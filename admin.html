@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單管理 | Project.CD</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/admin.js" defer></script>
+</head>
+<body class="admin-body">
+
+    <div class="admin-wrap">
+        <header class="admin-header">
+            <h1>訂單管理</h1>
+            <button type="button" id="admin-logout-btn" class="btn-submit admin-logout-btn" hidden>登出</button>
+        </header>
+
+        <!-- 未登入或非店主帳號時顯示 -->
+        <div id="admin-login-panel" class="admin-panel">
+            <form id="admin-login-form" class="auth-form admin-login-form">
+                <div class="form-group">
+                    <label for="admin-email">信箱</label>
+                    <input type="email" id="admin-email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">密碼</label>
+                    <input type="password" id="admin-password" required autocomplete="current-password">
+                </div>
+                <p class="auth-error" id="admin-login-error" hidden></p>
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-submit" id="btn-admin-login">
+                        <span class="btn-text">登入</span>
+                    </button>
+                </div>
+            </form>
+            <p id="admin-denied-msg" class="admin-denied-msg" hidden>無權限查看，此頁僅供店主帳號使用。</p>
+        </div>
+
+        <!-- 登入且為店主帳號時顯示 -->
+        <div id="admin-orders-panel" class="admin-panel" hidden>
+            <p id="admin-orders-empty" class="admin-orders-empty" hidden>目前沒有任何訂單。</p>
+            <div class="admin-table-wrap">
+                <table class="admin-orders-table" id="admin-orders-table" hidden>
+                    <thead>
+                        <tr>
+                            <th>狀態</th>
+                            <th>取貨日期</th>
+                            <th>客戶</th>
+                            <th>電話</th>
+                            <th>品項</th>
+                            <th>小計</th>
+                            <th>備註</th>
+                            <th>建立時間</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

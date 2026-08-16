@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project.CD | 品味純粹的甜蜜時光</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- SEO 與社群分享標籤 (OG Tags) -->
+    <meta name="description" content="Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。">
+    <meta name="keywords" content="Project.CD, 手工甜點, 烘焙, 鳳梨酥, 磅蛋糕, 堅果塔, 馬卡龍">
+    <meta property="og:title" content="Project.CD | 品味純粹的甜蜜時光">
+    <meta property="og:description" content="嚴選頂級食材，每日新鮮手工烘焙。點擊了解更多品牌故事與熱門甜點。">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="images/banner.png">
+
+    <!-- X (Twitter) 分享預覽標籤 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Project.CD | 品味純粹的甜蜜時光">
+    <meta name="twitter:description" content="嚴選頂級食材，每日新鮮手工烘焙。點擊了解更多品牌故事與熱門甜點。">
+    <meta name="twitter:image" content="images/banner.png">
+
+    <!-- 結構化資料 (Organization，非店面營業，故不含地址/地圖資訊；上線後請把 url 換成正式網域) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Project.CD",
+        "url": "https://your-domain.com/",
+        "logo": "https://your-domain.com/images/UNICORN%20LOGO.png",
+        "description": "Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。",
+        "email": "contact@project.cd.com"
+    }
+    </script>
+
+    <!-- 結構化資料 (FAQPage，讓常見問題有機會顯示在 Google 搜尋結果摘要中) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "甜點的保存期限多久？該怎麼保存？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "建議冷藏保存，賞味期限依產品不同約 5-7 天。收到商品後請盡快放入冰箱冷藏，並於期限內享用完畢以確保最佳風味。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "全台灣都能宅配到嗎？運費怎麼算？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "目前商品透過蝦皮購物、iOpen Mall、全家好賣+ 等平台販售，實際運費與配送方式請依您下單平台的規定為準；不論透過哪個通路購買，我們都堅持全程低溫配送，確保甜點新鮮送達。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "甜點有添加防腐劑嗎？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "我們堅持無添加防腐劑，所有甜點皆為新鮮手工現做，正因如此才需要全程冷藏配送與保存，也建議盡快食用完畢。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "有素食或不含堅果的選項嗎？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "目前部分品項含有奶油、堅果等成分，若您有特殊飲食需求或過敏原顧慮，歡迎透過 LINE 或聯絡表單與我們洽詢，我們會盡力協助建議適合的品項。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "可以客製化或大量訂購嗎？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "可以，無論是節慶禮盒、企業訂購或客製化需求，歡迎透過 LINE 官方帳號或聯絡表單與我們討論細節，我們會依需求提供報價與建議。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "商品有問題可以退換貨嗎？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "由於商品皆透過蝦皮購物、iOpen Mall、全家好賣+ 等第三方平台販售，退換貨請依照您下單平台的退換貨規定辦理；若收到的商品有品質疑慮（例如嚴重毀損、變質或品項不符），也歡迎直接與我們聯繫，我們會協助您處理。"
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- CSS 樣式表與字體庫 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP：網頁動畫用，2025年起完全免費（含以前要付費的 ScrollTrigger），CDN引入不用建置工具 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+    <script src="js/script.js" defer></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 會員/購物車功能：Firebase SDK（compat 版本，不需要建置工具） -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/member.js" defer></script>
+</head>
+
+<body>
+    <!-- 無障礙：鍵盤/螢幕閱讀器使用者可跳過導覽列直接到主內容 -->
+    <a href="#home" class="skip-link">跳至主要內容</a>
+
+    <!-- HTML5 原生背景音樂播放器 -->
+    <audio id="bg-audio" loop preload="auto" src="audio/Melody.mp3"></audio>
+
+    <!-- 螢幕四周 4 邊 2px 金黃色滾動進度條 -->
+    <div id="scroll-progress-top" class="scroll-progress-h top"></div>
+    <div id="scroll-progress-right" class="scroll-progress-v right"></div>
+    <div id="scroll-progress-bottom" class="scroll-progress-h bottom"></div>
+    <div id="scroll-progress-left" class="scroll-progress-v left"></div>
+
+    <!-- 100% 完全透明懸浮導覽列 -->
+    <nav class="navbar" id="main-navbar">
+        <button type="button" class="hamburger-btn" id="hamburger-btn" aria-label="開啟選單" aria-expanded="false" aria-controls="nav-links">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
+        <a href="#home" class="logo-area">
+            <img src="images/UNICORN LOGO.png" alt="Project.CD LOGO" class="nav-icon" loading="lazy">
+            <span class="logo-text">Project.CD</span>
+        </a>
+
+        <div class="nav-right">
+            <ul class="nav-links" id="nav-links">
+                <li>
+                    <a href="#home" class="active">
+                        <span class="nav-text">首頁</span>
+                        <span class="nav-icon-mobile material-symbols-outlined">home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#brand">
+                        <span class="nav-text">品牌</span>
+                        <span class="nav-icon-mobile material-symbols-outlined">stars</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#products">
+                        <span class="nav-text">產品</span>
+                        <span class="nav-icon-mobile material-symbols-outlined">cake</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#shop">
+                        <span class="nav-text">商城</span>
+                        <span class="nav-icon-mobile material-symbols-outlined">storefront</span>
+                    </a>
+                </li>
+
+                <!-- 手機/平板漢堡選單專用：聯繫連結，桌機版不顯示（桌機版聯繫在右側工具區，用ICON呈現） -->
+                <li class="nav-contact-mobile">
+                    <a href="#contact" id="nav-link-contact-mobile">
+                        <span class="nav-text">聯繫</span>
+                    </a>
+                </li>
+
+                <!-- 手機/平板漢堡選單專用：音樂與音效開關，桌機版不顯示（桌機用右下角浮動按鈕） -->
+                <li class="nav-mobile-extra">
+                    <div class="nav-mobile-divider"></div>
+                    <div class="mobile-sound-wrap">
+                        <button id="btn-mobile-sound-toggle" class="btn-circular btn-mobile-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
+                            <i class="fa-solid fa-volume-xmark"></i>
+                            <span class="mobile-sound-label">音樂與音效</span>
+                        </button>
+                        <div class="mobile-sound-popover" id="mobile-sound-popover">
+                            <div class="mobile-sound-row">
+                                <i class="fa-solid fa-compact-disc"></i>
+                                <input type="range" id="mobile-music-volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="背景音樂音量">
+                            </div>
+                            <div class="mobile-sound-row">
+                                <i class="fa-solid fa-bell"></i>
+                                <input type="range" id="mobile-sfx-volume-slider" min="0" max="0.3" step="0.005" value="0.05" aria-label="按鍵音效音量">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="nav-utility-group">
+                <button type="button" class="nav-icon-btn" id="nav-btn-account" aria-label="會員登入">
+                    <svg class="nav-icon-svg" id="nav-account-icon-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
+                    <svg class="nav-icon-svg nav-account-icon-crown" id="nav-account-icon-crown" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l-1.2-8.6L7.6 12 12 5l4.4 7 5.8-3.6L21 17"/><path d="M5 19.5h14"/></svg>
+                </button>
+                <a href="#contact" class="nav-icon-link" id="nav-btn-contact" aria-label="聯繫我們">
+                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="1.6"/><path d="M4 7l8 6 8-6"/></svg>
+                </a>
+                <button type="button" class="nav-icon-btn nav-cart-btn" id="nav-btn-cart" aria-label="購物車">
+                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 11.6a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.6L20.8 8H6.2"/><circle cx="9.6" cy="20" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.8" cy="20" r="1.1" fill="currentColor" stroke="none"/></svg>
+                    <span class="cart-badge" id="cart-badge" hidden>0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 手機/平板漢堡選單開啟時的背景遮罩，點擊可關閉選單 -->
+    <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+
+    <!-- 右下角圓形按鈕堆疊 -->
+    <div class="music-control-wrap">
+        <div class="volume-pop">
+            <input type="range" id="music-volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="音樂音量">
+        </div>
+        <button id="btn-music-toggle" class="btn-circular btn-music-toggle" aria-label="播放背景音樂">
+            <i class="fa-solid fa-music"></i>
+        </button>
+    </div>
+
+    <div class="sound-control-wrap">
+        <div class="volume-pop">
+            <input type="range" id="sfx-volume-slider" min="0" max="0.3" step="0.005" value="0.05" aria-label="按鍵音效音量">
+        </div>
+        <button id="btn-sound-toggle" class="btn-circular btn-sound-toggle" aria-label="切換音效">
+            <i class="fa-solid fa-volume-xmark"></i>
+        </button>
+    </div>
+
+    <!-- 首頁區塊 -->
+    <header id="home" class="hero-banner fullscreen-section dark-section">
+        <div class="hero-video-bg">
+            <video class="hero-video" muted playsinline preload="auto"></video>
+            <video class="hero-video" muted playsinline preload="auto"></video>
+        </div>
+
+        <a href="#brand" class="scroll-down-indicator" aria-label="往下滾動">
+            <span>SCROLL DOWN</span>
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+    </header>
+
+    <!-- 品牌團隊區塊 (人物切換式版面，第一格為品牌故事) -->
+    <section id="brand" class="fullscreen-section">
+        <div class="team-switcher reveal-element">
+            <div class="team-left-col">
+                <div class="team-avatar-rail">
+                    <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
+                        <i class="fa-solid fa-chevron-up"></i>
+                    </button>
+                    <div class="team-avatar-list" id="team-avatar-list"></div>
+                    <button class="team-nav-btn" id="team-nav-down" aria-label="下一位成員" type="button">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="team-info-panel">
+                    <span class="team-info-watermark" id="team-info-watermark" aria-hidden="true">01</span>
+                    <p class="team-section-label">品牌團隊</p>
+                    <p class="team-info-index" id="team-info-index">01 / 04</p>
+                    <h3 class="team-info-name" id="team-info-name"></h3>
+                    <div class="team-info-tags">
+                        <span class="team-tag team-tag-dept" id="team-info-dept"></span>
+                        <span class="team-tag team-tag-role" id="team-info-role"></span>
+                    </div>
+                    <p class="team-info-quote" id="team-info-quote"></p>
+                    <p class="team-info-bio" id="team-info-bio"></p>
+                </div>
+            </div>
+
+            <div class="team-portrait" id="team-portrait" role="img" aria-label="">
+                <span class="team-portrait-initial" id="team-portrait-initial" aria-hidden="true"></span>
+                <div class="team-portrait-text" id="team-portrait-text"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 產品區塊 (滿版直向分割選單) -->
+    <section id="products" class="fullscreen-section">
+        <div class="product-panels" id="product-panels"></div>
+    </section>
+
+    <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
+    <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
+        <div class="modal-container faq-modal-box">
+            <button class="modal-close" id="faq-modal-close" aria-label="關閉">&times;</button>
+            <h2 class="faq-title" id="faq-modal-title">常見問題</h2>
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <span class="faq-card-number">01</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-snowflake"></i></div>
+                    <h3 class="faq-card-title">保存期限與方式</h3>
+                    <p class="faq-card-desc">建議冷藏保存，賞味期限依產品不同約 5-7 天，收到後請盡快冷藏並於期限內享用完畢。</p>
+                </div>
+
+                <a href="#" class="faq-card policy-link" data-policy="shipping">
+                    <span class="faq-card-number">02</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <h3 class="faq-card-title">全台配送與冷藏須知</h3>
+                    <p class="faq-card-desc">商品透過蝦皮購物、iOpen Mall、全家好賣+ 等平台販售並全程低溫配送，點擊查看完整配送須知。</p>
+                </a>
+
+                <div class="faq-card">
+                    <span class="faq-card-number">03</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-leaf"></i></div>
+                    <h3 class="faq-card-title">無添加防腐劑</h3>
+                    <p class="faq-card-desc">所有甜點皆為新鮮手工現做，堅持無添加防腐劑，正因如此才需要全程冷藏配送與保存。</p>
+                </div>
+
+                <div class="faq-card">
+                    <span class="faq-card-number">04</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <h3 class="faq-card-title">素食與過敏原選項</h3>
+                    <p class="faq-card-desc">部分品項含有奶油、堅果等成分，若有特殊飲食需求或過敏原顧慮，歡迎透過 LINE 或聯絡表單洽詢。</p>
+                </div>
+
+                <div class="faq-card">
+                    <span class="faq-card-number">05</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-gift"></i></div>
+                    <h3 class="faq-card-title">客製化與大量訂購</h3>
+                    <p class="faq-card-desc">無論是節慶禮盒、企業訂購或客製化需求，歡迎透過 LINE 官方帳號或聯絡表單與我們討論細節。</p>
+                </div>
+
+                <a href="#" class="faq-card policy-link" data-policy="returns">
+                    <span class="faq-card-number">06</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                    <h3 class="faq-card-title">退換貨政策</h3>
+                    <p class="faq-card-desc">烘焙食品不適用七天鑑賞期；若商品有嚴重毀損或品項不符，點擊查看完整退換貨規定。</p>
+                </a>
+
+                <div class="faq-card">
+                    <span class="faq-card-number">07</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3 class="faq-card-title">會員線上訂購與取貨</h3>
+                    <p class="faq-card-desc">登入會員即可線上選購並指定取貨日期（至少 5 個工作天後，週一公休除外），完成後至超商取貨付款。</p>
+                </div>
+
+                <a href="#" class="faq-card policy-link" data-policy="privacy">
+                    <span class="faq-card-number">08</span>
+                    <div class="faq-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="faq-card-title">隱私權政策</h3>
+                    <p class="faq-card-desc">僅於訂購、配送及客戶服務之必要範圍內使用您的資料，絕不提供給第三方，點擊查看完整政策。</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 聯繫我們區塊 -->
+    <!-- 聯繫我們：改成彈窗，只有點選導覽列的聯繫圖示才會出現，不會排在首頁滾動流程裡 -->
+    <div id="contact-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" inert>
+        <div class="modal-container contact-modal-box">
+        <button class="modal-close" id="contact-modal-close" aria-label="關閉">&times;</button>
+        <div class="contact-glass-card">
+            <div class="contact-glass-intro">
+                <p class="contact-eyebrow">CONTACT</p>
+                <h2 class="contact-visual-title" id="contact-modal-title">與我聯繫</h2>
+                <p class="contact-visual-sub">有任何問題，歡迎隨時與我們聯繫</p>
+
+                <div class="line-service-box">
+                    <div class="line-status-bar">
+                        <span class="line-status-dot">🟢 ONLINE</span>
+                        <span class="line-tag">REAL-TIME CHAT</span>
+                    </div>
+                    <h4 class="line-title"><i class="fa-brands fa-line"></i> LINE 官方帳號客服</h4>
+                    <p class="line-desc">不想等待 Email 回覆？加入 LINE 官方帳號，專人即時為您服務。</p>
+                    <a href="#" class="btn-line-cta" target="_blank" rel="noopener noreferrer">
+                        <span>開啟 LINE 線上對話</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="contact-details-list">
+                    <div class="contact-detail-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <strong>門市工作室地址</strong>
+                            <p>台北市內湖區某某路 123 號</p>
+                        </div>
+                    </div>
+                    <div class="contact-detail-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <strong>營業時間</strong>
+                            <p>週二至週日 10:00 - 19:00 (週一公休)</p>
+                        </div>
+                    </div>
+                    <div class="contact-detail-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <strong>官方客服信箱</strong>
+                            <p>contact@project.cd.com</p>
+                        </div>
+                        <button type="button" class="btn-copy-email" data-copy-text="contact@project.cd.com" aria-label="複製信箱地址">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-glass-form">
+                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="contact-form" id="contact-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">姓名 <span class="required-star">*</span></label>
+                            <input type="text" id="name" name="name" placeholder="這裏輸入姓名" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">性別 <span class="required-star">*</span></label>
+                            <div class="select-wrapper">
+                                <select id="gender" name="gender" required>
+                                    <option value="" disabled selected>請選擇</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">電話 <span class="required-star">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="09xx-xxx-xxx" pattern="[0-9]{10,}" title="請輸入至少10碼數字電話" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">信箱 <span class="required-star">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-group-full">
+                        <label for="message">留言 <span class="required-star">*</span></label>
+                        <textarea id="message" name="message" rows="3" placeholder="描述您的需求..." required></textarea>
+                    </div>
+
+                    <p class="contact-privacy-note">
+                        提交本表單即表示您同意我們的 <a href="#" class="policy-link" data-policy="privacy">隱私權政策</a>，我們僅會於訂購、配送及客戶服務之必要範圍內使用您的資料，絕不提供給第三方。
+                    </p>
+
+                    <div class="form-submit-area">
+                        <button type="submit" class="btn-submit" id="btn-contact-submit">
+                            <span class="btn-text">發送留言</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                        <p class="form-note">我們通常會在 24 小時內回覆您。</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- 購物 + Footer 合併為單一滿版螢幕 -->
+    <div class="shop-footer-screen">
+        <!-- 購物連結區塊 -->
+        <section id="shop" class="shopping-section">
+            <p class="shop-eyebrow">ONLINE STORE</p>
+            <h2 class="shop-title reveal-zoom">官方線上商城</h2>
+            <div class="shop-links">
+                <a href="https://shopee.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.1" style="--glow: #EE4D2D;">
+                    <i class="fa-solid fa-bag-shopping shop-link-icon"></i>
+                    <span class="shop-link-name">蝦皮購物</span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <a href="https://mall.iopenmall.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.22" style="--glow: #E60012;">
+                    <i class="fa-solid fa-box-open shop-link-icon"></i>
+                    <span class="shop-link-name">iOpen Mall</span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <a href="https://famishop.fami.life/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.34" style="--glow: #009944;">
+                    <i class="fa-solid fa-store shop-link-icon"></i>
+                    <span class="shop-link-name">全家好賣+</span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer 頁尾區塊 -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3 class="footer-title">Project.CD</h3>
+                    <p>用心烘焙每一天的美好。</p>
+                    <p><i class="fa-solid fa-location-dot"></i> 台北市某某區某某路 123 號</p>
+                    <p><i class="fa-solid fa-clock"></i> 營業時間：10:00 - 19:00 (週一公休)</p>
+                    <p><i class="fa-solid fa-envelope"></i> 官方信箱：contact@project.cd.com</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">探索更多</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" id="footer-link-faq">常見問題與服務條款</a></li>
+                        <!-- 以下兩個目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
+                        <li><a href="../Project.CD遊樂場/index.html">Project.CD-Game</a></li>
+                        <li><a href="../Project.CD教育/index.html">Project.CD-Education</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">關注我們</h3>
+                    <div class="footer-social">
+                        <a href="#" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
+                        <a href="#" class="social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Project.CD. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 右側章節導覽小圓點 -->
+    <nav class="section-dots" id="section-dots" aria-label="頁面章節導覽">
+        <a href="#home" class="section-dot" data-target="home" aria-label="首頁"></a>
+        <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
+        <a href="#products" class="section-dot" data-target="products" aria-label="產品"></a>
+        <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
+    </nav>
+
+    <!-- 顧客服務條款彈窗 -->
+    <div id="policy-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true" inert>
+        <div class="modal-container policy-modal-box">
+            <button class="modal-close" id="policy-modal-close" aria-label="關閉">&times;</button>
+            <h3 id="policy-modal-title" class="modal-title">條款須知</h3>
+            <div id="policy-modal-body" class="policy-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 產品詳細介紹與多圖藝廊彈窗 (支持 6 張縮圖) -->
+    <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" aria-hidden="true" inert>
+        <div class="modal-container product-modal-box">
+            <button class="modal-close" id="product-modal-close" aria-label="關閉">&times;</button>
+            <div class="product-modal-content">
+                <div class="product-gallery">
+                    <div class="gallery-main">
+                        <img id="product-modal-main-img" src="" alt="產品大圖">
+                    </div>
+                    <div class="gallery-thumbs" id="product-modal-thumbs"></div>
+                </div>
+                <div class="product-detail-body">
+                    <h3 id="product-modal-title">產品名稱</h3>
+                    <div class="product-modal-meta">
+                        <span id="product-modal-price" class="price">NT$ 0</span>
+                        <span id="product-modal-qty" class="qty">數量</span>
+                    </div>
+                    <p id="product-modal-desc" class="desc">產品詳細說明</p>
+                    <div class="product-tags">
+                        <div class="tag-item"><i class="fa-solid fa-leaf"></i> 嚴選優質食材</div>
+                        <div class="tag-item"><i class="fa-solid fa-snowflake"></i> 低溫冷藏保鮮</div>
+                        <div class="tag-item"><i class="fa-solid fa-shield-cat"></i> 無添加防腐劑</div>
+                    </div>
+                    <div class="cart-add-row">
+                        <div class="qty-stepper">
+                            <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
+                            <span id="product-modal-qty-value">1</span>
+                            <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
+                        </div>
+                        <button type="button" class="btn-modal-cta" id="product-modal-add-cart">加入購物車</button>
+                    </div>
+                    <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
+                    <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 會員登入／註冊彈窗 -->
+    <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" aria-hidden="true" inert>
+        <div class="modal-container auth-modal-box">
+            <button class="modal-close" id="auth-modal-close" aria-label="關閉">&times;</button>
+            <h3 id="auth-modal-title" class="sr-only">會員登入</h3>
+
+            <div class="auth-modal-logo">
+                <img src="images/UNICORN LOGO.png" alt="" class="auth-modal-logo-icon">
+                <span class="auth-modal-logo-text">Project.CD</span>
+            </div>
+
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" data-tab="login">登入</button>
+                <button type="button" class="auth-tab" data-tab="signup">註冊</button>
+            </div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">信箱</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密碼</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="login-password" required autocomplete="current-password">
+                        <button type="button" class="password-toggle-btn" data-target="login-password" aria-label="顯示密碼" aria-pressed="false">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <label class="auth-checkbox-row auth-remember-row">
+                    <span class="auth-checkbox-text">保持登入</span>
+                    <input type="checkbox" id="login-remember" checked>
+                    <span class="ios-toggle-track"><span class="ios-toggle-knob"></span></span>
+                </label>
+                <p class="auth-error" id="login-error" hidden></p>
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-submit" id="btn-login-submit">
+                        <span class="btn-text">登入</span>
+                    </button>
+                </div>
+                <button type="button" class="auth-forgot-link" id="btn-forgot-password">忘記密碼？</button>
+            </form>
+
+            <form id="signup-form" class="auth-form" hidden>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="signup-name">姓名</label>
+                        <input type="text" id="signup-name" required autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-phone">電話</label>
+                        <input type="tel" id="signup-phone" required autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">信箱</label>
+                        <input type="email" id="signup-email" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">密碼（至少 6 碼）</label>
+                        <div class="password-input-wrap">
+                            <input type="password" id="signup-password" minlength="6" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-btn" data-target="signup-password" aria-label="顯示密碼" aria-pressed="false">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-birthday-trigger">生日（選填）</label>
+                        <div class="date-picker-wrap">
+                            <button type="button" class="date-picker-trigger" id="signup-birthday-trigger" aria-haspopup="dialog" aria-expanded="false">
+                                <span id="signup-birthday-display">年 / 月 / 日</span>
+                                <i class="fa-regular fa-calendar"></i>
+                            </button>
+                            <input type="hidden" id="signup-birthday" autocomplete="bday">
+                            <div class="date-picker-panel" id="signup-birthday-panel" role="dialog" aria-label="選擇生日" hidden>
+                                <div class="date-picker-header">
+                                    <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="date-picker-month-label" id="signup-birthday-label"></button>
+                                    <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                                <div class="date-picker-weekdays">
+                                    <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                                </div>
+                                <div class="date-picker-grid" id="signup-birthday-grid"></div>
+                                <div class="date-picker-footer">
+                                    <button type="button" class="date-picker-text-btn" id="signup-birthday-clear">清除</button>
+                                    <button type="button" class="date-picker-text-btn" id="signup-birthday-today">回到今天</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-store">偏好取貨超商（選填）</label>
+                        <div class="select-wrapper">
+                            <select id="signup-store">
+                                <option value="" selected>請選擇</option>
+                                <option value="711">7-11</option>
+                                <option value="family">全家</option>
+                                <option value="other">皆可</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="auth-checkbox-row">
+                    <input type="checkbox" id="signup-terms" required>
+                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check"></i></span>
+                    <span class="auth-checkbox-text">我同意 <a href="#" class="policy-link" data-policy="terms">服務條款</a> 與 <a href="#" class="policy-link" data-policy="privacy">隱私權政策</a><span class="required-star">*</span></span>
+                </label>
+                <label class="auth-checkbox-row">
+                    <input type="checkbox" id="signup-marketing">
+                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check"></i></span>
+                    <span class="auth-checkbox-text">我願意收到優惠活動簡訊／LINE 通知（選填）</span>
+                </label>
+
+                <p class="auth-error" id="signup-error" hidden></p>
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-submit" id="btn-signup-submit">
+                        <span class="btn-text">建立帳號</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="auth-divider"><span>或</span></div>
+
+            <button type="button" class="btn-google-signin" id="btn-google-signin">
+                <svg class="google-g-icon" viewBox="0 0 18 18" aria-hidden="true">
+                    <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+                    <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                    <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
+                    <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+                </svg>
+                <span>使用 Google 帳號繼續</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 會員資料彈窗：登入後點擊皇冠圖示顯示 -->
+    <div id="account-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="account-modal-title" aria-hidden="true" inert>
+        <div class="modal-container account-modal-box">
+            <button class="modal-close" id="account-modal-close" aria-label="關閉">&times;</button>
+
+            <h3 id="account-modal-title" class="sr-only">會員資料</h3>
+
+            <div class="account-columns">
+                <div class="account-column">
+                    <p class="account-column-title">會員資訊</p>
+
+                    <div class="account-profile-header">
+                        <div class="account-profile-header-row">
+                            <button type="button" class="account-avatar" id="account-avatar-btn" aria-label="更換大頭貼">
+                                <span id="account-avatar-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><circle cx="9" cy="11" r="2.5"/><circle cx="23" cy="11" r="2.5"/><line x1="5" y1="18" x2="10" y2="19"/><line x1="5" y1="22" x2="10" y2="21"/><line x1="27" y1="18" x2="22" y2="19"/><line x1="27" y1="22" x2="22" y2="21"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="24" r="1" fill="currentColor" stroke="none"/></svg></span>
+                            </button>
+                            <p class="account-profile-name" id="account-display-name">會員</p>
+                            <div class="title-dropdown" id="title-dropdown">
+                                <select id="account-title-select" class="sr-only" tabindex="-1" aria-hidden="true">
+                                    <option value="">選擇封號</option>
+                                    <optgroup label="咖啡封號">
+                                        <option value="咖啡新手">咖啡新手</option>
+                                        <option value="咖啡愛好者">咖啡愛好者</option>
+                                        <option value="拿鐵控">拿鐵控</option>
+                                        <option value="手沖玩家">手沖玩家</option>
+                                        <option value="咖啡因成癮者">咖啡因成癮者</option>
+                                    </optgroup>
+                                    <optgroup label="甜點封號">
+                                        <option value="甜點新手">甜點新手</option>
+                                        <option value="甜點控">甜點控</option>
+                                        <option value="手作甜點師">手作甜點師</option>
+                                        <option value="深夜甜點師">深夜甜點師</option>
+                                        <option value="甜點收藏家">甜點收藏家</option>
+                                    </optgroup>
+                                    <optgroup label="成就封號" id="achievement-optgroup"></optgroup>
+                                </select>
+                                <button type="button" class="title-dropdown-trigger" id="title-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                    <span id="title-dropdown-label">選擇封號</span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="title-dropdown-panel" id="title-dropdown-panel" role="listbox" hidden></div>
+                            </div>
+                        </div>
+                        <div class="avatar-picker" id="avatar-picker" hidden>
+                            <button type="button" class="avatar-option" data-avatar="rat" aria-label="鼠"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><circle cx="9" cy="11" r="2.5"/><circle cx="23" cy="11" r="2.5"/><line x1="5" y1="18" x2="10" y2="19"/><line x1="5" y1="22" x2="10" y2="21"/><line x1="27" y1="18" x2="22" y2="19"/><line x1="27" y1="22" x2="22" y2="21"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="24" r="1" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="ox" aria-label="牛"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><path d="M8 13 Q4 8 8 5"/><path d="M24 13 Q28 8 24 5"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="tiger" aria-label="虎"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><path d="M9 13 L6 7 L12 11 Z"/><path d="M23 13 L26 7 L20 11 Z"/><line x1="10" y1="21" x2="13" y2="23"/><line x1="22" y1="21" x2="19" y2="23"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="rabbit" aria-label="兔"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="20" r="7"/><ellipse cx="11" cy="7" rx="2.2" ry="6.5" transform="rotate(-15 11 7)"/><ellipse cx="21" cy="7" rx="2.2" ry="6.5" transform="rotate(15 21 7)"/><circle cx="13" cy="19" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="dragon" aria-label="龍"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 25 Q10 12 16 16 Q22 20 27 7"/><line x1="27" y1="7" x2="29" y2="3"/><line x1="24" y1="8" x2="25" y2="4"/><circle cx="26" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="snake" aria-label="蛇"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7 Q22 7 12 16 Q2 25 24 25"/><line x1="24" y1="25" x2="28" y2="23"/><line x1="24" y1="25" x2="28" y2="27"/><circle cx="9" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="horse" aria-label="馬"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="19" rx="6" ry="9"/><path d="M11 12 L9 6 L14 11 Z"/><path d="M21 12 L23 6 L18 11 Z"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="goat" aria-label="羊"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><path d="M9 14 Q3 13 5 8 Q6 5 10 7"/><path d="M23 14 Q29 13 27 8 Q26 5 22 7"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="monkey" aria-label="猴"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="19" r="7"/><circle cx="7" cy="19" r="3"/><circle cx="25" cy="19" r="3"/><circle cx="16" cy="21" r="4"/><circle cx="13" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="rooster" aria-label="雞"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="19" r="7"/><path d="M9 12 L11 6 L13 12 L15 6 L17 12"/><path d="M21 17 L27 15 L21 20 Z"/><circle cx="11" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="17" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="dog" aria-label="狗"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="18" r="7"/><ellipse cx="8" cy="16" rx="3" ry="5.5" transform="rotate(-20 8 16)"/><ellipse cx="24" cy="16" rx="3" ry="5.5" transform="rotate(20 24 16)"/><ellipse cx="16" cy="23" rx="3" ry="2"/><circle cx="13" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                            <button type="button" class="avatar-option" data-avatar="pig" aria-label="豬"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="18" r="7"/><path d="M10 12 L8 8 L13 10 Z"/><path d="M22 12 L24 8 L19 10 Z"/><rect x="12" y="20" width="8" height="6" rx="3"/><circle cx="14.5" cy="23" r="0.8" fill="currentColor" stroke="none"/><circle cx="17.5" cy="23" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="16" r="0.8" fill="currentColor" stroke="none"/><circle cx="20" cy="16" r="0.8" fill="currentColor" stroke="none"/></svg></button>
+                        </div>
+                    </div>
+
+
+                    <button type="button" class="liquid-glass-btn lg-btn-black account-logout-btn" id="btn-account-logout">
+                        <span class="btn-text">登出</span>
+                    </button>
+                </div>
+
+                <div class="account-column">
+                    <p class="account-column-title">曾經購買品項</p>
+                    <div class="account-history-list" id="account-history-list">
+                        <div class="account-history-empty" id="account-history-empty">
+                            <span class="account-empty-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12 L11 6 H21 L23 12"/><rect x="7" y="12" width="18" height="14" rx="2"/><path d="M12 16 Q12 20 16 20 Q20 20 20 16"/></svg></span>
+                            <p class="account-empty-text" id="account-history-empty-text">尚無購買紀錄</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 購物車彈窗 -->
+    <div id="cart-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title" aria-hidden="true" inert>
+        <div class="modal-container cart-modal-box">
+            <button class="modal-close" id="cart-modal-close" aria-label="關閉">&times;</button>
+            <h3 id="cart-modal-title" class="modal-title">購物車</h3>
+
+            <div id="cart-empty-state" class="cart-empty-state" hidden>
+                <p>購物車目前是空的</p>
+            </div>
+
+            <ul id="cart-items-list" class="cart-items-list"></ul>
+
+            <div class="cart-summary">
+                <span>小計</span>
+                <span id="cart-subtotal">NT$ 0</span>
+            </div>
+            <button type="button" class="btn-modal-cta" id="btn-go-checkout" disabled>前往結帳</button>
+        </div>
+    </div>
+
+    <!-- 結帳彈窗（含取貨日期選擇） -->
+    <div id="checkout-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title" aria-hidden="true" inert>
+        <div class="modal-container checkout-modal-box">
+            <button class="modal-close" id="checkout-modal-close" aria-label="關閉">&times;</button>
+            <h3 id="checkout-modal-title" class="modal-title">確認訂購</h3>
+
+            <div id="checkout-order-summary" class="checkout-order-summary"></div>
+
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="checkout-pickup-date">取貨日期 <span class="required-star">*</span></label>
+                    <input type="date" id="checkout-pickup-date" required>
+                    <p class="field-hint">須為下單日 5 天後，且不可為週一（公休）</p>
+                    <p class="field-error" id="checkout-date-error" hidden>此日期不可選，請重新選擇（最少需 5 天前預訂，且週一公休）</p>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-name">姓名 <span class="required-star">*</span></label>
+                    <input type="text" id="checkout-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-phone">電話 <span class="required-star">*</span></label>
+                    <input type="tel" id="checkout-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-note">備註</label>
+                    <textarea id="checkout-note" rows="2"></textarea>
+                </div>
+                <p class="auth-error" id="checkout-error" hidden></p>
+                <div class="form-submit-area">
+                    <button type="submit" class="btn-submit" id="btn-checkout-submit" disabled>
+                        <span class="btn-text">送出訂單</span>
+                    </button>
+                    <p class="form-note">訂單送出後，我們將於出貨前透過 LINE 提供取貨資訊，恕不支援線上付款。</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

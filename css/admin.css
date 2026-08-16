@@ -1,0 +1,106 @@
+/* 訂單管理後台專用樣式（獨立於主網站，只有 admin.html 會載入） */
+
+.admin-body {
+    background-color: rgba(29, 29, 31, 0.03);
+    min-height: 100vh;
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+}
+
+.admin-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 24px;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.admin-header h1 {
+    font-size: var(--fs-h2);
+    color: #1d1d1f;
+}
+
+.admin-logout-btn {
+    width: auto;
+    padding: 10px 24px;
+}
+
+.admin-panel {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.admin-login-form {
+    max-width: 360px;
+    margin: 0 auto;
+}
+
+.admin-denied-msg {
+    text-align: center;
+    color: #e60000;
+    margin-top: 16px;
+}
+
+.admin-orders-empty {
+    text-align: center;
+    color: var(--ink-soft);
+}
+
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.admin-orders-table th,
+.admin-orders-table td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.admin-orders-table th {
+    color: var(--ink-soft);
+    font-weight: 700;
+    border-bottom: 2px solid #1d1d1f;
+}
+
+.admin-orders-table td.admin-col-items,
+.admin-orders-table td.admin-col-note {
+    white-space: normal;
+    max-width: 260px;
+}
+
+.admin-row-urgent {
+    background-color: #fff8e1;
+}
+
+.admin-row-completed {
+    opacity: 0.55;
+}
+
+.admin-row-cancelled {
+    opacity: 0.4;
+}
+
+.admin-status-select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--ink-line);
+    background-color: #ffffff;
+    color: #1d1d1f;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+}

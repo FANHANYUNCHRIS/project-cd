@@ -1,0 +1,3821 @@
+/* =========================================
+   0. Material Symbols 圖示宣告 (行動版導覽列專用)
+   ========================================= */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Google 字體的同名樣式表會蓋掉這裡的 display，連帶讓瀏覽器內建的 [hidden] 隱藏行為失效，
+   所以這裡要明確補上 [hidden] 的情況，用 JS 切換顯示/隱藏的圖示（例如會員登入狀態）才會真的生效 */
+.material-symbols-outlined[hidden] {
+    display: none !important;
+}
+
+/* =========================================
+   1. 基礎設定 & 原生高影格全頁滾動 (Scroll Snap)
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* ===== 字級階梯 Type Scale (統一標題/副標/內文大小，8px 網格基礎) ===== */
+    --fs-caption: 12px;  /* 標籤、備註、次要資訊 */
+    --fs-small: 14px;    /* 小標籤、卡片說明 */
+    --fs-body: 16px;     /* 內文 */
+    --fs-lead: 18px;     /* 副標題、強調內文 */
+    --fs-h4: 20px;       /* 卡片/小節標題 */
+    --fs-h3: 24px;       /* 中標題 */
+    --fs-h2: 32px;       /* 區塊主標題 */
+    --fs-h1: 40px;       /* 大標題 */
+    --fs-display: 48px;  /* 首頁主視覺標題 */
+
+    /* ===== 間距階梯 Spacing Scale (4px 網格，同 Tailwind 慣用比例) ===== */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    /* ===== 黑白二分色票（不用金色、不用灰階）=====
+       每個數值都用 WCAG 對比公式驗證過，白底上一般文字至少要 4.5:1（AA）：
+       --ink 純黑 100% 在白底上 = 16.9:1；
+       --ink-soft 原本 65% 黑只有 5.2:1，實際看起來偏淡不好讀，提高到 78% 黑 = 8.2:1（達到 AAA 等級），
+       次要文字更清楚，但仍比純黑淡、還是分得出主副層次。
+       --ink-line 只用在裝飾性分隔線/邊框，不放文字，不受文字對比規範限制 */
+    --ink: #16161a;
+    --ink-soft: rgba(22, 22, 26, 0.78);
+    --ink-line: rgba(22, 22, 26, 0.16);
+    --paper-soft: rgba(255, 255, 255, 0.7);  /* 深色底上的白字降低強調，7.7:1，一樣符合 AA */
+    --glow: rgba(22, 22, 26, 0.28);  /* 卡片 hover 陰影/邊框專用的黑色光暈，不放文字 */
+
+    /* ===== 液態玻璃全站規格（2026-08 確認）=====
+       白色只用在頁面背景，黑色只用在文字，藍紫粉三色只准出現在按鈕上，
+       文字內容一律換成透明玻璃底（.liquid-glass-panel），不再用實色卡片背景 */
+    --lg-blue: #4f8ef7;
+    --lg-pink: #ec5fa8;
+    --lg-purple: #9b6bf2;
+}
+
+/* =========================================
+   液態玻璃系統：全站共用的核心元件
+   ========================================= */
+
+/* 文字內容的底：全透明玻璃，取代原本的實色/邊框卡片。純黑字疊在上面。
+   多層 inset 陰影做出玻璃斜切邊緣的受光/背光面，::before 做一道斜向高光，
+   ::after 做底部一條反光邊——跟液態玻璃提案報告裡驗證過的技巧完全一致 */
+.liquid-glass-panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.22) 65%);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -6px 12px -10px rgba(22, 22, 26, 0.18),
+        0 16px 32px -16px rgba(22, 22, 26, 0.28),
+        0 3px 10px rgba(22, 22, 26, 0.08);
+}
+
+.liquid-glass-panel::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -30%;
+    width: 65%;
+    height: 220%;
+    background: linear-gradient(115deg, transparent 22%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.12) 56%, transparent 70%);
+    transform: rotate(-9deg);
+    pointer-events: none;
+}
+
+.liquid-glass-panel::after {
+    content: '';
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
+    pointer-events: none;
+}
+
+.liquid-glass-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* 圖片浮起來的卡片：圓角＋陰影，讓圖片像浮在背景上，不是貼齊版面的方形色塊 */
+.floating-card {
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
+    overflow: hidden;
+}
+
+/* 按鈕：唯一容許上色的地方。垂直漸層上亮下深＋頂部高光帶，模擬玻璃管被打光。
+   跟液態玻璃提案報告裡最終驗證過的版本同一套數值 */
+.liquid-glass-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: 100px;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.liquid-glass-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* 登出是低頻、次要的操作，不該是整個彈窗裡最搶眼的東西——
+   拿掉硬撐滿版寬度的設定，改成內容自適應寬度、置中，份量降到跟它的重要性相符 */
+.account-logout-btn {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 12px 40px;
+}
+
+.lg-btn-black {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22%),
+        linear-gradient(180deg, #4a4a4e 0%, #202024 48%, #050506 100%);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.5),
+        inset 0 -8px 16px -9px rgba(0, 0, 0, 0.7),
+        0 14px 26px -10px rgba(0, 0, 0, 0.45),
+        0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.lg-btn-blue {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
+        linear-gradient(180deg, #bcd6ff 0%, #4f8ef7 48%, #2158c9 100%);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -8px 16px -9px rgba(10, 30, 90, 0.6),
+        0 18px 30px -10px rgba(47, 100, 220, 0.6),
+        0 4px 10px rgba(20, 50, 120, 0.25);
+}
+
+.lg-btn-pink {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
+        linear-gradient(180deg, #ffd0e9 0%, #ec5fa8 48%, #c22a78 100%);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -8px 16px -9px rgba(120, 10, 60, 0.55),
+        0 18px 30px -10px rgba(220, 60, 140, 0.55),
+        0 4px 10px rgba(120, 20, 70, 0.25);
+}
+
+.lg-btn-purple {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
+        linear-gradient(180deg, #e0d0ff 0%, #9b6bf2 48%, #6a2fd0 100%);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -8px 16px -9px rgba(50, 10, 100, 0.55),
+        0 18px 30px -10px rgba(140, 90, 230, 0.55),
+        0 4px 10px rgba(60, 20, 120, 0.25);
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory; /* 全頁靈敏對齊 */
+    background-color: #EBEBEC;
+}
+
+/* 無障礙：使用者於系統設定關閉動態效果時，取消所有動畫/轉場/平滑捲動 */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+body {
+    background-color: #EBEBEC;
+    color: var(--ink);
+    font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 無障礙跳轉連結：預設藏在畫面外，鍵盤 Tab 到才出現 */
+.skip-link {
+    position: fixed;
+    top: -60px;
+    left: 16px;
+    z-index: 2100;
+    background-color: var(--ink);
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: var(--fs-small);
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 16px;
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
+/* 螢幕四周 4 邊 2px 黑色滾動進度條 */
+.scroll-progress-h,
+.scroll-progress-v {
+    position: fixed;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.scroll-progress-h {
+    height: 2px;
+    background-color: var(--ink);
+    transition: width 0.1s ease-out;
+}
+
+.scroll-progress-v {
+    width: 2px;
+    background-color: var(--ink);
+    transition: height 0.1s ease-out;
+}
+
+.scroll-progress-h.top { top: 0; left: 0; width: 0%; }
+.scroll-progress-v.right { top: 0; right: 0; height: 0%; }
+.scroll-progress-h.bottom { bottom: 0; right: 0; width: 0%; }
+.scroll-progress-v.left { bottom: 0; left: 0; height: 0%; }
+
+/* =========================================
+   2. 果凍彈跳式頁面浮現/離場隱藏
+   ========================================= */
+.reveal-element {
+    opacity: 0;
+    transform: scale(0.85) translateY(40px);
+    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                opacity 0.45s ease;
+    will-change: transform, opacity;
+}
+
+.reveal-element.reveal-active {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* 進場動畫變化款：左右滑入、輕淡入、縮放彈入，讓不同區塊的進場節奏不單一 */
+.reveal-fade,
+.reveal-slide-left,
+.reveal-slide-right,
+.reveal-zoom {
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s ease;
+    will-change: transform, opacity;
+}
+
+.reveal-fade {
+    transform: translateY(24px);
+}
+
+.reveal-slide-left {
+    transform: translateX(-60px);
+}
+
+.reveal-slide-right {
+    transform: translateX(60px);
+}
+
+.reveal-zoom {
+    transform: scale(0.8);
+}
+
+.reveal-fade.reveal-active,
+.reveal-slide-left.reveal-active,
+.reveal-slide-right.reveal-active,
+.reveal-zoom.reveal-active {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+}
+
+/* =========================================
+   3. 100% 完全透明懸浮導覽列 (兩端對齊 6%)
+   ========================================= */
+.navbar,
+.navbar.scrolled {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    background-color: transparent !important; /* 100% 透明無白底 */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    height: 72px !important; /* 全程固定 72px 高度 */
+    padding: 8px 6%; /* 對稱對齊兩端邊界 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+/* 漢堡選單按鈕：只在平板/手機顯示，桌機版沿用文字導覽列 */
+.hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hamburger-line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--ink);
+    border-radius: 1px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background-color 0.3s ease;
+}
+
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* 桌機版把 nav-links 跟工具區包在同一個右側容器裡，維持跟原本一模一樣的水平排列；
+   平板/手機版時 nav-links 會變成抽屜選單（position:fixed），nav-right 本身只剩工具區在原本位置 */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+/* 平板/手機漢堡選單裡才會用到的內容，桌機版預設隱藏 */
+.nav-mobile-extra,
+.nav-contact-mobile {
+    display: none;
+}
+
+.mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999; /* 蓋在頁面內容上方，但要低於導覽列（1000），漢堡/會員/購物車圖示才不會被蓋住點不到 */
+}
+
+.mobile-menu-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.nav-icon {
+    height: 40px !important; /* 直接展示 LOGO 圖示 */
+    width: auto;
+    filter: none;
+    transition: filter 0.3s ease;
+}
+
+.logo-text {
+    color: var(--ink); /* 深黑色品牌名 */
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'League Spartan', sans-serif;
+    transition: color 0s;
+}
+
+/* iOS×Tesla：導覽列從「透明+文字跟著深淺背景變色」改成「不透明白色膠囊浮島」，
+   本身永遠是白底，不管疊在深色影片還是淺色內容上面，都不需要再判斷背景深淺——
+   今天一整天在追的閃爍/不同步問題，根源就是背景深淺判斷，這個做法直接讓問題不存在 */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2px;
+    align-items: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    border-radius: 100px;
+    padding: 5px;
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
+}
+
+.nav-links a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.1px;
+    position: relative;
+    padding: 9px 18px;
+    border-radius: 100px;
+    display: inline-block;
+    transition: background-color 0.15s linear, color 0.15s linear;
+}
+
+.nav-links a.active {
+    background-color: var(--ink);
+    color: #fff;
+}
+
+.nav-links a.nav-icon-link.active {
+    background-color: transparent;
+    color: inherit;
+}
+
+.nav-links a::after { display: none; }
+
+.nav-icon-mobile {
+    /* !important 是必要的：Google Fonts 的 Material Symbols 樣式表在 style.css 之後載入，
+       它自帶的 .material-symbols-outlined 也會設定 display，優先度打平時後載入的會蓋掉這裡 */
+    display: none !important;
+}
+
+.social-group {
+    display: flex;
+    gap: 0px; /* 對齊收緊間距 */
+    align-items: center; 
+    margin-left: 12px;
+}
+
+.social-group a {
+    font-size: 26px;
+    padding-bottom: 0;
+    transition: transform 0.2s ease;
+}
+
+/* 官方 Icon 原色常態顯示 */
+.social-group a.social-line { color: #00C300; }
+.social-group a.social-fb { color: #1877F2; }
+.social-group a.social-ig {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.social-group a.social-yt { color: #FF0000; }
+
+.social-group a:hover {
+    transform: translateY(-2px) scale(1.1);
+}
+
+/* 工具區：聯繫／會員／購物車，圖示本身已經各自是獨立的白色圓形浮島，
+   不再需要額外的分隔線去區隔 */
+.nav-utility-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* iOS×Tesla：跟導覽膠囊同一個道理，圖示按鈕改成不透明白色圓底浮島，
+   不再需要跟著背景深淺切換顏色 */
+.nav-icon-link,
+.nav-icon-btn {
+    /* <button> 瀏覽器預設會帶內距/邊距，<a> 沒有，兩邊寬高不一致就是導致三個圖示
+       沒對齊、間距看起來不均的原因，這裡全部歸零重置，確保三個盒子完全一樣大 */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+    position: relative;
+    font-size: 21px;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
+    transition: transform 0.2s ease;
+}
+
+/* 會員／聯繫／購物車：Lucide 風格線條圖示，手繪 SVG（2px筆畫、圓角），
+   不吃字型檔，顏色直接用 currentColor 跟著 .nav-icon-btn/.nav-icon-link 的 color 走 */
+.nav-icon-svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+/* 皇冠圖示視覺上比其他三顆略小一點，手動校正 */
+#nav-account-icon-crown {
+    width: 20px;
+    height: 20px;
+}
+
+/* SVG 天生就吃 [hidden] 的內建隱藏行為，這裡不需要再補 !important，
+   但明確寫出來避免日後其他樣式蓋過去，登入/登出切換人像↔皇冠才會真的只顯示一個 */
+#nav-account-icon-crown[hidden] {
+    display: none;
+}
+
+/* hover時補一顆淡淡的玻璃圓底，呼應選中膠囊同一套材質語言，不是只有放大而已 */
+.nav-icon-link:hover,
+.nav-icon-btn:hover,
+.nav-icon-link:focus-visible,
+.nav-icon-btn:focus-visible {
+    transform: scale(1.15);
+}
+
+/* 鍵盤 Tab 導覽專用：光靠放大不夠明顯，補一圈跟 .skip-link:focus 同樣做法的外框，
+   focus 才看得清楚游標在哪一顆圖示上 */
+.nav-icon-link:focus-visible,
+.nav-icon-btn:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
+/* 登入後人像圖示換成金色皇冠 */
+.nav-account-icon-crown {
+    color: var(--ink);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    background-color: var(--ink);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+/* .cart-badge{display:flex} 蓋過瀏覽器對 [hidden] 屬性內建的 display:none，
+   購物車還沒有商品時徽章會一直顯示「0」，這裡補回 [hidden] 該有的行為 */
+.cart-badge[hidden] {
+    display: none !important;
+}
+
+/* =========================================
+   4. 滿版區塊與標題 (Snap Alignment)
+   ========================================= */
+.fullscreen-section {
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding-top: 88px;
+    padding-bottom: 32px;
+    padding-left: 5%;
+    padding-right: 5%;
+    position: relative;
+    overflow: visible;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.flex-center-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =========================================
+   5. 首頁 (Hero Banner)
+   ========================================= */
+.hero-banner {
+    background-color: var(--ink); /* 影片載入前的備用底色 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* 導覽列疊在深色區塊 (首頁影片/頁尾) 上方時，文字與 LOGO 自動轉白（社群 icon 不受影響，維持官方色）；
+   選中膠囊現在是外框而不是實色填底，字色跟外框都要一起轉白，所以這裡不再排除 .active */
+/* nav-links跟圖示按鈕已經改成不透明白色浮島，不再需要跟著深淺背景換色；
+   只剩LOGO文字還是直接貼在影片/內容上面，維持原本的深淺切換 */
+.navbar.on-dark .logo-text {
+    color: #ebebec;
+}
+
+/* 選中膠囊的外框顏色跟文字色一起切換，深底用淺色圈、淺底用墨黑圈 */
+.navbar.on-dark .nav-links a.active {
+    box-shadow: inset 0 0 0 1.5px #ebebec;
+}
+
+/* 手機版漢堡按鈕跟導覽列一樣完全透明，三條線也要依同樣邏輯切換深淺色 */
+.navbar.on-dark .hamburger-line {
+    background-color: #ebebec;
+}
+
+.navbar.on-dark .nav-icon {
+    filter: invert(1);
+}
+
+/* 首頁背景影片輪播 (雙層淡入淡出) */
+.hero-video-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hero-video-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+.hero-video.active {
+    opacity: 1;
+}
+
+.scroll-down-indicator {
+    position: absolute;
+    z-index: 2;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ebebec;
+    text-decoration: none;
+    font-size: var(--fs-caption);
+    font-family: 'Inter', monospace;
+    letter-spacing: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.85;
+    animation: floatDown 2s infinite ease-in-out;
+}
+
+@keyframes floatDown {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 8px); }
+}
+
+/* =========================================
+   6. 品牌介紹文字樣式 (現在顯示於品牌團隊切換器的立繪區)
+   ========================================= */
+.brand-video-title {
+    color: var(--ink);
+    font-size: var(--fs-h1);
+    font-weight: bold;
+    margin-bottom: var(--sp-3);
+}
+
+.brand-video-subtitle {
+    color: var(--ink);
+    font-size: var(--fs-lead);
+    margin-bottom: var(--sp-8);
+}
+
+.brand-video-text {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.brand-video-text p {
+    color: var(--ink);
+    font-size: var(--fs-body);
+    line-height: 1.9;
+    margin-bottom: var(--sp-5);
+}
+
+.brand-video-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================================
+   7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
+   ========================================= */
+#products.fullscreen-section {
+    background-color: #EBEBEC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-panels {
+    display: flex;
+    width: 100%;
+    height: 640px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.product-panel {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: #EBEBEC;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s ease;
+}
+
+.product-panel:last-child {
+    border-right: none;
+}
+
+.product-panel:hover {
+    flex: 1.15;
+}
+
+/* 產品照片就位前的佔位設計，跟品牌團隊立繪同一套語言：深底 + 巨大淡字，
+   filter 強制灰階，之後換上真實產品照片會自動符合全站零色彩規則 */
+.product-panel-image {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(1) contrast(1.05);
+    transition: transform 0.5s ease;
+}
+
+.product-panel-initial {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    font-size: 200px;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+    user-select: none;
+}
+
+.product-panel:hover .product-panel-image {
+    transform: scale(1.05);
+}
+
+.product-panel-body {
+    flex-shrink: 0;
+    background-color: var(--ink);
+    padding: var(--sp-6) var(--sp-5);
+    text-align: center;
+}
+
+.product-panel-name {
+    font-size: var(--fs-h4);
+    font-weight: bold;
+    color: #ebebec;
+    margin-bottom: var(--sp-2);
+}
+
+.product-panel-detail {
+    font-size: var(--fs-small);
+    color: #ebebec;
+    line-height: 1.5;
+    margin-bottom: var(--sp-3);
+}
+
+.product-panel-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sp-3);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: var(--sp-3);
+}
+
+.product-panel-price {
+    font-size: var(--fs-small);
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.product-panel-qty {
+    font-size: var(--fs-caption);
+    color: #ebebec;
+}
+
+/* =========================================
+   7b. 品牌團隊人物切換器
+   ========================================= */
+#brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 區塊本身仍是一屏一頁的滿版捲動吸附，但裡面的內容改成固定高度（不再是78vh），
+   不會因為使用者螢幕高矮不同就跟著被拉伸縮放，內容置中在滿版區塊正中間，
+   上下留白多寡交給螢幕高度決定，內容尺寸本身維持一致 */
+.team-switcher {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: 640px;
+}
+
+/* 頭像 + 文字介紹合計約佔畫面左半邊，右半邊留給人物立繪滿版；
+   左欄跟中間文字的間距（gap）跟中間文字跟右邊的間距（padding-right）故意設成同一個值，
+   兩邊間距才會相等 */
+.team-left-col {
+    flex: 0 0 50%;
+    max-width: 50%;
+    box-sizing: border-box;
+    padding-right: 48px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+}
+
+.team-avatar-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.team-nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-line);
+    background-color: #ffffff;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.team-nav-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.team-avatar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.team-avatar-item {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    padding: 0;
+    border: 3px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgba(29, 29, 31, 0.06);
+    opacity: 0.55;
+    transition: all 0.3s ease;
+}
+
+/* 頭像圓框裁切點往上移到臉部，避免半身照置中裁切時臉被推到框外 */
+.team-avatar-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 15%;
+}
+
+.team-avatar-item:hover {
+    opacity: 0.85;
+}
+
+.team-avatar-item.active {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+.team-info-panel {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+/* 中間文字區塊內容偏少，用巨大的淡字級數字補滿視覺份量，讓左欄視覺高度接近右邊滿版立繪 */
+.team-info-watermark {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-family: 'Inter', monospace;
+    font-size: 280px;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(29, 29, 31, 0.04);
+    pointer-events: none;
+    user-select: none;
+}
+
+.team-section-label {
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-2);
+}
+
+.team-info-index {
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-family: 'Inter', monospace;
+    letter-spacing: 1px;
+    margin-bottom: var(--sp-3);
+}
+
+.team-info-name {
+    font-size: var(--fs-h1);
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: var(--sp-4);
+}
+
+.team-info-tags {
+    display: flex;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-5);
+}
+
+.team-tag {
+    font-size: var(--fs-small);
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 100px;
+}
+
+.team-tag-dept {
+    background-color: var(--ink);
+    color: #ffffff;
+}
+
+.team-tag-role {
+    background-color: rgba(29, 29, 31, 0.05);
+    color: var(--ink);
+    border: 1px solid var(--ink-line);
+}
+
+.team-info-quote {
+    font-size: var(--fs-body);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: var(--sp-4);
+    border-left: 3px solid var(--ink);
+    padding-left: var(--sp-3);
+}
+
+.team-info-bio {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    line-height: 1.8;
+}
+
+/* 立繪滿版：深底 + 巨大姓氏字首，跟左欄「淺底+淡數字」形成一深一淺的節奏；
+   filter 強制灰階，之後就算換上真人彩色照片，也會自動符合全站零色彩的規則，不用每張圖自己後製 */
+.team-portrait {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    filter: grayscale(1) contrast(1.05);
+    overflow: hidden;
+    position: relative;
+    transition: opacity 0.4s ease;
+}
+
+.team-portrait-initial {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    font-size: 480px;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+    user-select: none;
+}
+
+.team-portrait-text {
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+}
+
+.team-portrait-text:empty {
+    display: none;
+}
+
+/* =========================================
+   8. 聯繫我們彈窗（原本是可捲動到的區塊，現在只有點導覽列聯繫圖示才會彈出）
+   ========================================= */
+.contact-modal-box {
+    max-width: 1020px;
+    width: 100%;
+    padding: 0;
+}
+
+.contact-glass-card {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    align-items: stretch;
+    gap: 40px;
+    text-align: left;
+}
+
+.contact-glass-intro {
+    flex: 0 0 300px;
+    max-width: 300px;
+}
+
+.contact-glass-form {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    padding-left: 40px;
+    border-left: 1px solid #eee;
+}
+
+.contact-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.contact-eyebrow {
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-3);
+}
+
+.contact-visual-title {
+    color: var(--ink);
+    font-size: var(--fs-h2);
+    font-weight: bold;
+    margin-bottom: var(--sp-3);
+}
+
+.contact-visual-sub {
+    color: var(--ink);
+    font-size: var(--fs-small);
+    margin-bottom: var(--sp-6);
+}
+
+.line-service-box {
+    background-color: #f8fcf8;
+    color: var(--ink);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border: 1px solid #e0f2e0;
+    border-left: 4px solid #00C300;
+}
+
+.line-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.line-status-dot {
+    font-size: var(--fs-caption);
+    font-family: 'Inter', monospace;
+    font-weight: bold;
+    color: #00A300;
+}
+
+.line-tag {
+    font-size: var(--fs-caption);
+    font-family: 'Inter', monospace;
+    color: var(--ink);
+}
+
+.line-title {
+    font-size: var(--fs-lead);
+    color: #00A300;
+    margin-bottom: var(--sp-2);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-weight: bold;
+}
+
+.line-desc {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: var(--sp-4);
+}
+
+.btn-line-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #00C300;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-weight: bold;
+    padding: 11px 0;
+    border-radius: 50px;
+    transition: all 0.25s ease;
+}
+
+.btn-line-cta:hover {
+    background-color: #00e000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 195, 0, 0.3);
+}
+
+.contact-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    margin-top: var(--sp-5);
+}
+
+.contact-detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    text-align: left;
+}
+
+.contact-detail-item i {
+    font-size: var(--fs-lead);
+    color: var(--ink);
+    margin-top: 3px;
+}
+
+.contact-detail-item strong {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.contact-detail-item p {
+    font-size: var(--fs-small);
+    color: var(--ink);
+}
+
+/* 44px＝iOS HIG 最小觸控目標 */
+.btn-copy-email {
+    margin-left: auto;
+    align-self: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background-color: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.btn-copy-email:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.btn-copy-email.copied {
+    border-color: #2e7d32;
+    color: #2e7d32;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-4);
+}
+
+.form-group-full {
+    grid-column: span 2;
+    margin-bottom: var(--sp-4);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* 網格項目預設 min-width 是 auto，裡面塞了不換行文字（生日欄）時，
+       瀏覽器會硬撐大這一欄、擠壓旁邊那欄——歸零讓它能正常縮小 */
+    min-width: 0;
+}
+
+.form-group label {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+}
+
+.required-star {
+    color: #e60000; 
+    margin-left: 4px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px; 
+    border: 1px solid var(--ink-line);
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-family: inherit;
+    transition: all 0.2s ease; 
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--ink-soft);
+}
+
+/* 日期欄位的日曆圖示瀏覽器預設是灰藍色系統圖示，跟旁邊自訂箭頭的下拉選單風格對不起來，
+   調暗＋去背讓它融入同一套安靜的墨黑線條語言 */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: opacity(0.45);
+    cursor: pointer;
+}
+
+/* 點下去不是黑色外框，是「凹陷感」——用內陰影模擬輸入框被按進畫面裡，
+   呼應整體「靠陰影深度傳達回饋，不靠顏色」的互動語言 */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: transparent !important;
+    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.16), inset 0 1px 2px rgba(29, 29, 31, 0.1);
+    background-color: rgba(29, 29, 31, 0.025);
+}
+
+/* 密碼欄「顯示/隱藏」切換：右側疊一顆眼睛圖示按鈕，輸入框右內距讓出空間避免文字被蓋住 */
+.password-input-wrap {
+    position: relative;
+}
+
+.password-input-wrap input {
+    width: 100%;
+    padding-right: 56px;
+}
+
+/* 44px＝iOS HIG 最小觸控目標 */
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: var(--ink-soft);
+    font-size: 15px;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus-visible {
+    color: var(--ink);
+    background-color: rgba(29, 29, 31, 0.06);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '\f107'; 
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    pointer-events: none;
+    font-size: var(--fs-small);
+}
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 32px; 
+    cursor: pointer;
+}
+
+.form-group textarea {
+    resize: none;
+    line-height: 1.5;
+}
+
+/* =========================================
+   自訂日期選擇器（取代 <input type="date"> 原生彈出視窗，
+   原生視窗是系統畫的，CSS完全改不了顏色/字型，只能整個換成自己刻的版本）
+   ========================================= */
+.date-picker-wrap {
+    position: relative;
+}
+
+.date-picker-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.045);
+    border: 1px solid var(--ink-line);
+    border-radius: 30px;
+    padding: 13px 22px;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.date-picker-trigger:focus-visible,
+.date-picker-trigger[aria-expanded="true"] {
+    outline: none;
+    border-color: transparent;
+    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.16), inset 0 1px 2px rgba(29, 29, 31, 0.1);
+    background-color: rgba(29, 29, 31, 0.025);
+}
+
+.date-picker-trigger span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date-picker-trigger .fa-calendar {
+    flex-shrink: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+}
+
+.date-picker-trigger.has-value span {
+    color: var(--ink);
+}
+
+.date-picker-trigger:not(.has-value) span {
+    color: var(--ink-soft);
+}
+
+.date-picker-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    width: 272px;
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
+}
+
+.date-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+/* 44px＝iOS HIG 最小觸控目標 */
+.date-picker-nav {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.date-picker-nav:hover {
+    background-color: rgba(29, 29, 31, 0.08);
+}
+
+.date-picker-month-label {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.date-picker-month-label:hover {
+    background-color: rgba(29, 29, 31, 0.08);
+}
+
+.date-picker-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+}
+
+.date-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.date-picker-grid.year-view {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.date-picker-day,
+.date-picker-year {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.date-picker-year {
+    border-radius: 10px;
+    aspect-ratio: auto;
+    padding: 10px 0;
+}
+
+.date-picker-day:hover,
+.date-picker-year:hover {
+    background-color: rgba(29, 29, 31, 0.08);
+}
+
+.date-picker-day.outside {
+    color: rgba(29, 29, 31, 0.28);
+}
+
+.date-picker-day.today {
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+.date-picker-day.selected,
+.date-picker-year.selected {
+    background-color: var(--ink);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.date-picker-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--ink-line);
+}
+
+.date-picker-text-btn {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.date-picker-text-btn:hover {
+    color: var(--ink);
+}
+
+.form-submit-area {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background-color: var(--ink);
+    color: #ffffff;
+    border: none;
+    padding: 12px 36px;
+    font-size: var(--fs-body);
+    font-weight: bold;
+    border-radius: 50px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+}
+
+.btn-submit:hover {
+    background-color: #333336; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-note {
+    font-size: var(--fs-caption);
+    color: var(--ink);
+}
+
+.contact-privacy-note {
+    font-size: var(--fs-caption);
+    line-height: 1.7;
+    color: var(--ink);
+    margin-top: var(--sp-4);
+}
+
+.contact-privacy-note .policy-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+}
+
+.contact-privacy-note .policy-link:hover {
+    color: var(--ink);
+}
+
+/* =========================================
+   8b. 常見問題 FAQ
+   ========================================= */
+.faq-modal-box {
+    max-width: 960px;
+    width: 100%;
+    padding: 40px;
+}
+
+.faq-title {
+    font-size: var(--fs-h2);
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: var(--sp-8);
+}
+
+/* 八大重點卡片網格，參考教育網站「八大課程」編號卡片排版：
+   4 欄 x 2 排，白卡＋右上角浮水印編號＋金色圖示，取代原本的手風琴問答清單 */
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-4);
+    text-align: left;
+}
+
+.faq-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
+    border-radius: 16px;
+    padding: 28px 22px;
+    min-height: 200px;
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+a.faq-card {
+    cursor: pointer;
+}
+
+.faq-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--ink);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.faq-card-number {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 42px;
+    font-weight: bold;
+    color: var(--ink);
+    opacity: 0.15;
+    line-height: 1;
+    transition: opacity 0.3s ease;
+}
+
+.faq-card:hover .faq-card-number {
+    opacity: 0.45;
+}
+
+.faq-card-icon {
+    color: var(--ink);
+    font-size: 26px;
+    margin-bottom: var(--sp-3);
+}
+
+.faq-card-title {
+    font-size: var(--fs-body);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+}
+
+.faq-card-desc {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    line-height: 1.6;
+}
+
+/* =========================================
+   9. 官方線上商城
+   ========================================= */
+.shop-footer-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.shopping-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 112px 5% 96px;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.shop-eyebrow {
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-4);
+}
+
+.shop-title {
+    font-size: var(--fs-h2);
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: var(--sp-16);
+}
+
+.shop-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.shop-glass-card {
+    flex: 1;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 48px 24px;
+    text-decoration: none;
+    color: var(--glow);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px -14px var(--glow), 0 4px 16px rgba(0, 0, 0, 0.06);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.45s ease,
+                opacity 0.4s ease,
+                filter 0.4s ease,
+                border-color 0.4s ease;
+}
+
+.shop-links:hover .shop-glass-card {
+    opacity: 0.5;
+    filter: saturate(0.6) brightness(0.96);
+    transform: scale(0.96);
+}
+
+.shop-links .shop-glass-card:hover {
+    opacity: 1;
+    filter: none;
+    transform: scale(1.08);
+    border-color: var(--glow);
+    box-shadow: 0 24px 55px -12px var(--glow), 0 10px 30px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+}
+
+.shop-link-icon {
+    font-size: 30px;
+    color: var(--glow);
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.shop-glass-card:hover .shop-link-icon {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08);
+}
+
+.shop-link-name {
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.shop-link-arrow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-caption);
+    letter-spacing: 1px;
+    color: var(--glow);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.shop-glass-card:hover .shop-link-arrow {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   10. Footer 頁尾區塊
+   ========================================= */
+.footer {
+    flex-shrink: 0;
+    background-color: var(--ink);
+    color: #ebebec;
+    padding: 48px 5% 24px;
+    border-top: 1px solid #333;
+}
+
+/* 改用 grid 而不是 flex:1——flex:1 是依內容多寡分配寬度，內容少的欄位旁邊會多出一大塊空白，
+   看起來欄位間距不平均；grid 讓三欄寬度完全相等，間距自然就一致
+   （原本「顧客服務」單獨一欄只有一個連結太空，已經併進「探索更多」） */
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #333;
+}
+
+.footer-section {
+    min-width: 0;
+}
+
+.footer-title {
+    color: #ffffff;
+    font-size: var(--fs-h4);
+    font-weight: bold;
+    margin-bottom: var(--sp-4);
+}
+
+.footer-section p {
+    margin-bottom: var(--sp-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.footer-section i {
+    margin-right: 8px;
+    color: var(--paper-soft);
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #ebebec;
+    text-decoration: none;
+    font-size: var(--fs-small);
+    transition: color 0.2s ease-in-out;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.footer-social {
+    display: flex;
+    gap: 16px;
+}
+
+.footer-social a {
+    color: #ebebec;
+    font-size: 24px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.footer-social a:hover {
+    transform: translateY(-3px);
+}
+
+.footer-social a.social-line:hover i { color: #00C300; }
+.footer-social a.social-fb:hover i { color: #1877F2; }
+.footer-social a.social-ig:hover i {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.footer-social a.social-yt:hover i { color: #FF0000; }
+
+.footer-bottom {
+    text-align: center;
+    padding-top: var(--sp-6);
+    font-size: var(--fs-caption);
+    color: #ebebec;
+}
+
+/* =========================================
+   10b. 右側章節導覽小圓點
+   ========================================= */
+.section-dots {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.section-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 1.5px solid rgba(29, 29, 31, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.section-dot::after {
+    content: attr(aria-label);
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--fs-caption);
+    font-weight: bold;
+    color: var(--ink);
+    background-color: #ffffff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.25s ease;
+}
+
+.section-dot:hover {
+    border-color: rgba(29, 29, 31, 0.7);
+}
+
+.section-dot:hover::after {
+    opacity: 1;
+}
+
+.section-dot.active {
+    background-color: var(--ink);
+    border-color: var(--ink);
+    transform: scale(1.3);
+}
+
+/* 疊在深色區塊上方時反轉配色 */
+.section-dots.on-dark .section-dot {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.section-dots.on-dark .section-dot:hover {
+    border-color: rgba(255, 255, 255, 0.85);
+}
+
+.section-dots.on-dark .section-dot.active {
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+/* =========================================
+   11. 右下角圓形浮動按鈕區
+   ========================================= */
+/* iOS×Tesla：跟導覽列圖示同一套白色浮島語言，不透明白底＋淡邊框＋柔和陰影 */
+.btn-circular {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: var(--ink);
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.music-control-wrap,
+.sound-control-wrap {
+    position: fixed;
+    right: 32px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.music-control-wrap { bottom: 144px; }
+.sound-control-wrap { bottom: 88px; }
+
+/* 這兩顆浮在照片背景上,陰影要比導覽列裡的圖示更明顯才立體 */
+#btn-music-toggle,
+#btn-sound-toggle {
+    box-shadow: 0 2px 4px rgba(22, 22, 26, 0.12), 0 12px 28px -8px rgba(22, 22, 26, 0.45);
+}
+
+.volume-pop {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
+    border-radius: 24px;
+    padding: 0 16px;
+    height: 46px;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+}
+
+.music-control-wrap:hover .volume-pop,
+.music-control-wrap:focus-within .volume-pop,
+.sound-control-wrap:hover .volume-pop,
+.sound-control-wrap:focus-within .volume-pop {
+    max-width: 120px;
+    opacity: 1;
+    padding: 0 16px;
+    pointer-events: auto;
+}
+
+.volume-pop input[type="range"] {
+    width: 90px;
+    accent-color: var(--ink);
+    cursor: pointer;
+}
+
+/* 播放中：填滿黑色（跟導覽列選中膠囊同一個「黑色＝目前啟用」訊號），不再靠白色光暈表示 */
+.btn-music-toggle.active-music {
+    background-color: var(--ink);
+    color: #ffffff;
+    border-color: var(--ink);
+}
+
+.btn-sound-toggle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: var(--ink);
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-sound-toggle:hover {
+    transform: translateY(-3px);
+}
+
+.btn-sound-toggle.active-sound {
+    background-color: var(--ink);
+    color: #ffffff;
+    border-color: var(--ink);
+}
+
+.mobile-sound-wrap {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 998;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.btn-mobile-sound-toggle.active-sound {
+    background-color: var(--ink);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+}
+
+.mobile-sound-popover {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: var(--ink);
+    border: 1px solid #ffffff;
+    border-radius: 12px;
+    padding: 0 14px;
+    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+}
+
+.mobile-sound-popover.open {
+    max-height: 100px;
+    opacity: 1;
+    padding: 12px 14px;
+    pointer-events: auto;
+}
+
+.mobile-sound-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.mobile-sound-row input[type="range"] {
+    width: 100px;
+    accent-color: #ffffff;
+    cursor: pointer;
+}
+
+/* =========================================
+   12. 彈窗通用 (Modals)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 所有彈窗共用同一套實色白材質——拿掉毛玻璃透明+模糊，背景是乾淨的純白，
+   文字對比不會被背後透出的顏色跟模糊稀釋，字看起來更扎實 */
+.modal-container {
+    background-color: #ffffff;
+    border: 1px solid rgba(29, 29, 31, 0.08);
+    border-radius: 22px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform: scale(0.92);
+    /* iOS 彈簧感：先超過終值一點再回彈，不是單純減速停止 */
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-container {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    z-index: 10;
+    transform: rotate(0deg);
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-close:hover {
+    color: var(--ink);
+    transform: rotate(90deg);
+}
+
+.policy-modal-box {
+    max-width: 600px;
+    width: 100%;
+    padding: 40px;
+}
+
+.modal-title {
+    font-size: var(--fs-h3);
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: var(--sp-5);
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: var(--sp-3);
+}
+
+/* 視覺上隱藏但螢幕閱讀器讀得到，登入表單拿掉了看得見的信箱/密碼文字標籤
+   （改用輸入框裡的 placeholder 呈現），但語意上還是要留給無障礙使用者 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- 會員登入／註冊彈窗：參考 Spotify 登入視窗排版（置中LOGO＋膠囊輸入框＋分頁）。
+   毛邊玻璃材質現在是 .modal-container 共用的基礎樣式，這裡只留版面相關設定 */
+.auth-modal-box {
+    max-width: 440px;
+    width: 100%;
+    padding: 44px 40px 40px;
+    text-align: center;
+}
+
+.auth-modal-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--sp-6);
+}
+
+.auth-modal-logo-icon {
+    height: 48px;
+    width: auto;
+}
+
+.auth-modal-logo-text {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--ink);
+}
+
+/* iOS 風格分段控制器（Segmented Control）：淡淡的黑色軌道底＋白色藥丸浮在選中的項目上，
+   取代原本的底線標籤，選中的那格用陰影做出「浮起來」的層次，不是用顏色分辨 */
+.auth-tabs {
+    display: flex;
+    background-color: rgba(29, 29, 31, 0.06);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: var(--sp-6);
+}
+
+.auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    padding: 8px 2px;
+    cursor: pointer;
+    transition: background-color 0.3s cubic-bezier(0.34, 1.2, 0.64, 1), color 0.2s ease, box-shadow 0.3s ease;
+}
+
+.auth-tab.active {
+    color: var(--ink);
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(29, 29, 31, 0.16);
+}
+
+/* 加上明確的垂直間距節奏（原本欄位間全靠輸入框自己的邊框撐出間隔感，checkbox 那排會貼著密碼框） */
+.auth-modal-box .auth-form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+}
+
+/* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
+   不然登入/註冊兩個表單會同時顯示在畫面上（跟先前購物車徽章是同一種 bug） */
+.auth-modal-box .auth-form[hidden] {
+    display: none;
+}
+
+.auth-modal-box .form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3) var(--sp-4);
+}
+
+/* 卡片提亮到接近純白後，輸入框改用淺灰底（不是白上疊白），跟卡片本身才拉得出對比
+   同一套膠囊造型套用到所有彈窗裡的表單（登入/聯繫/結帳），不只登入視窗自己有 */
+.auth-modal-box .form-group input,
+.auth-modal-box .form-group select,
+.contact-modal-box .form-group input,
+.contact-modal-box .form-group select,
+.checkout-modal-box .form-group input,
+.checkout-modal-box .form-group select {
+    background-color: rgba(0, 0, 0, 0.045);
+    border: 1px solid var(--ink-line);
+    border-radius: 30px;
+    padding: 13px 22px;
+}
+
+.contact-modal-box .form-group textarea,
+.checkout-modal-box .form-group textarea {
+    background-color: rgba(0, 0, 0, 0.045);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: 13px 22px;
+}
+
+.auth-modal-box .form-group input::placeholder,
+.contact-modal-box .form-group input::placeholder,
+.contact-modal-box .form-group textarea::placeholder,
+.checkout-modal-box .form-group input::placeholder,
+.checkout-modal-box .form-group textarea::placeholder {
+    color: var(--ink-soft);
+}
+
+.auth-modal-box .form-group input:focus,
+.auth-modal-box .form-group select:focus,
+.contact-modal-box .form-group input:focus,
+.contact-modal-box .form-group select:focus,
+.contact-modal-box .form-group textarea:focus,
+.checkout-modal-box .form-group input:focus,
+.checkout-modal-box .form-group select:focus,
+.checkout-modal-box .form-group textarea:focus {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-color: transparent !important;
+    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.18), inset 0 1px 2px rgba(29, 29, 31, 0.1);
+}
+
+
+.auth-forgot-link {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: var(--fs-small);
+    color: var(--ink);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.auth-forgot-link:hover {
+    color: var(--ink);
+}
+
+/* 自訂圓形勾選框（服務條款同意／行銷通知同意），取代瀏覽器預設方框樣式；
+   上下加 padding 撐開實際可點擊高度，不然只有文字行高（約21px），低於WCAG 2.5.8的24px觸控門檻 */
+.auth-checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    margin-bottom: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auth-checkbox-row input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.auth-checkbox-mark {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: 50%;
+    border: 1px solid rgba(29, 29, 31, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    transition: all 0.2s ease;
+}
+
+.auth-checkbox-row input[type="checkbox"]:checked + .auth-checkbox-mark {
+    background-color: var(--ink);
+    border-color: var(--ink);
+    color: #ffffff;
+}
+
+.auth-checkbox-row input[type="checkbox"]:focus-visible + .auth-checkbox-mark {
+    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.25);
+}
+
+.auth-checkbox-text {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    line-height: 1.5;
+}
+
+.auth-checkbox-text a {
+    color: var(--ink);
+    text-decoration: underline;
+}
+
+/* iOS 風格滑動開關（用在「保持登入」這種設定型選項，跟上面服務條款那種
+   一次性同意的圓形勾選框刻意分開處理——語意不同，視覺也該不一樣） */
+.auth-remember-row {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ios-toggle-track {
+    position: relative;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 26px;
+    border-radius: 13px;
+    background-color: rgba(29, 29, 31, 0.16);
+    transition: background-color 0.3s ease, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ios-toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.auth-checkbox-row input[type="checkbox"]:checked + .ios-toggle-track {
+    background-color: var(--ink);
+}
+
+.auth-checkbox-row input[type="checkbox"]:checked + .ios-toggle-track .ios-toggle-knob {
+    transform: translateX(20px);
+}
+
+.auth-checkbox-row input[type="checkbox"]:focus-visible + .ios-toggle-track {
+    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.25);
+}
+
+.auth-remember-row:active .ios-toggle-track {
+    transform: scale(0.94);
+    transition-duration: 0.08s;
+}
+
+/* 「或」分隔線 + Google 登入按鈕 */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 16px;
+    color: var(--ink);
+    font-size: var(--fs-small);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: rgba(29, 29, 31, 0.08);
+}
+
+/* 刻意做得比黑色主按鈕「輕」：字重降到 600、外框更淡、內距略小，
+   一眼就能分出「登入」是主要動作、Google 是次要選項，不是兩個並列的按鈕 */
+.btn-google-signin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background-color: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--ink-line);
+    padding: 10px 0;
+    border-radius: 50px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.google-g-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.btn-google-signin:hover {
+    background-color: #f8f8f8;
+    border-color: var(--ink-line);
+}
+
+.auth-error {
+    color: #e60000;
+    font-size: var(--fs-small);
+    margin: -6px 0 0;
+}
+
+.auth-error.auth-success {
+    color: #1a7a3c;
+}
+
+/* --- 產品彈窗：加入購物車列 --- */
+.cart-add-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-top: auto;
+}
+
+.qty-stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    border: 1px solid var(--ink-line);
+    border-radius: 28px;
+    padding: 6px 10px;
+    flex-shrink: 0;
+}
+
+/* 44px＝iOS HIG 最小觸控目標 */
+.qty-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(29, 29, 31, 0.06);
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.qty-btn:hover {
+    background-color: var(--ink);
+    color: #ffffff;
+}
+
+.qty-stepper span {
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.cart-add-row .btn-modal-cta {
+    margin-top: 0;
+    flex: 1;
+}
+
+.cart-add-note {
+    color: #e60000;
+    font-size: var(--fs-caption);
+    margin: 8px 0 0;
+    text-align: center;
+}
+
+.btn-modal-cta-secondary {
+    display: block;
+    text-align: center;
+    color: var(--ink);
+    font-size: var(--fs-small);
+    text-decoration: underline;
+    margin-top: 12px;
+}
+
+.btn-modal-cta-secondary:hover {
+    color: var(--ink);
+}
+
+/* --- 會員資料彈窗 --- */
+/* 軟膠擬物質感（Neumorphism）：靠雙向陰影（亮面左上、暗面右下）做出浮凸/凹陷層次，
+   不靠邊框或色彩分辨層級，所以底色要換成不是純白的淺灰，陰影才有地方「藏」 */
+/* 改回跟「聯繫我們」彈窗同一個等級的固定大小置中卡片，不再滿版撐滿整個螢幕 */
+.account-modal-box {
+    max-width: 1020px;
+    width: 100%;
+    padding: 44px 40px 32px;
+    background-color: #E9EBEF;
+}
+
+/* 三欄式版面：左會員資訊／中系統資訊／右購買品項，分工清楚，不用捲動就能看完整份資料。
+   每欄都用取景框角標包成獨立的資訊面板——這是整套設計系統的招牌語言（跟品牌介紹區塊、消費點數卡同一套），
+   欄位本身有邊框跟角標之後，就算內容量不同（例如購買品項是空的），版面看起來還是「三個對等的面板」，
+   不會因為內容多寡就顯得失衡 */
+.account-columns {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+    margin-bottom: var(--sp-6);
+    text-align: left;
+}
+
+.account-column {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 22px;
+    border-radius: 20px;
+    opacity: 0;
+}
+
+.account-column-title {
+    font-size: var(--fs-small);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 var(--sp-4);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--ink-line);
+}
+
+.account-profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: var(--sp-5);
+    padding-bottom: var(--sp-5);
+    border-bottom: 1px solid var(--ink-line);
+}
+
+/* 頭像旁邊直接放大名字，填滿原本頭像右側那片空白，也讓姓名不用再獨立佔一張滿版卡片 */
+.account-profile-header-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+.account-profile-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+    margin: 0;
+}
+
+.account-avatar {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    border-radius: 26px;
+    background-color: var(--ink);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    border: none;
+    cursor: pointer;
+    box-shadow:
+        8px 8px 16px rgba(29, 29, 31, 0.22),
+        -6px -6px 14px rgba(255, 255, 255, 0.7);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.account-avatar:hover {
+    transform: scale(1.06);
+}
+
+.account-avatar svg {
+    width: 48px;
+    height: 48px;
+}
+
+/* 內建大頭貼選單（12生肖）：點頭像展開，不用上傳，不佔用 Storage 額度 */
+.avatar-picker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.avatar-picker[hidden] {
+    display: none;
+}
+
+.avatar-option {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background-color: rgba(29, 29, 31, 0.06);
+    color: var(--ink);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.avatar-option svg {
+    width: 22px;
+    height: 22px;
+}
+
+.avatar-option:hover {
+    background-color: rgba(29, 29, 31, 0.12);
+}
+
+.avatar-option.active {
+    background-color: var(--ink);
+    color: #ffffff;
+}
+
+/* 封號選單：原生 select 的下拉清單無法用 CSS 重新設計（瀏覽器原生渲染，改不了），
+   所以底下真正拿來存值的 <select> 藏起來只當資料來源，畫面上是一顆完全自訂的 HUD 下拉選單，
+   點開時即時讀取 <select> 目前的 optgroup/option（含動態加入的成就封號）產生選單內容 */
+.title-dropdown {
+    position: relative;
+}
+
+.title-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--ink);
+    color: #ffffff;
+    border: none;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.title-dropdown-trigger:hover {
+    transform: scale(1.04);
+}
+
+.title-dropdown-trigger i {
+    font-size: 9px;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.title-dropdown.open .title-dropdown-trigger i {
+    transform: rotate(180deg);
+}
+
+.title-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    width: 220px;
+    max-height: 320px;
+    overflow-y: auto;
+    background-color: var(--ink);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    animation: titleDropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    /* 可以滑動但不要看到捲軸本身，畫面更乾淨 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.title-dropdown-panel::-webkit-scrollbar {
+    display: none;
+}
+
+.title-dropdown-panel[hidden] {
+    display: none;
+}
+
+@keyframes titleDropdownIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.title-dropdown-group-label {
+    font-family: 'Inter', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 8px 10px 4px;
+}
+
+.title-dropdown-group-label::before {
+    content: '// ';
+}
+
+.title-dropdown-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.title-dropdown-option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.title-dropdown-option.selected {
+    background-color: #ffffff;
+    color: var(--ink);
+}
+
+/* 仿 iOS 設定頁的清單列：標籤在左、值在右、列與列之間用極淡的分隔線 */
+/* 改成卡片網格（跟旁邊「系統資訊」欄的取景框角標卡是同一套語言），
+   不再是一排排用底線隔開的純文字列表——參考使用者提供的儀表板排版，
+   但只借版面結構，顏色/字體維持原本黑白系統，不跟著換成藍色商務風 */
+.account-info-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: var(--sp-6);
+}
+
+.account-column .account-info-list:last-child {
+    margin-bottom: 0;
+}
+
+/* 軟膠浮凸卡片：亮面陰影在左上、暗面陰影在右下，同一個底色就能做出「從背景浮出來」的層次，
+   不再靠邊框或取景框角標分辨卡片邊界 */
+/* label 靠左、value 靠右，讓卡片寬度被撐大時內容跟著鋪開，不會在寬螢幕上留一大片空白 */
+.account-info-row {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: var(--fs-small);
+    min-width: 0;
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+}
+
+/* 姓名是身分辨識度最高的欄位，獨立佔滿整排，其餘四張卡片在底下排成 2x2 網格 */
+.account-info-label {
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.account-info-label::before {
+    content: '// ';
+    font-family: 'Inter', monospace;
+    color: var(--ink);
+}
+
+.account-info-value {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    color: var(--ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 購買紀錄：只列已完成訂單，避免下單但沒取貨的訂單混進來；flex:1 讓清單（或空狀態）填滿整個面板高度，
+   不會因為欄位是空的就在下方留一大片白 */
+.account-history-list {
+    flex: 1;
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.account-history-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 0;
+}
+
+.account-empty-icon {
+    color: var(--ink-line);
+}
+
+.account-empty-icon svg {
+    width: 44px;
+    height: 44px;
+}
+
+.account-history-item {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background-color: rgba(29, 29, 31, 0.04);
+}
+
+.account-history-date {
+    font-size: 11px;
+    color: var(--ink);
+    margin-bottom: 2px;
+}
+
+.account-history-items {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.account-empty-text {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    text-align: center;
+    margin: 0;
+}
+
+/* --- 購物車彈窗 --- */
+.cart-modal-box {
+    max-width: 480px;
+    width: 100%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-empty-state {
+    text-align: center;
+    color: var(--ink);
+    padding: 24px 0;
+}
+
+.cart-items-list {
+    list-style: none;
+    margin: 0 0 var(--sp-4);
+    padding: 0;
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+.cart-line-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3) 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-line-item:last-child {
+    border-bottom: none;
+}
+
+.cart-line-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-line-name {
+    font-weight: bold;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cart-line-price {
+    color: var(--ink);
+    font-size: var(--fs-small);
+}
+
+.cart-line-remove {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.cart-line-remove:hover {
+    color: #e60000;
+}
+
+.cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: var(--fs-lead);
+    color: var(--ink);
+    padding: var(--sp-4) 0;
+    border-top: 2px solid var(--ink);
+    margin-bottom: var(--sp-4);
+}
+
+#btn-go-checkout:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* --- 結帳彈窗 --- */
+.checkout-modal-box {
+    max-width: 480px;
+    width: 100%;
+    padding: 40px;
+}
+
+.checkout-order-summary {
+    background-color: rgba(29, 29, 31, 0.04);
+    border-radius: 10px;
+    padding: var(--sp-4);
+    margin-bottom: var(--sp-5);
+    font-size: var(--fs-small);
+    color: var(--ink);
+}
+
+.checkout-order-summary .summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.checkout-order-summary .summary-total {
+    font-weight: bold;
+    border-top: 1px solid #ddd;
+    margin-top: 8px;
+    padding-top: 8px;
+}
+
+.field-hint {
+    font-size: var(--fs-caption);
+    color: var(--ink);
+    margin: 0;
+}
+
+.field-error {
+    font-size: var(--fs-caption);
+    color: #e60000;
+    margin: 0;
+}
+
+#btn-checkout-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.policy-modal-body p {
+    font-size: var(--fs-body);
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: var(--sp-4);
+}
+
+.product-modal-box {
+    max-width: 850px;
+    width: 100%;
+    padding: 32px;
+}
+
+.product-modal-content {
+    display: flex;
+    gap: 32px;
+}
+
+.product-gallery {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gallery-main {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: rgba(29, 29, 31, 0.05);
+}
+
+.gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 產品圖片尚未上傳時的優雅預留樣式 (取代瀏覽器預設裂圖示) */
+.gallery-main.img-fallback,
+.thumb-item.img-fallback {
+    background-color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-main.img-fallback img,
+.thumb-item.img-fallback img {
+    display: none;
+}
+
+.gallery-main.img-fallback::after,
+.thumb-item.img-fallback::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f03e";
+    color: var(--ink);
+}
+
+.gallery-main.img-fallback::after { font-size: 32px; }
+.thumb-item.img-fallback::after { font-size: 14px; }
+
+/* 產品彈窗縮圖 - 支持 6 張縮圖排版 */
+.gallery-thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.thumb-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    opacity: 0.65;
+}
+
+.thumb-item.active,
+.thumb-item:hover {
+    border-color: var(--ink);
+    opacity: 1;
+}
+
+.thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-detail-body {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.product-detail-body h3 {
+    font-size: var(--fs-h3);
+    color: var(--ink);
+    margin-bottom: var(--sp-2);
+}
+
+.product-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-4);
+}
+
+.product-modal-meta .price {
+    font-size: var(--fs-h4);
+    font-weight: bold;
+    color: var(--ink);
+}
+
+.product-modal-meta .qty {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    background-color: rgba(29, 29, 31, 0.05);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.product-detail-body .desc {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: var(--sp-5);
+}
+
+.product-tags {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-6);
+}
+
+.tag-item {
+    font-size: var(--fs-small);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.tag-item i {
+    color: var(--ink);
+}
+
+.btn-modal-cta {
+    display: block;
+    width: 100%;
+    background-color: var(--ink);
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    font-size: var(--fs-body);
+    font-weight: bold;
+    padding: 12px 0;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn-modal-cta:hover {
+    background-color: #333336;
+    color: #ffffff;
+}
+
+/* =========================================
+   13. 響應式設定 (行動版底欄純 5 個 ICON，無文字)
+   ========================================= */
+@media (max-width: 1024px) {
+    html {
+        scroll-snap-type: none; /* 手機版還原流暢自然滑動 */
+    }
+
+    /* 往下滑收起導覽列、往上滑再滑出——只在平板/手機生效，
+       電腦版導覽列固定顯示，不會跟著捲動消失（見 script.js 的判斷） */
+    .navbar.nav-hidden {
+        transform: translateY(-100%);
+    }
+
+    /* 手機版彈窗改成 iOS 風格的底部滑出式面板（sheet），不是從畫面中央縮放出現——
+       只有上面兩角是圓角，下緣直接貼齊螢幕底部，符合 iOS Action Sheet 的外觀 */
+    .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-container {
+        width: 100%;
+        max-width: 100%;
+        max-height: 88vh;
+        border-radius: 24px 24px 0 0;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .modal-overlay.active .modal-container {
+        transform: translateY(0);
+    }
+
+    .fullscreen-section {
+        height: auto;
+        padding-top: 32px;
+        padding-bottom: 80px;
+        overflow: visible;
+        scroll-snap-align: none;
+    }
+
+    .team-switcher {
+        height: auto;
+    }
+
+    .product-panels {
+        height: auto;
+    }
+
+    /* Hero 是品牌視覺印象區塊，手機/平板仍保留滿版沉浸感；其餘區塊改為內容自適應高度 */
+    .hero-banner.fullscreen-section {
+        min-height: 100vh;
+    }
+
+    .footer { padding-bottom: 80px; }
+
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+
+    /* 手機/平板欄位變窄，地址/營業時間/信箱這幾行原本禁止換行是給桌機用的，
+       這裡窄到會整行溢出、疊到右邊欄位文字上面，改回正常換行 */
+    .footer-section p {
+        white-space: normal;
+    }
+
+    /* 手機/平板模式隱藏右下角浮動按鈕與章節導覽點，防止擋畫面 */
+    .music-control-wrap,
+    .sound-control-wrap,
+    .section-dots {
+        display: none !important;
+    }
+
+    /* 導覽列改回頂部固定條：左側漢堡、中間 LOGO、右側會員/聯繫/購物車
+       兩側欄位刻意用 auto（不是 1fr），因為漢堡按鈕跟三個工具圖示寬度差很多，
+       用 1fr 硬性等寬會讓比較寬的那一側（三個圖示）被壓縮，導致購物車圖示被推到螢幕外 */
+    .navbar,
+    .navbar.scrolled {
+        display: grid;
+        /* 左右兩欄故意用同一個固定寬度（不是 auto），這樣中間的 LOGO 欄位
+           兩邊留白才會真正對稱，LOGO 才會是畫面上視覺置中，而不是只在欄位裡置中；
+           96px 是配合右側圖示改回 44pt（iOS HIG 最小觸控目標）算出來的寬度，
+           2×44px+4px間距=92px，多留4px緩衝避免邊框/次像素誤差造成溢出 */
+        grid-template-columns: 96px 1fr 96px;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        padding: 8px 16px;
+        height: 72px !important;
+        width: 100%;
+        /* 不再用深色底條，導覽列跟桌機版一樣完全透明，
+           讓漢堡/LOGO/圖示直接浮在畫面上（深淺會依 .on-dark 自動切換顏色） */
+    }
+
+    .hamburger-btn {
+        display: flex;
+        justify-self: start;
+    }
+
+    .logo-area {
+        display: flex !important;
+        justify-self: center;
+        gap: 8px;
+    }
+
+    .logo-area .nav-icon { height: 38px !important; }
+    .logo-area .logo-text { font-size: 20px; }
+
+    .nav-right { justify-self: end; }
+
+    /* 首頁／品牌／產品／聯繫收進左側漢堡選單抽屜，滑出式面板；
+       內容都是兩個字的短連結，抽屜不需要很寬 */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: min(64%, 260px);
+        margin: 0;
+        padding: 96px 24px 32px;
+        box-sizing: border-box;
+        background-color: var(--ink);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1001;
+    }
+
+    .nav-contact-mobile {
+        display: block;
+    }
+
+    /* 桌機版聯繫用ICON放在右側工具區，手機版改收進漢堡選單裡用文字呈現，避免重複 */
+    .nav-utility-group .nav-icon-link {
+        display: none;
+    }
+
+    .nav-links.open {
+        transform: translateX(0);
+    }
+
+    .nav-links li { width: 100%; }
+
+    /* 抽屜選單維持文字（不要圖示） */
+    .nav-text {
+        display: inline-block !important;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .nav-icon-mobile {
+        display: none !important;
+    }
+
+    .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 14px 16px;
+        color: #ebebec;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* 抽屜選單不用「目前捲動到哪個區塊」的即時高亮（.active 是捲動監聽器在控制，
+       打開選單當下捲到哪就會亮哪一個，容易被誤會成手滑點到）。改成只有「剛剛點了哪個」
+       才會亮，靠 .tapped（由漢堡選單自己的點擊事件控制，見 script.js）判斷 */
+    .nav-links a.active {
+        background-color: transparent !important;
+    }
+
+    .nav-links a.active .nav-text {
+        color: #ebebec;
+    }
+
+    .nav-links a.tapped {
+        background-color: rgba(255, 255, 255, 0.14) !important;
+    }
+
+    .nav-links a.tapped .nav-text {
+        color: #ffffff; /* 剛剛點下去的項目亮白提示，抽屜背景是深色 */
+    }
+
+    /* 抽屜選單裡的音樂/音效開關（原本浮動在畫面右上角，現在收進漢堡選單） */
+    .nav-mobile-extra {
+        display: block;
+        margin-top: 12px;
+    }
+
+    .nav-mobile-divider {
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.15);
+        margin: 8px 0 16px;
+    }
+
+    /* 音樂/音效按鈕改直式（圖示在上、文字在下），不然圖示+文字橫向排列
+       會把整個抽屜撐寬，跟其他兩個字的純文字連結不成比例 */
+    .nav-mobile-extra .mobile-sound-wrap {
+        display: flex;
+        position: static;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nav-mobile-extra .btn-mobile-sound-toggle {
+        width: auto;
+        height: auto;
+        flex-direction: column;
+        border-radius: 14px;
+        gap: 4px;
+        padding: 10px 20px;
+    }
+
+    .mobile-sound-label {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .nav-mobile-extra .mobile-sound-popover {
+        align-items: center;
+    }
+
+    /* 會員／聯繫／購物車：常駐在導覽列右側，不收進抽屜選單 */
+    .nav-utility-group {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        gap: 4px;
+    }
+
+    /* 44px＝iOS HIG 最小觸控目標，手機版最需要達標的地方，不能比桌機版小 */
+    .nav-icon-link,
+    .nav-icon-btn {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+    }
+
+    .nav-icon-svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    #nav-account-icon-crown {
+        width: 20px;
+        height: 20px;
+    }
+
+    .product-panels {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .product-panel {
+        flex: none;
+        min-height: 480px;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .product-panel:last-child {
+        border-bottom: none;
+    }
+
+    .product-panel:hover {
+        flex: none;
+    }
+
+    .team-switcher {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+        max-height: none;
+        gap: var(--sp-6);
+    }
+
+    /* 手機版拆開左欄包裹，讓頭像/立繪/文字各自依 order 排列 */
+    .team-left-col {
+        display: contents;
+    }
+
+    .team-avatar-rail {
+        flex-direction: row;
+        order: 1;
+    }
+
+    .team-nav-btn {
+        display: none;
+    }
+
+    .team-avatar-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .team-avatar-item {
+        width: 84px;
+        height: 84px;
+    }
+
+    .team-portrait {
+        order: 2;
+        width: 100%;
+        height: 42vh;
+    }
+
+    .team-info-panel {
+        order: 3;
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .team-info-tags {
+        justify-content: center;
+    }
+
+    /* 手機版內容直向堆疊，高度已經很足夠，不需要靠巨大浮水印數字補視覺份量 */
+    .team-info-watermark {
+        display: none;
+    }
+
+    .team-info-quote {
+        border-left: none;
+        border-top: 3px solid var(--ink);
+        padding-left: 0;
+        padding-top: var(--sp-3);
+    }
+
+    .faq-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--sp-3);
+    }
+
+    .faq-card {
+        min-height: 170px;
+        padding: 22px 18px;
+    }
+
+    .faq-card-number {
+        font-size: 32px;
+    }
+
+    .contact-glass-card {
+        flex-direction: column;
+        margin: 0;
+        padding: var(--sp-6) var(--sp-5);
+    }
+
+    .contact-glass-intro {
+        flex: none;
+        max-width: 100%;
+    }
+
+    .contact-glass-form {
+        padding-left: 0;
+        padding-top: var(--sp-6);
+        border-left: none;
+        border-top: 1px solid #eee;
+    }
+
+    .shop-footer-screen {
+        min-height: auto;
+        scroll-snap-align: none;
+    }
+
+    .shopping-section {
+        padding: 80px 24px 60px;
+    }
+
+    .shop-links {
+        flex-direction: column;
+        gap: var(--sp-5);
+    }
+
+    .shop-glass-card {
+        max-width: 100%;
+        width: 100%;
+        padding: var(--sp-8) var(--sp-6);
+    }
+
+    .shop-links:hover .shop-glass-card {
+        opacity: 1;
+        filter: none;
+        transform: none;
+    }
+
+    .product-modal-content {
+        flex-direction: column;
+        gap: var(--sp-5);
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: var(--sp-3);
+    }
+
+    .form-group-full { grid-column: 1; }
+
+    /* 會員資料的三欄（個人／系統／購買資訊）手機版收成單欄，直向堆疊 */
+    .account-columns {
+        grid-template-columns: 1fr;
+        gap: var(--sp-6);
+    }
+}
+
+/* =========================================
+   20. 全站按壓回饋（凹陷/按下感）
+   不用顏色，靠縮放+陰影收緊傳達「這個按下去了」，放在檔案最後
+   確保跟前面各元件自己的 :hover 規則比，用 source order 贏過去
+   ========================================= */
+.btn-submit:active,
+.btn-modal-cta:active,
+.btn-modal-cta-secondary:active,
+.btn-google-signin:active,
+.btn-line-cta:active,
+.btn-circular:active,
+.btn-sound-toggle:active,
+.btn-copy-email:active,
+.qty-btn:active,
+.nav-icon-btn:active,
+.nav-icon-link:active,
+.footer-social a:active,
+.team-nav-btn:active,
+.team-avatar-item:active,
+.thumb-item:active,
+.auth-checkbox-mark:active,
+.auth-tab:active,
+.auth-forgot-link:active,
+.hamburger-btn:active,
+.policy-link:active,
+.section-dot:active,
+.scroll-down-indicator:active,
+.faq-card:active,
+.shop-glass-card:active,
+.account-avatar:active,
+.avatar-option:active,
+.product-panel:active {
+    transform: scale(0.96);
+    transition-duration: 0.08s !important;
+}
+
+/* 這幾個本來就有自己的 transform（位移/縮放），按下去要疊加而不是蓋掉，
+   不然位移效果會在按下瞬間消失，看起來像故障 */
+.team-avatar-item.active:active {
+    transform: scale(1.08) scale(0.97);
+}
+
+.modal-close:active {
+    transform: scale(0.85);
+}
+
+.modal-close:hover:active {
+    transform: rotate(90deg) scale(0.85);
+}
+
+/* translateY 系列的按鈕壓下去要保留位移，只加縮放會看起來像沒反應 */
+.btn-submit:hover:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* 手機（非平板）寬度更窄，footer 兩欄還是太擠，改成單欄整個疊起來 */
+@media (max-width: 600px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+}
