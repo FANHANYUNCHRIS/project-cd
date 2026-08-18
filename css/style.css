@@ -32,6 +32,11 @@
     box-sizing: border-box;
 }
 
+:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+}
+
 :root {
     /* ===== 字級階梯 Type Scale (統一標題/副標/內文大小，8px 網格基礎) ===== */
     --fs-caption: 12px;  /* 標籤、備註、次要資訊 */
@@ -140,7 +145,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 13px 28px;
+    padding: 12px 28px;
     border-radius: 100px;
     color: #fff;
     font-weight: 700;
@@ -367,7 +372,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     width: 40px;
     height: 40px;
     padding: 0;
@@ -456,7 +461,7 @@ body {
     background-color: #fff;
     border: 1px solid rgba(22, 22, 26, 0.08);
     border-radius: 100px;
-    padding: 5px;
+    padding: 4px;
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
 }
 
@@ -467,7 +472,7 @@ body {
     font-size: 14px;
     letter-spacing: -0.1px;
     position: relative;
-    padding: 9px 18px;
+    padding: 8px 16px;
     border-radius: 100px;
     display: inline-block;
     transition: background-color 0.15s linear, color 0.15s linear;
@@ -1026,7 +1031,7 @@ body {
 .team-tag {
     font-size: var(--fs-small);
     font-weight: bold;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 100px;
 }
 
@@ -1171,14 +1176,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .line-status-dot {
     font-size: var(--fs-caption);
     font-family: 'Inter', monospace;
     font-weight: bold;
-    color: #00A300;
+    color: #006600;
 }
 
 .line-tag {
@@ -1189,7 +1194,7 @@ body {
 
 .line-title {
     font-size: var(--fs-lead);
-    color: #00A300;
+    color: #006600;
     margin-bottom: var(--sp-2);
     display: flex;
     align-items: center;
@@ -1214,7 +1219,7 @@ body {
     text-decoration: none;
     font-size: var(--fs-small);
     font-weight: bold;
-    padding: 11px 0;
+    padding: 12px 0;
     border-radius: 50px;
     transition: all 0.25s ease;
 }
@@ -1242,7 +1247,7 @@ body {
 .contact-detail-item i {
     font-size: var(--fs-lead);
     color: var(--ink);
-    margin-top: 3px;
+    margin-top: 4px;
 }
 
 .contact-detail-item strong {
@@ -1283,7 +1288,7 @@ body {
 
 .btn-copy-email.copied {
     border-color: #2e7d32;
-    color: #2e7d32;
+    color: #1F5C23;
 }
 
 .form-grid {
@@ -1316,7 +1321,7 @@ body {
 }
 
 .required-star {
-    color: #e60000; 
+    color: #B30000; 
     margin-left: 4px;
     font-weight: bold;
 }
@@ -1325,7 +1330,7 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 10px 12px; 
+    padding: 12px 12px; 
     border: 1px solid var(--ink-line);
     border-radius: 6px;
     background-color: #ffffff;
@@ -1440,7 +1445,7 @@ body {
     background-color: rgba(0, 0, 0, 0.045);
     border: 1px solid var(--ink-line);
     border-radius: 30px;
-    padding: 13px 22px;
+    padding: 12px 24px;
     font-family: inherit;
     font-size: var(--fs-small);
     color: var(--ink);
@@ -1486,7 +1491,7 @@ body {
     background-color: #ffffff;
     border: 1px solid var(--ink-line);
     border-radius: 18px;
-    padding: 14px;
+    padding: 16px;
     box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
 }
 
@@ -1525,7 +1530,7 @@ body {
     font-size: var(--fs-small);
     font-weight: 700;
     color: var(--ink);
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -1552,7 +1557,7 @@ body {
 
 .date-picker-grid.year-view {
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+    gap: 8px;
 }
 
 .date-picker-day,
@@ -1574,7 +1579,7 @@ body {
 .date-picker-year {
     border-radius: 10px;
     aspect-ratio: auto;
-    padding: 10px 0;
+    padding: 12px 0;
 }
 
 .date-picker-day:hover,
@@ -1600,8 +1605,8 @@ body {
 .date-picker-footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    padding-top: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--ink-line);
 }
 
@@ -1706,7 +1711,7 @@ body {
     background-color: #ffffff;
     border: 1px solid var(--ink-line);
     border-radius: 16px;
-    padding: 28px 22px;
+    padding: 28px 24px;
     min-height: 200px;
     text-decoration: none;
     overflow: hidden;
@@ -2002,6 +2007,13 @@ a.faq-card {
     position: relative;
 }
 
+/* 視覺上維持 10px 小點，但用 ::before 往外擴出隱形熱區，滿足 WCAG 2.5.8 24x24px 觸控目標下限 */
+.section-dot::before {
+    content: '';
+    position: absolute;
+    inset: -7px;
+}
+
 .section-dot::after {
     content: attr(aria-label);
     position: absolute;
@@ -2012,7 +2024,7 @@ a.faq-card {
     font-weight: bold;
     color: var(--ink);
     background-color: #ffffff;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     white-space: nowrap;
     opacity: 0;
@@ -2181,14 +2193,14 @@ a.faq-card {
     background-color: var(--ink);
     border: 1px solid #ffffff;
     border-radius: 12px;
-    padding: 0 14px;
+    padding: 0 16px;
     transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
 }
 
 .mobile-sound-popover.open {
     max-height: 100px;
     opacity: 1;
-    padding: 12px 14px;
+    padding: 12px 16px;
     pointer-events: auto;
 }
 
@@ -2396,7 +2408,7 @@ a.faq-card {
     background-color: rgba(0, 0, 0, 0.045);
     border: 1px solid var(--ink-line);
     border-radius: 30px;
-    padding: 13px 22px;
+    padding: 12px 24px;
 }
 
 .contact-modal-box .form-group textarea,
@@ -2404,7 +2416,7 @@ a.faq-card {
     background-color: rgba(0, 0, 0, 0.045);
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 20px;
-    padding: 13px 22px;
+    padding: 12px 24px;
 }
 
 .auth-modal-box .form-group input::placeholder,
@@ -2577,7 +2589,7 @@ a.faq-card {
     background-color: transparent;
     color: var(--ink-soft);
     border: 1px solid var(--ink-line);
-    padding: 10px 0;
+    padding: 12px 0;
     border-radius: 50px;
     font-size: var(--fs-small);
     font-weight: 600;
@@ -2598,13 +2610,13 @@ a.faq-card {
 }
 
 .auth-error {
-    color: #e60000;
+    color: #B30000;
     font-size: var(--fs-small);
-    margin: -6px 0 0;
+    margin: -8px 0 0;
 }
 
 .auth-error.auth-success {
-    color: #1a7a3c;
+    color: #0F4A24;
 }
 
 /* --- 產品彈窗：加入購物車列 --- */
@@ -2621,7 +2633,7 @@ a.faq-card {
     gap: var(--sp-2);
     border: 1px solid var(--ink-line);
     border-radius: 28px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     flex-shrink: 0;
 }
 
@@ -2659,7 +2671,7 @@ a.faq-card {
 }
 
 .cart-add-note {
-    color: #e60000;
+    color: #B30000;
     font-size: var(--fs-caption);
     margin: 8px 0 0;
     text-align: center;
@@ -2704,7 +2716,7 @@ a.faq-card {
 .account-column {
     display: flex;
     flex-direction: column;
-    padding: 26px 22px;
+    padding: 24px 24px;
     border-radius: 20px;
     opacity: 0;
 }
@@ -2734,7 +2746,7 @@ a.faq-card {
 .account-profile-header-row {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     width: 100%;
 }
 
@@ -2755,7 +2767,7 @@ a.faq-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     border: none;
     cursor: pointer;
     box-shadow:
@@ -2829,7 +2841,7 @@ a.faq-card {
     color: #ffffff;
     border: none;
     border-radius: 100px;
-    padding: 5px 14px;
+    padding: 8px 16px;
     font-family: inherit;
     font-size: 12px;
     font-weight: 700;
@@ -2861,7 +2873,7 @@ a.faq-card {
     overflow-y: auto;
     background-color: var(--ink);
     border-radius: 14px;
-    padding: 10px;
+    padding: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
     animation: titleDropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     /* 可以滑動但不要看到捲軸本身，畫面更乾淨 */
@@ -2889,7 +2901,7 @@ a.faq-card {
     letter-spacing: 1px;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.5);
-    padding: 8px 10px 4px;
+    padding: 8px 12px 4px;
 }
 
 .title-dropdown-group-label::before {
@@ -2903,7 +2915,7 @@ a.faq-card {
     background: none;
     border: none;
     border-radius: 8px;
-    padding: 9px 10px;
+    padding: 8px 12px;
     font-family: inherit;
     font-size: 13px;
     font-weight: 600;
@@ -2928,7 +2940,7 @@ a.faq-card {
 .account-info-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: var(--sp-6);
 }
 
@@ -2946,7 +2958,7 @@ a.faq-card {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 16px 16px;
     border-radius: 14px;
     font-size: var(--fs-small);
     min-width: 0;
@@ -3013,7 +3025,7 @@ a.faq-card {
 }
 
 .account-history-item {
-    padding: 10px 12px;
+    padding: 12px 12px;
     border-radius: 12px;
     background-color: rgba(29, 29, 31, 0.04);
 }
@@ -3101,7 +3113,7 @@ a.faq-card {
 }
 
 .cart-line-remove:hover {
-    color: #e60000;
+    color: #B30000;
 }
 
 .cart-summary {
@@ -3158,7 +3170,7 @@ a.faq-card {
 
 .field-error {
     font-size: var(--fs-caption);
-    color: #e60000;
+    color: #B30000;
     margin: 0;
 }
 
@@ -3291,7 +3303,7 @@ a.faq-card {
     font-size: var(--fs-small);
     color: var(--ink);
     background-color: rgba(29, 29, 31, 0.05);
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
 }
 
@@ -3507,7 +3519,7 @@ a.faq-card {
     .nav-links a {
         display: block;
         width: 100%;
-        padding: 14px 16px;
+        padding: 16px 16px;
         color: #ebebec;
         background-color: transparent !important;
         box-shadow: none !important;
@@ -3560,7 +3572,7 @@ a.faq-card {
         flex-direction: column;
         border-radius: 14px;
         gap: 4px;
-        padding: 10px 20px;
+        padding: 12px 20px;
     }
 
     .mobile-sound-label {
@@ -3688,7 +3700,7 @@ a.faq-card {
 
     .faq-card {
         min-height: 170px;
-        padding: 22px 18px;
+        padding: 24px 16px;
     }
 
     .faq-card-number {
