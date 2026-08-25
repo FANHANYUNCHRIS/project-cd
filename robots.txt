@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /_preview_account_modal.html
+Disallow: /_設計提案_水晶感按鈕範本.html
+
+Sitemap: https://your-domain.com/sitemap.xml

@@ -73,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (status === 'completed') tr.classList.add('admin-row-completed');
             if (status === 'cancelled') tr.classList.add('admin-row-cancelled');
 
-            const itemsText = (order.items || []).map(it => `${it.name} × ${it.qty}`).join('、');
+            const itemNames = (order.items || []).map(it => it.name).join('<br>');
+            const itemQtys = (order.items || []).map(it => `× ${it.qty}`).join('<br>');
             const created = order.createdAt && order.createdAt.toDate
                 ? order.createdAt.toDate().toLocaleString('zh-TW')
                 : '—';
@@ -87,7 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${order.pickupDate}</td>
                 <td>${order.customerName || ''}</td>
                 <td>${order.phone || ''}</td>
-                <td class="admin-col-items">${itemsText}</td>
+                <td class="admin-col-items">${itemNames}</td>
+                <td class="admin-col-qty">${itemQtys}</td>
                 <td>NT$ ${order.subtotal || 0}</td>
                 <td class="admin-col-note">${order.note || ''}</td>
                 <td>${created}</td>

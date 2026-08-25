@@ -50,11 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         '4': {
-            name: "宇治抹茶馬卡龍",
-            price: "NT$ 520",
-            qty: "6入/盒",
-            shortDesc: "日本宇治抹茶內餡，外酥內軟極致美味。",
-            desc: "採用日本宇治丸久小山園抹茶粉，調配苦甜平衡的抹茶白巧克力甘納許內餡，外酥內軟，呈現經典法式風情。",
+            name: "巧克力派",
+            price: "NT$ 650",
+            qty: "8吋/顆",
+            shortDesc: "濃郁苦甜巧克力內餡，搭配酥脆奶油派皮，經典不敗的巧克力風味。",
+            desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
             images: [
                 "images/product-4.jpg",
                 "images/product-4-detail1.jpg",
@@ -164,29 +164,35 @@ document.addEventListener('DOMContentLoaded', () => {
     (function initTeamSwitcher() {
         const teamData = [
             {
-                name: '范漢雲',
-                dept: '經營團隊',
-                role: '創辦人 / 總監',
+                name: '武裝神姬',
+                job: '咖啡甜點專家',
+                battleRole: '戰鬥專家',
+                weapon: '武士刀X狙擊槍',
+                style: '任務執行到極致',
                 quote: '「用數據與匠心，重新定義這間店存在的意義。」',
-                bio: '品牌的起點，源自於他對完美風味近乎苛求的堅持。從食材挑選到門市選址，每一個決策都經過反覆推敲，確保呈現在顧客面前的，永遠是最精確的答案。',
-                avatar: 'images/team-1.jpg',
-                portrait: 'images/team-1.jpg'
+                bio: '武裝神姬，代號的由來不是巧合——她相信經營甜點事業與執行任務並無二致：都需要精準的判斷、絕對的紀律，以及在極限壓力下依然穩定輸出的能力。腰間的武士刀，象徵她對傳統工藝與職人手感的堅持，從不假手他人；肩上的狙擊槍，則代表她用數據與市場洞察，精準鎖定每一個決策的最佳解——從食材產地的篩選、配方比例的反覆試驗，到門市選址的評估，全部經過她親自校準。品牌的起點，正是源自於她對完美風味近乎苛求的堅持，任務一旦啟動，就會執行到底，絕不半途而廢。她也深知單打獨鬥成不了氣候，於是招募了移動基地強襲魔女與偵查兵貓貓組隊——三人各司其職，才撐起這間店背後看不見的作戰系統。呈現在顧客面前的，永遠是三人聯手校準過、最精確的答案。她的作戰日誌裡沒有「差不多」這個選項，任何一批食材只要甜度、水分、產地履歷有一絲落差，就會被直接退回；任何一款新品上市前，她都要求至少通過十輪盲測才准放行。組員私底下都說，跟著武裝神姬做事很累，但也正因為這份近乎偏執的堅持，才讓這間店每一次交到顧客手上的甜點，都對得起「精確」這兩個字。她始終相信，真正的浪漫不是天馬行空的靈感，而是把每一個微小環節都做到位的紀律——這才是她心中，甜點師與戰士共同的專業。',
+                avatar: 'images/staff01.jpg',
+                portrait: 'images/staff01-nobg.png'
             },
             {
-                name: '陳緹希',
-                dept: '烘焙廚房',
-                role: '首席主廚',
+                name: '強襲魔女',
+                job: '職代理店長X最強雜工',
+                battleRole: '移動基地',
+                weapon: '車',
+                style: '只想看戲',
                 quote: '「溫度差一度，風味就不再是那個風味。」',
-                bio: '擁有多年法式烘焙經歷，擅長將傳統工法與精準控溫技術結合，是店內所有配方背後最嚴謹的把關者。',
+                bio: '強襲魔女，聽起來像是要衝在最前線廝殺的角色，但她自己心知肚明——真正的戰場不在前排，而在後方那台隨時待命的車上。她的戰鬥職位登記為「移動基地」，專用武器欄位只寫了一個字：車。問她為什麼不學別人配一把趁手的武器，她總是聳聳肩說，能載人載貨、能當前線指揮所、餓了還能開去買宵夜的車，才是真正的萬能裝備。她的戰鬥風格更是誠實到讓人啼笑皆非——「只想看戲」，能不出手就不出手，能交給別人處理的絕不親自下場，唯獨遇到烘焙這件事例外。多年的法式烘焙經歷，讓她對溫度異常執著，差一度風味就整個走鐘，她能憑手感抓出烤箱裡每一區的溫差，是店裡所有配方背後最嚴謹的把關者，也是實際上什麼雜事都攬在身上的代理店長。平常懶洋洋窩在角落看熱鬧的她，一旦有人動了配方裡的溫控參數，會立刻從魔女變回一絲不苟的職人，這種反差正是她最不像「強襲」、卻最讓人安心的地方——因為真正撐住這間店日常運轉的，往往就是這種看似置身事外、關鍵時刻卻從不缺席的人。同事們私下給她取了個外號叫「萬能雜工」，缺人手時她會補位收銀，缺食材時她會開車去載貨，就連武裝神姬臨時抽不開身，也是她負責頂上代理店長的位置——說是看戲，其實她比誰都清楚整間店在演什麼劇本。',
                 avatar: 'images/team-2.jpg',
                 portrait: 'images/team-2.jpg'
             },
             {
-                name: '鄭品宣',
-                dept: '研發部門',
-                role: '甜點研發專員',
+                name: '貓貓',
+                job: '招財貓',
+                battleRole: '偵查',
+                weapon: '車',
+                style: '只想看戲',
                 quote: '「每一次失敗的配方，都是下一次成功的線索。」',
-                bio: '負責新品開發與風味實驗，習慣用近乎科學實驗的方式反覆測試比例，直到找出最平衡的那個版本。',
+                bio: '貓貓，代號直白到讓人懷疑是不是隨便取的，但認識他的人都知道，這個名字其實再貼切不過。工作職位登記為「招財貓」——不是因為他負責收銀或招攬客人，而是每次新品試賣的業績都莫名特別好，久而久之大家都戲稱他是店裡真正的財運吉祥物。戰鬥職位是「偵查」，這點倒是完全符合他本人的個性：對任何風味的風吹草動都異常敏銳，市面上一有新的甜點趨勢，他總是第一個發現、第一個買回來拆解分析。專用武器同樣是車，戰鬥風格也跟強襲魔女一樣寫著「只想看戲」，兩人常被說像是同一個模子刻出來的，平時窩在研發室的角落，安安靜靜地不知道在忙什麼，直到某天突然端出一款完全不像同一個人做得出來的新配方。負責新品開發與風味實驗的他，習慣用近乎科學實驗的方式反覆測試比例——同一款塔皮他能連續烤二十幾次，只為了抓出那零點五公克奶油的差異，直到找出最平衡的那個版本才肯罷休。他常說，每一次失敗的配方，都是下一次成功的線索，這句話與其說是激勵自己，不如說是他真心相信的偵查守則：任何蛛絲馬跡，都不該被輕易放過。武裝神姬常說，三人小隊裡最讓她放心的就是貓貓——外表看起來最像來亂的一個，實際上卻是把每一次失敗都仔細記錄歸檔的那個人，這份不動聲色的執著，才是他真正的戰鬥力所在。',
                 avatar: 'images/team-3.jpg',
                 portrait: 'images/team-3.jpg'
             }
@@ -196,11 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const indexEl = document.getElementById('team-info-index');
         const watermarkEl = document.getElementById('team-info-watermark');
         const nameEl = document.getElementById('team-info-name');
-        const deptEl = document.getElementById('team-info-dept');
-        const roleEl = document.getElementById('team-info-role');
+        const jobEl = document.getElementById('team-info-job');
+        const battleRoleEl = document.getElementById('team-info-battle');
+        const weaponEl = document.getElementById('team-info-weapon');
+        const styleEl = document.getElementById('team-info-style');
         const quoteEl = document.getElementById('team-info-quote');
         const bioEl = document.getElementById('team-info-bio');
         const portraitEl = document.getElementById('team-portrait');
+        const portraitTagEl = document.getElementById('team-portrait-tag');
         const portraitTextEl = document.getElementById('team-portrait-text');
         const portraitInitialEl = document.getElementById('team-portrait-initial');
         const btnUp = document.getElementById('team-nav-up');
@@ -231,10 +240,13 @@ document.addEventListener('DOMContentLoaded', () => {
             indexEl.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(teamData.length).padStart(2, '0')}`;
             watermarkEl.textContent = String(activeIndex + 1).padStart(2, '0');
             nameEl.textContent = `[ ${member.name} ]`;
-            deptEl.textContent = member.dept;
-            roleEl.textContent = member.role;
+            jobEl.textContent = member.job;
+            battleRoleEl.textContent = member.battleRole;
+            weaponEl.textContent = member.weapon;
+            styleEl.textContent = member.style;
             quoteEl.textContent = member.quote;
             bioEl.textContent = member.bio;
+            portraitTagEl.textContent = `NO.${String(activeIndex + 1).padStart(2, '0')}`;
             portraitEl.style.opacity = '0';
 
             setTimeout(() => {
@@ -416,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {}
     }
 
-    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-avatar-item, .team-nav-btn, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-back-to-top, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .hamburger-btn, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-avatar, .avatar-option, .account-title-select').forEach(el => {
+    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-back-to-top, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .hamburger-btn, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-avatar, .avatar-option, .account-title-select').forEach(el => {
         el.addEventListener('click', playClickSound);
     });
 
@@ -761,11 +773,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ));
     }
 
+    // 彈窗開著時鎖住背景頁面的捲動——手機版彈窗是 fixed 疊層，背景本身仍是可捲動的長頁面，
+    // 沒鎖住的話背景會透出一條頁面捲軸，使用者也能在彈窗打開時把背景拖動捲走。
+    // 用 Set 記錄目前開著的彈窗而不是單純計數器，是因為有些流程會疊兩層彈窗
+    // （例如商品彈窗開著時再跳出登入彈窗），用 Set 才不會因為開關順序不對稱而讓計數器對不齊
+    const openModals = new Set();
+
+    function syncBodyScrollLock() {
+        document.body.style.overflow = openModals.size > 0 ? 'hidden' : '';
+    }
+
     function openModal(modal) {
         lastFocusedBeforeModal = document.activeElement;
         modal.removeAttribute('inert');
         modal.setAttribute('aria-hidden', 'false');
         modal.classList.add('active');
+        openModals.add(modal);
+        syncBodyScrollLock();
         const focusable = getFocusableElements(modal);
         (focusable[0] || modal).focus();
     }
@@ -774,6 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
         modal.setAttribute('inert', '');
+        openModals.delete(modal);
+        syncBodyScrollLock();
         if (lastFocusedBeforeModal) lastFocusedBeforeModal.focus();
     }
 

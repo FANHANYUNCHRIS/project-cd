@@ -49,224 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(authModal);
     }
 
-    /* --- 會員資料彈窗：登入後點擊皇冠圖示顯示，取代原本直接跳 confirm() 問是否登出 --- */
+    /* --- 會員資料彈窗：登入後點擊皇冠圖示顯示。
+       面板內容已清空、等待重新設計，這裡先只保留開關功能，避免登出/大頭貼/封號/購買紀錄
+       等舊邏輯去操作已經不存在的 DOM 節點而噴錯 --- */
     const accountModal = document.getElementById('account-modal');
     const accountModalClose = document.getElementById('account-modal-close');
-    const btnAccountLogout = document.getElementById('btn-account-logout');
-    const accountDisplayName = document.getElementById('account-display-name');
-    const accountAvatarBtn = document.getElementById('account-avatar-btn');
-    const accountAvatarIcon = document.getElementById('account-avatar-icon');
-    const avatarPicker = document.getElementById('avatar-picker');
-    const avatarOptions = document.querySelectorAll('.avatar-option');
-    const accountTitleSelect = document.getElementById('account-title-select');
-    const achievementOptgroup = document.getElementById('achievement-optgroup');
-    const titleDropdown = document.getElementById('title-dropdown');
-    const titleDropdownTrigger = document.getElementById('title-dropdown-trigger');
-    const titleDropdownLabel = document.getElementById('title-dropdown-label');
-    const titleDropdownPanel = document.getElementById('title-dropdown-panel');
-    const accountInfoPhone = document.getElementById('account-info-phone');
-    const accountInfoEmail = document.getElementById('account-info-email');
-    const accountInfoBirthday = document.getElementById('account-info-birthday');
-    const accountInfoCreated = document.getElementById('account-info-created');
-    const accountInfoMemberNo = document.getElementById('account-info-memberno');
-    const accountHistoryList = document.getElementById('account-history-list');
-    const accountHistoryEmpty = document.getElementById('account-history-empty');
-    const accountHistoryEmptyText = document.getElementById('account-history-empty-text');
-
-    /* 成就封號：達到條件後自動出現在封號選單裡讓客人選用，不會憑空覆蓋掉客人原本選的封號 */
-    const achievementTitles = [
-        { label: '登入達人', check: data => (data.loginCount || 0) >= 10 },
-        { label: '忠實會員', check: data => (data.loginCount || 0) >= 30 },
-        { label: '消費新星', check: data => (data.completedSpend || 0) >= 1000 },
-        { label: '甜點大戶', check: data => (data.completedSpend || 0) >= 5000 },
-        { label: '傳說貴賓', check: data => (data.completedSpend || 0) >= 10000 }
-    ];
-    /* 12生肖大頭貼：內建可換，不用上傳圖片；SVG 線條圖跟 index.html 裡 .avatar-option 按鈕的圖示完全一致，
-       這樣選擇後大頭貼跟選單裡按鈕看起來才是同一顆圖案 */
-    const svgAttrs = 'viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
-    const avatarIcons = {
-        rat: `<svg ${svgAttrs}><circle cx="16" cy="19" r="7"/><circle cx="9" cy="11" r="2.5"/><circle cx="23" cy="11" r="2.5"/><line x1="5" y1="18" x2="10" y2="19"/><line x1="5" y1="22" x2="10" y2="21"/><line x1="27" y1="18" x2="22" y2="19"/><line x1="27" y1="22" x2="22" y2="21"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="24" r="1" fill="currentColor" stroke="none"/></svg>`,
-        ox: `<svg ${svgAttrs}><circle cx="16" cy="19" r="7"/><path d="M8 13 Q4 8 8 5"/><path d="M24 13 Q28 8 24 5"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        tiger: `<svg ${svgAttrs}><circle cx="16" cy="19" r="7"/><path d="M9 13 L6 7 L12 11 Z"/><path d="M23 13 L26 7 L20 11 Z"/><line x1="10" y1="21" x2="13" y2="23"/><line x1="22" y1="21" x2="19" y2="23"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        rabbit: `<svg ${svgAttrs}><circle cx="16" cy="20" r="7"/><ellipse cx="11" cy="7" rx="2.2" ry="6.5" transform="rotate(-15 11 7)"/><ellipse cx="21" cy="7" rx="2.2" ry="6.5" transform="rotate(15 21 7)"/><circle cx="13" cy="19" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        dragon: `<svg ${svgAttrs}><path d="M5 25 Q10 12 16 16 Q22 20 27 7"/><line x1="27" y1="7" x2="29" y2="3"/><line x1="24" y1="8" x2="25" y2="4"/><circle cx="26" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg>`,
-        snake: `<svg ${svgAttrs}><path d="M8 7 Q22 7 12 16 Q2 25 24 25"/><line x1="24" y1="25" x2="28" y2="23"/><line x1="24" y1="25" x2="28" y2="27"/><circle cx="9" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg>`,
-        horse: `<svg ${svgAttrs}><ellipse cx="16" cy="19" rx="6" ry="9"/><path d="M11 12 L9 6 L14 11 Z"/><path d="M21 12 L23 6 L18 11 Z"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        goat: `<svg ${svgAttrs}><circle cx="16" cy="19" r="7"/><path d="M9 14 Q3 13 5 8 Q6 5 10 7"/><path d="M23 14 Q29 13 27 8 Q26 5 22 7"/><circle cx="13" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        monkey: `<svg ${svgAttrs}><circle cx="16" cy="19" r="7"/><circle cx="7" cy="19" r="3"/><circle cx="25" cy="19" r="3"/><circle cx="16" cy="21" r="4"/><circle cx="13" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        rooster: `<svg ${svgAttrs}><circle cx="14" cy="19" r="7"/><path d="M9 12 L11 6 L13 12 L15 6 L17 12"/><path d="M21 17 L27 15 L21 20 Z"/><circle cx="11" cy="18" r="0.8" fill="currentColor" stroke="none"/><circle cx="17" cy="18" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        dog: `<svg ${svgAttrs}><circle cx="16" cy="18" r="7"/><ellipse cx="8" cy="16" rx="3" ry="5.5" transform="rotate(-20 8 16)"/><ellipse cx="24" cy="16" rx="3" ry="5.5" transform="rotate(20 24 16)"/><ellipse cx="16" cy="23" rx="3" ry="2"/><circle cx="13" cy="17" r="0.8" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>`,
-        pig: `<svg ${svgAttrs}><circle cx="16" cy="18" r="7"/><path d="M10 12 L8 8 L13 10 Z"/><path d="M22 12 L24 8 L19 10 Z"/><rect x="12" y="20" width="8" height="6" rx="3"/><circle cx="14.5" cy="23" r="0.8" fill="currentColor" stroke="none"/><circle cx="17.5" cy="23" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="16" r="0.8" fill="currentColor" stroke="none"/><circle cx="20" cy="16" r="0.8" fill="currentColor" stroke="none"/></svg>`
-    };
-
-    function setAccountAvatar(avatarId) {
-        const id = avatarIcons[avatarId] ? avatarId : 'rat';
-        accountAvatarIcon.innerHTML = avatarIcons[id];
-        avatarOptions.forEach(opt => opt.classList.toggle('active', opt.dataset.avatar === id));
-    }
 
     function openAccountModal() {
         if (!currentUser) return;
-
-        accountDisplayName.textContent = currentUser.displayName || '會員';
-        accountTitleSelect.value = '';
-        achievementOptgroup.innerHTML = '';
-        syncTitleDropdownLabel();
-        closeTitleDropdown();
-        setAccountAvatar('rat');
-        avatarPicker.hidden = true;
-        if (accountInfoPhone) accountInfoPhone.textContent = '—';
-        if (accountInfoEmail) accountInfoEmail.textContent = currentUser.email || '—';
-        if (accountInfoBirthday) accountInfoBirthday.textContent = '—';
-        if (accountInfoCreated) accountInfoCreated.textContent = '—';
-        if (accountInfoMemberNo) accountInfoMemberNo.textContent = currentUser.uid.slice(-8).toUpperCase();
-        accountHistoryList.innerHTML = '';
-        accountHistoryList.appendChild(accountHistoryEmpty);
-        accountHistoryEmptyText.textContent = '載入中...';
-        accountHistoryEmpty.hidden = false;
-
         openModal(accountModal);
-
-        /* 三欄依序浮現，不是同時彈出——面板逐一「上線」的節奏感，呼應 HUD 開機動畫。
-           用 GSAP stagger 取代原本的 CSS animation-delay 寫法，每次開彈窗都會重新播放 */
-        gsap.fromTo(
-            accountModal.querySelectorAll('.account-column'),
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.1 }
-        );
-
-        db.collection('users').doc(currentUser.uid).get().then(doc => {
-            if (!doc.exists) return;
-            const data = doc.data();
-
-            accountDisplayName.textContent = data.displayName || currentUser.email || '會員';
-            setAccountAvatar(data.avatarId);
-
-            achievementOptgroup.innerHTML = achievementTitles
-                .filter(t => t.check(data))
-                .map(t => `<option value="${t.label}">${t.label}</option>`)
-                .join('');
-            accountTitleSelect.value = data.title || '';
-            syncTitleDropdownLabel();
-
-            if (accountInfoPhone) accountInfoPhone.textContent = data.phone || '未填寫';
-            if (accountInfoBirthday) accountInfoBirthday.textContent = data.birthday || '未填寫';
-            if (accountInfoCreated) {
-                accountInfoCreated.textContent = data.createdAt && data.createdAt.toDate
-                    ? data.createdAt.toDate().toLocaleDateString('zh-TW')
-                    : '—';
-            }
-        }).catch(err => {
-            console.error('讀取會員資料失敗', err);
-        });
-
-        db.collection('orders').where('uid', '==', currentUser.uid).get().then(snapshot => {
-            const completedOrders = snapshot.docs
-                .map(doc => doc.data())
-                .filter(order => order.status === 'completed')
-                .sort((a, b) => (b.pickupDate || '').localeCompare(a.pickupDate || ''));
-
-            accountHistoryList.innerHTML = '';
-
-            if (completedOrders.length === 0) {
-                accountHistoryEmptyText.textContent = '尚無購買紀錄';
-                accountHistoryEmpty.hidden = false;
-                accountHistoryList.appendChild(accountHistoryEmpty);
-                return;
-            }
-
-            completedOrders.forEach(order => {
-                const itemsText = (order.items || []).map(it => `${it.name} × ${it.qty}`).join('、');
-                const item = document.createElement('div');
-                item.className = 'account-history-item';
-                item.innerHTML = `
-                    <p class="account-history-date">${order.pickupDate || ''}</p>
-                    <p class="account-history-items">${itemsText}</p>
-                `;
-                accountHistoryList.appendChild(item);
-            });
-        }).catch(err => {
-            console.error('讀取購買紀錄失敗', err);
-            accountHistoryEmptyText.textContent = '讀取失敗';
-        });
     }
-
-    accountAvatarBtn.addEventListener('click', () => {
-        avatarPicker.hidden = !avatarPicker.hidden;
-    });
-
-    avatarOptions.forEach(opt => {
-        opt.addEventListener('click', () => {
-            if (!currentUser) return;
-            const avatarId = opt.dataset.avatar;
-            setAccountAvatar(avatarId);
-            avatarPicker.hidden = true;
-            db.collection('users').doc(currentUser.uid).update({ avatarId }).catch(err => {
-                console.error('更新大頭貼失敗', err);
-            });
-        });
-    });
-
-    accountTitleSelect.addEventListener('change', () => {
-        if (!currentUser) return;
-        db.collection('users').doc(currentUser.uid).update({ title: accountTitleSelect.value }).catch(err => {
-            console.error('更新封號失敗', err);
-        });
-    });
-
-    /* 封號下拉選單是自訂 HUD 面板，不是原生 select 外觀（原生下拉清單瀏覽器渲染，CSS 改不動）。
-       底下真正的 <select> 只當資料來源跟存值用，畫面上這個面板每次點開都重新讀取 <select>
-       目前的 optgroup/option（包含動態塞進去的成就封號）現組出來，兩邊資料不會脫節 */
-    function syncTitleDropdownLabel() {
-        const selected = accountTitleSelect.options[accountTitleSelect.selectedIndex];
-        titleDropdownLabel.textContent = (selected && selected.value) ? selected.textContent : '選擇封號';
-    }
-
-    function closeTitleDropdown() {
-        titleDropdown.classList.remove('open');
-        titleDropdownPanel.hidden = true;
-        titleDropdownTrigger.setAttribute('aria-expanded', 'false');
-    }
-
-    function renderTitleDropdown() {
-        let html = '';
-        Array.from(accountTitleSelect.children).forEach(child => {
-            if (child.tagName === 'OPTGROUP') {
-                if (!child.children.length) return;
-                html += `<p class="title-dropdown-group-label">${child.label}</p>`;
-                Array.from(child.children).forEach(opt => {
-                    const selected = opt.value === accountTitleSelect.value ? ' selected' : '';
-                    html += `<button type="button" class="title-dropdown-option${selected}" data-value="${opt.value}">${opt.textContent}</button>`;
-                });
-            }
-        });
-        titleDropdownPanel.innerHTML = html;
-
-        titleDropdownPanel.querySelectorAll('.title-dropdown-option').forEach(btn => {
-            btn.addEventListener('click', () => {
-                accountTitleSelect.value = btn.dataset.value;
-                accountTitleSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                syncTitleDropdownLabel();
-                closeTitleDropdown();
-            });
-        });
-    }
-
-    titleDropdownTrigger.addEventListener('click', () => {
-        const willOpen = titleDropdownPanel.hidden;
-        if (willOpen) {
-            renderTitleDropdown();
-            titleDropdownPanel.hidden = false;
-            titleDropdown.classList.add('open');
-            titleDropdownTrigger.setAttribute('aria-expanded', 'true');
-        } else {
-            closeTitleDropdown();
-        }
-    });
-
-    document.addEventListener('click', e => {
-        if (!titleDropdown.contains(e.target)) closeTitleDropdown();
-    });
 
     navBtnAccount.addEventListener('click', () => {
         if (currentUser) {
@@ -277,13 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     accountModalClose.addEventListener('click', () => closeModal(accountModal));
-
-    btnAccountLogout.addEventListener('click', () => {
-        if (confirm('是否登出？')) {
-            auth.signOut();
-            closeModal(accountModal);
-        }
-    });
 
     authModalClose.addEventListener('click', () => closeModal(authModal));
 
@@ -483,11 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartItemsList = document.getElementById('cart-items-list');
     const cartEmptyState = document.getElementById('cart-empty-state');
     const cartSubtotalEl = document.getElementById('cart-subtotal');
+    const cartSummaryEl = document.getElementById('cart-summary');
     const cartBadge = document.getElementById('cart-badge');
     const btnGoCheckout = document.getElementById('btn-go-checkout');
     const navBtnCart = document.getElementById('nav-btn-cart');
     const addToCartBtn = document.getElementById('product-modal-add-cart');
     const addCartNote = document.getElementById('product-modal-add-note');
+    const cartBody = document.getElementById('cart-body');
+    const cartLoginGate = document.getElementById('cart-login-gate');
+    const cartLoginGateCta = document.getElementById('cart-login-gate-cta');
 
     let cartItems = [];
     let cartUnsubscribe = null;
@@ -510,9 +299,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCartModal() {
+        const loggedIn = !!currentUser;
+        cartLoginGate.hidden = loggedIn;
+        cartBody.hidden = !loggedIn;
+
         cartItemsList.innerHTML = '';
-        cartEmptyState.hidden = cartItems.length > 0;
-        btnGoCheckout.disabled = cartItems.length === 0;
+        const hasItems = cartItems.length > 0;
+        cartEmptyState.hidden = hasItems;
+        cartSummaryEl.hidden = !hasItems;
+        btnGoCheckout.hidden = !hasItems;
+        btnGoCheckout.disabled = !hasItems;
 
         cartItems.forEach((item, index) => {
             const li = document.createElement('li');
@@ -562,11 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     navBtnCart.addEventListener('click', () => {
-        if (!currentUser) { openAuthModal('login'); return; }
         openModal(cartModal);
     });
 
     cartModalClose.addEventListener('click', () => closeModal(cartModal));
+
+    cartLoginGateCta.addEventListener('click', () => openAuthModal('login'));
 
     addToCartBtn.addEventListener('click', () => {
         if (!currentUser) {

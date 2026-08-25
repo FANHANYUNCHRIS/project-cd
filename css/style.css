@@ -890,34 +890,27 @@ body {
     justify-content: center;
 }
 
-/* 區塊本身仍是一屏一頁的滿版捲動吸附，但裡面的內容改成固定高度（不再是78vh），
-   不會因為使用者螢幕高矮不同就跟著被拉伸縮放，內容置中在滿版區塊正中間，
-   上下留白多寡交給螢幕高度決定，內容尺寸本身維持一致 */
+/* 原本固定 height:640px，不會因為螢幕高矮跟著縮放；但角色檔案文字現在動輒 500 字，
+   內容量早就超過 640px，立繪／頭像欄硬撐在固定 640px 反而比文字短一截，
+   底部對不齊。改用 min-height（保留「不要太矮」的下限）+ 高度交給內容自然撐開，
+   立繪、頭像欄跟文字欄三個都用 align-items:stretch 撐到同一個高度，永遠對齊 */
 .team-switcher {
     display: flex;
     align-items: stretch;
     width: 100%;
-    height: 640px;
-}
-
-/* 頭像 + 文字介紹合計約佔畫面左半邊，右半邊留給人物立繪滿版；
-   左欄跟中間文字的間距（gap）跟中間文字跟右邊的間距（padding-right）故意設成同一個值，
-   兩邊間距才會相等 */
-.team-left-col {
-    flex: 0 0 50%;
-    max-width: 50%;
-    box-sizing: border-box;
-    padding-right: 48px;
-    display: flex;
-    align-items: center;
+    min-height: 640px;
     gap: 48px;
 }
 
+/* 撐滿整欄高度（align-self:stretch，跟立繪 .team-portrait 同一招），上下箭頭
+   用 space-between 頂到頂／底，才會跟右欄文字（品牌團隊標籤在最上、角色檔案在最下）
+   的頂部/底部對齊——原本置中會讓左欄整組頭像懸在中間，跟右欄拉滿版的文字對不齊 */
 .team-avatar-rail {
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 16px;
     flex-shrink: 0;
 }
@@ -972,15 +965,22 @@ body {
     opacity: 0.85;
 }
 
+/* 選中的頭像加一圈實色描邊，像選角畫面裡「目前選到誰」的高亮框——
+   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯 */
 .team-avatar-item.active {
     opacity: 1;
     transform: scale(1.08);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12);
 }
 
 .team-info-panel {
-    flex: 1;
+    flex: 1 1 0%;
     min-width: 0;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* 中間文字區塊內容偏少，用巨大的淡字級數字補滿視覺份量，讓左欄視覺高度接近右邊滿版立繪 */
@@ -1022,28 +1022,98 @@ body {
     margin-bottom: var(--sp-4);
 }
 
-.team-info-tags {
-    display: flex;
-    gap: var(--sp-2);
+/* 角色資料改成 2x2 的 HUD 面板網格，不是清單列——沿用會員彈窗「會員權益」欄
+   同一套取景框角標 + 發光數值語言（見 .account-column::before/after、.account-hud-num
+   跟 accountHudPulse），這才是設計系統文件裡真正記錄的「電玩／動漫」視覺語彙，
+   平舖的底線清單列太像設定頁，沒有那個味道 */
+.team-stat-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     margin-bottom: var(--sp-5);
 }
 
-.team-tag {
-    font-size: var(--fs-small);
-    font-weight: bold;
-    padding: 8px 16px;
-    border-radius: 100px;
-}
-
-.team-tag-dept {
-    background-color: var(--ink);
-    color: #ffffff;
-}
-
-.team-tag-role {
-    background-color: rgba(29, 29, 31, 0.05);
-    color: var(--ink);
+.team-stat-row {
+    position: relative;
+    padding: 14px 16px;
     border: 1px solid var(--ink-line);
+    border-radius: 4px;
+}
+
+.team-stat-row::before,
+.team-stat-row::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: var(--ink);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+}
+
+.team-stat-row::before {
+    top: -3px;
+    left: -3px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+}
+
+.team-stat-row::after {
+    bottom: -3px;
+    right: -3px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+}
+
+.team-stat-label {
+    display: block;
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    margin-bottom: 6px;
+}
+
+.team-stat-label::before {
+    content: '// ';
+    color: var(--ink-soft);
+}
+
+.team-stat-value {
+    display: block;
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    font-size: var(--fs-body);
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1.3;
+    animation: accountHudPulse 2.6s ease-in-out infinite;
+}
+
+/* 角色檔案面板：把大段人物介紹文字從「一整塊散文」改成「終端機讀取的檔案」——
+   邊框 + 貼在頂邊的標籤頁籤，是遊戲裡角色檔案／情報卡最典型的呈現方式，
+   標籤頁籤故意疊在邊框線上（margin-top 負值），才會有「貼上去」的實體感 */
+.team-file-panel {
+    position: relative;
+    border: 1px solid var(--ink-line);
+    border-radius: 4px;
+    padding: var(--sp-5) var(--sp-4) var(--sp-4);
+    margin-top: var(--sp-4);
+}
+
+.team-file-tab {
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    background-color: #EBEBEC;
+    padding: 0 8px;
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
 }
 
 .team-info-quote {
@@ -1062,22 +1132,71 @@ body {
     line-height: 1.8;
 }
 
-/* 立繪滿版：深底 + 巨大姓氏字首，跟左欄「淺底+淡數字」形成一深一淺的節奏；
-   filter 強制灰階，之後就算換上真人彩色照片，也會自動符合全站零色彩的規則，不用每張圖自己後製 */
+/* 人物立繪：深底 + 巨大姓氏字首，跟右欄「淺底+淡數字」形成一深一淺的節奏；
+   用 contain + bottom 而不是 cover，去背立繪才會完整站在畫面裡，不會被裁切。
+   拿掉了原本強制灰階的 filter——設計系統文件「00 設計方向與目標」P03 本來就寫明
+   「未來加入動漫風格人物插畫時，會是全站唯一保留的『色彩時刻』」，現在放的正是這種插畫，
+   不是需要壓成黑白配合全站規則的真人照片，維持原色是文件已經預告過的例外，不是新的偏離 */
+/* 立繪加取景框角標——跟右邊四張 HUD 資料卡、原本會員彈窗的 .account-column
+   是同一套語言，角標尺寸放大到 32px/4px 因為立繪是整個版面最大的元素，
+   跟小卡片用同一個尺寸會顯得角標太小、鎮不住這麼大的畫面 */
 .team-portrait {
     flex: 1;
     align-self: stretch;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--ink);
-    background-size: cover;
-    background-position: center top;
+    background-color: #ffffff;
+    background-size: contain;
+    background-position: center bottom;
     background-repeat: no-repeat;
-    filter: grayscale(1) contrast(1.05);
+    border: 1px solid var(--ink-line);
     overflow: hidden;
     position: relative;
     transition: opacity 0.4s ease;
+}
+
+.team-portrait::before,
+.team-portrait::after {
+    content: '';
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-color: var(--ink);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.team-portrait::before {
+    top: -1px;
+    left: -1px;
+    border-top-width: 4px;
+    border-left-width: 4px;
+}
+
+.team-portrait::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom-width: 4px;
+    border-right-width: 4px;
+}
+
+/* HUD 標籤：仿遊戲角色選擇畫面的編號牌，貼在立繪左上角取景框內側 */
+.team-portrait-tag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    font-family: 'Inter', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff;
+    background-color: var(--ink);
+    padding: 5px 12px;
+    pointer-events: none;
 }
 
 .team-portrait-initial {
@@ -1085,7 +1204,7 @@ body {
     font-size: 480px;
     font-weight: 900;
     line-height: 1;
-    color: rgba(255, 255, 255, 0.06);
+    color: rgba(29, 29, 31, 0.05);
     pointer-events: none;
     user-select: none;
 }
@@ -1162,14 +1281,42 @@ body {
     margin-bottom: var(--sp-6);
 }
 
+/* 改回黑白取景框角標卡片（跟會員彈窗的 .account-column 同一套語言），
+   拿掉原本沒有記錄在設計系統文件裡的淡綠底／淡綠邊框——LINE 綠只保留在
+   文件核准的兩個地方：狀態文字（#006600）跟按鈕底色（#00C300，見下方 .btn-line-cta） */
 .line-service-box {
-    background-color: #f8fcf8;
+    position: relative;
     color: var(--ink);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 4px;
     margin-bottom: 24px;
-    border: 1px solid #e0f2e0;
-    border-left: 4px solid #00C300;
+    border: 1px solid var(--ink-line);
+}
+
+.line-service-box::before,
+.line-service-box::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--ink);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+}
+
+.line-service-box::before {
+    top: -4px;
+    left: -4px;
+    border-top-width: 3px;
+    border-left-width: 3px;
+}
+
+.line-service-box::after {
+    bottom: -4px;
+    right: -4px;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
 }
 
 .line-status-bar {
@@ -1179,11 +1326,24 @@ body {
     margin-bottom: 12px;
 }
 
+/* 原本用 🟢 表情符號畫線上狀態點——emoji 顏色是系統內建色盤，CSS 完全控制不到，
+   跟「每一階色彩都有實測對比數值」的原則衝突，改成用 ::before 畫一個顏色可控的圓點 */
 .line-status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: var(--fs-caption);
     font-family: 'Inter', monospace;
     font-weight: bold;
     color: #006600;
+}
+
+.line-status-dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #006600;
 }
 
 .line-tag {
@@ -1209,13 +1369,15 @@ body {
     margin-bottom: var(--sp-4);
 }
 
+/* 白字在 #00C300 上實測只有 2.39:1，離網站自訂的 AAA 7:1 門檻很遠，
+   連基本 AA（4.5:1）都不到。改成 var(--ink) 深字，同一個綠底上實測約 7.6:1，達到 AAA */
 .btn-line-cta {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     background-color: #00C300;
-    color: #ffffff;
+    color: var(--ink);
     text-decoration: none;
     font-size: var(--fs-small);
     font-weight: bold;
@@ -1242,6 +1404,13 @@ body {
     align-items: flex-start;
     gap: var(--sp-3);
     text-align: left;
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--ink-line);
+}
+
+.contact-detail-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .contact-detail-item i {
@@ -1287,7 +1456,7 @@ body {
 }
 
 .btn-copy-email.copied {
-    border-color: #2e7d32;
+    border-color: #1F5C23;
     color: #1F5C23;
 }
 
@@ -1827,7 +1996,7 @@ a.faq-card {
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 20px;
-    box-shadow: 0 12px 30px -14px var(--glow), 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.45s ease,
                 opacity 0.4s ease,
@@ -1846,7 +2015,7 @@ a.faq-card {
     filter: none;
     transform: scale(1.08);
     border-color: var(--glow);
-    box-shadow: 0 24px 55px -12px var(--glow), 0 10px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     z-index: 2;
 }
 
@@ -2254,10 +2423,17 @@ a.faq-card {
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    /* 可以滑動但不要看到捲軸本身，捲軸會壓在 22px 圓角上，畫面不乾淨 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8);
     transform: scale(0.92);
     /* iOS 彈簧感：先超過終值一點再回彈，不是單純減速停止 */
     transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-container::-webkit-scrollbar {
+    display: none;
 }
 
 .modal-overlay.active .modal-container {
@@ -2693,21 +2869,24 @@ a.faq-card {
 /* --- 會員資料彈窗 --- */
 /* 軟膠擬物質感（Neumorphism）：靠雙向陰影（亮面左上、暗面右下）做出浮凸/凹陷層次，
    不靠邊框或色彩分辨層級，所以底色要換成不是純白的淺灰，陰影才有地方「藏」 */
-/* 改回跟「聯繫我們」彈窗同一個等級的固定大小置中卡片，不再滿版撐滿整個螢幕 */
+/* 跟頁尾三欄 grid（.footer-container，max-width 1100px）同一個寬度基準，
+   全站尺度一致，不是另外挑的數字 */
 .account-modal-box {
-    max-width: 1020px;
+    max-width: 1100px;
     width: 100%;
     padding: 44px 40px 32px;
     background-color: #E9EBEF;
 }
 
-/* 三欄式版面：左會員資訊／中系統資訊／右購買品項，分工清楚，不用捲動就能看完整份資料。
+/* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
+   左欄欄位最多（頭像到會員 ID 共 8 項），比例吃重；中欄只有三個數據，比例最窄；
+   右欄購買紀錄長度不定，取中間值。
    每欄都用取景框角標包成獨立的資訊面板——這是整套設計系統的招牌語言（跟品牌介紹區塊、消費點數卡同一套），
-   欄位本身有邊框跟角標之後，就算內容量不同（例如購買品項是空的），版面看起來還是「三個對等的面板」，
+   欄位本身有邊框跟角標之後，就算內容量不同（例如購買紀錄是空的），版面看起來還是「三個對等的面板」，
    不會因為內容多寡就顯得失衡 */
 .account-columns {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1.15fr 0.8fr 1.05fr;
     gap: 24px;
     margin-bottom: var(--sp-6);
     text-align: left;
@@ -2718,7 +2897,6 @@ a.faq-card {
     flex-direction: column;
     padding: 24px 24px;
     border-radius: 4px;
-    opacity: 0;
     position: relative;
     border: 1px solid var(--ink-line);
 }
@@ -2965,18 +3143,84 @@ a.faq-card {
 }
 
 /* 仿 iOS 設定頁的清單列：標籤在左、值在右、列與列之間用極淡的分隔線 */
-/* 改成卡片網格（跟旁邊「系統資訊」欄的取景框角標卡是同一套語言），
-   不再是一排排用底線隔開的純文字列表——參考使用者提供的儀表板排版，
-   但只借版面結構，顏色/字體維持原本黑白系統，不跟著換成藍色商務風 */
+/* 改成卡片式清單（跟旁邊欄位的取景框角標卡是同一套語言），單欄直向堆疊——
+   原本試過兩欄網格塞信箱/電話/生日/加入日期，但信箱這類較長的值會被裁切成
+   「projectcd.bakery...」，改回單欄後每一列有全寬可用，除非值本身長度誇張，
+   否則不會再被裁切 */
 .account-info-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
     margin-bottom: var(--sp-6);
 }
 
 .account-column .account-info-list:last-child {
     margin-bottom: 0;
+}
+
+/* 中欄「會員權益」圖像化：借用設計系統文件「05 元件模式」的 HUD 數據卡語言——
+   碩大等寬數字 + 發光脈動 + // 開頭的等寬標籤，用字級與動態取代圖示/色彩，
+   符合「黑白灰科技感靠視覺／聽覺／觸覺／互動四感堆疊，不靠色彩取巧」的原則（設計系統 P03）。
+   文件裡的示範是數字在左、文字在右的橫向排列，但這欄只有 ~0.8fr 寬，橫向會太擠，
+   改成數字在上、標籤在下的直向堆疊 */
+/* flex:1 + align-content:center：中欄只有 3 張卡片，內容量比左欄（8 個欄位）少很多，
+   三欄用同一個 grid row 撐開高度後，中欄卡片原本全部貼頂，下面留一大塊空白。
+   讓清單吃滿欄位剩餘高度、卡片群組整體置中，跟右欄「購買紀錄」空狀態置中是同一個處理邏輯 */
+.account-hud-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 12px;
+}
+
+.account-hud-card {
+    padding: 22px 16px 16px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+}
+
+.account-hud-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+}
+
+.account-hud-num {
+    display: block;
+    font-family: 'Inter', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1.15;
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--ink-line);
+    animation: accountHudPulse 2.6s ease-in-out infinite;
+}
+
+.account-hud-label {
+    display: block;
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--ink);
+}
+
+.account-hud-label::before {
+    content: '// ';
+    color: var(--ink-soft);
+}
+
+@keyframes accountHudPulse {
+    0%, 100% { text-shadow: 0 0 12px rgba(29, 29, 31, 0.1); }
+    50% { text-shadow: 0 0 22px rgba(29, 29, 31, 0.3); }
 }
 
 /* 軟膠浮凸卡片：亮面陰影在左上、暗面陰影在右下，同一個底色就能做出「從背景浮出來」的層次，
@@ -2998,7 +3242,6 @@ a.faq-card {
         -6px -6px 12px rgba(255, 255, 255, 0.8);
 }
 
-/* 姓名是身分辨識度最高的欄位，獨立佔滿整排，其餘四張卡片在底下排成 2x2 網格 */
 .account-info-label {
     color: var(--ink);
     font-weight: 600;
@@ -3023,6 +3266,45 @@ a.faq-card {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* 單月查詢：上一月／下一月箭頭夾著月份標籤，不用另外做日期選擇器彈窗——
+   查詢範圍只需要「哪一個月」，不需要選特定某一天。按鈕維持 44×44pt 觸控熱區（HIG 最小值），
+   圖示本身用視覺置中撐大熱區，不是把整顆按鈕畫成 44px 的黑色色塊 */
+.account-history-month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-4);
+}
+
+.history-month-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.history-month-btn:hover {
+    background-color: rgba(29, 29, 31, 0.06);
+}
+
+.history-month-label {
+    font-family: 'Inter', monospace;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    min-width: 88px;
+    text-align: center;
 }
 
 /* 購買紀錄：只列已完成訂單，避免下單但沒取貨的訂單混進來；flex:1 讓清單（或空狀態）填滿整個面板高度，
@@ -3055,22 +3337,81 @@ a.faq-card {
     height: 44px;
 }
 
+/* 每一筆是一張迷你收據卡：編號＋購買時間當表頭，品項各自一列（名稱＋數量），
+   金額壓底線收尾——資訊量比原本「日期＋一行品項文字」多很多，改用收據式分區塊，
+   不然全部擠成一行會裁切或看不清楚 */
 .account-history-item {
-    padding: 12px 12px;
+    padding: 14px 14px;
     border-radius: 12px;
     background-color: rgba(29, 29, 31, 0.04);
 }
 
-.account-history-date {
-    font-size: 11px;
-    color: var(--ink);
-    margin-bottom: 2px;
+.account-history-item-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink-line);
 }
 
-.account-history-items {
+.account-history-order-no {
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.account-history-datetime {
+    font-size: 11px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.account-history-item-list {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.account-history-item-list li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
     font-size: var(--fs-small);
     color: var(--ink);
-    font-weight: 600;
+}
+
+.account-history-item-list li span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-history-item-list li span:last-child {
+    flex-shrink: 0;
+    color: var(--ink-soft);
+}
+
+.account-history-item-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--ink-line);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
 }
 
 .account-empty-text {
@@ -3093,6 +3434,85 @@ a.faq-card {
     text-align: center;
     color: var(--ink);
     padding: 24px 0;
+}
+
+/* 未登入引導畫面：跟 #cart-body 是互斥的兩個狀態，同一個 .cart-modal-box 底下切換 hidden，
+   不額外開新彈窗、不改變既有 480px 版面尺寸 */
+.cart-login-gate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 32px 24px;
+    position: relative;
+    border: 1px solid var(--ink-line);
+    border-radius: 4px;
+}
+
+/* 跟會員資料 .account-column、聯繫彈窗 .line-service-box 同一套 HUD 取景框角標語言，
+   讓三個彈窗的視覺語彙一致 */
+.cart-login-gate::before,
+.cart-login-gate::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--ink);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+}
+
+.cart-login-gate::before {
+    top: -4px;
+    left: -4px;
+    border-top-width: 3px;
+    border-left-width: 3px;
+}
+
+.cart-login-gate::after {
+    bottom: -4px;
+    right: -4px;
+    border-bottom-width: 3px;
+    border-right-width: 3px;
+}
+
+.cart-login-gate-cat {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: var(--sp-6);
+}
+
+.cart-login-gate-title {
+    font-size: var(--fs-h4);
+    font-weight: bold;
+    color: var(--ink);
+    margin: 0 0 var(--sp-2);
+}
+
+.cart-login-gate-desc {
+    font-size: var(--fs-body);
+    color: var(--ink-soft);
+    max-width: 26ch;
+    margin: 0 0 var(--sp-6);
+}
+
+.cart-login-gate .btn-modal-cta {
+    margin-top: 0;
+    width: 100%;
+}
+
+#cart-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
+   不然未登入時貓咪引導畫面跟「購物車目前是空的」會同時出現（同一種 bug，見上面 .cart-summary[hidden]） */
+#cart-body[hidden] {
+    display: none;
 }
 
 .cart-items-list {
@@ -3157,6 +3577,12 @@ a.faq-card {
     padding: var(--sp-4) 0;
     border-top: 2px solid var(--ink);
     margin-bottom: var(--sp-4);
+}
+
+/* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
+   不然購物車空的時候小計還是會顯示（跟購物車徽章是同一種 bug，見上面 .cart-badge[hidden]） */
+.cart-summary[hidden] {
+    display: none;
 }
 
 #btn-go-checkout:disabled {
@@ -3362,6 +3788,12 @@ a.faq-card {
 
 .tag-item i {
     color: var(--ink);
+}
+
+/* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
+   同一種 bug 這裡也補一次（見上面 .cart-summary[hidden]） */
+.btn-modal-cta[hidden] {
+    display: none;
 }
 
 .btn-modal-cta {
@@ -3669,14 +4101,14 @@ a.faq-card {
         gap: var(--sp-6);
     }
 
-    /* 手機版拆開左欄包裹，讓頭像/立繪/文字各自依 order 排列 */
-    .team-left-col {
-        display: contents;
-    }
-
+    /* 桌機版 .team-avatar-rail 用 justify-content:space-between 把上下箭頭
+       頂到頂/底對齊右欄文字；手機版箭頭是 display:none，只剩頭像清單一個子項，
+       space-between 對單一子項的效果是貼齊主軸起點（左），頭像才會全部擠在最左邊——
+       這裡要蓋掉，改回置中 */
     .team-avatar-rail {
-        flex-direction: row;
         order: 1;
+        flex-direction: row;
+        justify-content: center;
     }
 
     .team-nav-btn {
@@ -3708,9 +4140,6 @@ a.faq-card {
         text-align: center;
     }
 
-    .team-info-tags {
-        justify-content: center;
-    }
 
     /* 手機版內容直向堆疊，高度已經很足夠，不需要靠巨大浮水印數字補視覺份量 */
     .team-info-watermark {
