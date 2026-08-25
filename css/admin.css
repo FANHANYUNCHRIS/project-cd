@@ -21,7 +21,7 @@
 
 .admin-header h1 {
     font-size: var(--fs-h2);
-    color: #1d1d1f;
+    color: var(--ink);
 }
 
 .admin-logout-btn {
@@ -94,6 +94,17 @@
     opacity: 0.4;
 }
 
+/* 待處理且明後天就要取貨的訂單：淡紅底提醒，取貨日期欄位加粗標紅，
+   沿用設計系統核准的錯誤語意色 #B30000 */
+.admin-row-urgent {
+    background-color: rgba(179, 0, 0, 0.06);
+}
+
+.admin-row-urgent td:nth-child(2) {
+    color: #B30000;
+    font-weight: 700;
+}
+
 /* iOS 填色選單按鈕：關掉瀏覽器原生下拉箭頭，換成自訂 chevron，
    底色用 ink 6% 的灰階填色（不是新增色相，只是既有 --ink 的低透明度變體），
    對應 iOS 灰底填色按鈕（Bordered/Tinted Gray Button）樣式 */
@@ -109,7 +120,7 @@
     background-repeat: no-repeat;
     background-position: right 16px center;
     background-size: 16px;
-    color: #1d1d1f;
+    color: var(--ink);
     font-size: var(--fs-small);
     font-weight: 600;
     cursor: pointer;

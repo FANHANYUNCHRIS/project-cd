@@ -70,12 +70,13 @@
     --ink: #16161a;
     --ink-soft: rgba(22, 22, 26, 0.78);
     --ink-line: rgba(22, 22, 26, 0.16);
+    --paper: #ebebec;  /* 深色底/影片背景上的主要文字色，16.6:1，比純白柔和但保持最高辨識度 */
     --paper-soft: rgba(255, 255, 255, 0.7);  /* 深色底上的白字降低強調，7.7:1，一樣符合 AA */
     --glow: rgba(22, 22, 26, 0.28);  /* 卡片 hover 陰影/邊框專用的黑色光暈，不放文字 */
 
     /* ===== 液態玻璃全站規格（2026-08 確認）=====
-       白色只用在頁面背景，黑色只用在文字，藍紫粉三色只准出現在按鈕上，
-       文字內容一律換成透明玻璃底（.liquid-glass-panel），不再用實色卡片背景 */
+       白色只用在頁面背景，黑色只用在文字，藍紫粉三色只准出現在按鈕背景上（見 .liquid-glass-btn），
+       不用於文字/圖示；藍/粉/紫三色目前站上還沒有實際按鈕在用，先保留為已核准的預留色票 */
     --lg-blue: #4f8ef7;
     --lg-pink: #ec5fa8;
     --lg-purple: #9b6bf2;
@@ -85,61 +86,8 @@
    液態玻璃系統：全站共用的核心元件
    ========================================= */
 
-/* 文字內容的底：全透明玻璃，取代原本的實色/邊框卡片。純黑字疊在上面。
-   多層 inset 陰影做出玻璃斜切邊緣的受光/背光面，::before 做一道斜向高光，
-   ::after 做底部一條反光邊——跟液態玻璃提案報告裡驗證過的技巧完全一致 */
-.liquid-glass-panel {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    background: linear-gradient(165deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.22) 65%);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
-        inset 0 -6px 12px -10px rgba(22, 22, 26, 0.18),
-        0 16px 32px -16px rgba(22, 22, 26, 0.28),
-        0 3px 10px rgba(22, 22, 26, 0.08);
-}
-
-.liquid-glass-panel::before {
-    content: '';
-    position: absolute;
-    top: -60%;
-    left: -30%;
-    width: 65%;
-    height: 220%;
-    background: linear-gradient(115deg, transparent 22%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.12) 56%, transparent 70%);
-    transform: rotate(-9deg);
-    pointer-events: none;
-}
-
-.liquid-glass-panel::after {
-    content: '';
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    bottom: 1px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent);
-    pointer-events: none;
-}
-
-.liquid-glass-panel > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* 圖片浮起來的卡片：圓角＋陰影，讓圖片像浮在背景上，不是貼齊版面的方形色塊 */
-.floating-card {
-    border-radius: 20px;
-    box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
-    overflow: hidden;
-}
-
 /* 按鈕：唯一容許上色的地方。垂直漸層上亮下深＋頂部高光帶，模擬玻璃管被打光。
-   跟液態玻璃提案報告裡最終驗證過的版本同一套數值 */
+   文字色用 92% 白（非純白），符合玻璃材質文字對比規則 */
 .liquid-glass-btn {
     display: inline-flex;
     align-items: center;
@@ -147,7 +95,7 @@
     gap: 8px;
     padding: 12px 28px;
     border-radius: 100px;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.92);
     font-weight: 700;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(14px) saturate(160%);
@@ -179,39 +127,6 @@
         inset 0 -8px 16px -9px rgba(0, 0, 0, 0.7),
         0 14px 26px -10px rgba(0, 0, 0, 0.45),
         0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.lg-btn-blue {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
-        linear-gradient(180deg, #bcd6ff 0%, #4f8ef7 48%, #2158c9 100%);
-    box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
-        inset 0 -8px 16px -9px rgba(10, 30, 90, 0.6),
-        0 18px 30px -10px rgba(47, 100, 220, 0.6),
-        0 4px 10px rgba(20, 50, 120, 0.25);
-}
-
-.lg-btn-pink {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
-        linear-gradient(180deg, #ffd0e9 0%, #ec5fa8 48%, #c22a78 100%);
-    box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
-        inset 0 -8px 16px -9px rgba(120, 10, 60, 0.55),
-        0 18px 30px -10px rgba(220, 60, 140, 0.55),
-        0 4px 10px rgba(120, 20, 70, 0.25);
-}
-
-.lg-btn-purple {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 22%),
-        linear-gradient(180deg, #e0d0ff 0%, #9b6bf2 48%, #6a2fd0 100%);
-    box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
-        inset 0 -8px 16px -9px rgba(50, 10, 100, 0.55),
-        0 18px 30px -10px rgba(140, 90, 230, 0.55),
-        0 4px 10px rgba(60, 20, 120, 0.25);
 }
 
 html {
@@ -338,8 +253,7 @@ body {
 /* =========================================
    3. 100% 完全透明懸浮導覽列 (兩端對齊 6%)
    ========================================= */
-.navbar,
-.navbar.scrolled {
+.navbar {
     display: flex;
     justify-content: space-between; 
     align-items: center;            
@@ -363,18 +277,19 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-height: 44px;
     text-decoration: none;
 }
 
-/* 漢堡選單按鈕：只在平板/手機顯示，桌機版沿用文字導覽列 */
+/* 漢堡選單按鈕：只在平板/手機顯示，桌機版沿用文字導覽列。44px＝iOS HIG 最小觸控目標 */
 .hamburger-btn {
     display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 4px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     background: none;
     border: none;
@@ -496,33 +411,6 @@ body {
     display: none !important;
 }
 
-.social-group {
-    display: flex;
-    gap: 0px; /* 對齊收緊間距 */
-    align-items: center; 
-    margin-left: 12px;
-}
-
-.social-group a {
-    font-size: 26px;
-    padding-bottom: 0;
-    transition: transform 0.2s ease;
-}
-
-/* 官方 Icon 原色常態顯示 */
-.social-group a.social-line { color: #00C300; }
-.social-group a.social-fb { color: #1877F2; }
-.social-group a.social-ig {
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.social-group a.social-yt { color: #FF0000; }
-
-.social-group a:hover {
-    transform: translateY(-2px) scale(1.1);
-}
-
 /* 工具區：聯繫／會員／購物車，圖示本身已經各自是獨立的白色圓形浮島，
    不再需要額外的分隔線去區隔 */
 .nav-utility-group {
@@ -609,7 +497,7 @@ body {
     right: -2px;
     background-color: var(--ink);
     color: #ffffff;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     font-weight: bold;
     min-width: 18px;
     height: 18px;
@@ -643,13 +531,6 @@ body {
     scroll-snap-stop: always;
 }
 
-.flex-center-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
 /* =========================================
    5. 首頁 (Hero Banner)
    ========================================= */
@@ -666,7 +547,7 @@ body {
 /* nav-links跟圖示按鈕已經改成不透明白色浮島，不再需要跟著深淺背景換色；
    只剩LOGO文字還是直接貼在影片/內容上面，維持原本的深淺切換 */
 .navbar.on-dark .logo-text {
-    color: #ebebec;
+    color: var(--paper);
 }
 
 /* 選中膠囊的外框顏色跟文字色一起切換，深底用淺色圈、淺底用墨黑圈 */
@@ -676,7 +557,7 @@ body {
 
 /* 手機版漢堡按鈕跟導覽列一樣完全透明，三條線也要依同樣邏輯切換深淺色 */
 .navbar.on-dark .hamburger-line {
-    background-color: #ebebec;
+    background-color: var(--paper);
 }
 
 .navbar.on-dark .nav-icon {
@@ -719,7 +600,7 @@ body {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    color: #ebebec;
+    color: var(--paper);
     text-decoration: none;
     font-size: var(--fs-caption);
     font-family: 'Inter', monospace;
@@ -740,36 +621,6 @@ body {
 /* =========================================
    6. 品牌介紹文字樣式 (現在顯示於品牌團隊切換器的立繪區)
    ========================================= */
-.brand-video-title {
-    color: var(--ink);
-    font-size: var(--fs-h1);
-    font-weight: bold;
-    margin-bottom: var(--sp-3);
-}
-
-.brand-video-subtitle {
-    color: var(--ink);
-    font-size: var(--fs-lead);
-    margin-bottom: var(--sp-8);
-}
-
-.brand-video-text {
-    max-width: 680px;
-    margin: 0 auto;
-    text-align: left;
-}
-
-.brand-video-text p {
-    color: var(--ink);
-    font-size: var(--fs-body);
-    line-height: 1.9;
-    margin-bottom: var(--sp-5);
-}
-
-.brand-video-text p:last-child {
-    margin-bottom: 0;
-}
-
 /* =========================================
    7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
    ========================================= */
@@ -826,16 +677,6 @@ body {
     transition: transform 0.5s ease;
 }
 
-.product-panel-initial {
-    font-family: 'Inter', 'Noto Sans TC', sans-serif;
-    font-size: 200px;
-    font-weight: 900;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.06);
-    pointer-events: none;
-    user-select: none;
-}
-
 .product-panel:hover .product-panel-image {
     transform: scale(1.05);
 }
@@ -850,13 +691,13 @@ body {
 .product-panel-name {
     font-size: var(--fs-h4);
     font-weight: bold;
-    color: #ebebec;
+    color: var(--paper);
     margin-bottom: var(--sp-2);
 }
 
 .product-panel-detail {
     font-size: var(--fs-small);
-    color: #ebebec;
+    color: var(--paper);
     line-height: 1.5;
     margin-bottom: var(--sp-3);
 }
@@ -878,7 +719,7 @@ body {
 
 .product-panel-qty {
     font-size: var(--fs-caption);
-    color: #ebebec;
+    color: var(--paper);
 }
 
 /* =========================================
@@ -983,21 +824,6 @@ body {
     justify-content: center;
 }
 
-/* 中間文字區塊內容偏少，用巨大的淡字級數字補滿視覺份量，讓左欄視覺高度接近右邊滿版立繪 */
-.team-info-watermark {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    font-family: 'Inter', monospace;
-    font-size: 280px;
-    font-weight: 900;
-    line-height: 1;
-    color: rgba(29, 29, 31, 0.04);
-    pointer-events: none;
-    user-select: none;
-}
-
 .team-section-label {
     color: var(--ink);
     font-size: var(--fs-small);
@@ -1022,10 +848,7 @@ body {
     margin-bottom: var(--sp-4);
 }
 
-/* 角色資料改成 2x2 的 HUD 面板網格，不是清單列——沿用會員彈窗「會員權益」欄
-   同一套取景框角標 + 發光數值語言（見 .account-column::before/after、.account-hud-num
-   跟 accountHudPulse），這才是設計系統文件裡真正記錄的「電玩／動漫」視覺語彙，
-   平舖的底線清單列太像設定頁，沒有那個味道 */
+/* 角色資料改成 2x2 的卡片網格，不是清單列，跟 iOS 設定頁的分組列表同一套語言 */
 .team-stat-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1034,86 +857,44 @@ body {
 }
 
 .team-stat-row {
-    position: relative;
     padding: 14px 16px;
     border: 1px solid var(--ink-line);
-    border-radius: 4px;
-}
-
-.team-stat-row::before,
-.team-stat-row::after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-color: var(--ink);
-    border-style: solid;
-    border-width: 0;
-    pointer-events: none;
-}
-
-.team-stat-row::before {
-    top: -3px;
-    left: -3px;
-    border-top-width: 2px;
-    border-left-width: 2px;
-}
-
-.team-stat-row::after {
-    bottom: -3px;
-    right: -3px;
-    border-bottom-width: 2px;
-    border-right-width: 2px;
+    border-radius: 16px;
 }
 
 .team-stat-label {
     display: block;
-    font-family: 'Inter', monospace;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--ink-soft);
     white-space: nowrap;
-    margin-bottom: 6px;
-}
-
-.team-stat-label::before {
-    content: '// ';
-    color: var(--ink-soft);
+    margin-bottom: var(--sp-2);
 }
 
 .team-stat-value {
     display: block;
-    font-family: 'Inter', 'Noto Sans TC', sans-serif;
     font-size: var(--fs-body);
-    font-weight: 900;
+    font-weight: 700;
     color: var(--ink);
     line-height: 1.3;
-    animation: accountHudPulse 2.6s ease-in-out infinite;
 }
 
-/* 角色檔案面板：把大段人物介紹文字從「一整塊散文」改成「終端機讀取的檔案」——
-   邊框 + 貼在頂邊的標籤頁籤，是遊戲裡角色檔案／情報卡最典型的呈現方式，
-   標籤頁籤故意疊在邊框線上（margin-top 負值），才會有「貼上去」的實體感 */
+/* 角色檔案面板：跟 iOS 設定頁分組卡片一致的簡單邊框卡片，標籤放在卡片上方而不是疊在邊框上 */
 .team-file-panel {
-    position: relative;
     border: 1px solid var(--ink-line);
-    border-radius: 4px;
-    padding: var(--sp-5) var(--sp-4) var(--sp-4);
+    border-radius: 16px;
+    padding: var(--sp-4);
     margin-top: var(--sp-4);
 }
 
 .team-file-tab {
-    position: absolute;
-    top: -11px;
-    left: 16px;
-    background-color: #EBEBEC;
-    padding: 0 8px;
-    font-family: 'Inter', monospace;
-    font-size: 11px;
+    display: block;
+    font-size: var(--fs-caption);
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--ink-soft);
+    margin-bottom: var(--sp-2);
 }
 
 .team-info-quote {
@@ -1132,14 +913,10 @@ body {
     line-height: 1.8;
 }
 
-/* 人物立繪：深底 + 巨大姓氏字首，跟右欄「淺底+淡數字」形成一深一淺的節奏；
-   用 contain + bottom 而不是 cover，去背立繪才會完整站在畫面裡，不會被裁切。
+/* 人物立繪：用 contain + bottom 而不是 cover，去背立繪才會完整站在畫面裡，不會被裁切。
    拿掉了原本強制灰階的 filter——設計系統文件「00 設計方向與目標」P03 本來就寫明
    「未來加入動漫風格人物插畫時，會是全站唯一保留的『色彩時刻』」，現在放的正是這種插畫，
    不是需要壓成黑白配合全站規則的真人照片，維持原色是文件已經預告過的例外，不是新的偏離 */
-/* 立繪加取景框角標——跟右邊四張 HUD 資料卡、原本會員彈窗的 .account-column
-   是同一套語言，角標尺寸放大到 32px/4px 因為立繪是整個版面最大的元素，
-   跟小卡片用同一個尺寸會顯得角標太小、鎮不住這麼大的畫面 */
 .team-portrait {
     flex: 1;
     align-self: stretch;
@@ -1151,62 +928,10 @@ body {
     background-position: center bottom;
     background-repeat: no-repeat;
     border: 1px solid var(--ink-line);
+    border-radius: 24px;
     overflow: hidden;
     position: relative;
     transition: opacity 0.4s ease;
-}
-
-.team-portrait::before,
-.team-portrait::after {
-    content: '';
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    border-color: var(--ink);
-    border-style: solid;
-    border-width: 0;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.team-portrait::before {
-    top: -1px;
-    left: -1px;
-    border-top-width: 4px;
-    border-left-width: 4px;
-}
-
-.team-portrait::after {
-    bottom: -1px;
-    right: -1px;
-    border-bottom-width: 4px;
-    border-right-width: 4px;
-}
-
-/* HUD 標籤：仿遊戲角色選擇畫面的編號牌，貼在立繪左上角取景框內側 */
-.team-portrait-tag {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 2;
-    font-family: 'Inter', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #ffffff;
-    background-color: var(--ink);
-    padding: 5px 12px;
-    pointer-events: none;
-}
-
-.team-portrait-initial {
-    font-family: 'Inter', 'Noto Sans TC', sans-serif;
-    font-size: 480px;
-    font-weight: 900;
-    line-height: 1;
-    color: rgba(29, 29, 31, 0.05);
-    pointer-events: none;
-    user-select: none;
 }
 
 .team-portrait-text {
@@ -1281,42 +1006,14 @@ body {
     margin-bottom: var(--sp-6);
 }
 
-/* 改回黑白取景框角標卡片（跟會員彈窗的 .account-column 同一套語言），
-   拿掉原本沒有記錄在設計系統文件裡的淡綠底／淡綠邊框——LINE 綠只保留在
+/* 黑白邊框卡片，拿掉原本沒有記錄在設計系統文件裡的淡綠底／淡綠邊框——LINE 綠只保留在
    文件核准的兩個地方：狀態文字（#006600）跟按鈕底色（#00C300，見下方 .btn-line-cta） */
 .line-service-box {
-    position: relative;
     color: var(--ink);
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 16px;
     margin-bottom: 24px;
     border: 1px solid var(--ink-line);
-}
-
-.line-service-box::before,
-.line-service-box::after {
-    content: '';
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    border-color: var(--ink);
-    border-style: solid;
-    border-width: 0;
-    pointer-events: none;
-}
-
-.line-service-box::before {
-    top: -4px;
-    left: -4px;
-    border-top-width: 3px;
-    border-left-width: 3px;
-}
-
-.line-service-box::after {
-    bottom: -4px;
-    right: -4px;
-    border-bottom-width: 3px;
-    border-right-width: 3px;
 }
 
 .line-status-bar {
@@ -1331,7 +1028,7 @@ body {
 .line-status-dot {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--sp-1);
     font-size: var(--fs-caption);
     font-family: 'Inter', monospace;
     font-weight: bold;
@@ -1446,7 +1143,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: var(--fs-small);
     transition: all 0.2s ease;
 }
 
@@ -1557,7 +1254,7 @@ body {
     border: none;
     border-radius: 50%;
     color: var(--ink-soft);
-    font-size: 15px;
+    font-size: var(--fs-small);
     cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
@@ -1683,7 +1380,7 @@ body {
     background: none;
     border: none;
     color: var(--ink);
-    font-size: 13px;
+    font-size: var(--fs-small);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -1713,7 +1410,7 @@ body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     color: var(--ink-soft);
     margin-bottom: 4px;
 }
@@ -1739,7 +1436,7 @@ body {
     background: none;
     border: none;
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--fs-small);
     color: var(--ink);
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -1757,7 +1454,7 @@ body {
 }
 
 .date-picker-day.outside {
-    color: rgba(29, 29, 31, 0.28);
+    color: rgba(22, 22, 26, 0.28);
 }
 
 .date-picker-day.today {
@@ -1783,7 +1480,7 @@ body {
     background: none;
     border: none;
     font-family: inherit;
-    font-size: 12.5px;
+    font-size: var(--fs-caption);
     color: var(--ink-soft);
     text-decoration: underline;
     cursor: pointer;
@@ -1864,8 +1561,7 @@ body {
     margin-bottom: var(--sp-8);
 }
 
-/* 八大重點卡片網格，參考教育網站「八大課程」編號卡片排版：
-   4 欄 x 2 排，白卡＋右上角浮水印編號＋金色圖示，取代原本的手風琴問答清單 */
+/* 八大重點卡片網格：4 欄 x 2 排，白卡＋圖示，取代原本的手風琴問答清單 */
 .faq-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1897,26 +1593,9 @@ a.faq-card {
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
 }
 
-.faq-card-number {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    font-family: 'League Spartan', sans-serif;
-    font-size: 42px;
-    font-weight: bold;
-    color: var(--ink);
-    opacity: 0.15;
-    line-height: 1;
-    transition: opacity 0.3s ease;
-}
-
-.faq-card:hover .faq-card-number {
-    opacity: 0.45;
-}
-
 .faq-card-icon {
     color: var(--ink);
-    font-size: 26px;
+    font-size: var(--fs-h3);
     margin-bottom: var(--sp-3);
 }
 
@@ -1990,7 +1669,7 @@ a.faq-card {
     gap: 16px;
     padding: 48px 24px;
     text-decoration: none;
-    color: var(--glow);
+    color: var(--brand);
     background: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -2014,14 +1693,14 @@ a.faq-card {
     opacity: 1;
     filter: none;
     transform: scale(1.08);
-    border-color: var(--glow);
+    border-color: var(--brand);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     z-index: 2;
 }
 
 .shop-link-icon {
-    font-size: 30px;
-    color: var(--glow);
+    font-size: var(--fs-h2);
+    color: var(--brand);
     opacity: 0.9;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -2043,7 +1722,7 @@ a.faq-card {
     gap: 4px;
     font-size: var(--fs-caption);
     letter-spacing: 1px;
-    color: var(--glow);
+    color: var(--brand);
     opacity: 0;
     transform: translateY(6px);
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -2060,7 +1739,7 @@ a.faq-card {
 .footer {
     flex-shrink: 0;
     background-color: var(--ink);
-    color: #ebebec;
+    color: var(--paper);
     padding: 48px 5% 24px;
     border-top: 1px solid #333;
 }
@@ -2110,7 +1789,7 @@ a.faq-card {
 }
 
 .footer-links a {
-    color: #ebebec;
+    color: var(--paper);
     text-decoration: none;
     font-size: var(--fs-small);
     transition: color 0.2s ease-in-out;
@@ -2126,7 +1805,7 @@ a.faq-card {
 }
 
 .footer-social a {
-    color: #ebebec;
+    color: var(--paper);
     font-size: 24px;
     transition: transform 0.2s ease-in-out;
 }
@@ -2148,7 +1827,7 @@ a.faq-card {
     text-align: center;
     padding-top: var(--sp-6);
     font-size: var(--fs-caption);
-    color: #ebebec;
+    color: var(--paper);
 }
 
 /* =========================================
@@ -2378,7 +2057,7 @@ a.faq-card {
     align-items: center;
     gap: 12px;
     color: #ffffff;
-    font-size: 13px;
+    font-size: var(--fs-small);
 }
 
 .mobile-sound-row input[type="range"] {
@@ -2451,7 +2130,7 @@ a.faq-card {
     justify-content: center;
     background: transparent;
     border: none;
-    font-size: 28px;
+    font-size: var(--fs-h3);
     color: var(--ink-soft);
     cursor: pointer;
     z-index: 10;
@@ -2517,7 +2196,7 @@ a.faq-card {
 
 .auth-modal-logo-text {
     font-family: 'League Spartan', sans-serif;
-    font-size: 22px;
+    font-size: var(--fs-h3);
     font-weight: bold;
     color: var(--ink);
 }
@@ -2543,7 +2222,7 @@ a.faq-card {
     font-weight: bold;
     letter-spacing: 0.5px;
     color: var(--ink-soft);
-    padding: 8px 2px;
+    padding: var(--sp-2) var(--sp-1);
     cursor: pointer;
     transition: background-color 0.3s cubic-bezier(0.34, 1.2, 0.64, 1), color 0.2s ease, box-shadow 0.3s ease;
 }
@@ -2664,7 +2343,7 @@ a.faq-card {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     color: transparent;
     transition: all 0.2s ease;
 }
@@ -2881,9 +2560,8 @@ a.faq-card {
 /* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
    左欄欄位最多（頭像到會員 ID 共 8 項），比例吃重；中欄只有三個數據，比例最窄；
    右欄購買紀錄長度不定，取中間值。
-   每欄都用取景框角標包成獨立的資訊面板——這是整套設計系統的招牌語言（跟品牌介紹區塊、消費點數卡同一套），
-   欄位本身有邊框跟角標之後，就算內容量不同（例如購買紀錄是空的），版面看起來還是「三個對等的面板」，
-   不會因為內容多寡就顯得失衡 */
+   每欄都用簡單邊框卡片包成獨立的資訊面板，就算內容量不同（例如購買紀錄是空的），
+   版面看起來還是「三個對等的面板」，不會因為內容多寡就顯得失衡 */
 .account-columns {
     display: grid;
     grid-template-columns: 1.15fr 0.8fr 1.05fr;
@@ -2896,38 +2574,8 @@ a.faq-card {
     display: flex;
     flex-direction: column;
     padding: 24px 24px;
-    border-radius: 4px;
-    position: relative;
+    border-radius: 20px;
     border: 1px solid var(--ink-line);
-}
-
-/* 取景框角標：把註解裡講過但一直沒真的做出來的 HUD 面板語言補上，
-   跟設計系統文件「05 元件模式」的 HUD 數據卡同一套手法——實色描邊 + 兩個對角的粗角標，
-   圓角故意收窄成 4px（原本 20px），角標是直角，跟大圓角放在一起會顯得漂浮、對不齊 */
-.account-column::before,
-.account-column::after {
-    content: '';
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    border-color: var(--ink);
-    border-style: solid;
-    border-width: 0;
-    pointer-events: none;
-}
-
-.account-column::before {
-    top: -4px;
-    left: -4px;
-    border-top-width: 3px;
-    border-left-width: 3px;
-}
-
-.account-column::after {
-    bottom: -4px;
-    right: -4px;
-    border-bottom-width: 3px;
-    border-right-width: 3px;
 }
 
 .account-column-title {
@@ -2959,13 +2607,6 @@ a.faq-card {
     width: 100%;
 }
 
-.account-profile-name {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--ink);
-    margin: 0;
-}
-
 .account-avatar {
     position: relative;
     width: 92px;
@@ -2977,16 +2618,9 @@ a.faq-card {
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-    border: none;
-    cursor: pointer;
     box-shadow:
         8px 8px 16px rgba(29, 29, 31, 0.22),
         -6px -6px 14px rgba(255, 255, 255, 0.7);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.account-avatar:hover {
-    transform: scale(1.06);
 }
 
 .account-avatar svg {
@@ -2994,159 +2628,10 @@ a.faq-card {
     height: 48px;
 }
 
-/* 內建大頭貼選單（12生肖）：點頭像展開，不用上傳，不佔用 Storage 額度 */
-.avatar-picker {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    width: 100%;
-    margin-bottom: 8px;
-}
-
-.avatar-picker[hidden] {
-    display: none;
-}
-
-.avatar-option {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 12px;
-    background-color: rgba(29, 29, 31, 0.06);
-    color: var(--ink);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.25s ease, transform 0.25s ease;
-}
-
-.avatar-option svg {
-    width: 22px;
-    height: 22px;
-}
-
-.avatar-option:hover {
-    background-color: rgba(29, 29, 31, 0.12);
-}
-
-.avatar-option.active {
-    background-color: var(--ink);
-    color: #ffffff;
-}
-
-/* 封號選單：原生 select 的下拉清單無法用 CSS 重新設計（瀏覽器原生渲染，改不了），
-   所以底下真正拿來存值的 <select> 藏起來只當資料來源，畫面上是一顆完全自訂的 HUD 下拉選單，
-   點開時即時讀取 <select> 目前的 optgroup/option（含動態加入的成就封號）產生選單內容 */
-.title-dropdown {
-    position: relative;
-}
-
-.title-dropdown-trigger {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--ink);
-    color: #ffffff;
-    border: none;
-    border-radius: 100px;
-    padding: 8px 16px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.title-dropdown-trigger:hover {
-    transform: scale(1.04);
-}
-
-.title-dropdown-trigger i {
-    font-size: 9px;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.title-dropdown.open .title-dropdown-trigger i {
-    transform: rotate(180deg);
-}
-
-.title-dropdown-panel {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    z-index: 20;
-    width: 220px;
-    max-height: 320px;
-    overflow-y: auto;
-    background-color: var(--ink);
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-    animation: titleDropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    /* 可以滑動但不要看到捲軸本身，畫面更乾淨 */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.title-dropdown-panel::-webkit-scrollbar {
-    display: none;
-}
-
-.title-dropdown-panel[hidden] {
-    display: none;
-}
-
-@keyframes titleDropdownIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.title-dropdown-group-label {
-    font-family: 'Inter', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    padding: 8px 12px 4px;
-}
-
-.title-dropdown-group-label::before {
-    content: '// ';
-}
-
-.title-dropdown-option {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: #ffffff;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-}
-
-.title-dropdown-option:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.title-dropdown-option.selected {
-    background-color: #ffffff;
-    color: var(--ink);
-}
-
 /* 仿 iOS 設定頁的清單列：標籤在左、值在右、列與列之間用極淡的分隔線 */
-/* 改成卡片式清單（跟旁邊欄位的取景框角標卡是同一套語言），單欄直向堆疊——
-   原本試過兩欄網格塞信箱/電話/生日/加入日期，但信箱這類較長的值會被裁切成
-   「projectcd.bakery...」，改回單欄後每一列有全寬可用，除非值本身長度誇張，
-   否則不會再被裁切 */
+/* 改成卡片式清單，單欄直向堆疊——原本試過兩欄網格塞信箱/電話/生日/加入日期，
+   但信箱這類較長的值會被裁切成「projectcd.bakery...」，改回單欄後每一列有全寬可用，
+   除非值本身長度誇張，否則不會再被裁切 */
 .account-info-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -3158,11 +2643,8 @@ a.faq-card {
     margin-bottom: 0;
 }
 
-/* 中欄「會員權益」圖像化：借用設計系統文件「05 元件模式」的 HUD 數據卡語言——
-   碩大等寬數字 + 發光脈動 + // 開頭的等寬標籤，用字級與動態取代圖示/色彩，
-   符合「黑白灰科技感靠視覺／聽覺／觸覺／互動四感堆疊，不靠色彩取巧」的原則（設計系統 P03）。
-   文件裡的示範是數字在左、文字在右的橫向排列，但這欄只有 ~0.8fr 寬，橫向會太擠，
-   改成數字在上、標籤在下的直向堆疊 */
+/* 中欄「會員權益」圖像化：碩大數字＋簡單標籤，用字級取代圖示/色彩傳達重點。
+   數字在左、文字在右的橫向排列在這欄（~0.8fr 寬）會太擠，改成數字在上、標籤在下的直向堆疊 */
 /* flex:1 + align-content:center：中欄只有 3 張卡片，內容量比左欄（8 個欄位）少很多，
    三欄用同一個 grid row 撐開高度後，中欄卡片原本全部貼頂，下面留一大塊空白。
    讓清單吃滿欄位剩餘高度、卡片群組整體置中，跟右欄「購買紀錄」空狀態置中是同一個處理邏輯 */
@@ -3175,7 +2657,7 @@ a.faq-card {
 }
 
 .account-hud-card {
-    padding: 22px 16px 16px;
+    padding: var(--sp-5) var(--sp-4) var(--sp-4);
     border-radius: 14px;
     text-align: center;
     box-shadow:
@@ -3187,44 +2669,31 @@ a.faq-card {
     width: 30px;
     height: 30px;
     color: var(--ink-soft);
-    margin-bottom: 10px;
+    margin-bottom: var(--sp-2);
 }
 
 .account-hud-num {
     display: block;
-    font-family: 'Inter', monospace;
     font-variant-numeric: tabular-nums;
     font-size: 32px;
-    font-weight: 900;
+    font-weight: 700;
     color: var(--ink);
     line-height: 1.15;
-    padding-bottom: 10px;
+    padding-bottom: var(--sp-2);
     margin-bottom: 8px;
     border-bottom: 1px solid var(--ink-line);
-    animation: accountHudPulse 2.6s ease-in-out infinite;
 }
 
 .account-hud-label {
     display: block;
-    font-family: 'Inter', monospace;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     color: var(--ink);
 }
 
-.account-hud-label::before {
-    content: '// ';
-    color: var(--ink-soft);
-}
-
-@keyframes accountHudPulse {
-    0%, 100% { text-shadow: 0 0 12px rgba(29, 29, 31, 0.1); }
-    50% { text-shadow: 0 0 22px rgba(29, 29, 31, 0.3); }
-}
-
 /* 軟膠浮凸卡片：亮面陰影在左上、暗面陰影在右下，同一個底色就能做出「從背景浮出來」的層次，
-   不再靠邊框或取景框角標分辨卡片邊界 */
+   不靠邊框分辨卡片邊界 */
 /* label 靠左、value 靠右，讓卡片寬度被撐大時內容跟著鋪開，不會在寬螢幕上留一大片空白 */
 .account-info-row {
     position: relative;
@@ -3247,12 +2716,6 @@ a.faq-card {
     font-weight: 600;
     letter-spacing: 0.5px;
     white-space: nowrap;
-}
-
-.account-info-label::before {
-    content: '// ';
-    font-family: 'Inter', monospace;
-    color: var(--ink);
 }
 
 .account-info-value {
@@ -3289,7 +2752,7 @@ a.faq-card {
     border: none;
     background: transparent;
     color: var(--ink);
-    font-size: 13px;
+    font-size: var(--fs-small);
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -3341,7 +2804,7 @@ a.faq-card {
    金額壓底線收尾——資訊量比原本「日期＋一行品項文字」多很多，改用收據式分區塊，
    不然全部擠成一行會裁切或看不清楚 */
 .account-history-item {
-    padding: 14px 14px;
+    padding: var(--sp-4);
     border-radius: 12px;
     background-color: rgba(29, 29, 31, 0.04);
 }
@@ -3358,7 +2821,7 @@ a.faq-card {
 
 .account-history-order-no {
     font-family: 'Inter', monospace;
-    font-size: 11px;
+    font-size: var(--fs-caption);
     font-weight: 700;
     color: var(--ink);
     white-space: nowrap;
@@ -3367,7 +2830,7 @@ a.faq-card {
 }
 
 .account-history-datetime {
-    font-size: 11px;
+    font-size: var(--fs-caption);
     color: var(--ink-soft);
     white-space: nowrap;
     flex-shrink: 0;
@@ -3444,37 +2907,8 @@ a.faq-card {
     align-items: center;
     text-align: center;
     padding: 32px 24px;
-    position: relative;
     border: 1px solid var(--ink-line);
-    border-radius: 4px;
-}
-
-/* 跟會員資料 .account-column、聯繫彈窗 .line-service-box 同一套 HUD 取景框角標語言，
-   讓三個彈窗的視覺語彙一致 */
-.cart-login-gate::before,
-.cart-login-gate::after {
-    content: '';
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    border-color: var(--ink);
-    border-style: solid;
-    border-width: 0;
-    pointer-events: none;
-}
-
-.cart-login-gate::before {
-    top: -4px;
-    left: -4px;
-    border-top-width: 3px;
-    border-left-width: 3px;
-}
-
-.cart-login-gate::after {
-    bottom: -4px;
-    right: -4px;
-    border-bottom-width: 3px;
-    border-right-width: 3px;
+    border-radius: 20px;
 }
 
 .cart-login-gate-cat {
@@ -3897,8 +3331,7 @@ a.faq-card {
     /* 導覽列改回頂部固定條：左側漢堡、中間 LOGO、右側會員/聯繫/購物車
        兩側欄位刻意用 auto（不是 1fr），因為漢堡按鈕跟三個工具圖示寬度差很多，
        用 1fr 硬性等寬會讓比較寬的那一側（三個圖示）被壓縮，導致購物車圖示被推到螢幕外 */
-    .navbar,
-    .navbar.scrolled {
+    .navbar {
         display: grid;
         /* 左右兩欄故意用同一個固定寬度（不是 auto），這樣中間的 LOGO 欄位
            兩邊留白才會真正對稱，LOGO 才會是畫面上視覺置中，而不是只在欄位裡置中；
@@ -3971,7 +3404,7 @@ a.faq-card {
     /* 抽屜選單維持文字（不要圖示） */
     .nav-text {
         display: inline-block !important;
-        font-size: 17px;
+        font-size: var(--fs-lead);
         font-weight: bold;
     }
 
@@ -3983,7 +3416,7 @@ a.faq-card {
         display: block;
         width: 100%;
         padding: 16px 16px;
-        color: #ebebec;
+        color: var(--paper);
         background-color: transparent !important;
         box-shadow: none !important;
     }
@@ -3996,7 +3429,7 @@ a.faq-card {
     }
 
     .nav-links a.active .nav-text {
-        color: #ebebec;
+        color: var(--paper);
     }
 
     .nav-links a.tapped {
@@ -4039,7 +3472,7 @@ a.faq-card {
     }
 
     .mobile-sound-label {
-        font-size: 13px;
+        font-size: var(--fs-small);
         font-weight: bold;
     }
 
@@ -4141,11 +3574,6 @@ a.faq-card {
     }
 
 
-    /* 手機版內容直向堆疊，高度已經很足夠，不需要靠巨大浮水印數字補視覺份量 */
-    .team-info-watermark {
-        display: none;
-    }
-
     .team-info-quote {
         border-left: none;
         border-top: 3px solid var(--ink);
@@ -4161,10 +3589,6 @@ a.faq-card {
     .faq-card {
         min-height: 170px;
         padding: 24px 16px;
-    }
-
-    .faq-card-number {
-        font-size: 32px;
     }
 
     .contact-glass-card {
@@ -4259,8 +3683,6 @@ a.faq-card {
 .scroll-down-indicator:active,
 .faq-card:active,
 .shop-glass-card:active,
-.account-avatar:active,
-.avatar-option:active,
 .product-panel:active {
     transform: scale(0.96);
     transition-duration: 0.08s !important;

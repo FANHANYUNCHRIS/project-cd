@@ -49,14 +49,131 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(authModal);
     }
 
-    /* --- 會員資料彈窗：登入後點擊皇冠圖示顯示。
-       面板內容已清空、等待重新設計，這裡先只保留開關功能，避免登出/大頭貼/封號/購買紀錄
-       等舊邏輯去操作已經不存在的 DOM 節點而噴錯 --- */
+    /* --- 會員資料彈窗：登入後點擊皇冠圖示顯示，開啟時即時從 Firestore 抓資料填入。
+       大頭貼切換／封號／會員等級／優惠券在資料庫裡沒有對應欄位（從沒建過後端），
+       畫面上已經拿掉，只接了真的有資料的欄位：姓名/信箱/電話/生日/加入日期/購物點數/購買紀錄/登出 --- */
     const accountModal = document.getElementById('account-modal');
     const accountModalClose = document.getElementById('account-modal-close');
+    const accountInfoName = document.getElementById('account-info-name');
+    const accountInfoEmail = document.getElementById('account-info-email');
+    const accountInfoPhone = document.getElementById('account-info-phone');
+    const accountInfoBirthday = document.getElementById('account-info-birthday');
+    const accountInfoCreated = document.getElementById('account-info-created');
+    const accountInfoMemberno = document.getElementById('account-info-memberno');
+    const accountInfoPoints = document.getElementById('account-info-points');
+    const btnAccountLogout = document.getElementById('btn-account-logout');
+    const historyMonthPrev = document.getElementById('history-month-prev');
+    const historyMonthNext = document.getElementById('history-month-next');
+    const historyMonthLabel = document.getElementById('history-month-label');
+    const accountHistoryList = document.getElementById('account-history-list');
+    const accountHistoryEmpty = document.getElementById('account-history-empty');
+
+    let completedOrders = [];
+    let historyViewDate = new Date();
+
+    // dateLike 可能是 <input type="date"> 存的 'YYYY-MM-DD' 字串，也可能是 Firestore Timestamp
+    function formatDateSlash(dateLike) {
+        if (!dateLike) return '—';
+        let d;
+        if (typeof dateLike === 'string') {
+            d = new Date(`${dateLike}T00:00:00`);
+        } else if (typeof dateLike.toDate === 'function') {
+            d = dateLike.toDate();
+        } else {
+            return '—';
+        }
+        if (isNaN(d.getTime())) return '—';
+        return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function renderAccountProfile(uid) {
+        db.collection('users').doc(uid).get().then(doc => {
+            const data = doc.exists ? doc.data() : {};
+            accountInfoName.textContent = data.displayName || '—';
+            accountInfoEmail.textContent = data.email || (currentUser && currentUser.email) || '—';
+            accountInfoPhone.textContent = data.phone || '—';
+            accountInfoBirthday.textContent = formatDateSlash(data.birthday);
+            accountInfoCreated.textContent = formatDateSlash(data.createdAt);
+            // 資料庫沒有獨立的會員編號欄位，用帳號 uid 前 8 碼推導出穩定、唯一的顯示 ID
+            accountInfoMemberno.textContent = 'CD' + uid.slice(0, 8).toUpperCase();
+            accountInfoPoints.textContent = (data.points || 0).toLocaleString();
+        });
+    }
+
+    // 購買紀錄只列已完成訂單（status: 'completed'，見 admin.js 的訂單狀態切換）
+    function renderHistoryMonth() {
+        const y = historyViewDate.getFullYear();
+        const m = historyViewDate.getMonth();
+        historyMonthLabel.textContent = `${y}年${String(m + 1).padStart(2, '0')}月`;
+
+        accountHistoryList.querySelectorAll('.account-history-item').forEach(el => el.remove());
+
+        const monthOrders = completedOrders.filter(o => {
+            const d = o.createdAt && typeof o.createdAt.toDate === 'function' ? o.createdAt.toDate() : null;
+            return d && d.getFullYear() === y && d.getMonth() === m;
+        });
+
+        if (monthOrders.length === 0) {
+            accountHistoryEmpty.hidden = false;
+            return;
+        }
+        accountHistoryEmpty.hidden = true;
+
+        monthOrders.forEach(order => {
+            const d = order.createdAt.toDate();
+            const datetime = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            const itemsHtml = (order.items || []).map(it =>
+                `<li><span>${it.name} x${it.qty}</span><span>NT$${it.price * it.qty}</span></li>`
+            ).join('');
+
+            const div = document.createElement('div');
+            div.className = 'account-history-item';
+            div.innerHTML = `
+                <div class="account-history-item-head">
+                    <span class="account-history-order-no">#${order.id.slice(0, 8).toUpperCase()}</span>
+                    <span class="account-history-datetime">${datetime}</span>
+                </div>
+                <ul class="account-history-item-list">${itemsHtml}</ul>
+                <div class="account-history-item-total">
+                    <span>小計</span>
+                    <span>NT$${order.subtotal}</span>
+                </div>
+            `;
+            accountHistoryList.insertBefore(div, accountHistoryEmpty);
+        });
+    }
+
+    function loadAccountHistory(uid) {
+        // 只用單一 where 相等條件查詢（不加 orderBy），避免需要額外建立 Firestore 複合索引；
+        // 排序、狀態篩選、月份分組全部改在前端做
+        db.collection('orders').where('uid', '==', uid).get().then(snapshot => {
+            completedOrders = snapshot.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(o => o.status === 'completed')
+                .sort((a, b) => {
+                    const at = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+                    const bt = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+                    return bt - at;
+                });
+            historyViewDate = new Date();
+            renderHistoryMonth();
+        });
+    }
+
+    historyMonthPrev.addEventListener('click', () => {
+        historyViewDate = new Date(historyViewDate.getFullYear(), historyViewDate.getMonth() - 1, 1);
+        renderHistoryMonth();
+    });
+
+    historyMonthNext.addEventListener('click', () => {
+        historyViewDate = new Date(historyViewDate.getFullYear(), historyViewDate.getMonth() + 1, 1);
+        renderHistoryMonth();
+    });
 
     function openAccountModal() {
         if (!currentUser) return;
+        renderAccountProfile(currentUser.uid);
+        loadAccountHistory(currentUser.uid);
         openModal(accountModal);
     }
 
@@ -69,6 +186,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     accountModalClose.addEventListener('click', () => closeModal(accountModal));
+
+    btnAccountLogout.addEventListener('click', () => {
+        auth.signOut().then(() => closeModal(accountModal));
+    });
 
     authModalClose.addEventListener('click', () => closeModal(authModal));
 

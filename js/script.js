@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* =========================================
-       2. 滾動收縮式導覽列 (Scroll-Shrink Sticky Navbar)
+       2. 捲動連動導覽列行為 (Scroll-Driven Navbar Behavior)
        ========================================= */
     const navbar = document.getElementById('main-navbar');
 
@@ -79,12 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', () => {
         const currentScrollY = window.scrollY;
-
-        if (currentScrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
 
         // 手機選單開著的時候不要收起導覽列，不然漢堡按鈕跟著消失會關不掉選單
         const mobileDrawer = document.getElementById('nav-links');
@@ -200,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const listEl = document.getElementById('team-avatar-list');
         const indexEl = document.getElementById('team-info-index');
-        const watermarkEl = document.getElementById('team-info-watermark');
         const nameEl = document.getElementById('team-info-name');
         const jobEl = document.getElementById('team-info-job');
         const battleRoleEl = document.getElementById('team-info-battle');
@@ -209,9 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const quoteEl = document.getElementById('team-info-quote');
         const bioEl = document.getElementById('team-info-bio');
         const portraitEl = document.getElementById('team-portrait');
-        const portraitTagEl = document.getElementById('team-portrait-tag');
         const portraitTextEl = document.getElementById('team-portrait-text');
-        const portraitInitialEl = document.getElementById('team-portrait-initial');
         const btnUp = document.getElementById('team-nav-up');
         const btnDown = document.getElementById('team-nav-down');
 
@@ -238,20 +229,17 @@ document.addEventListener('DOMContentLoaded', () => {
             avatarButtons.forEach((btn, i) => btn.classList.toggle('active', i === activeIndex));
 
             indexEl.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(teamData.length).padStart(2, '0')}`;
-            watermarkEl.textContent = String(activeIndex + 1).padStart(2, '0');
-            nameEl.textContent = `[ ${member.name} ]`;
+            nameEl.textContent = member.name;
             jobEl.textContent = member.job;
             battleRoleEl.textContent = member.battleRole;
             weaponEl.textContent = member.weapon;
             styleEl.textContent = member.style;
             quoteEl.textContent = member.quote;
             bioEl.textContent = member.bio;
-            portraitTagEl.textContent = `NO.${String(activeIndex + 1).padStart(2, '0')}`;
             portraitEl.style.opacity = '0';
 
             setTimeout(() => {
                 portraitTextEl.innerHTML = '';
-                portraitInitialEl.textContent = member.name.charAt(0);
                 portraitEl.style.backgroundImage = `url('${member.portrait}')`;
                 portraitEl.setAttribute('aria-label', `${member.name} 立繪`);
                 portraitEl.style.opacity = '1';
@@ -282,9 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.setAttribute('aria-label', `查看${product.name}詳細介紹`);
 
             panel.innerHTML = `
-                <div class="product-panel-image" data-bg="${product.images[0]}">
-                    <span class="product-panel-initial" aria-hidden="true">${product.name.charAt(0)}</span>
-                </div>
+                <div class="product-panel-image" data-bg="${product.images[0]}"></div>
                 <div class="product-panel-body">
                     <h3 class="product-panel-name">${product.name}</h3>
                     <p class="product-panel-detail">${product.shortDesc}</p>
@@ -318,34 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         panelsEl.querySelectorAll('.product-panel-image').forEach(el => lazyBgObserver.observe(el));
     })();
-
-    /* =========================================
-       6. 首頁副標文字寬度自動對齊品牌名稱
-       ========================================= */
-    function matchHeroTaglineWidth() {
-        const heroTitle = document.querySelector('.hero-content h1');
-        const heroTagline = document.querySelector('.hero-content p');
-        if (!heroTitle || !heroTagline) return;
-
-        heroTagline.style.fontSize = '';
-        const targetWidth = heroTitle.offsetWidth;
-        const currentWidth = heroTagline.offsetWidth;
-        if (!targetWidth || !currentWidth) return;
-
-        const currentFontSize = parseFloat(getComputedStyle(heroTagline).fontSize);
-        heroTagline.style.fontSize = `${currentFontSize * (targetWidth / currentWidth)}px`;
-    }
-
-    function syncResponsiveSizing() {
-        matchHeroTaglineWidth();
-    }
-
-    if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(syncResponsiveSizing);
-    } else {
-        syncResponsiveSizing();
-    }
-    window.addEventListener('resize', syncResponsiveSizing);
 
     /* =========================================
        7. Web Audio API 音效與右下角圓形切換按鈕（含音效音量）
@@ -428,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {}
     }
 
-    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-back-to-top, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .hamburger-btn, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-avatar, .avatar-option, .account-title-select').forEach(el => {
+    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .hamburger-btn, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-logout-btn, .history-month-btn').forEach(el => {
         el.addEventListener('click', playClickSound);
     });
 
