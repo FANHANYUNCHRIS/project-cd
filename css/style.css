@@ -739,7 +739,10 @@ body {
     display: flex;
     align-items: stretch;
     width: 100%;
-    min-height: 640px;
+    /* 用 min() 取「理想高度 640px」跟「這台裝置實際可視高度扣掉區塊上下留白」兩者較小值——
+       瀏覽器工具列高度不同（例如 Safari 比 Chrome 矮）會讓可視高度縮水，固定 640px
+       會讓角色檔案文字被推出畫面外，又因為外層是 scroll-snap 沒辦法捲動補看 */
+    height: min(640px, calc(100vh - 88px - 32px));
     gap: 48px;
 }
 
@@ -822,6 +825,15 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    /* 角色檔案文字有長有短：內容比欄位矮時维持垂直置中；比欄位高時（例如較長的角色簡介）
+       改成這欄自己內部捲動，不會被右下角浮動音樂/音效按鈕蓋到，也不會被截斷看不到 */
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.team-info-panel::-webkit-scrollbar {
+    display: none;
 }
 
 .team-section-label {
@@ -1910,9 +1922,10 @@ a.faq-card {
 }
 
 /* =========================================
-   11. 右下角圓形浮動按鈕區
+   11. 導覽列音樂/音效控制（原本是右下角浮動圓鈕，改收進導覽列右側工具區，
+   跟 account/contact/cart 用同一套 nav-icon-btn 樣式，不用再另外算安全距離）
    ========================================= */
-/* iOS×Tesla：跟導覽列圖示同一套白色浮島語言，不透明白底＋淡邊框＋柔和陰影 */
+/* 手機版還在用：漢堡選單裡的音樂/音效展開按鈕，跟桌機版是各自獨立的元件 */
 .btn-circular {
     width: 46px;
     height: 46px;
@@ -1931,21 +1944,18 @@ a.faq-card {
 
 .music-control-wrap,
 .sound-control-wrap {
-    position: fixed;
-    right: 32px;
-    z-index: 999;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.music-control-wrap { bottom: 144px; }
-.sound-control-wrap { bottom: 88px; }
-
-/* 這兩顆浮在照片背景上,陰影要比導覽列裡的圖示更明顯才立體 */
-#btn-music-toggle,
-#btn-sound-toggle {
-    box-shadow: 0 2px 4px rgba(22, 22, 26, 0.12), 0 12px 28px -8px rgba(22, 22, 26, 0.45);
+/* 工具區裡的細直線分隔線，把音樂/音效跟會員/聯繫/購物車視覺上分成兩組，
+   顏色刻意選中性灰，深色（首頁影片）跟淺色（其餘區塊）背景上都看得清楚 */
+.nav-utility-divider {
+    width: 1px;
+    height: 22px;
+    background-color: rgba(142, 142, 147, 0.5);
+    flex: 0 0 1px;
 }
 
 .volume-pop {
@@ -1954,9 +1964,9 @@ a.faq-card {
     background-color: #fff;
     border: 1px solid rgba(22, 22, 26, 0.08);
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
-    border-radius: 24px;
+    border-radius: 22px;
     padding: 0 16px;
-    height: 46px;
+    height: 44px;
     max-width: 0;
     opacity: 0;
     overflow: hidden;
@@ -2177,7 +2187,10 @@ a.faq-card {
 .auth-modal-box {
     max-width: 440px;
     width: 100%;
-    padding: 44px 40px 40px;
+    /* 註冊表單欄位多，原本 44/40 的內距加上寬鬆間距，內容常常比視窗高，
+       彈窗只能整個用捲動才看得到底部——使用者不想捲動，改成整體抓緊一點，
+       目標是大多數桌機視窗高度下不捲動也能完整顯示 */
+    padding: var(--sp-8) var(--sp-8) var(--sp-8);
     text-align: center;
 }
 
@@ -2185,12 +2198,12 @@ a.faq-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    margin-bottom: var(--sp-6);
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-3);
 }
 
 .auth-modal-logo-icon {
-    height: 48px;
+    height: 40px;
     width: auto;
 }
 
@@ -2209,7 +2222,7 @@ a.faq-card {
     border-radius: 12px;
     padding: 4px;
     gap: 4px;
-    margin-bottom: var(--sp-6);
+    margin-bottom: var(--sp-3);
 }
 
 .auth-tab {
@@ -2238,7 +2251,7 @@ a.faq-card {
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--sp-3);
 }
 
 /* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
@@ -2249,7 +2262,7 @@ a.faq-card {
 
 .auth-modal-box .form-grid {
     grid-template-columns: 1fr 1fr;
-    gap: var(--sp-3) var(--sp-4);
+    gap: var(--sp-2) var(--sp-4);
 }
 
 /* 卡片提亮到接近純白後，輸入框改用淺灰底（不是白上疊白），跟卡片本身才拉得出對比
@@ -2264,6 +2277,14 @@ a.faq-card {
     border: 1px solid var(--ink-line);
     border-radius: 30px;
     padding: 12px 24px;
+}
+
+/* 註冊表單欄位較多，垂直內距單獨抓緊一點，減少整體高度需要捲動的機率；
+   聯繫/結帳表單欄位少，維持原本 12px 不受影響 */
+.auth-modal-box .form-group input,
+.auth-modal-box .form-group select {
+    padding-top: var(--sp-2);
+    padding-bottom: var(--sp-2);
 }
 
 .contact-modal-box .form-group textarea,
@@ -2420,7 +2441,7 @@ a.faq-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 24px 0 16px;
+    margin: var(--sp-4) 0 var(--sp-3);
     color: var(--ink);
     font-size: var(--fs-small);
 }
@@ -3321,9 +3342,12 @@ a.faq-card {
         white-space: normal;
     }
 
-    /* 手機/平板模式隱藏右下角浮動按鈕與章節導覽點，防止擋畫面 */
+    /* 手機/平板模式隱藏導覽列裡的音樂/音效按鈕跟章節導覽點：
+       音樂/音效在漢堡選單裡已經有 .mobile-sound-wrap 同樣功能，這裡不重複顯示；
+       章節導覽點單純是防止擋畫面 */
     .music-control-wrap,
     .sound-control-wrap,
+    .nav-utility-divider,
     .section-dots {
         display: none !important;
     }

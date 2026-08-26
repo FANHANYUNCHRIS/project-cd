@@ -121,11 +121,32 @@ document.addEventListener('DOMContentLoaded', () => {
             layers[nextLayer].load();
         }
 
+        // Safari 等瀏覽器有時會擋下自動播放（政策/省電模式等），且不一定會補畫面，
+        // 導致背景永遠停在黑畫面。這裡記住「目前該播誰」，一旦使用者有任何互動
+        // （捲動、點擊、觸控）就立刻重試播放，不會再卡死。
+        let pendingRetryLayer = null;
+
+        function tryPlay(layerEl) {
+            const result = layerEl.play();
+            if (result && typeof result.catch === 'function') {
+                result.catch(() => { pendingRetryLayer = layerEl; });
+            }
+        }
+
+        function retryPendingPlay() {
+            if (pendingRetryLayer && pendingRetryLayer.paused) {
+                tryPlay(pendingRetryLayer);
+            }
+        }
+        ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, retryPendingPlay, { passive: true });
+        });
+
         function crossfadeTo(nextLayer) {
             layers[activeLayer].classList.remove('active');
             layers[nextLayer].classList.add('active');
             layers[nextLayer].currentTime = 0;
-            layers[nextLayer].play().catch(() => {});
+            tryPlay(layers[nextLayer]);
             activeLayer = nextLayer;
             preloadStarted = false;
         }
@@ -149,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         layers[0].src = clips[0];
         layers[0].load();
         layers[0].classList.add('active');
-        layers[0].play().catch(() => {});
+        tryPlay(layers[0]);
     })();
 
     /* =========================================
