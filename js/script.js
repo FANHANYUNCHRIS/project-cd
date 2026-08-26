@@ -96,6 +96,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* =========================================
+       2b. 導覽列音樂/音效置中（跟左邊導覽膠囊、右邊會員/聯繫/購物車保持等距）
+       ========================================= */
+    /* 導覽膠囊寬度跟右側工具區寬度都會隨內容/斷點變動，純 CSS 沒辦法算出
+       兩個獨立元素中間的等距點，所以在這裡即時量測兩者的邊界，把音樂/音效
+       這組的中心點設在正中間——這樣膠囊跟右側圖示才能維持在原本的位置不動，
+       音樂/音效才是真正「插進中間」的第三塊，不是靠它們兩個各自往內縮 */
+    function positionNavSoundGroup() {
+        const pill = document.getElementById('nav-links');
+        const soundGroup = document.querySelector('.nav-sound-group');
+        const utilityGroup = document.querySelector('.nav-utility-group');
+        if (!pill || !soundGroup || !utilityGroup) return;
+        if (getComputedStyle(soundGroup).display === 'none') return; // 手機版音樂/音效收進漢堡選單了，不用算
+
+        const navbarRect = navbar.getBoundingClientRect();
+        const pillRect = pill.getBoundingClientRect();
+        const utilityRect = utilityGroup.getBoundingClientRect();
+        const midpoint = (pillRect.right + utilityRect.left) / 2 - navbarRect.left;
+        soundGroup.style.left = `${midpoint}px`;
+    }
+
+    positionNavSoundGroup();
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(positionNavSoundGroup);
+    }
+    window.addEventListener('load', positionNavSoundGroup);
+    window.addEventListener('resize', positionNavSoundGroup);
+
+    /* =========================================
        3. 首頁背景影片輪播 (雙層淡入淡出)
        ========================================= */
     (function initHeroVideoBackground() {
@@ -185,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 weapon: '武士刀X狙擊槍',
                 style: '任務執行到極致',
                 quote: '「用數據與匠心，重新定義這間店存在的意義。」',
-                bio: '武裝神姬，代號的由來不是巧合——她相信經營甜點事業與執行任務並無二致：都需要精準的判斷、絕對的紀律，以及在極限壓力下依然穩定輸出的能力。腰間的武士刀，象徵她對傳統工藝與職人手感的堅持，從不假手他人；肩上的狙擊槍，則代表她用數據與市場洞察，精準鎖定每一個決策的最佳解——從食材產地的篩選、配方比例的反覆試驗，到門市選址的評估，全部經過她親自校準。品牌的起點，正是源自於她對完美風味近乎苛求的堅持，任務一旦啟動，就會執行到底，絕不半途而廢。她也深知單打獨鬥成不了氣候，於是招募了移動基地強襲魔女與偵查兵貓貓組隊——三人各司其職，才撐起這間店背後看不見的作戰系統。呈現在顧客面前的，永遠是三人聯手校準過、最精確的答案。她的作戰日誌裡沒有「差不多」這個選項，任何一批食材只要甜度、水分、產地履歷有一絲落差，就會被直接退回；任何一款新品上市前，她都要求至少通過十輪盲測才准放行。組員私底下都說，跟著武裝神姬做事很累，但也正因為這份近乎偏執的堅持，才讓這間店每一次交到顧客手上的甜點，都對得起「精確」這兩個字。她始終相信，真正的浪漫不是天馬行空的靈感，而是把每一個微小環節都做到位的紀律——這才是她心中，甜點師與戰士共同的專業。',
+                bio: '武裝神姬對品質近乎苛求：食材只要有一絲落差就直接退回，任何新品上市前，都必須先通過十輪盲測才准放行。她相信真正的浪漫不是天馬行空的靈感，而是把每個微小細節都做到位的紀律，是這間店最後、也最嚴格的把關者。',
                 avatar: 'images/staff01.jpg',
                 portrait: 'images/staff01-nobg.png'
             },
@@ -196,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 weapon: '車',
                 style: '只想看戲',
                 quote: '「溫度差一度，風味就不再是那個風味。」',
-                bio: '強襲魔女，聽起來像是要衝在最前線廝殺的角色，但她自己心知肚明——真正的戰場不在前排，而在後方那台隨時待命的車上。她的戰鬥職位登記為「移動基地」，專用武器欄位只寫了一個字：車。問她為什麼不學別人配一把趁手的武器，她總是聳聳肩說，能載人載貨、能當前線指揮所、餓了還能開去買宵夜的車，才是真正的萬能裝備。她的戰鬥風格更是誠實到讓人啼笑皆非——「只想看戲」，能不出手就不出手，能交給別人處理的絕不親自下場，唯獨遇到烘焙這件事例外。多年的法式烘焙經歷，讓她對溫度異常執著，差一度風味就整個走鐘，她能憑手感抓出烤箱裡每一區的溫差，是店裡所有配方背後最嚴謹的把關者，也是實際上什麼雜事都攬在身上的代理店長。平常懶洋洋窩在角落看熱鬧的她，一旦有人動了配方裡的溫控參數，會立刻從魔女變回一絲不苟的職人，這種反差正是她最不像「強襲」、卻最讓人安心的地方——因為真正撐住這間店日常運轉的，往往就是這種看似置身事外、關鍵時刻卻從不缺席的人。同事們私下給她取了個外號叫「萬能雜工」，缺人手時她會補位收銀，缺食材時她會開車去載貨，就連武裝神姬臨時抽不開身，也是她負責頂上代理店長的位置——說是看戲，其實她比誰都清楚整間店在演什麼劇本。',
+                bio: '強襲魔女的戰鬥職位是「移動基地」，武器欄只寫了一個字：車。戰鬥風格寫著「只想看戲」，實際上卻是店裡所有配方溫控背後最嚴謹的把關者——缺人手時補收銀、缺食材時開車去載貨，是名符其實、什麼都攬在身上的萬能雜工。',
                 avatar: 'images/team-2.jpg',
                 portrait: 'images/team-2.jpg'
             },
@@ -214,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         const listEl = document.getElementById('team-avatar-list');
-        const indexEl = document.getElementById('team-info-index');
         const nameEl = document.getElementById('team-info-name');
         const jobEl = document.getElementById('team-info-job');
         const battleRoleEl = document.getElementById('team-info-battle');
@@ -249,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             avatarButtons.forEach((btn, i) => btn.classList.toggle('active', i === activeIndex));
 
-            indexEl.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(teamData.length).padStart(2, '0')}`;
             nameEl.textContent = member.name;
             jobEl.textContent = member.job;
             battleRoleEl.textContent = member.battleRole;
@@ -958,7 +984,9 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        18. 自訂生日日期選擇器（取代原生 <input type="date">，
        原生彈出視窗是系統畫的，沒辦法套用網站自己的黑白風格，全部自己刻）
-       ========================================= */
+       只收「月/日」不收出生年——生日欄位這裡只拿來做生日當月/當天發優惠用，
+       不需要完整出生年份，收越少個資越好。月曆版面計算固定套用 2024（閏年）
+       當參照年份，這樣 2/29 才選得到，但完全不會存進資料或顯示出來 */
     (function initBirthdayPicker() {
         const wrap = document.querySelector('.date-picker-wrap');
         if (!wrap) return;
@@ -971,48 +999,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('signup-birthday-grid');
         const btnClear = document.getElementById('signup-birthday-clear');
         const btnToday = document.getElementById('signup-birthday-today');
-        const weekdaysEl = wrap.querySelector('.date-picker-weekdays');
 
+        const LEAP_REF_YEAR = 2024; // 只用來算月曆格子，不會存進資料
         const today = new Date();
-        let viewYear = today.getFullYear();
         let viewMonth = today.getMonth(); // 0-11
-        let viewMode = 'day'; // 'day' | 'year'
-        let selected = null; // { year, month, day }
+        let selected = null; // { month, day }
 
         function pad(n) { return String(n).padStart(2, '0'); }
 
         function updateTrigger() {
             if (selected) {
-                display.textContent = `${selected.year}/${pad(selected.month + 1)}/${pad(selected.day)}`;
+                display.textContent = `${pad(selected.month + 1)} / ${pad(selected.day)}`;
                 trigger.classList.add('has-value');
-                hiddenInput.value = `${selected.year}-${pad(selected.month + 1)}-${pad(selected.day)}`;
+                hiddenInput.value = `${pad(selected.month + 1)}-${pad(selected.day)}`;
             } else {
-                display.textContent = '年 / 月 / 日';
+                display.textContent = '月 / 日';
                 trigger.classList.remove('has-value');
                 hiddenInput.value = '';
             }
         }
 
-        function daysInMonth(year, month) {
-            return new Date(year, month + 1, 0).getDate();
+        function daysInMonth(month) {
+            return new Date(LEAP_REF_YEAR, month + 1, 0).getDate();
         }
 
-        function renderDayView() {
-            weekdaysEl.hidden = false;
-            grid.classList.remove('year-view');
-            label.textContent = `${viewYear} 年 ${pad(viewMonth + 1)} 月`;
+        function render() {
+            label.textContent = `${pad(viewMonth + 1)} 月`;
 
-            const firstWeekday = new Date(viewYear, viewMonth, 1).getDay();
-            const total = daysInMonth(viewYear, viewMonth);
-            const prevTotal = daysInMonth(viewYear, viewMonth - 1);
+            const firstWeekday = new Date(LEAP_REF_YEAR, viewMonth, 1).getDay();
+            const total = daysInMonth(viewMonth);
+            const prevTotal = daysInMonth(viewMonth - 1 < 0 ? 11 : viewMonth - 1);
 
             let html = '';
             for (let i = firstWeekday - 1; i >= 0; i--) {
                 html += `<button type="button" class="date-picker-day outside" disabled>${prevTotal - i}</button>`;
             }
             for (let d = 1; d <= total; d++) {
-                const isSelected = selected && selected.year === viewYear && selected.month === viewMonth && selected.day === d;
-                const isToday = today.getFullYear() === viewYear && today.getMonth() === viewMonth && today.getDate() === d;
+                const isSelected = selected && selected.month === viewMonth && selected.day === d;
+                const isToday = today.getMonth() === viewMonth && today.getDate() === d;
                 html += `<button type="button" class="date-picker-day${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}" data-day="${d}">${d}</button>`;
             }
             const remainder = (firstWeekday + total) % 7;
@@ -1024,45 +1048,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             grid.querySelectorAll('.date-picker-day[data-day]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    selected = { year: viewYear, month: viewMonth, day: parseInt(btn.dataset.day, 10) };
+                    selected = { month: viewMonth, day: parseInt(btn.dataset.day, 10) };
                     updateTrigger();
                     closePanel();
                 });
             });
         }
 
-        function renderYearView() {
-            weekdaysEl.hidden = true;
-            grid.classList.add('year-view');
-            const startYear = viewYear - (viewYear % 20);
-            label.textContent = `${startYear} - ${startYear + 19}`;
-
-            let html = '';
-            for (let y = startYear; y < startYear + 20; y++) {
-                const isSelected = y === viewYear;
-                html += `<button type="button" class="date-picker-year${isSelected ? ' selected' : ''}" data-year="${y}">${y}</button>`;
-            }
-            grid.innerHTML = html;
-
-            grid.querySelectorAll('.date-picker-year').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    viewYear = parseInt(btn.dataset.year, 10);
-                    viewMode = 'day';
-                    render();
-                });
-            });
-        }
-
-        function render() {
-            if (viewMode === 'day') renderDayView();
-            else renderYearView();
-        }
-
         function openPanel() {
             panel.hidden = false;
             trigger.setAttribute('aria-expanded', 'true');
-            viewMode = 'day';
-            if (selected) { viewYear = selected.year; viewMonth = selected.month; }
+            if (selected) { viewMonth = selected.month; }
             render();
         }
 
@@ -1076,28 +1072,15 @@ document.addEventListener('DOMContentLoaded', () => {
             else closePanel();
         });
 
-        label.addEventListener('click', () => {
-            viewMode = viewMode === 'day' ? 'year' : 'day';
-            render();
-        });
-
         wrap.querySelector('[data-nav="prev"]').addEventListener('click', () => {
-            if (viewMode === 'day') {
-                viewMonth--;
-                if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-            } else {
-                viewYear -= 20;
-            }
+            viewMonth--;
+            if (viewMonth < 0) { viewMonth = 11; }
             render();
         });
 
         wrap.querySelector('[data-nav="next"]').addEventListener('click', () => {
-            if (viewMode === 'day') {
-                viewMonth++;
-                if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-            } else {
-                viewYear += 20;
-            }
+            viewMonth++;
+            if (viewMonth > 11) { viewMonth = 0; }
             render();
         });
 
@@ -1108,9 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnToday.addEventListener('click', () => {
-            viewYear = today.getFullYear();
             viewMonth = today.getMonth();
-            viewMode = 'day';
             render();
         });
 

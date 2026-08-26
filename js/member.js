@@ -86,13 +86,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
     }
 
+    // 生日只存「月-日」（MM-DD），不收出生年——舊格式（改版前存成 YYYY-MM-DD）也相容處理，只取月/日顯示
+    function formatBirthdayMonthDay(value) {
+        if (!value || typeof value !== 'string') return '—';
+        const parts = value.split('-');
+        const month = parts.length === 3 ? parts[1] : parts[0];
+        const day = parts.length === 3 ? parts[2] : parts[1];
+        if (!month || !day) return '—';
+        return `${month.padStart(2, '0')}/${day.padStart(2, '0')}`;
+    }
+
     function renderAccountProfile(uid) {
         db.collection('users').doc(uid).get().then(doc => {
             const data = doc.exists ? doc.data() : {};
             accountInfoName.textContent = data.displayName || '—';
             accountInfoEmail.textContent = data.email || (currentUser && currentUser.email) || '—';
             accountInfoPhone.textContent = data.phone || '—';
-            accountInfoBirthday.textContent = formatDateSlash(data.birthday);
+            accountInfoBirthday.textContent = formatBirthdayMonthDay(data.birthday);
             accountInfoCreated.textContent = formatDateSlash(data.createdAt);
             // 資料庫沒有獨立的會員編號欄位，用帳號 uid 前 8 碼推導出穩定、唯一的顯示 ID
             accountInfoMemberno.textContent = 'CD' + uid.slice(0, 8).toUpperCase();

@@ -748,7 +748,9 @@ body {
 
 /* 撐滿整欄高度（align-self:stretch，跟立繪 .team-portrait 同一招），上下箭頭
    用 space-between 頂到頂／底，才會跟右欄文字（品牌團隊標籤在最上、角色檔案在最下）
-   的頂部/底部對齊——原本置中會讓左欄整組頭像懸在中間，跟右欄拉滿版的文字對不齊 */
+   的頂部/底部對齊——原本置中會讓左欄整組頭像懸在中間，跟右欄拉滿版的文字對不齊。
+   flex-grow:1（跟立繪 6、合併卡 3 同一組比例＝1:6:3），min-width 頂住 140px 頭像
+   本身的寬度，避免視窗較窄時比例算出來的份額比頭像還小，把圓形頭像擠變形 */
 .team-avatar-rail {
     align-self: stretch;
     display: flex;
@@ -756,7 +758,8 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    flex-shrink: 0;
+    flex: 1 1 0%;
+    min-width: 156px;
 }
 
 .team-nav-btn {
@@ -810,95 +813,124 @@ body {
 }
 
 /* 選中的頭像加一圈實色描邊，像選角畫面裡「目前選到誰」的高亮框——
-   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯 */
+   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯。
+   切換時額外播一次放大晃動動畫，每次 class 一加上就會重新觸發，
+   停下來時停在跟原本一樣的 scale(1.08)，不會跟 hover/選中狀態打架 */
 .team-avatar-item.active {
     opacity: 1;
     transform: scale(1.08);
     border-color: var(--ink);
     box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12);
+    animation: team-avatar-wobble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.team-info-panel {
-    flex: 1 1 0%;
+@keyframes team-avatar-wobble {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    30% {
+        transform: scale(1.18) rotate(-7deg);
+    }
+    55% {
+        transform: scale(1.14) rotate(6deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    100% {
+        transform: scale(1.08) rotate(0deg);
+    }
+}
+
+/* 右欄改成左右兩塊並排：左邊放「事實資料」（姓名＋數據列表），右邊放「要完整讀的文章」
+   （角色檔案）——跟拆文字本身成兩欄不同，簡介還是同一欄從頭讀到尾，不會有跳讀問題 */
+/* 數據卡（姓名＋五欄位）跟角色檔案（引言＋簡介）合併成同一張卡片，
+   直接是 .team-switcher 底下第三個 flex 子項，跟縮圖列、立繪三欄同一層——
+   縮圖列:立繪:此卡＝1:6:3（flex-grow 比例），不再需要 .team-info-panel 這層
+   中介 wrapper 去左右拆兩張卡。內容本身夠長（標題＋數據＋引言＋簡介），
+   靠自己就能撐滿卡片高度，用不到人工撐空白的招數；超出高度時卡片自己捲動 */
+.team-info-merged {
+    flex: 3 1 0%;
     min-width: 0;
-    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /* 角色檔案文字有長有短：內容比欄位矮時维持垂直置中；比欄位高時（例如較長的角色簡介）
-       改成這欄自己內部捲動，不會被右下角浮動音樂/音效按鈕蓋到，也不會被截斷看不到 */
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
+    border-radius: 20px;
+    padding: var(--sp-6) var(--sp-6);
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
-.team-info-panel::-webkit-scrollbar {
+.team-info-merged::-webkit-scrollbar {
     display: none;
 }
 
-.team-section-label {
-    color: var(--ink);
-    font-size: var(--fs-small);
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: var(--sp-2);
-}
-
-.team-info-index {
-    color: var(--ink);
-    font-size: var(--fs-small);
-    font-family: 'Inter', monospace;
-    letter-spacing: 1px;
-    margin-bottom: var(--sp-3);
+.team-info-header {
+    margin-bottom: var(--sp-10);
 }
 
 .team-info-name {
     font-size: var(--fs-h1);
     font-weight: bold;
     color: var(--ink);
-    margin-bottom: var(--sp-4);
 }
 
-/* 角色資料改成 2x2 的卡片網格，不是清單列，跟 iOS 設定頁的分組列表同一套語言 */
+/* 角色資料改成 iOS「設定」App 那種整體分組列表：一個圓角容器，列與列之間用髮絲級分隔線，
+   不是各自獨立、有間距的卡片。改成單欄（不是 2 欄並排）——2 欄並排時，短內容的格子
+   會被同一列裡較長的鄰居拖著撐高，露出一截用不到的空白；單欄讓每一列高度只跟著
+   自己的內容走。橫向排列（標籤左、內容右）跟會員資料彈窗的 .account-info-row 同一套語言 */
+/* flex-shrink:0——這裡的 overflow:hidden 只是拿來裁圓角用的，但在直向 flex 排列裡
+   會讓瀏覽器把這塊當成唯一「可以縮到 0」的項目（其他區塊是文字，天生有 min-height:auto
+   頂住不會縮），結果合併卡片高度不夠時，只有這個清單被硬壓扁、四個欄位被自己的
+   overflow 裁掉只剩一行——加 flex-shrink:0 讓它維持原本高度，改交給外層卡片自己捲動 */
 .team-stat-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: var(--sp-5);
-}
-
-.team-stat-row {
-    padding: 14px 16px;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background-color: var(--ink-line);
     border: 1px solid var(--ink-line);
     border-radius: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-bottom: var(--sp-10);
+}
+
+/* 固定寬度兩欄 grid，四列共用同一個欄寬——原本用 flex + space-between，
+   label/value 中間的留白是靠彈性間距吃掉剩餘空間，每列數值長度不同，
+   中間的分界線位置就跟著每列亂跑，看起來像沒對齊。改成固定欄寬，
+   四列的分隔線才會落在同一條垂直線上 */
+.team-stat-row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    align-items: baseline;
+    gap: 12px;
+    padding: 24px 16px;
+    background-color: #ffffff;
 }
 
 .team-stat-label {
-    display: block;
     font-size: var(--fs-caption);
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--ink-soft);
     white-space: nowrap;
-    margin-bottom: var(--sp-2);
 }
 
 .team-stat-value {
-    display: block;
+    text-align: right;
     font-size: var(--fs-body);
     font-weight: 700;
     color: var(--ink);
     line-height: 1.3;
+    border-left: 1px solid var(--ink-line);
+    padding-left: 12px;
 }
 
-/* 角色檔案面板：跟 iOS 設定頁分組卡片一致的簡單邊框卡片，標籤放在卡片上方而不是疊在邊框上 */
-.team-file-panel {
-    border: 1px solid var(--ink-line);
-    border-radius: 16px;
-    padding: var(--sp-4);
-    margin-top: var(--sp-4);
-}
+/* 角色檔案區塊：現在是合併卡片下半段（跟姓名數據同一張卡），不再是獨立邊框卡片。
+   不額外加 margin-top——跟姓名→數據表同一套 sp-8 節奏，靠 .team-stat-list 自己的
+   margin-bottom 撐開就好，兩段落間距才會一致，不是各自加總出兩種不同的留白量 */
 
 .team-file-tab {
     display: block;
@@ -909,20 +941,20 @@ body {
     margin-bottom: var(--sp-2);
 }
 
+/* 拿掉左側裝飾粗線（比較像傳統網頁的引用區塊，不是 iOS 原生手法），
+   改靠字級跟字重自己做強調——像 Apple News／書籍 App 的引言排版 */
 .team-info-quote {
-    font-size: var(--fs-body);
+    font-size: var(--fs-lead);
     font-weight: 700;
     color: var(--ink);
-    line-height: 1.6;
+    line-height: 1.5;
     margin-bottom: var(--sp-4);
-    border-left: 3px solid var(--ink);
-    padding-left: var(--sp-3);
 }
 
 .team-info-bio {
-    font-size: var(--fs-small);
+    font-size: var(--fs-caption);
     color: var(--ink);
-    line-height: 1.8;
+    line-height: 1.6;
 }
 
 /* 人物立繪：用 contain + bottom 而不是 cover，去背立繪才會完整站在畫面裡，不會被裁切。
@@ -930,7 +962,7 @@ body {
    「未來加入動漫風格人物插畫時，會是全站唯一保留的『色彩時刻』」，現在放的正是這種插畫，
    不是需要壓成黑白配合全站規則的真人照片，維持原色是文件已經預告過的例外，不是新的偏離 */
 .team-portrait {
-    flex: 1;
+    flex: 6 1 0%;
     align-self: stretch;
     display: flex;
     align-items: center;
@@ -940,7 +972,7 @@ body {
     background-position: center bottom;
     background-repeat: no-repeat;
     border: 1px solid var(--ink-line);
-    border-radius: 24px;
+    border-radius: 20px;
     overflow: hidden;
     position: relative;
     transition: opacity 0.4s ease;
@@ -965,6 +997,13 @@ body {
     padding: 0;
 }
 
+/* 用 .modal-container.contact-modal-box 而不是單一 class——這條規則在原始碼位置
+   比 .modal-container 的白底規則早，class 數量一樣時特異度打平，會被後面的白底贏過去，
+   複合選擇器多算一個 class，特異度確實更高才能贏 */
+.modal-container.contact-modal-box {
+    background-color: var(--paper);
+}
+
 .contact-glass-card {
     width: 100%;
     box-sizing: border-box;
@@ -986,7 +1025,7 @@ body {
     min-width: 0;
     display: flex;
     padding-left: 40px;
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--ink-line);
 }
 
 .contact-form {
@@ -1018,14 +1057,17 @@ body {
     margin-bottom: var(--sp-6);
 }
 
-/* 黑白邊框卡片，拿掉原本沒有記錄在設計系統文件裡的淡綠底／淡綠邊框——LINE 綠只保留在
-   文件核准的兩個地方：狀態文字（#006600）跟按鈕底色（#00C300，見下方 .btn-line-cta） */
+/* 跟會員彈窗的 .account-hud-card 同一套軟膠浮凸卡片——不靠邊框分層，靠雙向陰影
+   從灰底浮出來。LINE 綠只保留在文件核准的兩個地方：狀態文字（#006600）跟
+   按鈕底色（#00C300，見下方 .btn-line-cta） */
 .line-service-box {
     color: var(--ink);
     padding: 20px;
     border-radius: 16px;
     margin-bottom: 24px;
-    border: 1px solid var(--ink-line);
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
 }
 
 .line-status-bar {
@@ -1148,7 +1190,7 @@ body {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid #ddd;
+    border: none;
     background-color: transparent;
     color: var(--ink-soft);
     cursor: pointer;
@@ -1160,12 +1202,11 @@ body {
 }
 
 .btn-copy-email:hover {
-    border-color: var(--ink);
+    background-color: rgba(29, 29, 31, 0.06);
     color: var(--ink);
 }
 
 .btn-copy-email.copied {
-    border-color: #1F5C23;
     color: #1F5C23;
 }
 
@@ -1402,20 +1443,12 @@ body {
 }
 
 .date-picker-month-label {
-    background: none;
-    border: none;
+    display: block;
     font-family: inherit;
     font-size: var(--fs-small);
     font-weight: 700;
     color: var(--ink);
     padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.date-picker-month-label:hover {
-    background-color: rgba(29, 29, 31, 0.08);
 }
 
 .date-picker-weekdays {
@@ -1433,13 +1466,7 @@ body {
     gap: 2px;
 }
 
-.date-picker-grid.year-view {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-
-.date-picker-day,
-.date-picker-year {
+.date-picker-day {
     aspect-ratio: 1;
     display: flex;
     align-items: center;
@@ -1454,14 +1481,7 @@ body {
     transition: background-color 0.15s ease;
 }
 
-.date-picker-year {
-    border-radius: 10px;
-    aspect-ratio: auto;
-    padding: 12px 0;
-}
-
-.date-picker-day:hover,
-.date-picker-year:hover {
+.date-picker-day:hover {
     background-color: rgba(29, 29, 31, 0.08);
 }
 
@@ -1473,8 +1493,7 @@ body {
     box-shadow: inset 0 0 0 1.5px var(--ink);
 }
 
-.date-picker-day.selected,
-.date-picker-year.selected {
+.date-picker-day.selected {
     background-color: var(--ink);
     color: #ffffff;
     font-weight: 700;
@@ -1942,15 +1961,33 @@ a.faq-card {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.music-control-wrap,
-.sound-control-wrap {
+/* 音樂／音效這組要跟左邊導覽膠囊、右邊會員/聯繫/購物車兩邊保持「相等」間距，
+   膠囊寬度跟工具區寬度都會隨內容/斷點變動，純 CSS 算不出兩個獨立元素中間的等距點，
+   所以位置交給 script.js 的 positionNavSoundGroup() 在載入/resize 時即時量測、
+   置中在兩者之間；這裡只需要先給一個絕對定位的容器，讓 JS 有東西可以設定 left */
+.nav-sound-group {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* 工具區裡的細直線分隔線，把音樂/音效跟會員/聯繫/購物車視覺上分成兩組，
-   顏色刻意選中性灰，深色（首頁影片）跟淺色（其餘區塊）背景上都看得清楚 */
+/* 音量滑桿改用絕對定位浮在圖示正下方，不再佔用 flex 排列的空間——
+   之前滑桿展開時會把同一列的圖示（包含隔壁的按鈕）一起推走，滑鼠停在圖示上
+   結果圖示自己先跑掉，是體驗上的 bug，不是設計。現在圖示位置永遠固定不動，
+   只有下方浮出來的音量條會動 */
+.music-control-wrap,
+.sound-control-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* 分隔線現在是 .nav-utility-group 的第一個項目（音樂/音效已經獨立移出去了），
+   跟後面會員圖示之間只有單一份 gap，不用再額外用負 margin 補償 */
 .nav-utility-divider {
     width: 1px;
     height: 22px;
@@ -1958,36 +1995,44 @@ a.faq-card {
     flex: 0 0 1px;
 }
 
+/* 直式音量條：固定寬高的浮動小卡，滑桿本身用 rotate(-90deg) 轉直，
+   用絕對定位+translate(-50%,-50%) 直接以自己的幾何中心對齊卡片正中央，
+   不靠 flex 置中——旋轉只改變畫面呈現，不改變版面盒子大小，用 flex 置中
+   容易因為盒子還是原本橫的尺寸而算錯位置 */
 .volume-pop {
-    display: flex;
-    align-items: center;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    z-index: 20;
+    width: 44px;
+    height: 116px;
     background-color: #fff;
     border: 1px solid rgba(22, 22, 26, 0.08);
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
     border-radius: 22px;
-    padding: 0 16px;
-    height: 44px;
-    max-width: 0;
     opacity: 0;
-    overflow: hidden;
     pointer-events: none;
-    transition: max-width 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+    transform: translate(-50%, -6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .music-control-wrap:hover .volume-pop,
 .music-control-wrap:focus-within .volume-pop,
 .sound-control-wrap:hover .volume-pop,
 .sound-control-wrap:focus-within .volume-pop {
-    max-width: 120px;
     opacity: 1;
-    padding: 0 16px;
     pointer-events: auto;
+    transform: translate(-50%, 0);
 }
 
 .volume-pop input[type="range"] {
-    width: 90px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 84px;
     accent-color: var(--ink);
     cursor: pointer;
+    transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 /* 播放中：填滿黑色（跟導覽列選中膠囊同一個「黑色＝目前啟用」訊號），不再靠白色光暈表示 */
@@ -1995,26 +2040,6 @@ a.faq-card {
     background-color: var(--ink);
     color: #ffffff;
     border-color: var(--ink);
-}
-
-.btn-sound-toggle {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background-color: #fff;
-    color: var(--ink);
-    border: 1px solid rgba(22, 22, 26, 0.08);
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-sound-toggle:hover {
-    transform: translateY(-3px);
 }
 
 .btn-sound-toggle.active-sound {
@@ -2192,6 +2217,7 @@ a.faq-card {
        目標是大多數桌機視窗高度下不捲動也能完整顯示 */
     padding: var(--sp-8) var(--sp-8) var(--sp-8);
     text-align: center;
+    background-color: var(--paper);
 }
 
 .auth-modal-logo {
@@ -2265,18 +2291,22 @@ a.faq-card {
     gap: var(--sp-2) var(--sp-4);
 }
 
-/* 卡片提亮到接近純白後，輸入框改用淺灰底（不是白上疊白），跟卡片本身才拉得出對比
-   同一套膠囊造型套用到所有彈窗裡的表單（登入/聯繫/結帳），不只登入視窗自己有 */
+/* 跟會員彈窗同一套軟膠擬物語言：不靠邊框分層，靠內凹陰影表示「可以輸入的凹槽」——
+   跟 .account-info-row 那種「浮凸」相反，輸入框是往下凹，語意上更像現實中的按鍵/凹槽。
+   同一套凹陷造型套用到所有彈窗裡的表單（登入/聯繫/結帳），不只登入視窗自己有 */
 .auth-modal-box .form-group input,
 .auth-modal-box .form-group select,
 .contact-modal-box .form-group input,
 .contact-modal-box .form-group select,
 .checkout-modal-box .form-group input,
 .checkout-modal-box .form-group select {
-    background-color: rgba(0, 0, 0, 0.045);
-    border: 1px solid var(--ink-line);
+    background-color: transparent;
+    border: none;
     border-radius: 30px;
     padding: 12px 24px;
+    box-shadow:
+        inset 4px 4px 8px rgba(29, 29, 31, 0.12),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.7);
 }
 
 /* 註冊表單欄位較多，垂直內距單獨抓緊一點，減少整體高度需要捲動的機率；
@@ -2289,10 +2319,13 @@ a.faq-card {
 
 .contact-modal-box .form-group textarea,
 .checkout-modal-box .form-group textarea {
-    background-color: rgba(0, 0, 0, 0.045);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: transparent;
+    border: none;
     border-radius: 20px;
     padding: 12px 24px;
+    box-shadow:
+        inset 4px 4px 8px rgba(29, 29, 31, 0.12),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.7);
 }
 
 .auth-modal-box .form-group input::placeholder,
@@ -2311,9 +2344,10 @@ a.faq-card {
 .checkout-modal-box .form-group input:focus,
 .checkout-modal-box .form-group select:focus,
 .checkout-modal-box .form-group textarea:focus {
-    background-color: rgba(0, 0, 0, 0.04);
     border-color: transparent !important;
-    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.18), inset 0 1px 2px rgba(29, 29, 31, 0.1);
+    box-shadow:
+        inset 5px 5px 10px rgba(29, 29, 31, 0.16),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.7);
 }
 
 
@@ -2575,7 +2609,7 @@ a.faq-card {
     max-width: 1100px;
     width: 100%;
     padding: 44px 40px 32px;
-    background-color: #E9EBEF;
+    background-color: var(--paper);
 }
 
 /* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
@@ -3050,15 +3084,18 @@ a.faq-card {
     max-width: 480px;
     width: 100%;
     padding: 40px;
+    background-color: var(--paper);
 }
 
 .checkout-order-summary {
-    background-color: rgba(29, 29, 31, 0.04);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: var(--sp-4);
     margin-bottom: var(--sp-5);
     font-size: var(--fs-small);
     color: var(--ink);
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
 }
 
 .checkout-order-summary .summary-line {
@@ -3069,7 +3106,7 @@ a.faq-card {
 
 .checkout-order-summary .summary-total {
     font-weight: bold;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--ink-line);
     margin-top: 8px;
     padding-top: 8px;
 }
@@ -3345,8 +3382,7 @@ a.faq-card {
     /* 手機/平板模式隱藏導覽列裡的音樂/音效按鈕跟章節導覽點：
        音樂/音效在漢堡選單裡已經有 .mobile-sound-wrap 同樣功能，這裡不重複顯示；
        章節導覽點單純是防止擋畫面 */
-    .music-control-wrap,
-    .sound-control-wrap,
+    .nav-sound-group,
     .nav-utility-divider,
     .section-dots {
         display: none !important;
@@ -3589,7 +3625,7 @@ a.faq-card {
         height: 42vh;
     }
 
-    .team-info-panel {
+    .team-info-merged {
         order: 3;
         flex: none;
         width: 100%;
