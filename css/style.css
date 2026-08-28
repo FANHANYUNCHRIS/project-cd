@@ -110,12 +110,28 @@
 }
 
 /* 登出是低頻、次要的操作，不該是整個彈窗裡最搶眼的東西——
-   拿掉硬撐滿版寬度的設定，改成內容自適應寬度、置中，份量降到跟它的重要性相符 */
+   拿掉硬撐滿版寬度的設定，改成內容自適應寬度、置中，份量降到跟它的重要性相符。
+   原本借用全站液態玻璃膠囊按鈕（.liquid-glass-btn/.lg-btn-black），但那是
+   模糊+漸層+高光的花俏材質，跟會員彈窗軟膠擬物的安靜語言不搭——改成一般純黑按鈕，
+   圓角跟卡片同一套 14px，不做滿版膠囊 */
 .account-logout-btn {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: fit-content;
     margin: 0 auto;
     padding: 12px 40px;
+    border: none;
+    border-radius: 14px;
+    background-color: var(--ink);
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.account-logout-btn:hover {
+    background-color: #333336;
 }
 
 .lg-btn-black {
@@ -2946,12 +2962,7 @@ a.faq-card {
     padding: 40px;
     display: flex;
     flex-direction: column;
-}
-
-.cart-empty-state {
-    text-align: center;
-    color: var(--ink);
-    padding: 24px 0;
+    background-color: var(--paper);
 }
 
 /* 未登入引導畫面：跟 #cart-body 是互斥的兩個狀態，同一個 .cart-modal-box 底下切換 hidden，
@@ -2962,8 +2973,10 @@ a.faq-card {
     align-items: center;
     text-align: center;
     padding: 32px 24px;
-    border: 1px solid var(--ink-line);
     border-radius: 20px;
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
 }
 
 .cart-login-gate-cat {
@@ -3004,6 +3017,12 @@ a.faq-card {
     display: none;
 }
 
+/* 保險再多一層：不管 JS 那邊的 hidden 狀態切換有沒有跑到，只要登入引導卡還顯示著，
+   CSS 層級直接把購物車本體（含「購物車目前是空的」）蓋掉，兩個互斥畫面不會再同時出現 */
+#cart-login-gate:not([hidden]) ~ #cart-body {
+    display: none;
+}
+
 .cart-items-list {
     list-style: none;
     margin: 0 0 var(--sp-4);
@@ -3017,7 +3036,7 @@ a.faq-card {
     align-items: center;
     gap: var(--sp-3);
     padding: var(--sp-3) 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ink-line);
 }
 
 .cart-line-item:last-child {
@@ -3720,6 +3739,7 @@ a.faq-card {
    確保跟前面各元件自己的 :hover 規則比，用 source order 贏過去
    ========================================= */
 .btn-submit:active,
+.account-logout-btn:active,
 .btn-modal-cta:active,
 .btn-modal-cta-secondary:active,
 .btn-google-signin:active,

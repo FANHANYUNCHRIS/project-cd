@@ -397,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartModal = document.getElementById('cart-modal');
     const cartModalClose = document.getElementById('cart-modal-close');
     const cartItemsList = document.getElementById('cart-items-list');
-    const cartEmptyState = document.getElementById('cart-empty-state');
     const cartSubtotalEl = document.getElementById('cart-subtotal');
     const cartSummaryEl = document.getElementById('cart-summary');
     const cartBadge = document.getElementById('cart-badge');
@@ -436,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cartItemsList.innerHTML = '';
         const hasItems = cartItems.length > 0;
-        cartEmptyState.hidden = hasItems;
         cartSummaryEl.hidden = !hasItems;
         btnGoCheckout.hidden = !hasItems;
         btnGoCheckout.disabled = !hasItems;
