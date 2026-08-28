@@ -987,18 +987,21 @@ document.addEventListener('DOMContentLoaded', () => {
        只收「月/日」不收出生年——生日欄位這裡只拿來做生日當月/當天發優惠用，
        不需要完整出生年份，收越少個資越好。月曆版面計算固定套用 2024（閏年）
        當參照年份，這樣 2/29 才選得到，但完全不會存進資料或顯示出來 */
-    (function initBirthdayPicker() {
-        const wrap = document.querySelector('.date-picker-wrap');
-        if (!wrap) return;
+    /* 拆成可重用的 factory——原本只有註冊表單用，現在會員彈窗編輯生日也要用同一套月曆，
+       不想複製貼上兩份幾乎一樣的邏輯。ids 指定這個實例要抓哪組 DOM 元素，
+       onSelect 是選好日期（或按「清除」）後的回呼，拿到 'MM-DD' 或空字串 */
+    function createBirthdayPicker(ids, onSelect) {
+        const wrap = document.getElementById(ids.wrap);
+        if (!wrap) return null;
 
-        const trigger = document.getElementById('signup-birthday-trigger');
-        const display = document.getElementById('signup-birthday-display');
-        const hiddenInput = document.getElementById('signup-birthday');
-        const panel = document.getElementById('signup-birthday-panel');
-        const label = document.getElementById('signup-birthday-label');
-        const grid = document.getElementById('signup-birthday-grid');
-        const btnClear = document.getElementById('signup-birthday-clear');
-        const btnToday = document.getElementById('signup-birthday-today');
+        const trigger = document.getElementById(ids.trigger);
+        const display = document.getElementById(ids.display);
+        const hiddenInput = document.getElementById(ids.hidden);
+        const panel = document.getElementById(ids.panel);
+        const label = document.getElementById(ids.label);
+        const grid = document.getElementById(ids.grid);
+        const btnClear = document.getElementById(ids.clear);
+        const btnToday = document.getElementById(ids.today);
 
         const LEAP_REF_YEAR = 2024; // 只用來算月曆格子，不會存進資料
         const today = new Date();
@@ -1007,7 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function pad(n) { return String(n).padStart(2, '0'); }
 
-        function updateTrigger() {
+        function updateTrigger(skipNotify) {
             if (selected) {
                 display.textContent = `${pad(selected.month + 1)} / ${pad(selected.day)}`;
                 trigger.classList.add('has-value');
@@ -1017,6 +1020,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger.classList.remove('has-value');
                 hiddenInput.value = '';
             }
+            if (!skipNotify && onSelect) onSelect(hiddenInput.value);
         }
 
         function daysInMonth(month) {
@@ -1103,6 +1107,36 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Escape' && !panel.hidden) closePanel();
         });
 
-        updateTrigger();
-    })();
+        updateTrigger(true);
+
+        return {
+            // 從外部（例如 Firestore 讀回來的資料）設定目前選到的日期，不觸發 onSelect，
+            // 不然一開啟會員彈窗、資料一填入，就會誤觸發一次「寫回資料庫」
+            setValue(value) {
+                if (value && typeof value === 'string') {
+                    const parts = value.split('-');
+                    const m = parseInt(parts.length === 3 ? parts[1] : parts[0], 10);
+                    const d = parseInt(parts.length === 3 ? parts[2] : parts[1], 10);
+                    selected = (m >= 1 && m <= 12 && d >= 1) ? { month: m - 1, day: d } : null;
+                } else {
+                    selected = null;
+                }
+                updateTrigger(true);
+            }
+        };
+    }
+
+    window.createBirthdayPicker = createBirthdayPicker;
+
+    createBirthdayPicker({
+        wrap: 'signup-birthday-wrap',
+        trigger: 'signup-birthday-trigger',
+        display: 'signup-birthday-display',
+        hidden: 'signup-birthday',
+        panel: 'signup-birthday-panel',
+        label: 'signup-birthday-label',
+        grid: 'signup-birthday-grid',
+        clear: 'signup-birthday-clear',
+        today: 'signup-birthday-today'
+    });
 });

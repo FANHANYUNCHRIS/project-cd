@@ -2765,13 +2765,16 @@ a.faq-card {
 
 /* 軟膠浮凸卡片：亮面陰影在左上、暗面陰影在右下，同一個底色就能做出「從背景浮出來」的層次，
    不靠邊框分辨卡片邊界 */
-/* label 靠左、value 靠右，讓卡片寬度被撐大時內容跟著鋪開，不會在寬螢幕上留一大片空白 */
+/* 固定寬度兩欄 grid，不是 flex+space-between——原本靠彈性間距把值推到最右邊，
+   每一列值的長度不同（姓名很短、信箱很長），中間的分界線就跟著每列跑，六列對不齊。
+   改成固定 66px 標籤欄 + 分隔線，值一律左對齊、從同一個 x 位置起排，
+   六列的分界線落在同一條垂直線上；標籤欄縮到 66px、分隔線內距縮到 8px，
+   是為了讓信箱這種最長的值仍然單行放得下，不用截斷也不用換行 */
 .account-info-row {
     position: relative;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 58px 1fr;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
     padding: 16px 16px;
     border-radius: 14px;
@@ -2791,15 +2794,53 @@ a.faq-card {
 
 .account-info-value {
     display: block;
-    flex: 1;
     min-width: 0;
     color: var(--ink);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    text-align: right;
+    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-left: 8px;
+    border-left: 1px solid var(--ink-line);
+}
+
+/* 生日這格是唯一可編輯的欄位，值本身就是觸發按鈕——蓋掉瀏覽器 button 預設樣式，
+   讓它看起來還是跟其他唯讀欄位一樣，只用右邊一個小箭頭暗示「這格可以點」 */
+.account-info-edit-trigger {
+    background: none;
+    border: none;
+    border-left: 1px solid var(--ink-line);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.account-info-edit-trigger i {
+    font-size: 11px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.account-birthday-wrap {
+    min-width: 0;
+}
+
+/* 彈窗欄位比表單窄，沿用表單那份 272px 的月曆面板寬度會超出卡片邊界，縮窄到 260px、
+   貼右邊界展開。另外「生日」這排離卡片底部只剩不到一排的高度，面板往下展開的話，
+   底下「清除／回到今天」那排會被 .modal-container 的 overflow-y:auto 從畫面裁掉——
+   改成往上展開（bottom 而不是 top），觸發按鈕上方空間比較夠 */
+.account-birthday-panel {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: auto;
+    right: 0;
+    width: 260px;
 }
 
 /* 單月查詢：上一月／下一月箭頭夾著月份標籤，不用另外做日期選擇器彈窗——

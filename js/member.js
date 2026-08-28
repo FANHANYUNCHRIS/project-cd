@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountInfoName = document.getElementById('account-info-name');
     const accountInfoEmail = document.getElementById('account-info-email');
     const accountInfoPhone = document.getElementById('account-info-phone');
-    const accountInfoBirthday = document.getElementById('account-info-birthday');
     const accountInfoCreated = document.getElementById('account-info-created');
     const accountInfoMemberno = document.getElementById('account-info-memberno');
     const accountInfoPoints = document.getElementById('account-info-points');
@@ -86,15 +85,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    // 生日只存「月-日」（MM-DD），不收出生年——舊格式（改版前存成 YYYY-MM-DD）也相容處理，只取月/日顯示
-    function formatBirthdayMonthDay(value) {
-        if (!value || typeof value !== 'string') return '—';
-        const parts = value.split('-');
-        const month = parts.length === 3 ? parts[1] : parts[0];
-        const day = parts.length === 3 ? parts[2] : parts[1];
-        if (!month || !day) return '—';
-        return `${month.padStart(2, '0')}/${day.padStart(2, '0')}`;
-    }
+    /* 會員彈窗本來整份資料都是唯讀，生日又只有註冊當下那個表單能填一次——
+       沒填的話就永遠卡在「—」，沒有回頭補填的路。重用 script.js 的月曆元件（見
+       window.createBirthdayPicker），選好日期直接寫回 Firestore，不用另外做一個
+       「儲存」按鈕，跟這個彈窗其他欄位「即點即用」的互動節奏一致 */
+    const accountBirthdayPicker = window.createBirthdayPicker ? window.createBirthdayPicker({
+        wrap: 'account-birthday-wrap',
+        trigger: 'account-birthday-trigger',
+        display: 'account-birthday-display',
+        hidden: 'account-birthday-input',
+        panel: 'account-birthday-panel',
+        label: 'account-birthday-label',
+        grid: 'account-birthday-grid',
+        clear: 'account-birthday-clear',
+        today: 'account-birthday-today'
+    }, (value) => {
+        if (!currentUser) return;
+        db.collection('users').doc(currentUser.uid).set({ birthday: value || null }, { merge: true });
+    }) : null;
 
     function renderAccountProfile(uid) {
         db.collection('users').doc(uid).get().then(doc => {
@@ -102,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             accountInfoName.textContent = data.displayName || '—';
             accountInfoEmail.textContent = data.email || (currentUser && currentUser.email) || '—';
             accountInfoPhone.textContent = data.phone || '—';
-            accountInfoBirthday.textContent = formatBirthdayMonthDay(data.birthday);
+            if (accountBirthdayPicker) accountBirthdayPicker.setValue(data.birthday || null);
             accountInfoCreated.textContent = formatDateSlash(data.createdAt);
             // 資料庫沒有獨立的會員編號欄位，用帳號 uid 前 8 碼推導出穩定、唯一的顯示 ID
             accountInfoMemberno.textContent = 'CD' + uid.slice(0, 8).toUpperCase();
