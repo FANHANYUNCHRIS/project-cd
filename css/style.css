@@ -279,13 +279,20 @@ body {
     border-bottom: none !important;
     box-shadow: none !important;
     height: 72px !important; /* 全程固定 72px 高度 */
-    padding: 8px 6%; /* 對稱對齊兩端邊界 */
+    /* 5% 對齊滿版區塊/商城/頁尾共用的左右留白，不再自己用 6%（原本的孤例，
+       會讓導覽列的 LOGO／圖示比下面內容邊界多縮進 10-19px，兩邊對不齊） */
+    padding: 8px 5%;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    transform: translateY(0);
+    /* 不要在這裡寫 transform: translateY(0) 或其他任何 transform 值——
+       即使是「不位移」的恆等值，只要 transform 不是 none，就會讓這個元素
+       變成內部 position:fixed 子元素（手機版分頁列 #nav-links）的定位基準，
+       而不是整個瀏覽器視窗，分頁列會跑到導覽列自己的 72px 高度裡出不去。
+       導覽列本身也不會跟著捲動收合了（手機版分頁列是常駐可點的操作區，
+       不是純裝飾，跟著捲動消失反而點不到），這個 transform 現在完全不需要 */
     transition: transform 0.3s ease;
 }
 
@@ -297,69 +304,12 @@ body {
     text-decoration: none;
 }
 
-/* 漢堡選單按鈕：只在平板/手機顯示，桌機版沿用文字導覽列。44px＝iOS HIG 最小觸控目標 */
-.hamburger-btn {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.hamburger-line {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background-color: var(--ink);
-    border-radius: 1px;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, background-color 0.3s ease;
-}
-
-.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-}
-
-.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(2) {
-    opacity: 0;
-}
-
-.hamburger-btn[aria-expanded="true"] .hamburger-line:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-}
-
-/* 桌機版把 nav-links 跟工具區包在同一個右側容器裡，維持跟原本一模一樣的水平排列；
-   平板/手機版時 nav-links 會變成抽屜選單（position:fixed），nav-right 本身只剩工具區在原本位置 */
+/* 桌機版把 nav-links 跟工具區包在同一個右側容器裡；平板/手機版 nav-links
+   改成固定在畫面底部的分頁列（position:fixed），nav-right 本身只剩工具區在原本位置 */
 .nav-right {
     display: flex;
     align-items: center;
     gap: 32px;
-}
-
-/* 平板/手機漢堡選單裡才會用到的內容，桌機版預設隱藏 */
-.nav-mobile-extra,
-.nav-contact-mobile {
-    display: none;
-}
-
-.mobile-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 999; /* 蓋在頁面內容上方，但要低於導覽列（1000），漢堡/會員/購物車圖示才不會被蓋住點不到 */
-}
-
-.mobile-menu-backdrop.open {
-    opacity: 1;
-    pointer-events: auto;
 }
 
 .nav-icon {
@@ -394,6 +344,11 @@ body {
     border-radius: 100px;
     padding: 4px;
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
+}
+
+/* 手機版分頁列專用的滑動泡泡，桌機版膠囊不需要 */
+.nav-tab-indicator-wrap {
+    display: none;
 }
 
 .nav-links a {
@@ -474,15 +429,24 @@ body {
     display: block;
 }
 
-/* 皇冠圖示視覺上比其他三顆略小一點，手動校正 */
-#nav-account-icon-crown {
-    width: 20px;
-    height: 20px;
+/* 桌機版只顯示圖示，文字標籤只在手機版「更多」選單裡才用得到（見手機版媒體查詢） */
+.nav-utility-label {
+    display: none;
+}
+
+/* 手機版專用的音樂＋音效合併開關，桌機版已經有 .nav-sound-group 各自獨立的
+   音樂/音效鍵，這顆只在手機版「更多」選單裡出現，避免桌機版重複兩套 */
+.nav-more-sound-btn {
+    display: none;
 }
 
 /* SVG 天生就吃 [hidden] 的內建隱藏行為，這裡不需要再補 !important，
-   但明確寫出來避免日後其他樣式蓋過去，登入/登出切換人像↔皇冠才會真的只顯示一個 */
-#nav-account-icon-crown[hidden] {
+   但明確寫出來避免日後其他樣式蓋過去，登入/登出切換人像↔皇冠才會真的只顯示一個。
+   .nav-icon-svg 的 display:block 是一般優先度的作者樣式，會蓋掉瀏覽器內建
+   [hidden]{display:none} 的 UA 樣式（作者樣式永遠贏過 UA 樣式，不管選擇器優先度），
+   所以人像圖示也要補上同一條規則，不然登入後人像會跟皇冠疊在一起 */
+#nav-account-icon-crown[hidden],
+#nav-account-icon-person[hidden] {
     display: none;
 }
 
@@ -502,7 +466,7 @@ body {
     outline-offset: 2px;
 }
 
-/* 登入後人像圖示換成金色皇冠 */
+/* 登入後人像圖示換成皇冠 */
 .nav-account-icon-crown {
     color: var(--ink);
 }
@@ -569,11 +533,6 @@ body {
 /* 選中膠囊的外框顏色跟文字色一起切換，深底用淺色圈、淺底用墨黑圈 */
 .navbar.on-dark .nav-links a.active {
     box-shadow: inset 0 0 0 1.5px #ebebec;
-}
-
-/* 手機版漢堡按鈕跟導覽列一樣完全透明，三條線也要依同樣邏輯切換深淺色 */
-.navbar.on-dark .hamburger-line {
-    background-color: var(--paper);
 }
 
 .navbar.on-dark .nav-icon {
@@ -648,34 +607,31 @@ body {
 }
 
 .product-panels {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-6);
     width: 100%;
     height: 640px;
-    border-radius: 20px;
-    overflow: hidden;
 }
 
 .product-panel {
     position: relative;
-    flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
     cursor: pointer;
     overflow: hidden;
     background-color: #EBEBEC;
-    border-right: 1px solid rgba(0, 0, 0, 0.08);
-    transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius: 20px;
+    box-shadow: 0 20px 50px -30px rgba(22, 22, 26, 0.35);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.6s ease;
 }
 
-.product-panel:last-child {
-    border-right: none;
-}
-
 .product-panel:hover {
-    flex: 1.15;
+    transform: translateY(-8px);
+    box-shadow: 0 28px 60px -28px rgba(22, 22, 26, 0.45);
 }
 
 /* 產品照片就位前的佔位設計，跟品牌團隊立繪同一套語言：深底 + 巨大淡字，
@@ -700,42 +656,43 @@ body {
 .product-panel-body {
     flex-shrink: 0;
     background-color: var(--ink);
-    padding: var(--sp-6) var(--sp-5);
-    text-align: center;
+    padding: var(--sp-8) var(--sp-5);
+    text-align: left;
+}
+
+/* 名稱靠左、價錢／數量靠右，同一行對齊 */
+.product-panel-row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-3);
 }
 
 .product-panel-name {
     font-size: var(--fs-h4);
     font-weight: bold;
     color: var(--paper);
-    margin-bottom: var(--sp-2);
-}
-
-.product-panel-detail {
-    font-size: var(--fs-small);
-    color: var(--paper);
-    line-height: 1.5;
-    margin-bottom: var(--sp-3);
+    margin: 0;
 }
 
 .product-panel-meta {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--sp-3);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    padding-top: var(--sp-3);
+    align-items: baseline;
+    gap: var(--sp-2);
+    flex-shrink: 0;
 }
 
 .product-panel-price {
     font-size: var(--fs-small);
     font-weight: bold;
     color: #ffffff;
+    white-space: nowrap;
 }
 
 .product-panel-qty {
     font-size: var(--fs-caption);
     color: var(--paper);
+    white-space: nowrap;
 }
 
 /* =========================================
@@ -826,6 +783,27 @@ body {
 
 .team-avatar-item:hover {
     opacity: 0.85;
+}
+
+/* 照片還沒上傳時的通用佔位樣式，取代瀏覽器預設的裂圖示——
+   跟產品圖片的 .img-fallback 是同一套邏輯，圖片準備好上傳後會自動換回真的照片 */
+.team-avatar-item.img-fallback {
+    background-color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-avatar-item.img-fallback img {
+    display: none;
+}
+
+.team-avatar-item.img-fallback::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f007";
+    color: #ffffff;
+    font-size: 44px;
 }
 
 /* 選中的頭像加一圈實色描邊，像選角畫面裡「目前選到誰」的高亮框——
@@ -1002,6 +980,22 @@ body {
 
 .team-portrait-text:empty {
     display: none;
+}
+
+/* 立繪還沒上傳時，用通用人形圖示佔位——跟左邊小頭像的 .img-fallback 同一套語言。
+   原本改成顯示姓名文字，但立繪正下方本來就有一張同樣寫著姓名的資訊卡標題，
+   兩個一起看就是同一個名字重複出現兩次，改回圖示更乾淨。
+   圖片準備好上傳後 JS 會自動換回真的立繪，不用再改這裡 */
+.team-portrait.img-fallback {
+    background-color: var(--ink);
+}
+
+.team-portrait.img-fallback::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f007";
+    color: #ffffff;
+    font-size: 96px;
 }
 
 /* =========================================
@@ -1413,6 +1407,73 @@ body {
     color: var(--ink);
 }
 
+/* =========================================
+   自訂下拉選單（取代 <select> 原生彈出視窗，同一個理由：
+   系統畫的選單 CSS 改不了顏色/字型，跟生日日期選擇器共用同一顆觸發按鈕樣式
+   .date-picker-trigger，這裡只補選單面板本身的樣式）
+   ========================================= */
+.custom-select-wrap {
+    position: relative;
+}
+
+.custom-select-trigger .fa-chevron-down {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+    transition: transform 0.2s ease;
+}
+
+.custom-select-trigger[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.custom-select-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
+    border-radius: 18px;
+    box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.custom-select-panel[hidden] {
+    display: none;
+}
+
+.custom-select-option {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    border-radius: 12px;
+    font-size: var(--fs-small);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.custom-select-option + .custom-select-option {
+    margin-top: 2px;
+}
+
+.custom-select-option:hover {
+    background-color: rgba(29, 29, 31, 0.06);
+}
+
+.custom-select-option.selected {
+    background-color: var(--ink);
+    color: #ffffff;
+    font-weight: 700;
+}
+
 .date-picker-trigger:not(.has-value) span {
     color: var(--ink-soft);
 }
@@ -1422,12 +1483,27 @@ body {
     top: calc(100% + 8px);
     left: 0;
     z-index: 20;
-    width: 272px;
+    /* 364px 是反推出來的：16px 內距 + 7 欄日期格 + 6 條 4px 間隙，
+       讓每顆日期都能達到 44px，符合 iOS HIG 最小觸控目標（見下面 .date-picker-day）；
+       min() 裡的 100vw-32px 是窄螢幕安全上限，避免面板在很窄的手機上左右溢出 */
+    width: min(364px, calc(100vw - 32px));
     background-color: #ffffff;
     border: 1px solid var(--ink-line);
     border-radius: 18px;
     padding: 16px;
     box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
+}
+
+/* 註冊表單「生日」這排離卡片底部只剩不到一排的高度，不管面板往上或往下展開
+   都可能被其他欄位或 .modal-container 的邊界擠到——乾脆不跟著觸發按鈕定位，
+   改成固定置中在彈窗卡片正中央。.modal-container 本身有 transform，會變成這個
+   面板 position:fixed 的定位基準（不是整個瀏覽器視窗），所以視覺上剛好置中在
+   彈窗卡片裡，不會超出卡片邊界，也就不需要捲動 */
+#signup-birthday-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .date-picker-header {
@@ -1446,16 +1522,22 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: none;
+    background-color: #ffffff;
     border: none;
     color: var(--ink);
     font-size: var(--fs-small);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.14), -2px -2px 5px rgba(255, 255, 255, 0.85);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .date-picker-nav:hover {
-    background-color: rgba(29, 29, 31, 0.08);
+    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.18), -3px -3px 7px rgba(255, 255, 255, 0.95);
+}
+
+.date-picker-nav:active {
+    transform: scale(0.96);
+    box-shadow: inset 1.5px 1.5px 3px rgba(29, 29, 31, 0.25), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.5);
 }
 
 .date-picker-month-label {
@@ -1479,38 +1561,58 @@ body {
 .date-picker-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
+    gap: var(--sp-1);
 }
 
+/* 7 欄 × 44px + 6 條 4px 間隙 = 面板寬度反推的依據（見 .date-picker-panel），
+   確保每顆日期都達到 iOS HIG 44×44pt 最小觸控目標，跟旁邊的上一月/下一月箭頭一致。
+   軟膠浮凸感：跟會員彈窗的 .account-hud-card 同一套語彙（亮面陰影在左上、
+   暗面陰影在右下，同一個白底就能做出「從面板浮出來」的立體感），只是把陰影
+   數值按比例縮小到適合 44px 這種小尺寸按鈕，不是照搬大卡片的數值 */
 .date-picker-day {
     aspect-ratio: 1;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: none;
+    border-radius: 14px;
+    background-color: #ffffff;
     border: none;
     font-family: inherit;
     font-size: var(--fs-small);
     color: var(--ink);
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .date-picker-day:hover {
-    background-color: rgba(29, 29, 31, 0.08);
+    transform: translateY(-1px);
+    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.16), -3px -3px 7px rgba(255, 255, 255, 0.9);
 }
 
+.date-picker-day:active {
+    transform: translateY(0) scale(0.96);
+}
+
+/* 上/下個月的補位日期：停用狀態，不用浮凸——維持跟面板同一個平面，
+   視覺上就看得出來「不能點」，不需要額外文字說明 */
 .date-picker-day.outside {
     color: rgba(22, 22, 26, 0.28);
+    background-color: transparent;
+    box-shadow: none;
+    cursor: default;
 }
 
 .date-picker-day.today {
-    box-shadow: inset 0 0 0 1.5px var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--ink), 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
 }
 
+/* 選中：反過來用「壓進面板裡」的內陰影，跟其他還沒選的浮凸日期方向相反，
+   一眼就能分辨「這顆已經被按下去了」 */
 .date-picker-day.selected {
     background-color: var(--ink);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.15);
     color: #ffffff;
     font-weight: 700;
 }
@@ -1518,23 +1620,43 @@ body {
 .date-picker-footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--ink-line);
 }
 
+/* 「清除」「回到今天」是真的可以按的操作，不是被動的輔助說明——
+   字級／顏色改成跟同一個元件裡其他可互動文字（月份標籤、日期數字）一樣的
+   --fs-small + --ink，不再套用給次要資訊用的 --fs-caption + --ink-soft。
+   另外加 padding 把觸控熱區撐到 44px；不用負 margin 把它抵銷回原本位置，
+   讓文字比面板本來的 16px 內距再多留一點空間，跟版面邊界不要貼太近 */
+/* 從文字連結改成實際的浮凸按鈕——跟面板裡其他元件（日期格子、上下月箭頭）
+   同一套軟膠語彙，拿掉底線，靠立體感本身表示「這是可以按的」 */
 .date-picker-text-btn {
-    background: none;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    border-radius: 100px;
+    background-color: #ffffff;
     border: none;
     font-family: inherit;
-    font-size: var(--fs-caption);
-    color: var(--ink-soft);
-    text-decoration: underline;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--ink);
     cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .date-picker-text-btn:hover {
-    color: var(--ink);
+    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.16), -3px -3px 7px rgba(255, 255, 255, 0.9);
+}
+
+.date-picker-text-btn:active {
+    transform: scale(0.96);
+    box-shadow: inset 1.5px 1.5px 3px rgba(29, 29, 31, 0.25), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.5);
 }
 
 .form-submit-area {
@@ -1957,6 +2079,60 @@ a.faq-card {
 }
 
 /* =========================================
+   10c. 左側頁碼標籤（跟右側小圓點左右對稱、份量刻意一樣輕，
+   純粹讓兩側視覺平衡，同時提供「目前第幾頁/共幾頁」的實際導覽資訊）
+   ========================================= */
+.section-index {
+    position: fixed;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 跟右邊 .section-dots 用同一個 16px 間距，兩邊才會用同一套節奏，
+       不是各自隨便挑數字 */
+    gap: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.section-index-current {
+    font-size: var(--fs-small);
+    font-weight: bold;
+    color: var(--ink);
+    transition: color 0.3s ease;
+}
+
+/* 中間改成直向的細線，長度撐出來讓整組標籤的垂直高度跟右邊 4 顆點的
+   總高度（4×10px + 3×16px ≈ 88px）接近，兩邊才會像同一個量級的東西，
+   不是一邊擠成一小坨、一邊拉開一長串 */
+.section-index-sep {
+    width: 1px;
+    height: 25px;
+    background-color: rgba(29, 29, 31, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.section-index-total {
+    font-size: var(--fs-caption);
+    color: rgba(29, 29, 31, 0.4);
+    transition: color 0.3s ease;
+}
+
+.section-index.on-dark .section-index-current {
+    color: #ffffff;
+}
+
+.section-index.on-dark .section-index-sep {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.section-index.on-dark .section-index-total {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* =========================================
    11. 導覽列音樂/音效控制（原本是右下角浮動圓鈕，改收進導覽列右側工具區，
    跟 account/contact/cart 用同一套 nav-icon-btn 樣式，不用再另外算安全距離）
    ========================================= */
@@ -1977,24 +2153,33 @@ a.faq-card {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 音樂／音效這組要跟左邊導覽膠囊、右邊會員/聯繫/購物車兩邊保持「相等」間距，
-   膠囊寬度跟工具區寬度都會隨內容/斷點變動，純 CSS 算不出兩個獨立元素中間的等距點，
-   所以位置交給 script.js 的 positionNavSoundGroup() 在載入/resize 時即時量測、
-   置中在兩者之間；這裡只需要先給一個絕對定位的容器，讓 JS 有東西可以設定 left */
-.nav-sound-group {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+/* LOGO + 音樂/音效包在同一個容器裡，讓 .navbar 的 justify-content:space-between
+   只需要分辨「左邊這一整塊」跟「右邊 nav-right」兩塊，音效才會貼著 LOGO，
+   不會被 space-between 平均分配空間、推到左右兩塊正中間去 */
+.nav-left-group {
     display: flex;
     align-items: center;
-    gap: 8px;
 }
 
-/* 音量滑桿改用絕對定位浮在圖示正下方，不再佔用 flex 排列的空間——
-   之前滑桿展開時會把同一列的圖示（包含隔壁的按鈕）一起推走，滑鼠停在圖示上
-   結果圖示自己先跑掉，是體驗上的 bug，不是設計。現在圖示位置永遠固定不動，
-   只有下方浮出來的音量條會動 */
+/* 音樂/音效弱化成次要控制項：貼著 LOGO，用一條細線隔開，不再套用
+   跟會員/聯繫/購物車一樣的白色圓形浮島樣式——這幾顆是核心購物操作，
+   音效只是氛圍偏好設定，份量刻意做輕 */
+.nav-sound-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    /* 分隔線左右留白對齊 4px 網格的同一個數字（12px），
+       原本左邊 6px、右邊 14px 不對稱 */
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(22, 22, 26, 0.14);
+    transition: border-color 0.3s ease;
+}
+
+.navbar.on-dark .nav-sound-group {
+    border-left-color: rgba(255, 255, 255, 0.25);
+}
+
 .music-control-wrap,
 .sound-control-wrap {
     position: relative;
@@ -2011,17 +2196,20 @@ a.faq-card {
     flex: 0 0 1px;
 }
 
-/* 直式音量條：固定寬高的浮動小卡，滑桿本身用 rotate(-90deg) 轉直，
-   用絕對定位+translate(-50%,-50%) 直接以自己的幾何中心對齊卡片正中央，
-   不靠 flex 置中——旋轉只改變畫面呈現，不改變版面盒子大小，用 flex 置中
-   容易因為盒子還是原本橫的尺寸而算錯位置 */
+/* 橫式音量條：往下展開，貼在按鍵正下方置中——滑桿本身是正常橫向
+   （不用 rotate(-90deg) 轉直），用 flex 置中卡片本身的內容。
+   寬度加大到能放下滑桿+關閉鍵兩個東西，調完可以明確點掉，不用只靠滑鼠移開 */
 .volume-pop {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     left: 50%;
     z-index: 20;
-    width: 44px;
-    height: 116px;
+    width: 156px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     background-color: #fff;
     border: 1px solid rgba(22, 22, 26, 0.08);
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
@@ -2032,89 +2220,78 @@ a.faq-card {
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.music-control-wrap:hover .volume-pop,
-.music-control-wrap:focus-within .volume-pop,
-.sound-control-wrap:hover .volume-pop,
-.sound-control-wrap:focus-within .volume-pop {
+/* 改成「點了才出現」（.open 由 script.js 控制），不再靠 :hover/:focus-within
+   滑鼠移過去就跳出來——滑桿是可以拖曳調整的操作面板，靠意外划過去就跳出來
+   容易誤觸，點擊/點兩下收起才是明確的操作意圖 */
+.music-control-wrap.open .volume-pop,
+.sound-control-wrap.open .volume-pop {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, 0);
 }
 
 .volume-pop input[type="range"] {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 84px;
+    width: 90px;
     accent-color: var(--ink);
     cursor: pointer;
-    transform: translate(-50%, -50%) rotate(-90deg);
 }
 
-/* 播放中：填滿黑色（跟導覽列選中膠囊同一個「黑色＝目前啟用」訊號），不再靠白色光暈表示 */
-.btn-music-toggle.active-music {
-    background-color: var(--ink);
-    color: #ffffff;
-    border-color: var(--ink);
-}
-
-.btn-sound-toggle.active-sound {
-    background-color: var(--ink);
-    color: #ffffff;
-    border-color: var(--ink);
-}
-
-.mobile-sound-wrap {
-    display: none;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 998;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-.btn-mobile-sound-toggle.active-sound {
-    background-color: var(--ink);
-    color: #ffffff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
-}
-
-.mobile-sound-popover {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    pointer-events: none;
-    background-color: var(--ink);
-    border: 1px solid #ffffff;
-    border-radius: 12px;
-    padding: 0 16px;
-    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
-}
-
-.mobile-sound-popover.open {
-    max-height: 100px;
-    opacity: 1;
-    padding: 12px 16px;
-    pointer-events: auto;
-}
-
-.mobile-sound-row {
+/* 調完音量可以直接點掉的關閉鍵，不用只靠滑鼠移開範圍這一種方式 */
+.volume-pop-close {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    color: rgba(22, 22, 26, 0.4);
+    font-size: 12px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    color: #ffffff;
-    font-size: var(--fs-small);
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.mobile-sound-row input[type="range"] {
-    width: 100px;
-    accent-color: #ffffff;
+.volume-pop-close:hover {
+    background-color: rgba(22, 22, 26, 0.08);
+    color: var(--ink);
+}
+
+/* 桌機版按鈕本體：視覺上縮小、拿掉白色圓底，但熱區維持 44px 不縮水
+   （iOS HIG 最小觸控目標），縮小的是圖示大小跟顏色對比，不是可點擊範圍 */
+.btn-music-toggle,
+.btn-sound-toggle {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: rgba(22, 22, 26, 0.5);
+    font-size: 15px;
     cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-music-toggle:hover,
+.btn-sound-toggle:hover {
+    background-color: rgba(22, 22, 26, 0.08);
+    color: var(--ink);
+}
+
+.navbar.on-dark .btn-music-toggle,
+.navbar.on-dark .btn-sound-toggle {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.navbar.on-dark .btn-music-toggle:hover,
+.navbar.on-dark .btn-sound-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
 }
 
 /* =========================================
@@ -2172,26 +2349,45 @@ a.faq-card {
 
 .modal-close {
     position: absolute;
-    top: 8px;
-    right: 12px;
+    /* 20px 對齊 4px 間距網格，同時清出容器 22px 圓角的轉彎範圍，
+       按鈕才不會被自己所在容器的圓角邊緣切到，貼得太緊 */
+    top: var(--sp-5);
+    right: var(--sp-5);
     width: 44px;
     height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
     background: transparent;
     border: none;
-    font-size: var(--fs-h3);
-    color: var(--ink-soft);
+    font-size: var(--fs-h2);
+    color: var(--ink);
     cursor: pointer;
     z-index: 10;
     transform: rotate(0deg);
     transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* 拿掉預設方形黑色外框——關閉鍵視覺上是圓的，方形黑框跟按鈕形狀不搭，
+   改用貼合圓形的柔和光圈，鍵盤 focus 時還是看得出來游標在哪，只是不生硬 */
+.modal-close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.2);
+}
+
 .modal-close:hover {
     color: var(--ink);
     transform: rotate(90deg);
+}
+
+/* 服務條款/隱私權政策彈窗是從其他彈窗（會員登入、聯繫我們、結帳）裡的連結
+   叫出來的，跟它的「上一層」彈窗同時開著——兩個 .modal-overlay 預設共用同一個
+   z-index(2000)，疊層順序只看 HTML 裡誰寫在後面，這個彈窗在 HTML 裡剛好排在
+   會員登入彈窗前面，結果永遠被蓋在下面，點了條款連結卻什麼都看不到。
+   直接給它更高的 z-index，不管從哪個彈窗叫出來都保證疊在最上層 */
+#policy-modal {
+    z-index: 2010;
 }
 
 .policy-modal-box {
@@ -2404,13 +2600,17 @@ a.faq-card {
     height: 0;
 }
 
+/* 跟日期選擇器的日期格子、會員彈窗的統計卡同一套軟膠浮凸語彙，
+   陰影數值依 20px 這個小尺寸等比縮小 */
 .auth-checkbox-mark {
     flex: 0 0 20px;
     width: 20px;
     height: 20px;
     margin-top: 1px;
     border-radius: 50%;
-    border: 1px solid rgba(29, 29, 31, 0.3);
+    border: none;
+    background-color: #ffffff;
+    box-shadow: 1.5px 1.5px 3px rgba(29, 29, 31, 0.15), -1.5px -1.5px 3px rgba(255, 255, 255, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2419,10 +2619,11 @@ a.faq-card {
     transition: all 0.2s ease;
 }
 
+/* 打勾：反過來用內陰影「壓進去」，跟未勾選的浮凸方向相反 */
 .auth-checkbox-row input[type="checkbox"]:checked + .auth-checkbox-mark {
     background-color: var(--ink);
-    border-color: var(--ink);
     color: #ffffff;
+    box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.4), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.15);
 }
 
 .auth-checkbox-row input[type="checkbox"]:focus-visible + .auth-checkbox-mark {
@@ -2831,16 +3032,16 @@ a.faq-card {
     min-width: 0;
 }
 
-/* 彈窗欄位比表單窄，沿用表單那份 272px 的月曆面板寬度會超出卡片邊界，縮窄到 260px、
-   貼右邊界展開。另外「生日」這排離卡片底部只剩不到一排的高度，面板往下展開的話，
+/* 「生日」這排離卡片底部只剩不到一排的高度，面板往下展開的話，
    底下「清除／回到今天」那排會被 .modal-container 的 overflow-y:auto 從畫面裁掉——
-   改成往上展開（bottom 而不是 top），觸發按鈕上方空間比較夠 */
+   改成往上展開（bottom 而不是 top），觸發按鈕上方空間比較夠。
+   寬度不再縮窄——維持跟 .date-picker-panel 一樣的寬度，才能讓日期格子維持 44px 觸控目標；
+   這個彈窗本身有 1100px 寬，貼右邊界展開不會超出卡片邊界 */
 .account-birthday-panel {
     top: auto;
     bottom: calc(100% + 8px);
     left: auto;
     right: 0;
-    width: 260px;
 }
 
 /* 單月查詢：上一月／下一月箭頭夾著月份標籤，不用另外做日期選擇器彈窗——
@@ -3198,7 +3399,9 @@ a.faq-card {
 .product-modal-box {
     max-width: 850px;
     width: 100%;
-    padding: 32px;
+    /* 關閉鍵是 20px+44px=64px 高，上邊界留 --sp-16(64px) 剛好清開，
+       圖片開頭才不會被關閉鍵疊到 */
+    padding: var(--sp-16) 32px 32px;
 }
 
 .product-modal-content {
@@ -3246,7 +3449,9 @@ a.faq-card {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     content: "\f03e";
-    color: var(--ink);
+    /* 圖示顏色原本誤寫成跟底色一樣的 var(--ink)，深色背景疊深色圖示等於看不見，
+       改成白色才看得出佔位圖示 */
+    color: #ffffff;
 }
 
 .gallery-main.img-fallback::after { font-size: 32px; }
@@ -3379,12 +3584,6 @@ a.faq-card {
         scroll-snap-type: none; /* 手機版還原流暢自然滑動 */
     }
 
-    /* 往下滑收起導覽列、往上滑再滑出——只在平板/手機生效，
-       電腦版導覽列固定顯示，不會跟著捲動消失（見 script.js 的判斷） */
-    .navbar.nav-hidden {
-        transform: translateY(-100%);
-    }
-
     /* 手機版彈窗改成 iOS 風格的底部滑出式面板（sheet），不是從畫面中央縮放出現——
        只有上面兩角是圓角，下緣直接貼齊螢幕底部，符合 iOS Action Sheet 的外觀 */
     .modal-overlay {
@@ -3418,6 +3617,7 @@ a.faq-card {
     }
 
     .product-panels {
+        grid-template-columns: 1fr;
         height: auto;
     }
 
@@ -3439,211 +3639,209 @@ a.faq-card {
         white-space: normal;
     }
 
-    /* 手機/平板模式隱藏導覽列裡的音樂/音效按鈕跟章節導覽點：
-       音樂/音效在漢堡選單裡已經有 .mobile-sound-wrap 同樣功能，這裡不重複顯示；
-       章節導覽點單純是防止擋畫面 */
+    /* 手機/平板模式隱藏導覽列裡桌機專用的音效群組跟章節導覽點 */
     .nav-sound-group,
     .nav-utility-divider,
-    .section-dots {
+    .section-dots,
+    .section-index {
         display: none !important;
     }
 
-    /* 導覽列改回頂部固定條：左側漢堡、中間 LOGO、右側會員/聯繫/購物車
-       兩側欄位刻意用 auto（不是 1fr），因為漢堡按鈕跟三個工具圖示寬度差很多，
-       用 1fr 硬性等寬會讓比較寬的那一側（三個圖示）被壓縮，導致購物車圖示被推到螢幕外 */
-    .navbar {
-        display: grid;
-        /* 左右兩欄故意用同一個固定寬度（不是 auto），這樣中間的 LOGO 欄位
-           兩邊留白才會真正對稱，LOGO 才會是畫面上視覺置中，而不是只在欄位裡置中；
-           96px 是配合右側圖示改回 44pt（iOS HIG 最小觸控目標）算出來的寬度，
-           2×44px+4px間距=92px，多留4px緩衝避免邊框/次像素誤差造成溢出 */
-        grid-template-columns: 96px 1fr 96px;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        bottom: auto;
-        padding: 8px 16px;
-        height: 72px !important;
-        width: 100%;
-        /* 不再用深色底條，導覽列跟桌機版一樣完全透明，
-           讓漢堡/LOGO/圖示直接浮在畫面上（深淺會依 .on-dark 自動切換顏色） */
+    /* 手機版只留一條導覽列（畫面底部的分頁列）。頂部這條連同 LOGO 一起收起來，
+       不再是獨立的第二條列——LOGO/品牌識別在首頁區塊本來就看得到，不需要常駐；
+       會員/聯繫/購物車改收進分頁列第5個「更多」按鈕彈出的選單（見 .nav-utility-group
+       下面的手機版規則、script.js 的開關邏輯），.navbar 本身留著只是當
+       position:fixed 的定位基準，不再顯示任何內容 */
+    .nav-left-group {
+        display: none !important;
     }
 
-    .hamburger-btn {
-        display: flex;
-        justify-self: start;
-    }
-
-    .logo-area {
-        display: flex !important;
-        justify-self: center;
-        gap: 8px;
-    }
-
-    .logo-area .nav-icon { height: 38px !important; }
-    .logo-area .logo-text { font-size: 20px; }
-
-    .nav-right { justify-self: end; }
-
-    /* 首頁／品牌／產品／聯繫收進左側漢堡選單抽屜，滑出式面板；
-       內容都是兩個字的短連結，抽屜不需要很寬 */
+    /* 首頁/品牌/產品/商城改成畫面底部「浮起來的深色藥丸列」，取代原本的
+       漢堡選單抽屜——跟桌機版共用同一組 <a>，捲動時哪個區塊亮起來（.active，
+       見 script.js 的 scrollspy）直接沿用，不用再另外寫一套邏輯。
+       跟畫面左右下都留白、四角全圓，不是貼齊三邊的長方形長條 */
     .nav-links {
         position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: min(64%, 260px);
+        top: auto;
+        bottom: max(16px, env(safe-area-inset-bottom, 16px));
+        left: 20px;
+        right: 20px;
+        height: auto;
+        width: auto;
         margin: 0;
-        padding: 96px 24px 32px;
+        padding: 8px 14px;
         box-sizing: border-box;
         background-color: var(--ink);
-        flex-direction: column;
-        align-items: stretch;
-        gap: 4px;
-        overflow-y: auto;
-        transform: translateX(-100%);
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        border: none;
+        border-radius: 32px;
+        box-shadow: 0 12px 28px -10px rgba(22, 22, 26, 0.5);
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        gap: 0;
+        overflow: visible;
+        transform: none;
+        transition: none;
         z-index: 1001;
     }
 
-    .nav-contact-mobile {
-        display: block;
-    }
+    .nav-links li { width: auto; }
 
-    /* 桌機版聯繫用ICON放在右側工具區，手機版改收進漢堡選單裡用文字呈現，避免重複 */
-    .nav-utility-group .nav-icon-link {
-        display: none;
-    }
-
-    .nav-links.open {
-        transform: translateX(0);
-    }
-
-    .nav-links li { width: 100%; }
-
-    /* 抽屜選單維持文字（不要圖示） */
+    /* 分頁列只顯示圖示，不顯示文字（跟頂部圖示按鈕、桌機版膠囊的文字用法不同，
+       分頁列空間窄，圖示本身的辨識度已經夠） */
     .nav-text {
-        display: inline-block !important;
-        font-size: var(--fs-lead);
-        font-weight: bold;
-    }
-
-    .nav-icon-mobile {
         display: none !important;
     }
 
+    .nav-icon-mobile {
+        display: inline-flex !important;
+        font-size: 22px;
+    }
+
+    /* 深色藥丸列上，靜止的圖示是半透明白（跟深底導覽列的 paper-soft 用色邏輯一致），
+       選中的分頁直接換成白底圓圈＋深色圖示，單純的顏色/背景切換，沒有另外的
+       浮動元素或動畫軌跡 */
     .nav-links a {
-        display: block;
-        width: 100%;
-        padding: 16px 16px;
-        color: var(--paper);
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* 抽屜選單不用「目前捲動到哪個區塊」的即時高亮（.active 是捲動監聽器在控制，
-       打開選單當下捲到哪就會亮哪一個，容易被誤會成手滑點到）。改成只有「剛剛點了哪個」
-       才會亮，靠 .tapped（由漢堡選單自己的點擊事件控制，見 script.js）判斷 */
-    .nav-links a.active {
-        background-color: transparent !important;
-    }
-
-    .nav-links a.active .nav-text {
-        color: var(--paper);
-    }
-
-    .nav-links a.tapped {
-        background-color: rgba(255, 255, 255, 0.14) !important;
-    }
-
-    .nav-links a.tapped .nav-text {
-        color: #ffffff; /* 剛剛點下去的項目亮白提示，抽屜背景是深色 */
-    }
-
-    /* 抽屜選單裡的音樂/音效開關（原本浮動在畫面右上角，現在收進漢堡選單） */
-    .nav-mobile-extra {
-        display: block;
-        margin-top: 12px;
-    }
-
-    .nav-mobile-divider {
-        height: 1px;
-        background-color: rgba(255, 255, 255, 0.15);
-        margin: 8px 0 16px;
-    }
-
-    /* 音樂/音效按鈕改直式（圖示在上、文字在下），不然圖示+文字橫向排列
-       會把整個抽屜撐寬，跟其他兩個字的純文字連結不成比例 */
-    .nav-mobile-extra .mobile-sound-wrap {
+        position: relative;
         display: flex;
-        position: static;
-        flex-direction: column;
         align-items: center;
-        gap: 8px;
-    }
-
-    .nav-mobile-extra .btn-mobile-sound-toggle {
-        width: auto;
-        height: auto;
-        flex-direction: column;
-        border-radius: 14px;
-        gap: 4px;
-        padding: 12px 20px;
-    }
-
-    .mobile-sound-label {
-        font-size: var(--fs-small);
-        font-weight: bold;
-    }
-
-    .nav-mobile-extra .mobile-sound-popover {
-        align-items: center;
-    }
-
-    /* 會員／聯繫／購物車：常駐在導覽列右側，不收進抽屜選單 */
-    .nav-utility-group {
-        border-left: none;
-        padding-left: 0;
-        margin-left: 0;
-        gap: 4px;
-    }
-
-    /* 44px＝iOS HIG 最小觸控目標，手機版最需要達標的地方，不能比桌機版小 */
-    .nav-icon-link,
-    .nav-icon-btn {
+        justify-content: center;
         width: 44px;
         height: 44px;
-        flex: 0 0 44px;
+        padding: 0;
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.55);
+        background-color: transparent;
+        box-shadow: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-links a.active {
+        color: var(--ink);
+        background-color: #ffffff;
+    }
+
+    /* 第5個分頁「更多」：跟其他四個分頁共用同一套視覺（44px 圓、半透明白），
+       但不是 <a>，套不到 .nav-links a 的選擇器，另外補一份一樣的樣式；
+       展開選單時（.open）換成跟其他分頁「選中」一樣的白底深色圖示，
+       讓使用者看得出這顆現在是「開啟」狀態 */
+    .nav-more-wrap {
+        display: block;
+    }
+
+    .nav-more-btn {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-family: inherit;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.55);
+        background-color: transparent;
+        box-shadow: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-more-btn.open {
+        color: var(--ink);
+        background-color: #ffffff;
+    }
+
+    /* 會員／聯繫／購物車：手機版收在「更多」彈出的選單裡，不再是頂部常駐的一排，
+       預設隱藏、靠 JS 切換 .open 才浮現在分頁列上方（見 script.js） */
+    .nav-utility-group {
+        position: fixed;
+        right: max(20px, env(safe-area-inset-right, 20px));
+        bottom: calc(max(16px, env(safe-area-inset-bottom, 16px)) + 72px);
+        border-left: none;
+        padding: 8px;
+        margin-left: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        background-color: var(--ink);
+        border-radius: 20px;
+        box-shadow: 0 12px 28px -10px rgba(22, 22, 26, 0.5);
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+        pointer-events: none;
+        transform-origin: bottom right;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 1002;
+    }
+
+    .nav-utility-group.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    /* 選單裡是一排排橫向列（圖示＋文字），不是桌機版的獨立圓鈕 */
+    .nav-icon-link,
+    .nav-icon-btn {
+        width: auto;
+        height: 44px;
+        flex: none;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 0 12px;
+        border-radius: 12px;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .nav-icon-link:active,
+    .nav-icon-btn:active {
+        background-color: rgba(255, 255, 255, 0.12);
     }
 
     .nav-icon-svg {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
+        flex: none;
     }
 
-    #nav-account-icon-crown {
-        width: 20px;
-        height: 20px;
+    .nav-more-sound-btn {
+        display: flex;
     }
 
-    .product-panels {
-        flex-direction: column;
-        min-height: auto;
+    .nav-more-sound-icon {
+        display: inline-flex;
+        justify-content: center;
+        width: 22px;
+        font-size: 22px;
+        flex: none;
+    }
+
+    .nav-utility-label {
+        display: inline;
+        font-size: var(--fs-small);
+        white-space: nowrap;
+    }
+
+    /* 選單裡的按鈕變寬了（圖示＋文字），購物車數量徽章改回跟著圖示走的行內小圓點，
+       不用桌機版那種疊在圓鈕右上角的絕對定位（那樣會飄到文字尾端，離圖示太遠） */
+    .nav-utility-group .cart-badge {
+        position: static;
+        margin: 0 0 0 -4px;
     }
 
     .product-panel {
-        flex: none;
         min-height: 480px;
-        border-right: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .product-panel:last-child {
-        border-bottom: none;
     }
 
     .product-panel:hover {
-        flex: none;
+        transform: none;
     }
 
     .team-switcher {
@@ -3683,6 +3881,11 @@ a.faq-card {
         order: 2;
         width: 100%;
         height: 42vh;
+        /* 桌機版的 flex:6 1 0% 用 flex-basis:0% 決定主軸尺寸，手機版直向排列時
+           main-axis 變成高度，flex-basis:0% 會蓋掉這裡的 height:42vh，
+           整個立繪框會被壓縮成幾乎 0 高——手機版不需要用 flex-grow 分配剩餘空間，
+           直接關掉 flex，改吃自己寫的 height */
+        flex: none;
     }
 
     .team-info-merged {
@@ -3757,7 +3960,22 @@ a.faq-card {
 
     .product-modal-content {
         flex-direction: column;
-        gap: var(--sp-5);
+        gap: var(--sp-4);
+    }
+
+    /* 手機版直向堆疊，圖片還維持桌機版 4:3 比例的話會佔掉太多高度，
+       整個彈窗就會超出螢幕、非得靠內部捲軸才看得到下面的加入購物車鍵——
+       改成更扁的比例，把高度讓給下面的商品資訊跟操作按鈕 */
+    .gallery-main {
+        aspect-ratio: 16 / 9;
+    }
+
+    .product-gallery {
+        gap: var(--sp-2);
+    }
+
+    .product-modal-box {
+        padding: var(--sp-16) var(--sp-6) var(--sp-6);
     }
 
     .form-grid {
@@ -3798,7 +4016,6 @@ a.faq-card {
 .auth-checkbox-mark:active,
 .auth-tab:active,
 .auth-forgot-link:active,
-.hamburger-btn:active,
 .policy-link:active,
 .section-dot:active,
 .scroll-down-indicator:active,

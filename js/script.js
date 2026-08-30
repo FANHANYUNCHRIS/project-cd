@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "經典鳳梨酥",
             price: "NT$ 500",
             qty: "10入/盒",
-            shortDesc: "嚴選台灣在地土鳳梨，搭配發酵奶油酥皮，酸甜果香。",
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國 Isigny 發酵奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
             images: [
                 "images/product-1.jpg",
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "法式磅蛋糕",
             price: "NT$ 400",
             qty: "1條/盒",
-            shortDesc: "濕潤扎實蛋糕體，散發伯爵茶香與香草籽優雅風味。",
             desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
             images: [
                 "images/product-2.jpg",
@@ -38,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "焦糖堅果塔",
             price: "NT$ 600",
             qty: "10入/盒",
-            shortDesc: "手工海鹽焦糖包裹夏威夷豆與核桃，口感酥脆香濃。",
             desc: "手工熬煮法國海鹽焦糖醬，均勻裹覆夏威夷豆與核桃，放在香脆塔皮上，口感層次豐富，香氣四溢。",
             images: [
                 "images/product-3.jpg",
@@ -53,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "巧克力派",
             price: "NT$ 650",
             qty: "8吋/顆",
-            shortDesc: "濃郁苦甜巧克力內餡，搭配酥脆奶油派皮，經典不敗的巧克力風味。",
             desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
             images: [
                 "images/product-4.jpg",
@@ -67,61 +63,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* =========================================
-       2. 捲動連動導覽列行為 (Scroll-Driven Navbar Behavior)
+       2. 導覽列（Navbar）
        ========================================= */
     const navbar = document.getElementById('main-navbar');
 
-    /* 深淺色判斷原本靠 scroll 事件裡手動算 getBoundingClientRect() 跟一個寫死的px門檻比較——
-       這個做法在 smooth-scroll + scroll-snap 快速切換滿版區塊時，scroll事件觸發頻率跟不上，
-       畫面看起來會卡一下才反應。改成跟下面「哪個連結該亮」共用同一個 IntersectionObserver，
-       深淺色的判定改由瀏覽器 compositor 直接驅動，不再依賴 scroll 事件的觸發頻率，更即時可靠 */
-    let lastNavScrollY = window.scrollY;
-
-    window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
-
-        // 手機選單開著的時候不要收起導覽列，不然漢堡按鈕跟著消失會關不掉選單
-        const mobileDrawer = document.getElementById('nav-links');
-        const isMobileMenuOpen = mobileDrawer && mobileDrawer.classList.contains('open');
-
-        if (!isMobileMenuOpen) {
-            if (currentScrollY > lastNavScrollY && currentScrollY > 80) {
-                navbar.classList.add('nav-hidden'); // 往下滑，收起
-            } else if (currentScrollY < lastNavScrollY) {
-                navbar.classList.remove('nav-hidden'); // 往上滑，滑出
-            }
-        }
-
-        lastNavScrollY = currentScrollY;
-    });
-
-    /* =========================================
-       2b. 導覽列音樂/音效置中（跟左邊導覽膠囊、右邊會員/聯繫/購物車保持等距）
-       ========================================= */
-    /* 導覽膠囊寬度跟右側工具區寬度都會隨內容/斷點變動，純 CSS 沒辦法算出
-       兩個獨立元素中間的等距點，所以在這裡即時量測兩者的邊界，把音樂/音效
-       這組的中心點設在正中間——這樣膠囊跟右側圖示才能維持在原本的位置不動，
-       音樂/音效才是真正「插進中間」的第三塊，不是靠它們兩個各自往內縮 */
-    function positionNavSoundGroup() {
-        const pill = document.getElementById('nav-links');
-        const soundGroup = document.querySelector('.nav-sound-group');
-        const utilityGroup = document.querySelector('.nav-utility-group');
-        if (!pill || !soundGroup || !utilityGroup) return;
-        if (getComputedStyle(soundGroup).display === 'none') return; // 手機版音樂/音效收進漢堡選單了，不用算
-
-        const navbarRect = navbar.getBoundingClientRect();
-        const pillRect = pill.getBoundingClientRect();
-        const utilityRect = utilityGroup.getBoundingClientRect();
-        const midpoint = (pillRect.right + utilityRect.left) / 2 - navbarRect.left;
-        soundGroup.style.left = `${midpoint}px`;
-    }
-
-    positionNavSoundGroup();
-    if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(positionNavSoundGroup);
-    }
-    window.addEventListener('load', positionNavSoundGroup);
-    window.addEventListener('resize', positionNavSoundGroup);
+    /* 深淺色判斷靠下面「哪個連結該亮」共用同一個 IntersectionObserver 驅動，
+       不依賴 scroll 事件的觸發頻率，反應即時可靠。
+       原本手機版捲動時會收起/滑出整條導覽列，但底部分頁列現在是常駐可點的
+       操作區（不是純裝飾的頂欄），跟著捲動消失反而讓人點不到，改成不管往上
+       往下捲，導覽列都固定顯示，跟桌機版行為一致 */
 
     /* =========================================
        3. 首頁背景影片輪播 (雙層淡入淡出)
@@ -225,6 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 style: '只想看戲',
                 quote: '「溫度差一度，風味就不再是那個風味。」',
                 bio: '強襲魔女的戰鬥職位是「移動基地」，武器欄只寫了一個字：車。戰鬥風格寫著「只想看戲」，實際上卻是店裡所有配方溫控背後最嚴謹的把關者——缺人手時補收銀、缺食材時開車去載貨，是名符其實、什麼都攬在身上的萬能雜工。',
+                // team-2.jpg 還沒真的上傳，圖片放進 images/ 資料夾就會自動生效，
+                // 在那之前 avatar/portrait 各自的錯誤處理會顯示通用佔位樣式
                 avatar: 'images/team-2.jpg',
                 portrait: 'images/team-2.jpg'
             },
@@ -263,7 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.type = 'button';
             btn.className = `team-avatar-item${i === 0 ? ' active' : ''}`;
             btn.setAttribute('aria-label', member.name);
-            btn.innerHTML = `<img src="${member.avatar}" alt="${member.name}" loading="lazy">`;
+            // alt 特意留空：按鈕本身已經有 aria-label 提供無障礙名稱，圖片只是裝飾用；
+            // 如果 alt 填了名字，圖片讀取失敗時 Chrome 滑鼠移過去會跳出瀏覽器原生的
+            // alt 文字提示框，跟畫面上其他元素的視覺風格不一致，也不是我們想要的提示
+            btn.innerHTML = `<img src="${member.avatar}" alt="" loading="lazy">`;
+            // 照片還沒上傳時，用通用佔位圖示取代瀏覽器預設的裂圖示
+            btn.querySelector('img').addEventListener('error', () => {
+                btn.classList.add('img-fallback');
+            }, { once: true });
             btn.addEventListener('click', () => showMember(i));
             listEl.appendChild(btn);
         });
@@ -286,10 +245,25 @@ document.addEventListener('DOMContentLoaded', () => {
             portraitEl.style.opacity = '0';
 
             setTimeout(() => {
-                portraitTextEl.innerHTML = '';
-                portraitEl.style.backgroundImage = `url('${member.portrait}')`;
                 portraitEl.setAttribute('aria-label', `${member.name} 立繪`);
-                portraitEl.style.opacity = '1';
+
+                // 立繪還沒上傳時（圖片路徑 404），用通用佔位樣式取代——
+                // background-image 讀取失敗不會像 <img> 一樣自動觸發瀏覽器裂圖示，
+                // 要自己用 Image() 預先載入一次才知道成不成功
+                const preload = new Image();
+                preload.onload = () => {
+                    portraitEl.classList.remove('img-fallback');
+                    portraitTextEl.innerHTML = '';
+                    portraitEl.style.backgroundImage = `url('${member.portrait}')`;
+                    portraitEl.style.opacity = '1';
+                };
+                preload.onerror = () => {
+                    portraitEl.classList.add('img-fallback');
+                    portraitEl.style.backgroundImage = 'none';
+                    portraitTextEl.innerHTML = '';
+                    portraitEl.style.opacity = '1';
+                };
+                preload.src = member.portrait;
             }, 200);
         }
 
@@ -319,11 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.innerHTML = `
                 <div class="product-panel-image" data-bg="${product.images[0]}"></div>
                 <div class="product-panel-body">
-                    <h3 class="product-panel-name">${product.name}</h3>
-                    <p class="product-panel-detail">${product.shortDesc}</p>
-                    <div class="product-panel-meta">
-                        <span class="product-panel-price">${product.price}</span>
-                        <span class="product-panel-qty">${product.qty}</span>
+                    <div class="product-panel-row1">
+                        <h3 class="product-panel-name">${product.name}</h3>
+                        <div class="product-panel-meta">
+                            <span class="product-panel-price">${product.price}</span>
+                            <span class="product-panel-qty">${product.qty}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -433,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {}
     }
 
-    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .hamburger-btn, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-logout-btn, .history-month-btn').forEach(el => {
+    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-logout-btn, .history-month-btn').forEach(el => {
         el.addEventListener('click', playClickSound);
     });
 
@@ -476,104 +451,133 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================================
-       8b. 手機/平板精簡音樂＋音效開關 (合併控制，共用桌機版的播放狀態與音量變數)
+       8a. 音量滑桿：點擊才展開，點旁邊的關閉鍵才收起
        ========================================= */
-    const btnMobileSound = document.getElementById('btn-mobile-sound-toggle');
-    const mobileSoundPopover = document.getElementById('mobile-sound-popover');
-    const mobileMusicVolumeSlider = document.getElementById('mobile-music-volume-slider');
-    const mobileSfxVolumeSlider = document.getElementById('mobile-sfx-volume-slider');
+    /* 不用 :hover/:focus-within 滑鼠移過去就跳出來——滑桿是可以拖曳調整的
+       操作面板，划過去就跳出來容易誤觸。改成點擊才展開（明確的操作意圖），
+       關閉也是明確動作：點旁邊的關閉鍵，不是靠滑鼠移開範圍
+       （移開就關會跟拖曳滑桿的游標移動打架，不可靠） */
+    (function initVolumePopovers() {
+        const wraps = [
+            document.querySelector('.music-control-wrap'),
+            document.querySelector('.sound-control-wrap')
+        ].filter(Boolean);
+        if (!wraps.length) return;
 
-    if (mobileMusicVolumeSlider && musicVolumeSlider) {
-        mobileMusicVolumeSlider.value = musicVolumeSlider.value;
-        mobileMusicVolumeSlider.addEventListener('input', () => {
-            musicVolumeSlider.value = mobileMusicVolumeSlider.value;
-            musicVolumeSlider.dispatchEvent(new Event('input'));
-        });
-    }
+        function closeAll() {
+            wraps.forEach(w => {
+                w.classList.remove('open');
+                const b = w.querySelector(':scope > button');
+                if (b) b.setAttribute('aria-expanded', 'false');
+            });
+        }
 
-    if (mobileSfxVolumeSlider && sfxVolumeSlider) {
-        mobileSfxVolumeSlider.value = sfxVolumeSlider.value;
-        mobileSfxVolumeSlider.addEventListener('input', () => {
-            sfxVolumeSlider.value = mobileSfxVolumeSlider.value;
-            sfxVolumeSlider.dispatchEvent(new Event('input'));
-        });
-    }
+        wraps.forEach(wrap => {
+            // :scope > button 才是觸發按鈕本身——.volume-pop 裡面現在也有一顆
+            // 關閉鍵，同樣是 <button>，直接用 querySelector('button') 會抓錯
+            // 抓到那顆而不是外面的觸發鍵
+            const btn = wrap.querySelector(':scope > button');
+            const closeBtn = wrap.querySelector('.volume-pop-close');
+            if (!btn) return;
 
-    if (btnMobileSound) {
-        let mobileSoundActive = false;
-        const mobileSoundIcon = btnMobileSound.querySelector('i');
-
-        btnMobileSound.addEventListener('click', () => {
-            mobileSoundActive = !mobileSoundActive;
-
-            if (mobileSoundActive) {
-                if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
-                if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (mobileSoundIcon) mobileSoundIcon.className = 'fa-solid fa-volume-high';
-                btnMobileSound.classList.add('active-sound');
-                btnMobileSound.setAttribute('aria-expanded', 'true');
-                mobileSoundPopover.classList.add('open');
-            } else {
-                if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
-                if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (mobileSoundIcon) mobileSoundIcon.className = 'fa-solid fa-volume-xmark';
-                btnMobileSound.classList.remove('active-sound');
-                btnMobileSound.setAttribute('aria-expanded', 'false');
-                mobileSoundPopover.classList.remove('open');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    wrap.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                });
             }
-        });
-    }
 
-    /* =========================================
-       8c. 平板/手機漢堡選單開合
-       ========================================= */
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navLinksDrawer = document.getElementById('nav-links');
-    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
-
-    if (hamburgerBtn && navLinksDrawer && mobileMenuBackdrop) {
-        const closeMobileMenu = () => {
-            navLinksDrawer.classList.remove('open');
-            mobileMenuBackdrop.classList.remove('open');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-        };
-
-        const drawerLinks = navLinksDrawer.querySelectorAll('a[href^="#"]');
-
-        const openMobileMenu = () => {
-            // 每次打開都重置成全白，不要讓上次點過的項目或捲動監聽器設的 .active 殘留高亮，
-            // 抽屜選單只顯示「剛剛點了誰」，不顯示「目前捲到哪」（那是桌機版膠囊在做的事）
-            drawerLinks.forEach(link => link.classList.remove('tapped'));
-            navLinksDrawer.classList.add('open');
-            mobileMenuBackdrop.classList.add('open');
-            hamburgerBtn.setAttribute('aria-expanded', 'true');
-        };
-
-        hamburgerBtn.addEventListener('click', () => {
-            const isOpen = navLinksDrawer.classList.contains('open');
-            if (isOpen) closeMobileMenu(); else openMobileMenu();
-        });
-
-        mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && navLinksDrawer.classList.contains('open')) closeMobileMenu();
-        });
-
-        // 點選抽屜裡的頁面連結（首頁/品牌/產品/商城/聯繫）後：亮出剛點的那個，並自動收合選單
-        drawerLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                drawerLinks.forEach(l => l.classList.remove('tapped'));
-                link.classList.add('tapped');
-                closeMobileMenu();
+            btn.addEventListener('click', () => {
+                const willOpen = !wrap.classList.contains('open');
+                closeAll();
+                if (willOpen) {
+                    wrap.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
             });
         });
 
-        // 螢幕從手機/平板尺寸放大回桌機尺寸時，確保抽屜狀態重置
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 1024) closeMobileMenu();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeAll();
         });
-    }
+    })();
+
+    /* =========================================
+       8b. 手機版分頁列第5顆「更多」：把會員/聯繫/購物車收進這顆按鈕彈出的選單
+       （手機版只留一條導覽列，頂部那排整個收起來，見 CSS 的 .nav-left-group）
+       ========================================= */
+    (function initNavMore() {
+        const moreBtn = document.getElementById('btn-nav-more');
+        const utilityGroup = document.querySelector('.nav-utility-group');
+        if (!moreBtn || !utilityGroup) return;
+
+        function closeMenu() {
+            utilityGroup.classList.remove('open');
+            moreBtn.classList.remove('open');
+            moreBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        moreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const willOpen = !utilityGroup.classList.contains('open');
+            if (willOpen) {
+                utilityGroup.classList.add('open');
+                moreBtn.classList.add('open');
+                moreBtn.setAttribute('aria-expanded', 'true');
+            } else {
+                closeMenu();
+            }
+        });
+
+        // 選單裡點了會員/聯繫我們/購物車任何一個，各自會另外開自己的彈窗，
+        // 這個「更多」選單本身要跟著收起來，不能兩層彈窗疊在一起
+        utilityGroup.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('click', closeMenu);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!utilityGroup.classList.contains('open')) return;
+            if (utilityGroup.contains(e.target) || moreBtn.contains(e.target)) return;
+            closeMenu();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMenu();
+        });
+    })();
+
+    /* =========================================
+       8c. 手機版「更多」選單裡的音樂＋音效合併開關
+       （桌機版音樂/音效各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
+       手機版簡化成一顆開關，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
+       ========================================= */
+    (function initMoreSoundToggle() {
+        const btn = document.getElementById('btn-more-sound-toggle');
+        const icon = document.getElementById('nav-more-sound-icon');
+        const label = document.getElementById('nav-more-sound-label');
+        if (!btn) return;
+
+        let active = false;
+
+        btn.addEventListener('click', () => {
+            active = !active;
+
+            if (active) {
+                if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
+                if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
+                if (icon) icon.textContent = 'volume_up';
+                if (label) label.textContent = '音效開';
+            } else {
+                if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
+                if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
+                if (icon) icon.textContent = 'volume_off';
+                if (label) label.textContent = '音效關';
+            }
+
+            btn.setAttribute('aria-expanded', String(active));
+        });
+    })();
 
     /* =========================================
        9. 螢幕四周 4 邊滾動進度條 (頂/右/底/左)
@@ -632,6 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
     const sectionDotsEl = document.getElementById('section-dots');
     const sectionDots = document.querySelectorAll('.section-dot');
+    const sectionIndexEl = document.getElementById('section-index');
+    const sectionIndexCurrent = document.getElementById('section-index-current');
 
     const observerOptions = {
         root: null,
@@ -648,7 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 navLinks.forEach(link => {
                     const href = link.getAttribute('href');
-                    link.classList.toggle('active', href === `#${currentId}`);
+                    const isActive = href === `#${currentId}`;
+                    link.classList.toggle('active', isActive);
                 });
 
                 sectionDots.forEach(dot => {
@@ -657,6 +664,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (sectionDotsEl) {
                     sectionDotsEl.classList.toggle('on-dark', isDark);
+                }
+
+                // 左側頁碼標籤：跟右側小圓點共用同一個 currentId／isDark 判斷，
+                // 兩邊才會同步切換，不會有時間差造成的不一致
+                if (sectionIndexCurrent) {
+                    const dotIndex = Array.from(sectionDots).findIndex(dot => dot.dataset.target === currentId);
+                    if (dotIndex !== -1) {
+                        sectionIndexCurrent.textContent = String(dotIndex + 1).padStart(2, '0');
+                    }
+                }
+
+                if (sectionIndexEl) {
+                    sectionIndexEl.classList.toggle('on-dark', isDark);
                 }
 
                 // 導覽列深淺色也交給同一個observer驅動，不再靠scroll事件手動算位置
@@ -672,18 +692,12 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================= */
     const contactModal = document.getElementById('contact-modal');
     const contactModalClose = document.getElementById('contact-modal-close');
-    const contactTriggers = [
-        document.getElementById('nav-btn-contact'),
-        document.getElementById('nav-link-contact-mobile')
-    ];
+    const contactTrigger = document.getElementById('nav-btn-contact');
 
-    if (contactModal && contactModalClose) {
-        contactTriggers.forEach(trigger => {
-            if (!trigger) return;
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal(contactModal);
-            });
+    if (contactModal && contactModalClose && contactTrigger) {
+        contactTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(contactModal);
         });
 
         contactModalClose.addEventListener('click', () => closeModal(contactModal));
@@ -1138,5 +1152,76 @@ document.addEventListener('DOMContentLoaded', () => {
         grid: 'signup-birthday-grid',
         clear: 'signup-birthday-clear',
         today: 'signup-birthday-today'
+    });
+
+    /* =========================================
+       自訂下拉選單（取代 <select>，原生彈出視窗是系統畫的，
+       跟生日日期選擇器同一個理由，CSS 改不了顏色/字型）
+       ========================================= */
+    function createCustomSelect(ids) {
+        const wrap = document.getElementById(ids.wrap);
+        if (!wrap) return null;
+
+        const trigger = document.getElementById(ids.trigger);
+        const display = document.getElementById(ids.display);
+        const hiddenInput = document.getElementById(ids.hidden);
+        const panel = document.getElementById(ids.panel);
+        const options = Array.from(panel.querySelectorAll('.custom-select-option'));
+
+        function openPanel() {
+            panel.hidden = false;
+            trigger.setAttribute('aria-expanded', 'true');
+        }
+
+        function closePanel() {
+            panel.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
+        }
+
+        function selectOption(opt, skipNotify) {
+            options.forEach(o => {
+                o.classList.remove('selected');
+                o.setAttribute('aria-selected', 'false');
+            });
+            opt.classList.add('selected');
+            opt.setAttribute('aria-selected', 'true');
+            hiddenInput.value = opt.dataset.value;
+            display.textContent = opt.textContent;
+            trigger.classList.toggle('has-value', !!opt.dataset.value);
+            closePanel();
+            if (!skipNotify) hiddenInput.dispatchEvent(new Event('change'));
+        }
+
+        trigger.addEventListener('click', () => {
+            if (panel.hidden) openPanel();
+            else closePanel();
+        });
+
+        options.forEach(opt => {
+            opt.addEventListener('click', () => selectOption(opt));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!panel.hidden && !wrap.contains(e.target)) closePanel();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !panel.hidden) closePanel();
+        });
+
+        return {
+            setValue(value) {
+                const opt = options.find(o => o.dataset.value === (value || '')) || options[0];
+                if (opt) selectOption(opt, true);
+            }
+        };
+    }
+
+    createCustomSelect({
+        wrap: 'signup-store-wrap',
+        trigger: 'signup-store-trigger',
+        display: 'signup-store-display',
+        hidden: 'signup-store',
+        panel: 'signup-store-panel'
     });
 });

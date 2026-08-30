@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountInfoCreated = document.getElementById('account-info-created');
     const accountInfoMemberno = document.getElementById('account-info-memberno');
     const accountInfoPoints = document.getElementById('account-info-points');
+    const accountInfoTier = document.getElementById('account-info-tier');
     const btnAccountLogout = document.getElementById('btn-account-logout');
     const historyMonthPrev = document.getElementById('history-month-prev');
     const historyMonthNext = document.getElementById('history-month-next');
@@ -83,6 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (isNaN(d.getTime())) return '—';
         return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    // 會員等級用現有的 points 欄位即時換算，不用另外存欄位——
+    // 門檻：銅 0-999／銀 1000-4999／金 5000+
+    function getMemberTier(points) {
+        if (points >= 5000) return '金卡會員';
+        if (points >= 1000) return '銀卡會員';
+        return '銅卡會員';
     }
 
     /* 會員彈窗本來整份資料都是唯讀，生日又只有註冊當下那個表單能填一次——
@@ -114,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
             accountInfoCreated.textContent = formatDateSlash(data.createdAt);
             // 資料庫沒有獨立的會員編號欄位，用帳號 uid 前 8 碼推導出穩定、唯一的顯示 ID
             accountInfoMemberno.textContent = 'CD' + uid.slice(0, 8).toUpperCase();
-            accountInfoPoints.textContent = (data.points || 0).toLocaleString();
+            const points = data.points || 0;
+            accountInfoPoints.textContent = points.toLocaleString();
+            if (accountInfoTier) accountInfoTier.textContent = getMemberTier(points);
         });
     }
 
@@ -350,9 +361,12 @@ document.addEventListener('DOMContentLoaded', () => {
     auth.onAuthStateChanged(user => {
         currentUser = user;
         if (user) {
-            // 登入後：人像圖示換成金色皇冠，代表已是會員；滑鼠移上去看得到姓名
-            navAccountIconPerson.hidden = true;
-            navAccountIconCrown.hidden = false;
+            // 登入後：人像圖示換成皇冠，代表已是會員；滑鼠移上去看得到姓名。
+            // 這兩個是 <svg>，不是普通 HTML 元素——實測 SVGElement 的 .hidden
+            // 屬性賦值不會反映到實際的 hidden attribute（跟 HTMLElement 不一樣），
+            // 賦值後畫面不會真的切換，所以這裡改用 setAttribute/removeAttribute 直接操作
+            navAccountIconPerson.setAttribute('hidden', '');
+            navAccountIconCrown.removeAttribute('hidden');
             navBtnAccount.setAttribute('aria-label', '會員專區');
             db.collection('users').doc(user.uid).get().then(doc => {
                 const name = (doc.exists && doc.data().displayName) || user.email;
@@ -360,8 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             subscribeCart(user.uid);
         } else {
-            navAccountIconPerson.hidden = false;
-            navAccountIconCrown.hidden = true;
+            navAccountIconPerson.removeAttribute('hidden');
+            navAccountIconCrown.setAttribute('hidden', '');
             navBtnAccount.setAttribute('aria-label', '會員登入');
             navBtnAccount.title = '會員登入';
             unsubscribeCart();

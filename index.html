@@ -133,79 +133,24 @@
 
     <!-- 100% 完全透明懸浮導覽列 -->
     <nav class="navbar" id="main-navbar">
-        <button type="button" class="hamburger-btn" id="hamburger-btn" aria-label="開啟選單" aria-expanded="false" aria-controls="nav-links">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
 
-        <a href="#home" class="logo-area">
-            <img src="images/UNICORN LOGO.png" alt="Project.CD LOGO" class="nav-icon" loading="lazy">
-            <span class="logo-text">Project.CD</span>
-        </a>
+        <div class="nav-left-group">
+            <a href="#home" class="logo-area">
+                <img src="images/UNICORN LOGO.png" alt="Project.CD LOGO" class="nav-icon" loading="lazy">
+                <span class="logo-text">Project.CD</span>
+            </a>
 
-        <div class="nav-right">
-            <ul class="nav-links" id="nav-links">
-                <li>
-                    <a href="#home" class="active">
-                        <span class="nav-text">首頁</span>
-                        <span class="nav-icon-mobile material-symbols-outlined">home</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#brand">
-                        <span class="nav-text">品牌</span>
-                        <span class="nav-icon-mobile material-symbols-outlined">stars</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#products">
-                        <span class="nav-text">產品</span>
-                        <span class="nav-icon-mobile material-symbols-outlined">cake</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#shop">
-                        <span class="nav-text">商城</span>
-                        <span class="nav-icon-mobile material-symbols-outlined">storefront</span>
-                    </a>
-                </li>
-
-                <!-- 手機/平板漢堡選單專用：聯繫連結，桌機版不顯示（桌機版聯繫在右側工具區，用ICON呈現） -->
-                <li class="nav-contact-mobile">
-                    <a href="#contact" id="nav-link-contact-mobile">
-                        <span class="nav-text">聯繫</span>
-                    </a>
-                </li>
-
-                <!-- 手機/平板漢堡選單專用：音樂與音效開關，桌機版不顯示（桌機用右下角浮動按鈕） -->
-                <li class="nav-mobile-extra">
-                    <div class="nav-mobile-divider"></div>
-                    <div class="mobile-sound-wrap">
-                        <button id="btn-mobile-sound-toggle" class="btn-circular btn-mobile-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
-                            <i class="fa-solid fa-volume-xmark"></i>
-                            <span class="mobile-sound-label">音樂與音效</span>
-                        </button>
-                        <div class="mobile-sound-popover" id="mobile-sound-popover">
-                            <div class="mobile-sound-row">
-                                <i class="fa-solid fa-compact-disc"></i>
-                                <input type="range" id="mobile-music-volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="背景音樂音量">
-                            </div>
-                            <div class="mobile-sound-row">
-                                <i class="fa-solid fa-bell"></i>
-                                <input type="range" id="mobile-sfx-volume-slider" min="0" max="0.3" step="0.005" value="0.05" aria-label="按鍵音效音量">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-
+            <!-- 音樂/音效：貼著 LOGO 放，弱化成次要控制項，不再跟會員/聯繫/購物車
+                 同一個視覺量級（那幾顆是核心購物操作，音效只是氛圍偏好設定） -->
             <div class="nav-sound-group">
                 <div class="music-control-wrap">
                     <div class="volume-pop">
                         <input type="range" id="music-volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="音樂音量">
+                        <button type="button" class="volume-pop-close" aria-label="關閉音樂音量調整">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                    <button type="button" id="btn-music-toggle" class="nav-icon-btn btn-music-toggle" aria-label="播放背景音樂">
+                    <button type="button" id="btn-music-toggle" class="btn-music-toggle" aria-label="播放背景音樂" aria-expanded="false">
                         <i class="fa-solid fa-music"></i>
                     </button>
                 </div>
@@ -213,33 +158,81 @@
                 <div class="sound-control-wrap">
                     <div class="volume-pop">
                         <input type="range" id="sfx-volume-slider" min="0" max="0.3" step="0.005" value="0.05" aria-label="按鍵音效音量">
+                        <button type="button" class="volume-pop-close" aria-label="關閉音效音量調整">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                    <button type="button" id="btn-sound-toggle" class="nav-icon-btn btn-sound-toggle" aria-label="切換音效">
+                    <button type="button" id="btn-sound-toggle" class="btn-sound-toggle" aria-label="切換音效" aria-expanded="false">
                         <i class="fa-solid fa-volume-xmark"></i>
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div class="nav-right">
+            <ul class="nav-links" id="nav-links">
+                <li>
+                    <a href="#home" class="active" aria-label="首頁">
+                        <span class="nav-text">首頁</span>
+                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#brand" aria-label="品牌">
+                        <span class="nav-text">品牌</span>
+                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">stars</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#products" aria-label="產品">
+                        <span class="nav-text">產品</span>
+                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">cake</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#shop" aria-label="商城">
+                        <span class="nav-text">商城</span>
+                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">storefront</span>
+                    </a>
+                </li>
+
+                <!-- 手機版第5個分頁：帳號/聯繫/購物車收在這顆按鈕彈出的選單裡，
+                     不是各自獨立顯示在頂部——頂部那排在手機版整個收起來了，
+                     見 script.js 的 nav-utility-group 開關邏輯 -->
+                <li class="nav-more-wrap">
+                    <button type="button" class="nav-more-btn" id="btn-nav-more" aria-haspopup="true" aria-expanded="false" aria-label="更多">
+                        <span class="nav-icon-mobile material-symbols-outlined">more_horiz</span>
+                    </button>
+                </li>
+            </ul>
 
             <div class="nav-utility-group">
                 <div class="nav-utility-divider" aria-hidden="true"></div>
 
+                <!-- 手機版專用的音樂＋音效總開關（合併控制，桌機版各自獨立的音樂/音效鍵見
+                     .nav-sound-group，手機版簡化成一顆，跟會員/聯繫/購物車收在同一個選單裡） -->
+                <button type="button" class="nav-icon-btn nav-more-sound-btn" id="btn-more-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
+                    <span class="material-symbols-outlined nav-more-sound-icon" id="nav-more-sound-icon">volume_off</span>
+                    <span class="nav-utility-label" id="nav-more-sound-label">音效關</span>
+                </button>
+
                 <button type="button" class="nav-icon-btn" id="nav-btn-account" aria-label="會員登入">
                     <svg class="nav-icon-svg" id="nav-account-icon-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
                     <svg class="nav-icon-svg nav-account-icon-crown" id="nav-account-icon-crown" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l-1.2-8.6L7.6 12 12 5l4.4 7 5.8-3.6L21 17"/><path d="M5 19.5h14"/></svg>
+                    <span class="nav-utility-label">會員</span>
                 </button>
                 <a href="#contact" class="nav-icon-link" id="nav-btn-contact" aria-label="聯繫我們">
                     <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="1.6"/><path d="M4 7l8 6 8-6"/></svg>
+                    <span class="nav-utility-label">聯繫我們</span>
                 </a>
                 <button type="button" class="nav-icon-btn nav-cart-btn" id="nav-btn-cart" aria-label="購物車">
                     <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 11.6a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.6L20.8 8H6.2"/><circle cx="9.6" cy="20" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.8" cy="20" r="1.1" fill="currentColor" stroke="none"/></svg>
                     <span class="cart-badge" id="cart-badge" hidden>0</span>
+                    <span class="nav-utility-label">購物車</span>
                 </button>
             </div>
         </div>
     </nav>
-
-    <!-- 手機/平板漢堡選單開啟時的背景遮罩，點擊可關閉選單 -->
-    <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
 
     <!-- 首頁區塊 -->
     <header id="home" class="hero-banner fullscreen-section dark-section">
@@ -544,6 +537,13 @@
         <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
     </nav>
 
+    <!-- 左側頁碼標籤：跟右側小圓點對稱、份量一樣輕，顯示目前第幾頁/共幾頁 -->
+    <div class="section-index" id="section-index" aria-hidden="true">
+        <span class="section-index-current" id="section-index-current">01</span>
+        <span class="section-index-sep"></span>
+        <span class="section-index-total">04</span>
+    </div>
+
     <!-- 顧客服務條款彈窗 -->
     <div id="policy-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true" inert>
         <div class="modal-container policy-modal-box">
@@ -684,14 +684,21 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="signup-store">偏好取貨超商（選填）</label>
-                        <div class="select-wrapper">
-                            <select id="signup-store">
-                                <option value="" selected>請選擇</option>
-                                <option value="711">7-11</option>
-                                <option value="family">全家</option>
-                                <option value="other">皆可</option>
-                            </select>
+                        <label for="signup-store-trigger">偏好取貨超商（選填）</label>
+                        <!-- 原生 <select> 的下拉選單是系統畫的，CSS 改不了顏色/字型，
+                             跟生日欄位同樣道理，改成自己刻的下拉面板 -->
+                        <div class="custom-select-wrap" id="signup-store-wrap">
+                            <button type="button" class="date-picker-trigger custom-select-trigger" id="signup-store-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                <span id="signup-store-display">請選擇</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <input type="hidden" id="signup-store" name="signup-store" value="">
+                            <ul class="custom-select-panel" id="signup-store-panel" role="listbox" aria-label="偏好取貨超商" hidden>
+                                <li role="option" data-value="" aria-selected="true" class="custom-select-option selected">請選擇</li>
+                                <li role="option" data-value="711" aria-selected="false" class="custom-select-option">7-11</li>
+                                <li role="option" data-value="family" aria-selected="false" class="custom-select-option">全家</li>
+                                <li role="option" data-value="other" aria-selected="false" class="custom-select-option">皆可</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -794,10 +801,16 @@
                     </button>
                 </div>
 
-                <!-- 中欄：會員權益（目前只有購物點數有真實後端資料） -->
+                <!-- 中欄：會員權益（等級由購物點數即時換算，不用後端另存欄位；
+                     優惠券目前沒有對應的資料模型，還沒加進來） -->
                 <div class="account-column">
                     <p class="account-column-title">會員權益</p>
                     <div class="account-hud-list">
+                        <div class="account-hud-card">
+                            <svg class="account-hud-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L26 8 V15 C26 22 21 27 16 29 C11 27 6 22 6 15 V8 Z"/></svg>
+                            <span class="account-hud-num" id="account-info-tier">—</span>
+                            <span class="account-hud-label">會員等級</span>
+                        </div>
                         <div class="account-hud-card">
                             <svg class="account-hud-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><path d="M16 10.5 L17.8 14.3 L22 14.9 L18.9 17.7 L19.7 21.9 L16 19.8 L12.3 21.9 L13.1 17.7 L10 14.9 L14.2 14.3 Z"/></svg>
                             <span class="account-hud-num" id="account-info-points">—</span>
@@ -895,5 +908,6 @@
             </form>
         </div>
     </div>
+
 </body>
 </html>
