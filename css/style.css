@@ -376,21 +376,12 @@ body {
 
 .nav-links a::after { display: none; }
 
-/* 「購物車」「會員」「更多」這三個分頁只在手機版分頁列出現（見底下 media
-   query 裡的 display: block 覆寫），桌機版膠囊只有前4個連結，這三個 <li>
+/* 「購物車」「會員」這兩個分頁只在手機版分頁列出現（見底下 media query
+   裡的 display: block 覆寫），桌機版膠囊只有前4個連結，這兩個 <li>
    桌機版預設要收起來，不然裡面沒套樣式的 <button> 會直接露出瀏覽器內建的
    黑色外框，變成一條突兀的直線 */
-.nav-more-wrap,
 .nav-cart-tab-wrap,
 .nav-account-tab-wrap {
-    display: none;
-}
-
-/* 手機版「更多」選單裡專用的品牌連結（.nav-utility-group 裡那份），
-   品牌桌機版已經在上面的分頁膠囊顯示了，這裡桌機版要藏起來，不然工具列
-   會多一個重複的品牌入口——用 .nav-utility-group 提高一階優先度，
-   蓋過後面 .nav-icon-link 那條 display:inline-flex 的基本樣式 */
-.nav-utility-group .nav-brand-more-link {
     display: none;
 }
 
@@ -452,8 +443,8 @@ body {
     display: none;
 }
 
-/* 手機版專用的音樂＋音效合併開關，桌機版已經有 .nav-sound-group 各自獨立的
-   音樂/音效鍵，這顆只在手機版「更多」選單裡出現，避免桌機版重複兩套 */
+/* 手機版專用的音樂＋音效合併開關（右上角浮動圓鈕），桌機版已經有
+   .nav-sound-group 各自獨立的音樂/音效鍵，這顆桌機版收起來，避免重複兩套 */
 .nav-more-sound-btn {
     display: none;
 }
@@ -3689,9 +3680,10 @@ a.faq-card {
 
     /* 手機版只留一條導覽列（畫面底部的分頁列）。頂部這條連同 LOGO 一起收起來，
        不再是獨立的第二條列——LOGO/品牌識別在首頁區塊本來就看得到，不需要常駐；
-       會員/聯繫/購物車改收進分頁列第5個「更多」按鈕彈出的選單（見 .nav-utility-group
-       下面的手機版規則、script.js 的開關邏輯），.navbar 本身留著只是當
-       position:fixed 的定位基準，不再顯示任何內容 */
+       會員/購物車已經獨立成分頁列常駐分頁，聯繫我們收進頁尾連結，音效開關
+       換成右上角浮動圓鈕（見 .nav-more-sound-btn，那顆按鈕不在 .nav-left-group
+       裡面，不受這條規則影響），.navbar 本身留著只是當 position:fixed 的
+       定位基準，不再顯示任何內容 */
     .nav-left-group {
         display: none !important;
     }
@@ -3765,15 +3757,7 @@ a.faq-card {
         background-color: #ffffff;
     }
 
-    /* 第5個分頁「更多」：跟其他四個分頁共用同一套視覺（44px 圓、半透明白），
-       但不是 <a>，套不到 .nav-links a 的選擇器，另外補一份一樣的樣式；
-       展開選單時（.open）換成跟其他分頁「選中」一樣的白底深色圖示，
-       讓使用者看得出這顆現在是「開啟」狀態 */
-    .nav-more-wrap {
-        display: block;
-    }
-
-    /* 購物車分頁跟「更多」共用同一顆 .nav-more-btn 圓底樣式（見上面註解），
+    /* 購物車分頁跟會員分頁共用同一顆 .nav-more-btn 圓底樣式（見下面該規則），
        這裡只需要把桌機版預設的 display:none 換成手機版該有的 display:block */
     .nav-cart-tab-wrap {
         display: block;
@@ -3786,34 +3770,15 @@ a.faq-card {
         color: var(--ink);
     }
 
-    /* 購物車已經獨立成常駐分頁（見上面 .nav-cart-tab-wrap），「更多」選單裡
-       原本那顆購物車按鈕在手機版收起來，避免同一個入口出現兩次 */
-    .nav-utility-group .nav-cart-btn {
-        display: none;
-    }
-
     /* 會員分頁同樣複用 .nav-more-btn 圓底樣式 */
     .nav-account-tab-wrap {
         display: block;
     }
 
-    /* 會員已經獨立成常駐分頁，「更多」選單裡原本那顆會員按鈕在手機版收起來，
-       避免同一個入口出現兩次 */
-    .nav-utility-group .nav-account-btn {
-        display: none;
-    }
-
-    /* 品牌分頁列最多5個放不下，手機版分頁列不顯示，改收進「更多」選單
-       （見下面 .nav-brand-more-link） */
+    /* 品牌分頁列最多5個放不下，手機版分頁列不顯示——品牌本來就是首頁往下
+       捲動就到的區塊，不是獨立功能，不需要在分頁列另外給入口 */
     .nav-brand-tab {
         display: none;
-    }
-
-    /* 手機版「更多」選單裡的品牌連結，跟其他選單項目一樣是橫向列（複用
-       .nav-icon-link 的手機版樣式），這裡要跟桌機版那條 .nav-utility-group
-       .nav-brand-more-link{display:none} 同樣的優先度（0-2-0），才蓋得過去 */
-    .nav-utility-group .nav-brand-more-link {
-        display: flex;
     }
 
     .nav-more-btn {
@@ -3837,90 +3802,24 @@ a.faq-card {
         transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .nav-more-btn.open {
-        color: var(--ink);
-        background-color: #ffffff;
-    }
-
-    /* 會員／聯繫／購物車：手機版收在「更多」彈出的選單裡，不再是頂部常駐的一排，
-       預設隱藏、靠 JS 切換 .open 才浮現在分頁列上方（見 script.js） */
+    /* 會員／聯繫／購物車工具列是桌機版設計，手機版會員/購物車已經獨立成
+       分頁列常駐分頁、聯繫我們收進頁尾，這裡整組收起來，避免入口重複 */
     .nav-utility-group {
-        position: fixed;
-        right: max(20px, env(safe-area-inset-right, 20px));
-        bottom: calc(max(16px, env(safe-area-inset-bottom, 16px)) + 72px);
-        border-left: none;
-        padding: 8px;
-        margin-left: 0;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 2px;
-        background-color: var(--ink);
-        border-radius: 20px;
-        box-shadow: 0 12px 28px -10px rgba(22, 22, 26, 0.5);
-        opacity: 0;
-        transform: translateY(8px) scale(0.96);
-        pointer-events: none;
-        transform-origin: bottom right;
-        transition: opacity 0.2s ease, transform 0.2s ease;
-        z-index: 1002;
+        display: none;
     }
 
-    .nav-utility-group.open {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        pointer-events: auto;
-    }
-
-    /* 選單裡是一排排橫向列（圖示＋文字），不是桌機版的獨立圓鈕 */
-    .nav-icon-link,
-    .nav-icon-btn {
-        width: auto;
-        height: 44px;
-        flex: none;
-        justify-content: flex-start;
-        gap: 10px;
-        padding: 0 12px;
-        border-radius: 12px;
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-        color: rgba(255, 255, 255, 0.85);
-    }
-
-    .nav-icon-link:active,
-    .nav-icon-btn:active {
-        background-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .nav-icon-svg {
-        width: 22px;
-        height: 22px;
-        flex: none;
-    }
-
+    /* 音樂＋音效合併開關：右上角常駐浮動圓鈕，跟分頁列一樣重用 .nav-icon-btn
+       的不透明白色圓底樣式（見上面基礎規則），這裡只需要加上固定定位 */
     .nav-more-sound-btn {
-        display: flex;
+        display: inline-flex;
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        right: max(16px, env(safe-area-inset-right, 16px));
+        z-index: 1001;
     }
 
     .nav-more-sound-icon {
-        display: inline-flex;
-        justify-content: center;
-        width: 22px;
         font-size: 22px;
-        flex: none;
-    }
-
-    .nav-utility-label {
-        display: inline;
-        font-size: var(--fs-small);
-        white-space: nowrap;
-    }
-
-    /* 選單裡的按鈕變寬了（圖示＋文字），購物車數量徽章改回跟著圖示走的行內小圓點，
-       不用桌機版那種疊在圓鈕右上角的絕對定位（那樣會飄到文字尾端，離圖示太遠） */
-    .nav-utility-group .cart-badge {
-        position: static;
-        margin: 0 0 0 -4px;
     }
 
     .product-panel {

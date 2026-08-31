@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project.CD | 品味純粹的甜蜜時光</title>
+    <title>Project.CD</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
 
     <!-- 正式網域確定後，請把下面所有 https://your-domain.com/ 換成實際網址 -->
@@ -177,9 +177,9 @@
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">home</span>
                     </a>
                 </li>
-                <!-- 手機版分頁列擠不下 6 個以上還要符合 HIG「分頁列最多5個」的建議，
-                     品牌（團隊介紹）用得比商城/產品/購物車/會員少，改收進「更多」
-                     選單（見下面 .nav-utility-group 裡另一份手機版專用的品牌連結），
+                <!-- 手機版分頁列要符合 HIG「分頁列最多5個」的建議，品牌（團隊介紹）
+                     用得比商城/產品/購物車/會員少，且本來就是首頁往下捲動就到的
+                     區塊（不是獨立功能），手機版不給分頁列入口，直接捲過去即可；
                      這個 <li> 桌機版仍正常顯示，只在手機版分頁列隱藏 -->
                 <li class="nav-brand-tab">
                     <a href="#brand" aria-label="品牌">
@@ -225,34 +225,10 @@
                     </button>
                 </li>
 
-                <!-- 手機版第5個分頁：聯繫收在這顆按鈕彈出的選單裡（購物車、會員已經
-                     獨立成上面常駐的分頁，不再收在這裡），不是各自獨立顯示在頂部——
-                     頂部那排在手機版整個收起來了，見 script.js 的 nav-utility-group
-                     開關邏輯 -->
-                <li class="nav-more-wrap">
-                    <button type="button" class="nav-more-btn" id="btn-nav-more" aria-haspopup="true" aria-expanded="false" aria-label="更多">
-                        <span class="nav-icon-mobile material-symbols-outlined">more_horiz</span>
-                    </button>
-                </li>
             </ul>
 
             <div class="nav-utility-group">
                 <div class="nav-utility-divider" aria-hidden="true"></div>
-
-                <!-- 品牌只在手機版「更多」選單裡出現（桌機版品牌連結在上面 .nav-links
-                     的分頁膠囊裡，這裡桌機版要隱藏，不然工具列會多一個重複入口），
-                     用跟分頁列一樣的 groups 圖示維持視覺一致 -->
-                <a href="#brand" class="nav-icon-link nav-brand-more-link" aria-label="品牌">
-                    <span class="material-symbols-outlined nav-icon-svg" aria-hidden="true">groups</span>
-                    <span class="nav-utility-label">品牌</span>
-                </a>
-
-                <!-- 手機版專用的音樂＋音效總開關（合併控制，桌機版各自獨立的音樂/音效鍵見
-                     .nav-sound-group，手機版簡化成一顆，跟會員/聯繫/購物車收在同一個選單裡） -->
-                <button type="button" class="nav-icon-btn nav-more-sound-btn" id="btn-more-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
-                    <span class="material-symbols-outlined nav-more-sound-icon" id="nav-more-sound-icon">volume_off</span>
-                    <span class="nav-utility-label" id="nav-more-sound-label">音效關</span>
-                </button>
 
                 <button type="button" class="nav-icon-btn nav-account-btn" id="nav-btn-account" aria-label="會員登入">
                     <svg class="nav-icon-svg" id="nav-account-icon-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
@@ -271,6 +247,14 @@
             </div>
         </div>
     </nav>
+
+    <!-- 手機版專用的音樂＋音效總開關：獨立於 .nav-left-group 之外（那個容器在手機版
+         整個 display:none，塞在裡面的話不管怎麼下 CSS 都不會顯示），改成右上角常駐的
+         浮動圓鈕，跟分頁列一樣是不透明白色圓底（重用 .nav-icon-btn），不用另外發明
+         玻璃材質規則。桌機版沿用 .nav-sound-group 那兩顆獨立按鈕，這顆維持隱藏 -->
+    <button type="button" class="nav-icon-btn nav-more-sound-btn" id="btn-more-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
+        <span class="material-symbols-outlined nav-more-sound-icon" id="nav-more-sound-icon">volume_off</span>
+    </button>
 
     <!-- 首頁區塊 -->
     <header id="home" class="hero-banner fullscreen-section dark-section">
@@ -536,6 +520,7 @@
                     <h3 class="footer-title">Project.CD</h3>
                     <p>用心烘焙每一天的美好。</p>
                     <ul class="footer-links">
+                        <li><a href="#" id="footer-link-contact"><i class="fa-regular fa-envelope"></i> 聯繫我們</a></li>
                         <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question"></i> 常見問題與服務條款</a></li>
                     </ul>
                     <p><i class="fa-solid fa-location-dot"></i> 台北市某某區某某路 123 號</p>

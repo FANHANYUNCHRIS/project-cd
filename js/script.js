@@ -504,58 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     /* =========================================
-       8b. 手機版分頁列第5顆「更多」：把會員/聯繫/購物車收進這顆按鈕彈出的選單
-       （手機版只留一條導覽列，頂部那排整個收起來，見 CSS 的 .nav-left-group）
-       ========================================= */
-    (function initNavMore() {
-        const moreBtn = document.getElementById('btn-nav-more');
-        const utilityGroup = document.querySelector('.nav-utility-group');
-        if (!moreBtn || !utilityGroup) return;
-
-        function closeMenu() {
-            utilityGroup.classList.remove('open');
-            moreBtn.classList.remove('open');
-            moreBtn.setAttribute('aria-expanded', 'false');
-        }
-
-        moreBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const willOpen = !utilityGroup.classList.contains('open');
-            if (willOpen) {
-                utilityGroup.classList.add('open');
-                moreBtn.classList.add('open');
-                moreBtn.setAttribute('aria-expanded', 'true');
-            } else {
-                closeMenu();
-            }
-        });
-
-        // 選單裡點了會員/聯繫我們/購物車任何一個，各自會另外開自己的彈窗，
-        // 這個「更多」選單本身要跟著收起來，不能兩層彈窗疊在一起
-        utilityGroup.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('click', closeMenu);
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!utilityGroup.classList.contains('open')) return;
-            if (utilityGroup.contains(e.target) || moreBtn.contains(e.target)) return;
-            closeMenu();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeMenu();
-        });
-    })();
-
-    /* =========================================
-       8c. 手機版「更多」選單裡的音樂＋音效合併開關
+       8b. 手機版右上角浮動的音樂＋音效合併開關
        （桌機版音樂/音效各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
-       手機版簡化成一顆開關，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
+       手機版簡化成一顆常駐圓鈕，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
        ========================================= */
     (function initMoreSoundToggle() {
         const btn = document.getElementById('btn-more-sound-toggle');
         const icon = document.getElementById('nav-more-sound-icon');
-        const label = document.getElementById('nav-more-sound-label');
         if (!btn) return;
 
         let active = false;
@@ -567,12 +522,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
                 if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
                 if (icon) icon.textContent = 'volume_up';
-                if (label) label.textContent = '音效開';
             } else {
                 if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
                 if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
                 if (icon) icon.textContent = 'volume_off';
-                if (label) label.textContent = '音效關';
             }
 
             btn.setAttribute('aria-expanded', String(active));
@@ -693,11 +646,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactModal = document.getElementById('contact-modal');
     const contactModalClose = document.getElementById('contact-modal-close');
     const contactTrigger = document.getElementById('nav-btn-contact');
+    const footerLinkContact = document.getElementById('footer-link-contact');
 
-    if (contactModal && contactModalClose && contactTrigger) {
-        contactTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            openModal(contactModal);
+    if (contactModal && contactModalClose) {
+        [contactTrigger, footerLinkContact].filter(Boolean).forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(contactModal);
+            });
         });
 
         contactModalClose.addEventListener('click', () => closeModal(contactModal));
