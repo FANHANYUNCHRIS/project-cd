@@ -376,6 +376,24 @@ body {
 
 .nav-links a::after { display: none; }
 
+/* 「購物車」「會員」「更多」這三個分頁只在手機版分頁列出現（見底下 media
+   query 裡的 display: block 覆寫），桌機版膠囊只有前4個連結，這三個 <li>
+   桌機版預設要收起來，不然裡面沒套樣式的 <button> 會直接露出瀏覽器內建的
+   黑色外框，變成一條突兀的直線 */
+.nav-more-wrap,
+.nav-cart-tab-wrap,
+.nav-account-tab-wrap {
+    display: none;
+}
+
+/* 手機版「更多」選單裡專用的品牌連結（.nav-utility-group 裡那份），
+   品牌桌機版已經在上面的分頁膠囊顯示了，這裡桌機版要藏起來，不然工具列
+   會多一個重複的品牌入口——用 .nav-utility-group 提高一階優先度，
+   蓋過後面 .nav-icon-link 那條 display:inline-flex 的基本樣式 */
+.nav-utility-group .nav-brand-more-link {
+    display: none;
+}
+
 .nav-icon-mobile {
     /* !important 是必要的：Google Fonts 的 Material Symbols 樣式表在 style.css 之後載入，
        它自帶的 .material-symbols-outlined 也會設定 display，優先度打平時後載入的會蓋掉這裡 */
@@ -522,17 +540,11 @@ body {
     text-align: center;
 }
 
-/* 導覽列疊在深色區塊 (首頁影片/頁尾) 上方時，文字與 LOGO 自動轉白（社群 icon 不受影響，維持官方色）；
-   選中膠囊現在是外框而不是實色填底，字色跟外框都要一起轉白，所以這裡不再排除 .active */
+/* 導覽列疊在深色區塊 (首頁影片/頁尾) 上方時，文字與 LOGO 自動轉白（社群 icon 不受影響，維持官方色）*/
 /* nav-links跟圖示按鈕已經改成不透明白色浮島，不再需要跟著深淺背景換色；
    只剩LOGO文字還是直接貼在影片/內容上面，維持原本的深淺切換 */
 .navbar.on-dark .logo-text {
     color: var(--paper);
-}
-
-/* 選中膠囊的外框顏色跟文字色一起切換，深底用淺色圈、淺底用墨黑圈 */
-.navbar.on-dark .nav-links a.active {
-    box-shadow: inset 0 0 0 1.5px #ebebec;
 }
 
 .navbar.on-dark .nav-icon {
@@ -1913,13 +1925,19 @@ a.faq-card {
     border-top: 1px solid #333;
 }
 
-/* 改用 grid 而不是 flex:1——flex:1 是依內容多寡分配寬度，內容少的欄位旁邊會多出一大塊空白，
-   看起來欄位間距不平均；grid 讓三欄寬度完全相等，間距自然就一致
-   （原本「顧客服務」單獨一欄只有一個連結太空，已經併進「探索更多」） */
+/* 現在只剩兩個區塊（Project.CD 品牌資訊／關注我們的 icon 列，原本「探索更多」
+   已經拆掉併入關注我們）。兩欄都用 max-content——不是 1fr，1fr 會把只有 6 顆
+   icon 的那欄硬拉滿跟品牌資訊欄一樣寬。用 justify-content:space-evenly 讓
+   「容器左邊到第一欄」「兩欄中間」「第二欄到容器右邊」這三段距離完全相等
+   （space-between 只會處理欄位「之間」，兩側會沒有留白；space-evenly 是
+   把左右兩側加進來一起平均分配，才是真正的三段等距）。不能同時保留固定的
+   gap 數值——gap 是欄位間的最小保底距離，會疊加在 space-evenly 算出來的
+   間距之上，導致中間那段比左右兩段多出 gap 的量，三段就不等長了，所以
+   間距完全交給 space-evenly 決定 */
 .footer-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    grid-template-columns: max-content max-content;
+    justify-content: space-evenly;
     max-width: 1100px;
     margin: 0 auto;
     padding-bottom: 32px;
@@ -1976,6 +1994,16 @@ a.faq-card {
 .footer-social a {
     color: var(--paper);
     font-size: 24px;
+    text-decoration: none;
+    /* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
+       寬度都不一樣（量過 LINE 32px、YouTube 35px、Instagram 29px…），
+       圖示本身大小看起來就會不一致，用固定的 32×32px（=--sp-8）方框
+       置中對齊，六顆才會是真正一樣大 */
+    width: var(--sp-8);
+    height: var(--sp-8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.2s ease-in-out;
 }
 
@@ -1991,6 +2019,14 @@ a.faq-card {
     -webkit-text-fill-color: transparent;
 }
 .footer-social a.social-yt:hover i { color: #FF0000; }
+
+/* Game/Education 不是外部社群平台，沒有官方品牌色可以照抄，改用跟各自主題
+   語意相關的顏色（使用者指定）：Game 是紫色，沿用設計系統裡「液態玻璃」
+   例外色之一的 Liquid Purple，跟 IG 漸層、YT 紅、Education 金色都能明顯區分；
+   Education 是學術金（畢業繐帶/榮譽色）暫定色，非官方色，見上方對話。
+   跟 LINE/FB/IG/YT 用各自官方色是同一個「hover 才顯色」的邏輯 */
+.footer-social a.social-game:hover i { color: #9b6bf2; }
+.footer-social a.social-edu:hover i { color: #d4af37; }
 
 .footer-bottom {
     text-align: center;
@@ -3626,10 +3662,14 @@ a.faq-card {
         min-height: 100vh;
     }
 
-    .footer { padding-bottom: 80px; }
+    /* 手機版分頁列是 position:fixed，浮在頁尾內容上方，不是真的把頁面往上推——
+       這裡的 padding-bottom 要蓋過分頁列實際佔用的高度，文字才不會貼著分頁列。
+       分頁列本身離螢幕底部 16px + 藥丸高度約 60px（8px 內距×2 + 44px 圓鈕）
+       ＝76px，原本 80px 只夠貼著蓋過去，幾乎沒有呼吸空間，加上 --sp-6(24px)
+       的緩衝變成 104px */
+    .footer { padding-bottom: 104px; }
 
     .footer-container {
-        grid-template-columns: 1fr 1fr;
         gap: 32px;
     }
 
@@ -3664,15 +3704,19 @@ a.faq-card {
         position: fixed;
         top: auto;
         bottom: max(16px, env(safe-area-inset-bottom, 16px));
-        left: 20px;
-        right: 20px;
+        left: 16px;
+        right: 16px;
         height: auto;
         width: auto;
         margin: 0;
-        padding: 8px 14px;
+        padding: 8px 8px;
         box-sizing: border-box;
         background-color: var(--ink);
-        border: none;
+        /* 深色藥丸疊在同樣深色的區塊（例如頁尾）上時，原本唯一的區隔線索
+           box-shadow 是深色陰影，跟深色背景幾乎沒有對比度，整顆會融進背景。
+           加一圈固定的髮絲級亮邊框（不是即時偵測背景深淺再換色，那是已經
+           踩過的雷，見上面導覽列架構說明），不管背景多深都能把輪廓切出來 */
+        border: 0.5px solid rgba(255, 255, 255, 0.14);
         border-radius: 32px;
         box-shadow: 0 12px 28px -10px rgba(22, 22, 26, 0.5);
         flex-direction: row;
@@ -3695,7 +3739,7 @@ a.faq-card {
 
     .nav-icon-mobile {
         display: inline-flex !important;
-        font-size: 22px;
+        font-size: 26px;
     }
 
     /* 深色藥丸列上，靜止的圖示是半透明白（跟深底導覽列的 paper-soft 用色邏輯一致），
@@ -3727,6 +3771,49 @@ a.faq-card {
        讓使用者看得出這顆現在是「開啟」狀態 */
     .nav-more-wrap {
         display: block;
+    }
+
+    /* 購物車分頁跟「更多」共用同一顆 .nav-more-btn 圓底樣式（見上面註解），
+       這裡只需要把桌機版預設的 display:none 換成手機版該有的 display:block */
+    .nav-cart-tab-wrap {
+        display: block;
+    }
+
+    /* 購物車數量徽章原本是黑底白字（配桌機版白色圓鈕），疊在這裡深色的
+       分頁圓鈕上會整個隱形，改成白底深字才在深色藥丸列上看得見 */
+    .nav-cart-tab-wrap .cart-badge {
+        background-color: #ffffff;
+        color: var(--ink);
+    }
+
+    /* 購物車已經獨立成常駐分頁（見上面 .nav-cart-tab-wrap），「更多」選單裡
+       原本那顆購物車按鈕在手機版收起來，避免同一個入口出現兩次 */
+    .nav-utility-group .nav-cart-btn {
+        display: none;
+    }
+
+    /* 會員分頁同樣複用 .nav-more-btn 圓底樣式 */
+    .nav-account-tab-wrap {
+        display: block;
+    }
+
+    /* 會員已經獨立成常駐分頁，「更多」選單裡原本那顆會員按鈕在手機版收起來，
+       避免同一個入口出現兩次 */
+    .nav-utility-group .nav-account-btn {
+        display: none;
+    }
+
+    /* 品牌分頁列最多5個放不下，手機版分頁列不顯示，改收進「更多」選單
+       （見下面 .nav-brand-more-link） */
+    .nav-brand-tab {
+        display: none;
+    }
+
+    /* 手機版「更多」選單裡的品牌連結，跟其他選單項目一樣是橫向列（複用
+       .nav-icon-link 的手機版樣式），這裡要跟桌機版那條 .nav-utility-group
+       .nav-brand-more-link{display:none} 同樣的優先度（0-2-0），才蓋得過去 */
+    .nav-utility-group .nav-brand-more-link {
+        display: flex;
     }
 
     .nav-more-btn {
@@ -4045,9 +4132,94 @@ a.faq-card {
     transform: translateY(-1px) scale(0.98);
 }
 
-/* 手機（非平板）寬度更窄，footer 兩欄還是太擠，改成單欄整個疊起來 */
+/* 手機（非平板）寬度更窄，改成左右兩欄：左邊 Project.CD 品牌資訊（含常見問題
+   連結），右邊只剩關注我們一個區塊（6顆icon：社群4顆+Game/Education 2顆）。
+   跟桌機版一樣用 justify-content:space-evenly（見上面 .footer-container
+   基本規則的說明），讓容器左邊、兩欄中間、容器右邊三段留白等長，這裡不用
+   額外設 column-gap——設了固定 gap 會疊加在 space-evenly 算出來的間距上，
+   中間那段就會比兩側多出 gap 的量，三段變成不等長 */
 @media (max-width: 600px) {
     .footer-container {
-        grid-template-columns: 1fr;
+        text-align: left;
+        align-items: start;
+    }
+
+    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行；
+       常見問題連結文字也一樣不換行（本來就比地址/時間短，不會是這欄的
+       寬度瓶頸） */
+    .footer-section p,
+    .footer-links a {
+        white-space: nowrap;
+    }
+
+    /* 6 顆 icon 排成三排、每排兩顆（LINE+YouTube／Facebook+Instagram／
+       Game+Education，順序見 index.html 的排列），用 flex-wrap 讓它每兩顆
+       自動換行——這是圖示排列常見做法，不是文字斷行，跟上面「嚴禁換行」的
+       地址/信箱不是同一回事。圖示現在固定 32px 見方（--sp-8，見 .footer-social a），
+       2 顆(32px)+1個間距(--sp-4=16px)=80px，精確算好，不用再抓餘裕 */
+    .footer-social {
+        flex-wrap: wrap;
+        max-width: 80px;
+    }
+
+    /* 左欄空間有限，時間/信箱這兩行的文字前綴（「營業時間：」「官方信箱：」）
+       拿掉，圖示本身已經夠表意，只留圖示+實際內容，騰出寬度給右欄 */
+    .footer-label-prefix {
+        display: none;
+    }
+
+    /* 三家商城原本在 1024px 斷點（平板也算進去）就整個改成直排、一次一張
+       滿版卡片；平板寬度夠，直排沒問題，但手機版擠成三張直立卡片要滑很久
+       才看完三家，改成一排三張並排——每張卡片本來就是 icon+文字直排堆疊
+       （.shop-glass-card 的 flex-direction:column），不需要橫向空間，適合
+       縮小塞進一排。連結底下「前往選購」箭頭文字平常靠 hover 才顯示
+       （opacity:0），觸控裝置本來就用不太到 hover，這裡直接收起來，
+       省下的垂直空間讓卡片可以再更緊湊 */
+    /* 三個圓形圖示磚用 flex:1 撐滿容器寬度（見 .shop-glass-card 的 flex:1），
+       中間沒有多餘空間讓 justify-content 分配，真正決定「左邊留白／圖示中間
+       間距／右邊留白」是否一致的是這裡的 gap 要不要跟 .shopping-section 的
+       左右內距（24px＝--sp-6）同一個值——原本 gap 只有 8px，遠比兩側 24px
+       內距窄，看起來三個間距不一樣，改成同樣的 --sp-6 才是真的一致 */
+    .shop-links {
+        flex-direction: row;
+        gap: var(--sp-6);
+    }
+
+    /* 手機版拿掉毛玻璃卡片的底色/邊框/陰影，改成單純的「圓形圖示+文字說明」
+       圖示磚（跟手機主畫面 app icon 的排列邏輯一樣），圓形本身才是視覺重點 */
+    .shop-glass-card {
+        gap: var(--sp-2);
+        padding: 0;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+    }
+
+    .shop-links .shop-glass-card:hover {
+        box-shadow: none;
+    }
+
+    /* 拿掉圓形/圓角方形徽章的外框跟底色，只留純圖示（之後換成商家真實 LOGO
+       圖檔時就是乾淨的 LOGO 本身，不會多一圈邊框把它框住）。原本 92px 的
+       方框是配合徽章外框留的，拿掉外框後圖示看起來很小（字級只有24px，
+       方框大部分是看不見的空白），改成 --fs-display(48px) 讓圖示本身夠大 */
+    .shop-link-icon {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+    }
+
+    .shop-link-name {
+        font-size: var(--fs-small);
+        text-align: center;
+    }
+
+    .shop-link-arrow {
+        display: none;
     }
 }
