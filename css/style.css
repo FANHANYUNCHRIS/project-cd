@@ -1963,8 +1963,15 @@ a.faq-card {
 
 .footer-links {
     list-style: none;
-    margin: 0 0 var(--sp-2);
+    margin: 0;
     padding: 0;
+}
+
+/* 每個 <li> 各自的間距要跟 .footer-section p 的 margin-bottom 一致，
+   不能只在整個清單外面包一個 margin——那樣清單內部兩行連結會擠在一起，
+   跟下面地址/時間/信箱這幾個 <p> 的間距對不齊，排版看起來忽鬆忽緊 */
+.footer-links li {
+    margin-bottom: var(--sp-2);
 }
 
 .footer-links a {
@@ -2026,15 +2033,17 @@ a.faq-card {
 }
 .footer-social a.social-yt:hover i { color: #FF0000; }
 
-/* Game/Education/聯繫我們/音效開關都不是外部社群平台，沒有官方品牌色可以
+/* Game/Education/音樂開關/音效開關都不是外部社群平台，沒有官方品牌色可以
    照抄，各自配一個跟主題語意相關、彼此可明顯區分的顏色（使用者指定，已回頭
    同步進設計系統文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金、
-   聯繫我們橘、音效開關用文件裡本來就核定的 Liquid Pink——都是「預設不透明白，
-   hover 才顯色」的同一套邏輯 */
+   音樂開關用 Liquid Pink、音效開關用橘色——音樂跟音效是兩顆各自獨立的按鈕，
+   刻意配不同色避免分不清楚在切換哪一顆；音效先後試過 Liquid Blue、青色都
+   被使用者否決（藍色跟 Facebook 品牌藍太接近），改用橘色跟其他六顆
+   （綠/藍/漸層/紅/紫/金）都能明顯區分 */
 .footer-social a.social-game:hover i { color: #9b6bf2; }
 .footer-social a.social-edu:hover i { color: #d4af37; }
-.footer-social a.social-contact:hover i { color: #ea580c; }
-.footer-social button.social-sound:hover i { color: #ec5fa8; }
+.footer-social button.social-music:hover i { color: #ec5fa8; }
+.footer-social button.social-sound:hover i { color: #ea580c; }
 
 .footer-bottom {
     text-align: center;
@@ -4041,9 +4050,12 @@ a.faq-card {
    額外設 column-gap——設了固定 gap 會疊加在 space-evenly 算出來的間距上，
    中間那段就會比兩側多出 gap 的量，三段變成不等長 */
 @media (max-width: 600px) {
+    /* align-items 維持 grid 預設的 stretch（不覆寫成 start）：兩欄內容行數
+       不一樣多（左欄6行文字、右欄4排icon），stretch 讓兩個 .footer-section
+       格子本身等高，兩欄底部對齊，不會一長一短；裡面的文字/icon 本身是
+       區塊內容，不會被 stretch 拉伸變形，只有格子外框等高，視覺安全 */
     .footer-container {
         text-align: left;
-        align-items: start;
     }
 
     /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行；

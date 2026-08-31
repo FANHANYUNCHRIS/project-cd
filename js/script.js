@@ -504,13 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     /* =========================================
-       8b. 頁尾的音樂＋音效合併開關
-       （桌機版音樂/音效各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
-       這顆是簡化版單一開關，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
-       ========================================= */
-    (function initMoreSoundToggle() {
-        const btn = document.getElementById('btn-more-sound-toggle');
-        const icon = document.getElementById('nav-more-sound-icon');
+       8b. 頁尾的音樂開關、音效開關（各自獨立，不合併成一顆）
+       （桌機版音樂/音效本來就是各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
+       這兩顆是簡化版單一開關，各自共用桌機版對應的播放狀態，不重複另外做一套
+       音量邏輯，也不把兩個獨立功能綁在同一顆按鈕上） */
+    (function initFooterMusicToggle() {
+        const btn = document.getElementById('footer-btn-music-toggle');
+        const icon = document.getElementById('footer-music-icon');
         if (!btn) return;
 
         let active = false;
@@ -520,10 +520,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (active) {
                 if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
+                if (icon) icon.className = 'fa-solid fa-compact-disc fa-spin';
+            } else {
+                if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
+                if (icon) icon.className = 'fa-solid fa-music';
+            }
+
+            btn.setAttribute('aria-expanded', String(active));
+        });
+    })();
+
+    (function initFooterSoundToggle() {
+        const btn = document.getElementById('footer-btn-sound-toggle');
+        const icon = document.getElementById('footer-sound-icon');
+        if (!btn) return;
+
+        let active = false;
+
+        btn.addEventListener('click', () => {
+            active = !active;
+
+            if (active) {
                 if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
                 if (icon) icon.className = 'fa-solid fa-volume-high';
             } else {
-                if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
                 if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
                 if (icon) icon.className = 'fa-solid fa-volume-xmark';
             }
