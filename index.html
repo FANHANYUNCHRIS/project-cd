@@ -510,7 +510,9 @@
             <div class="footer-container">
                 <div class="footer-section">
                     <h3 class="footer-title">Project.CD</h3>
-                    <p>用心烘焙每一天的美好。</p>
+                    <ul class="footer-links">
+                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question"></i> 常見問題與服務條款</a></li>
+                    </ul>
                     <p><i class="fa-solid fa-location-dot"></i> 台北市某某區某某路 123 號</p>
                     <p><i class="fa-solid fa-clock"></i> <span class="footer-label-prefix">營業時間：</span>10:00 - 19:00 (週一公休)</p>
                     <p><i class="fa-solid fa-envelope"></i> <span class="footer-label-prefix">官方信箱：</span>contact@project.cd.com</p>
@@ -518,14 +520,15 @@
 
                 <!-- 手機版單欄斷點（≤600px）改成左右兩欄：左邊 Project.CD 品牌資訊，右邊
                      更多連結（社群帳號＋站內功能性項目共用同一組 icon 視覺語言，
-                     標題不再叫「關注我們」——常見問題/聯繫我們/音效開關不是社群帳號，
-                     用那個標題語意不準確）。兩個 .footer-section 是 .footer-container
-                     的直接子元素，沒有額外包裝 <div>＋display:contents——那個做法在
-                     Safari 上有名的相容性問題（清單樣式、連結顏色、grid 定位全部會跑掉） -->
+                     標題不再叫「關注我們」——聯繫我們/音效開關不是社群帳號，用那個
+                     標題語意不準確；常見問題維持左欄文字連結，不併進這裡）。兩個
+                     .footer-section 是 .footer-container 的直接子元素，沒有額外包裝
+                     <div>＋display:contents——那個做法在 Safari 上有名的相容性問題
+                     （清單樣式、連結顏色、grid 定位全部會跑掉） -->
                 <div class="footer-section">
                     <h3 class="footer-title">更多連結</h3>
-                    <!-- 9顆icon排列（LINE+YouTube／Facebook+Instagram／Game+Education／
-                         常見問題+聯繫我們+音效開關），配合 style.css 手機版 .footer-social
+                    <!-- 8顆icon排列（LINE+YouTube／Facebook+Instagram／Game+Education／
+                         聯繫我們+音效開關），配合 style.css 手機版 .footer-social
                          的 max-width 讓 flex-wrap 自動換行 -->
                     <div class="footer-social">
                         <a href="#" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
@@ -539,7 +542,6 @@
                         <!-- 站內功能性項目：不是品牌識別，跟社群/探索連結共用同一套
                              icon 尺寸與 hover 顯色語言，各自的顏色見 style.css 的
                              functional icon hover 區塊 -->
-                        <a href="#" class="social-faq" id="footer-link-faq" aria-label="常見問題與服務條款"><i class="fa-solid fa-circle-question"></i></a>
                         <a href="#" class="social-contact" id="footer-link-contact" aria-label="聯繫我們"><i class="fa-regular fa-envelope"></i></a>
                         <button type="button" class="social-sound" id="btn-more-sound-toggle" aria-label="開啟或關閉音樂與音效" aria-expanded="false">
                             <i class="fa-solid fa-volume-xmark" id="nav-more-sound-icon"></i>

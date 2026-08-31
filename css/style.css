@@ -1947,9 +1947,35 @@ a.faq-card {
     white-space: nowrap;
 }
 
+/* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
+   寬度都不一樣（問號、定位針、時鐘、信封形狀寬窄互異），左邊沒對齊、後面
+   文字起始點也跟著歪一截——用固定寬度的 inline-flex 方框置中對齊，圖示
+   跟文字才會每一行都從同一個 x 座標開始，這是跟 .footer-social a 一樣的
+   固定尺寸方框對齊手法 */
 .footer-section i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
     margin-right: 8px;
     color: var(--paper-soft);
+}
+
+.footer-links {
+    list-style: none;
+    margin: 0 0 var(--sp-2);
+    padding: 0;
+}
+
+.footer-links a {
+    color: var(--paper);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    transition: color 0.2s ease-in-out;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
 }
 
 .footer-social {
@@ -1975,7 +2001,7 @@ a.faq-card {
     transition: transform 0.2s ease-in-out;
 }
 
-/* 常見問題/聯繫我們/音效開關這三顆混進社群 icon 列，其中音效是 <button>，
+/* 聯繫我們/音效開關這兩顆混進社群 icon 列，其中音效是 <button>，
    瀏覽器預設的邊框/底色/內距/字型要歸零，才能跟其他 <a> icon 視覺一致 */
 .footer-social button {
     background: none;
@@ -2000,14 +2026,13 @@ a.faq-card {
 }
 .footer-social a.social-yt:hover i { color: #FF0000; }
 
-/* Game/Education/常見問題/聯繫我們/音效開關都不是外部社群平台，沒有官方
-   品牌色可以照抄，各自配一個跟主題語意相關、彼此可明顯區分的顏色（使用者
-   指定，已回頭同步進設計系統文件的功能色例外章節，見該文件 01b）：
-   Game 紫、Education 金、常見問題青、聯繫我們橘、音效開關用文件裡本來就
-   核定的 Liquid Pink——都是「預設不透明白，hover 才顯色」的同一套邏輯 */
+/* Game/Education/聯繫我們/音效開關都不是外部社群平台，沒有官方品牌色可以
+   照抄，各自配一個跟主題語意相關、彼此可明顯區分的顏色（使用者指定，已回頭
+   同步進設計系統文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金、
+   聯繫我們橘、音效開關用文件裡本來就核定的 Liquid Pink——都是「預設不透明白，
+   hover 才顯色」的同一套邏輯 */
 .footer-social a.social-game:hover i { color: #9b6bf2; }
 .footer-social a.social-edu:hover i { color: #d4af37; }
-.footer-social a.social-faq:hover i { color: #0d9488; }
 .footer-social a.social-contact:hover i { color: #ea580c; }
 .footer-social button.social-sound:hover i { color: #ec5fa8; }
 
@@ -4021,8 +4046,11 @@ a.faq-card {
         align-items: start;
     }
 
-    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行 */
-    .footer-section p {
+    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行；
+       常見問題連結文字也一樣不換行（本來就比地址/時間短，不會是這欄的
+       寬度瓶頸） */
+    .footer-section p,
+    .footer-links a {
         white-space: nowrap;
     }
 
