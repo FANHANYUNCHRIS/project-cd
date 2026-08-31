@@ -504,9 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     /* =========================================
-       8b. 手機版右上角浮動的音樂＋音效合併開關
+       8b. 頁尾的音樂＋音效合併開關
        （桌機版音樂/音效各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
-       手機版簡化成一顆常駐圓鈕，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
+       這顆是簡化版單一開關，共用桌機版的播放狀態，不重複另外做一套音量邏輯）
        ========================================= */
     (function initMoreSoundToggle() {
         const btn = document.getElementById('btn-more-sound-toggle');
@@ -521,11 +521,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (active) {
                 if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
                 if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (icon) icon.textContent = 'volume_up';
+                if (icon) icon.className = 'fa-solid fa-volume-high';
             } else {
                 if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
                 if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (icon) icon.textContent = 'volume_off';
+                if (icon) icon.className = 'fa-solid fa-volume-xmark';
             }
 
             btn.setAttribute('aria-expanded', String(active));

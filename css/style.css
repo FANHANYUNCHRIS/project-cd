@@ -443,12 +443,6 @@ body {
     display: none;
 }
 
-/* 手機版專用的音樂＋音效合併開關（右上角浮動圓鈕），桌機版已經有
-   .nav-sound-group 各自獨立的音樂/音效鍵，這顆桌機版收起來，避免重複兩套 */
-.nav-more-sound-btn {
-    display: none;
-}
-
 /* SVG 天生就吃 [hidden] 的內建隱藏行為，這裡不需要再補 !important，
    但明確寫出來避免日後其他樣式蓋過去，登入/登出切換人像↔皇冠才會真的只顯示一個。
    .nav-icon-svg 的 display:block 是一般優先度的作者樣式，會蓋掉瀏覽器內建
@@ -1958,38 +1952,21 @@ a.faq-card {
     color: var(--paper-soft);
 }
 
-.footer-links {
-    list-style: none;
-}
-
-.footer-links li {
-    margin-bottom: 12px;
-}
-
-.footer-links a {
-    color: var(--paper);
-    text-decoration: none;
-    font-size: var(--fs-small);
-    transition: color 0.2s ease-in-out;
-}
-
-.footer-links a:hover {
-    color: #ffffff;
-}
-
 .footer-social {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
 }
 
-.footer-social a {
+.footer-social a,
+.footer-social button {
     color: var(--paper);
     font-size: 24px;
     text-decoration: none;
     /* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
        寬度都不一樣（量過 LINE 32px、YouTube 35px、Instagram 29px…），
        圖示本身大小看起來就會不一致，用固定的 32×32px（=--sp-8）方框
-       置中對齊，六顆才會是真正一樣大 */
+       置中對齊，每一顆才會是真正一樣大 */
     width: var(--sp-8);
     height: var(--sp-8);
     display: inline-flex;
@@ -1998,7 +1975,19 @@ a.faq-card {
     transition: transform 0.2s ease-in-out;
 }
 
-.footer-social a:hover {
+/* 常見問題/聯繫我們/音效開關這三顆混進社群 icon 列，其中音效是 <button>，
+   瀏覽器預設的邊框/底色/內距/字型要歸零，才能跟其他 <a> icon 視覺一致 */
+.footer-social button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.footer-social a:hover,
+.footer-social button:hover {
     transform: translateY(-3px);
 }
 
@@ -2011,13 +2000,16 @@ a.faq-card {
 }
 .footer-social a.social-yt:hover i { color: #FF0000; }
 
-/* Game/Education 不是外部社群平台，沒有官方品牌色可以照抄，改用跟各自主題
-   語意相關的顏色（使用者指定）：Game 是紫色，沿用設計系統裡「液態玻璃」
-   例外色之一的 Liquid Purple，跟 IG 漸層、YT 紅、Education 金色都能明顯區分；
-   Education 是學術金（畢業繐帶/榮譽色）暫定色，非官方色，見上方對話。
-   跟 LINE/FB/IG/YT 用各自官方色是同一個「hover 才顯色」的邏輯 */
+/* Game/Education/常見問題/聯繫我們/音效開關都不是外部社群平台，沒有官方
+   品牌色可以照抄，各自配一個跟主題語意相關、彼此可明顯區分的顏色（使用者
+   指定，已回頭同步進設計系統文件的功能色例外章節，見該文件 01b）：
+   Game 紫、Education 金、常見問題青、聯繫我們橘、音效開關用文件裡本來就
+   核定的 Liquid Pink——都是「預設不透明白，hover 才顯色」的同一套邏輯 */
 .footer-social a.social-game:hover i { color: #9b6bf2; }
 .footer-social a.social-edu:hover i { color: #d4af37; }
+.footer-social a.social-faq:hover i { color: #0d9488; }
+.footer-social a.social-contact:hover i { color: #ea580c; }
+.footer-social button.social-sound:hover i { color: #ec5fa8; }
 
 .footer-bottom {
     text-align: center;
@@ -3680,10 +3672,9 @@ a.faq-card {
 
     /* 手機版只留一條導覽列（畫面底部的分頁列）。頂部這條連同 LOGO 一起收起來，
        不再是獨立的第二條列——LOGO/品牌識別在首頁區塊本來就看得到，不需要常駐；
-       會員/購物車已經獨立成分頁列常駐分頁，聯繫我們收進頁尾連結，音效開關
-       換成右上角浮動圓鈕（見 .nav-more-sound-btn，那顆按鈕不在 .nav-left-group
-       裡面，不受這條規則影響），.navbar 本身留著只是當 position:fixed 的
-       定位基準，不再顯示任何內容 */
+       會員/購物車已經獨立成分頁列常駐分頁，聯繫我們跟音樂/音效開關都收進
+       頁尾連結，.navbar 本身留著只是當 position:fixed 的定位基準，不再顯示
+       任何內容 */
     .nav-left-group {
         display: none !important;
     }
@@ -3806,20 +3797,6 @@ a.faq-card {
        分頁列常駐分頁、聯繫我們收進頁尾，這裡整組收起來，避免入口重複 */
     .nav-utility-group {
         display: none;
-    }
-
-    /* 音樂＋音效合併開關：右上角常駐浮動圓鈕，跟分頁列一樣重用 .nav-icon-btn
-       的不透明白色圓底樣式（見上面基礎規則），這裡只需要加上固定定位 */
-    .nav-more-sound-btn {
-        display: inline-flex;
-        position: fixed;
-        top: max(16px, env(safe-area-inset-top, 16px));
-        right: max(16px, env(safe-area-inset-right, 16px));
-        z-index: 1001;
-    }
-
-    .nav-more-sound-icon {
-        font-size: 22px;
     }
 
     .product-panel {
@@ -3996,6 +3973,7 @@ a.faq-card {
 .nav-icon-btn:active,
 .nav-icon-link:active,
 .footer-social a:active,
+.footer-social button:active,
 .team-nav-btn:active,
 .team-avatar-item:active,
 .thumb-item:active,
@@ -4043,19 +4021,17 @@ a.faq-card {
         align-items: start;
     }
 
-    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行；
-       常見問題連結文字也一樣不換行（本來就比地址/時間短，不會是這欄的
-       寬度瓶頸） */
-    .footer-section p,
-    .footer-links a {
+    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行 */
+    .footer-section p {
         white-space: nowrap;
     }
 
-    /* 6 顆 icon 排成三排、每排兩顆（LINE+YouTube／Facebook+Instagram／
-       Game+Education，順序見 index.html 的排列），用 flex-wrap 讓它每兩顆
-       自動換行——這是圖示排列常見做法，不是文字斷行，跟上面「嚴禁換行」的
-       地址/信箱不是同一回事。圖示現在固定 32px 見方（--sp-8，見 .footer-social a），
-       2 顆(32px)+1個間距(--sp-4=16px)=80px，精確算好，不用再抓餘裕 */
+    /* 9 顆 icon 排成每排兩顆（LINE+YouTube／Facebook+Instagram／Game+Education／
+       常見問題+聯繫我們+音效開關，順序見 index.html 的排列），用 flex-wrap
+       讓它每兩顆自動換行——這是圖示排列常見做法，不是文字斷行，跟上面
+       「嚴禁換行」的地址/信箱不是同一回事。圖示現在固定 32px 見方
+       （--sp-8，見 .footer-social a），2 顆(32px)+1個間距(--sp-4=16px)=80px，
+       精確算好，不用再抓餘裕 */
     .footer-social {
         flex-wrap: wrap;
         max-width: 80px;
