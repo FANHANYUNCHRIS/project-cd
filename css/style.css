@@ -2006,11 +2006,11 @@ a.faq-card {
     color: #ffffff;
 }
 
-/* 電腦版排成 3 欄（3x3 網格，目前 6 顆剛好排 2 排），用 grid 而不是
+/* 電腦版排成 2 欄（目前 6 顆剛好排 3 排，2/2/2），用 grid 而不是
    flex-wrap+固定容器寬度去湊，欄數不會因為圖示總數變動而跑掉 */
 .footer-social {
     display: grid;
-    grid-template-columns: repeat(3, var(--sp-8));
+    grid-template-columns: repeat(2, var(--sp-8));
     gap: 16px;
 }
 
