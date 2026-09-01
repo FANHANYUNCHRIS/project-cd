@@ -1036,15 +1036,6 @@ body {
 .contact-glass-intro {
     flex: 0 0 300px;
     max-width: 300px;
-    /* .contact-glass-card 是 align-items:stretch，這欄的外框高度會被拉到
-       跟右邊表單一樣高，但裡面只有標題跟 LINE 卡片兩塊內容，天生比表單短，
-       不處理的話內容會全部貼齊頂部，底下留一大片空白。改成 flex 直排＋
-       justify-content:center，讓這兩塊內容當作一組在拉高的欄位裡垂直置中，
-       空白平均分散到上下，不會集中卡在底部——手機版這欄不會被拉伸（見下面
-       媒體查詢 flex:none），本身高度等於內容高度，center 不會有可見效果 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .contact-glass-form {
