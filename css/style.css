@@ -2006,9 +2006,11 @@ a.faq-card {
     color: #ffffff;
 }
 
+/* 電腦版排成 3 欄（3x3 網格，目前 6 顆剛好排 2 排），用 grid 而不是
+   flex-wrap+固定容器寬度去湊，欄數不會因為圖示總數變動而跑掉 */
 .footer-social {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, var(--sp-8));
     gap: 16px;
 }
 
@@ -4311,7 +4313,10 @@ a.faq-card {
        「嚴禁換行」的地址/信箱不是同一回事。圖示現在固定 32px 見方
        （--sp-8，見 .footer-social a），2 顆(32px)+1個間距(--sp-4=16px)=80px，
        精確算好，不用再抓餘裕 */
+    /* 手機版改回 flex-wrap（不是電腦版的 3 欄 grid），窄螢幕排不下 3 顆，
+       固定寬度湊出每排 2 顆 */
     .footer-social {
+        display: flex;
         flex-wrap: wrap;
         max-width: 80px;
         /* column-gap 維持 16px（是上面算好的 80px 寬度的一部分，動了兩顆
