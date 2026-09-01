@@ -611,6 +611,10 @@ body {
     height: 640px;
 }
 
+/* hover/press 的位移跟陰影改用設計系統文件「04 四感設計・互動」定義的
+   iOS 彈簧回彈曲線 cubic-bezier(.34,1.56,.64,1)，跟彈窗/開關元件同一套
+   語言——原本的 cubic-bezier(0.16,1,0.3,1) 是純 ease-out，沒有回彈尾韻，
+   跟全站其他互動元件的手感不一致 */
 .product-panel {
     position: relative;
     min-width: 0;
@@ -621,8 +625,8 @@ body {
     background-color: #EBEBEC;
     border-radius: 20px;
     box-shadow: 0 20px 50px -30px rgba(22, 22, 26, 0.35);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
                 opacity 0.6s ease;
 }
 
@@ -631,8 +635,6 @@ body {
     box-shadow: 0 28px 60px -28px rgba(22, 22, 26, 0.45);
 }
 
-/* 產品照片就位前的佔位設計，跟品牌團隊立繪同一套語言：深底 + 巨大淡字，
-   filter 強制灰階，之後換上真實產品照片會自動符合全站零色彩規則 */
 .product-panel-image {
     flex: 1;
     min-height: 0;
@@ -642,7 +644,6 @@ body {
     background-color: var(--ink);
     background-size: cover;
     background-position: center;
-    filter: grayscale(1) contrast(1.05);
     transition: transform 0.5s ease;
 }
 
@@ -679,11 +680,15 @@ body {
     flex-shrink: 0;
 }
 
+/* 跟 .account-hud-num／.mock-stat-num 同一套「數字等寬」處理：4 張卡片
+   並排時，價格數字才會在同一個視覺基準上對齊，不會因為每個數字本身
+   寬度不同（1 比 8 窄）而讓整排價格看起來歪斜 */
 .product-panel-price {
     font-size: var(--fs-small);
     font-weight: bold;
     color: #ffffff;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .product-panel-qty {
@@ -995,6 +1000,12 @@ body {
     font-size: 96px;
 }
 
+/* 手機專用合併卡片（見 index.html 註解），桌機版預設收起來，
+   只在下面 ≤1024px 的 media query 裡改成顯示 */
+.team-mobile-card {
+    display: none;
+}
+
 /* =========================================
    8. 聯繫我們彈窗（原本是可捲動到的區塊，現在只有點導覽列聯繫圖示才會彈出）
    ========================================= */
@@ -1039,29 +1050,37 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* 原本用 justify-content:space-between 把剩餘空間平均塞進每個區塊之間，
+       這個值會隨表單實際高度（跟旁邊 LINE 卡片等高與否）變動，不是固定
+       數字，區塊間距看起來忽大忽小、沒有規律。改成固定 gap，每一段間距
+       都是同一個可控的值 */
+    gap: var(--sp-4);
 }
 
-.contact-eyebrow {
-    color: var(--ink);
-    font-size: var(--fs-small);
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: var(--sp-3);
+/* 標題「與我聯繫」跟副標「有任何問題...」原本是上下疊放，改成水平並排——
+   副標字級小、行高跟大標題對不齊，用 baseline 對齊讓兩行文字的基線切齊，
+   看起來像「標題+補充說明」同一行，不是視覺上分離的兩層 */
+.contact-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-6);
+    /* 副標題靠右對齊後會逼近右上角的關閉鍵（44×44px，貼齊容器右邊），
+       留一段安全距離，不管副標題文字多長都不會跟關閉鍵疊到 */
+    padding-right: 56px;
 }
 
 .contact-visual-title {
     color: var(--ink);
-    font-size: var(--fs-h2);
+    font-size: var(--fs-h3);
     font-weight: bold;
-    margin-bottom: var(--sp-3);
 }
 
 .contact-visual-sub {
-    color: var(--ink);
+    color: var(--ink-soft);
     font-size: var(--fs-small);
-    margin-bottom: var(--sp-6);
 }
 
 /* 跟會員彈窗的 .account-hud-card 同一套軟膠浮凸卡片——不靠邊框分層，靠雙向陰影
@@ -1139,8 +1158,11 @@ body {
     text-decoration: none;
     font-size: var(--fs-small);
     font-weight: bold;
-    padding: 12px 0;
-    border-radius: 50px;
+    padding: 16px 0;
+    /* 原本 50px（完整藥丸形）配上手機版滿版寬度，變成一條又扁又長的
+       膠囊，看起來像被左右拉開；改成比較內斂的圓角矩形，寬高比不會
+       那麼誇張 */
+    border-radius: 16px;
     transition: all 0.25s ease;
 }
 
@@ -1148,73 +1170,6 @@ body {
     background-color: #00e000;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 195, 0, 0.3);
-}
-
-.contact-details-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-4);
-    margin-top: var(--sp-5);
-}
-
-.contact-detail-item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sp-3);
-    text-align: left;
-    padding-bottom: var(--sp-4);
-    border-bottom: 1px solid var(--ink-line);
-}
-
-.contact-detail-item:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.contact-detail-item i {
-    font-size: var(--fs-lead);
-    color: var(--ink);
-    margin-top: 4px;
-}
-
-.contact-detail-item strong {
-    font-size: var(--fs-small);
-    color: var(--ink);
-    display: block;
-    margin-bottom: 2px;
-}
-
-.contact-detail-item p {
-    font-size: var(--fs-small);
-    color: var(--ink);
-}
-
-/* 44px＝iOS HIG 最小觸控目標 */
-.btn-copy-email {
-    margin-left: auto;
-    align-self: center;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background-color: transparent;
-    color: var(--ink-soft);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--fs-small);
-    transition: all 0.2s ease;
-}
-
-.btn-copy-email:hover {
-    background-color: rgba(29, 29, 31, 0.06);
-    color: var(--ink);
-}
-
-.btn-copy-email.copied {
-    color: #1F5C23;
 }
 
 .form-grid {
@@ -1256,7 +1211,7 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 12px 12px; 
+    padding: 16px 12px;
     border: 1px solid var(--ink-line);
     border-radius: 6px;
     background-color: #ffffff;
@@ -1675,7 +1630,9 @@ body {
     padding: 12px 36px;
     font-size: var(--fs-body);
     font-weight: bold;
-    border-radius: 50px; 
+    /* 跟 LINE 按鈕同一個問題：完整藥丸形配滿版寬度看起來拉得很長，
+       改成同一組比較內斂的圓角矩形 */
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
@@ -1697,7 +1654,6 @@ body {
     font-size: var(--fs-caption);
     line-height: 1.7;
     color: var(--ink);
-    margin-top: var(--sp-4);
 }
 
 .contact-privacy-note .policy-link {
@@ -1720,8 +1676,12 @@ body {
     padding: 40px;
 }
 
+/* 跟 .modal-title（購物車/結帳/條款須知用的）統一成同一個字級——彈窗本身是
+   疊在頁面上的次要情境，不是完整頁面，標題階層照國際慣例（iOS Alert/Action
+   Sheet、Material Dialog）通常會比頁面主標題矮一階，全站彈窗標題统一用
+   --fs-h3，不要有的彈窗特別大 */
 .faq-title {
-    font-size: var(--fs-h2);
+    font-size: var(--fs-h3);
     font-weight: bold;
     color: var(--ink);
     margin-bottom: var(--sp-8);
@@ -1735,28 +1695,82 @@ body {
     text-align: left;
 }
 
+/* 服務條款下面 3 條款項，跟上面常見問題一樣「每條各自一張卡片」，不是
+   3 段文字擠在同一張卡片裡——.faq-terms-section 本身只放標題，實際的
+   卡片網格是 .policy-modal-body（裡面每個 <p> 各自變成一張卡片） */
+.faq-terms-section {
+    margin-top: var(--sp-6);
+    text-align: left;
+}
+
+/* .policy-modal-body p 這個 class 同時給獨立的服務條款彈窗跟這裡的
+   常見問題彈窗共用，獨立彈窗維持原本純文字段落（唯一內容，不需要卡片化）；
+   這裡（要跟上面常見問題卡片群一樣）改成跟 .faq-card 同一套軟膠浮凸卡片，
+   只在 .faq-terms-section 範圍內覆寫，不影響獨立彈窗 */
+.faq-terms-section .policy-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+}
+
+.faq-terms-section .policy-modal-body p {
+    margin-bottom: 0;
+    padding: 20px;
+    border-radius: 16px;
+    color: var(--ink-soft);
+    text-align: justify;
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
+}
+
+/* 跟上面常見問題卡片同一個「游標碰到都要浮起來」規則，服務條款的
+   每條條款卡片也要一致 */
+.faq-terms-section .policy-modal-body p:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        8px 8px 16px rgba(29, 29, 31, 0.18),
+        -8px -8px 16px rgba(255, 255, 255, 0.85);
+}
+
+.faq-terms-title {
+    font-size: var(--fs-h3);
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: var(--sp-4);
+}
+
+/* 原本是白底+邊框的扁平卡片，跟聯繫我們/會員彈窗用的軟膠浮凸材質
+   （.line-service-box／.account-hud-card，靠雙向陰影營造凸起感、不靠邊框）
+   是兩套不同語彙——改成同一套，全站彈窗的卡片材質才真正統一 */
 .faq-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
-    border: 1px solid var(--ink-line);
+    color: var(--ink);
     border-radius: 16px;
-    padding: 28px 24px;
+    padding: 20px;
     min-height: 200px;
     text-decoration: none;
     overflow: hidden;
-    transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease, border-color 0.3s ease;
+    box-shadow:
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
 }
 
 a.faq-card {
     cursor: pointer;
 }
 
+/* 使用者指定：游標碰到卡片都要有浮起來的感覺，不分能不能點——全部
+   .faq-card 統一套上浮起＋陰影加深 */
 .faq-card:hover {
     transform: translateY(-4px);
-    border-color: var(--ink);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    box-shadow:
+        8px 8px 16px rgba(29, 29, 31, 0.18),
+        -8px -8px 16px rgba(255, 255, 255, 0.85);
 }
 
 .faq-card-icon {
@@ -1774,8 +1788,15 @@ a.faq-card {
 
 .faq-card-desc {
     font-size: var(--fs-small);
-    color: var(--ink);
+    /* 原本跟標題一樣用 --ink（純黑），只靠字重分層次；設計系統裡次要文字
+       本來就有專用的 --ink-soft token（例如聯繫我們的副標題就是用這個），
+       這裡補上，跟標題的視覺層次才分得更開 */
+    color: var(--ink-soft);
     line-height: 1.6;
+    /* 中文段落每行右邊界原本參差不齊（換行點完全看內容字數），加上
+       justify 讓非最後一行的字距自動撐開、切齊到同一個右邊界——最後一行
+       本身不受 justify 影響，這是所有排版軟體的通用規則，不是漏改 */
+    text-align: justify;
 }
 
 /* =========================================
@@ -1991,8 +2012,7 @@ a.faq-card {
     gap: 16px;
 }
 
-.footer-social a,
-.footer-social button {
+.footer-social a {
     color: var(--paper);
     font-size: 24px;
     text-decoration: none;
@@ -2008,42 +2028,26 @@ a.faq-card {
     transition: transform 0.2s ease-in-out;
 }
 
-/* 聯繫我們/音效開關這兩顆混進社群 icon 列，其中音效是 <button>，
-   瀏覽器預設的邊框/底色/內距/字型要歸零，才能跟其他 <a> icon 視覺一致 */
-.footer-social button {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    font-family: inherit;
-    cursor: pointer;
-}
-
-.footer-social a:hover,
-.footer-social button:hover {
+.footer-social a:hover {
     transform: translateY(-3px);
 }
 
 .footer-social a.social-line:hover i { color: #00C300; }
 .footer-social a.social-fb:hover i { color: #1877F2; }
+/* 原本用 background-clip:text 把 IG 官方漸層裁進圖示文字裡，這個技巧本身
+   在不同瀏覽器/情境下不夠穩定，使用者反應了兩次顏色顯示不完整，不再修補
+   這個技巧，直接換成 IG 官方單一代表色（#E4405F），穩定不會有裁切不完整
+   的問題 */
 .footer-social a.social-ig:hover i {
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #E4405F;
 }
 .footer-social a.social-yt:hover i { color: #FF0000; }
 
-/* Game/Education/音樂開關/音效開關都不是外部社群平台，沒有官方品牌色可以
-   照抄，各自配一個跟主題語意相關、彼此可明顯區分的顏色（使用者指定，已回頭
-   同步進設計系統文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金、
-   音樂開關用 Liquid Pink、音效開關用橘色——音樂跟音效是兩顆各自獨立的按鈕，
-   刻意配不同色避免分不清楚在切換哪一顆；音效先後試過 Liquid Blue、青色都
-   被使用者否決（藍色跟 Facebook 品牌藍太接近），改用橘色跟其他六顆
-   （綠/藍/漸層/紅/紫/金）都能明顯區分 */
+/* Game/Education 不是外部社群平台，沒有官方品牌色可以照抄，各自配一個跟
+   主題語意相關、彼此可明顯區分的顏色（使用者指定，已回頭同步進設計系統
+   文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金 */
 .footer-social a.social-game:hover i { color: #9b6bf2; }
 .footer-social a.social-edu:hover i { color: #d4af37; }
-.footer-social button.social-music:hover i { color: #ec5fa8; }
-.footer-social button.social-sound:hover i { color: #ea580c; }
 
 .footer-bottom {
     text-align: center;
@@ -2206,42 +2210,13 @@ a.faq-card {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* LOGO + 音樂/音效包在同一個容器裡，讓 .navbar 的 justify-content:space-between
-   只需要分辨「左邊這一整塊」跟「右邊 nav-right」兩塊，音效才會貼著 LOGO，
-   不會被 space-between 平均分配空間、推到左右兩塊正中間去 */
 .nav-left-group {
     display: flex;
     align-items: center;
 }
 
-/* 音樂/音效弱化成次要控制項：貼著 LOGO，用一條細線隔開，不再套用
-   跟會員/聯繫/購物車一樣的白色圓形浮島樣式——這幾顆是核心購物操作，
-   音效只是氛圍偏好設定，份量刻意做輕 */
-.nav-sound-group {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    /* 分隔線左右留白對齊 4px 網格的同一個數字（12px），
-       原本左邊 6px、右邊 14px 不對稱 */
-    margin-left: 12px;
-    padding-left: 12px;
-    border-left: 1px solid rgba(22, 22, 26, 0.14);
-    transition: border-color 0.3s ease;
-}
-
-.navbar.on-dark .nav-sound-group {
-    border-left-color: rgba(255, 255, 255, 0.25);
-}
-
-.music-control-wrap,
-.sound-control-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-/* 分隔線現在是 .nav-utility-group 的第一個項目（音樂/音效已經獨立移出去了），
-   跟後面會員圖示之間只有單一份 gap，不用再額外用負 margin 補償 */
+/* 分隔線是 .nav-utility-group 的第一個項目，跟後面會員圖示之間只有
+   單一份 gap，不用再額外用負 margin 補償 */
 .nav-utility-divider {
     width: 1px;
     height: 22px;
@@ -2249,103 +2224,6 @@ a.faq-card {
     flex: 0 0 1px;
 }
 
-/* 橫式音量條：往下展開，貼在按鍵正下方置中——滑桿本身是正常橫向
-   （不用 rotate(-90deg) 轉直），用 flex 置中卡片本身的內容。
-   寬度加大到能放下滑桿+關閉鍵兩個東西，調完可以明確點掉，不用只靠滑鼠移開 */
-.volume-pop {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 50%;
-    z-index: 20;
-    width: 156px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: #fff;
-    border: 1px solid rgba(22, 22, 26, 0.08);
-    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
-    border-radius: 22px;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* 改成「點了才出現」（.open 由 script.js 控制），不再靠 :hover/:focus-within
-   滑鼠移過去就跳出來——滑桿是可以拖曳調整的操作面板，靠意外划過去就跳出來
-   容易誤觸，點擊/點兩下收起才是明確的操作意圖 */
-.music-control-wrap.open .volume-pop,
-.sound-control-wrap.open .volume-pop {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, 0);
-}
-
-.volume-pop input[type="range"] {
-    width: 90px;
-    accent-color: var(--ink);
-    cursor: pointer;
-}
-
-/* 調完音量可以直接點掉的關閉鍵，不用只靠滑鼠移開範圍這一種方式 */
-.volume-pop-close {
-    flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: none;
-    border: none;
-    color: rgba(22, 22, 26, 0.4);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.volume-pop-close:hover {
-    background-color: rgba(22, 22, 26, 0.08);
-    color: var(--ink);
-}
-
-/* 桌機版按鈕本體：視覺上縮小、拿掉白色圓底，但熱區維持 44px 不縮水
-   （iOS HIG 最小觸控目標），縮小的是圖示大小跟顏色對比，不是可點擊範圍 */
-.btn-music-toggle,
-.btn-sound-toggle {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    border-radius: 50%;
-    color: rgba(22, 22, 26, 0.5);
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.btn-music-toggle:hover,
-.btn-sound-toggle:hover {
-    background-color: rgba(22, 22, 26, 0.08);
-    color: var(--ink);
-}
-
-.navbar.on-dark .btn-music-toggle,
-.navbar.on-dark .btn-sound-toggle {
-    color: rgba(255, 255, 255, 0.55);
-}
-
-.navbar.on-dark .btn-music-toggle:hover,
-.navbar.on-dark .btn-sound-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-}
 
 /* =========================================
    12. 彈窗通用 (Modals)
@@ -2414,6 +2292,7 @@ a.faq-card {
     border-radius: 50%;
     background: transparent;
     border: none;
+    outline: none;
     font-size: var(--fs-h2);
     color: var(--ink);
     cursor: pointer;
@@ -2422,11 +2301,12 @@ a.faq-card {
     transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 拿掉預設方形黑色外框——關閉鍵視覺上是圓的，方形黑框跟按鈕形狀不搭，
-   改用貼合圓形的柔和光圈，鍵盤 focus 時還是看得出來游標在哪，只是不生硬 */
+/* 原本這裡用 box-shadow 畫一圈柔和光圈當 focus-visible 的視覺提示，
+   但 Safari 對「點擊後是否算 focus-visible」的判斷比 Chrome 寬鬆，
+   實測會在單純點擊/觸控關閉鍵之後也顯示這圈光圈、而不只是鍵盤 Tab 導覽時，
+   看起來像是關閉鍵背後多了一個圓形殘影——使用者已經反應兩次，直接拿掉 */
 .modal-close:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.2);
 }
 
 .modal-close:hover {
@@ -2477,10 +2357,10 @@ a.faq-card {
 .auth-modal-box {
     max-width: 440px;
     width: 100%;
-    /* 註冊表單欄位多，原本 44/40 的內距加上寬鬆間距，內容常常比視窗高，
-       彈窗只能整個用捲動才看得到底部——使用者不想捲動，改成整體抓緊一點，
-       目標是大多數桌機視窗高度下不捲動也能完整顯示 */
-    padding: var(--sp-8) var(--sp-8) var(--sp-8);
+    /* 註冊表單欄位多，實測過（DevTools 量高度）在一般桌機視窗高度下內容
+       還是比彈窗高，會觸發捲動——這裡連同下面 logo/分段控制器/checkbox
+       列的間距一起收緊，把不必要的空白擠出來，目標是完整顯示不用捲動 */
+    padding: var(--sp-6) var(--sp-8) var(--sp-6);
     text-align: center;
     background-color: var(--paper);
 }
@@ -2490,11 +2370,11 @@ a.faq-card {
     flex-direction: column;
     align-items: center;
     gap: var(--sp-2);
-    margin-bottom: var(--sp-3);
+    margin-bottom: var(--sp-2);
 }
 
 .auth-modal-logo-icon {
-    height: 40px;
+    height: 32px;
     width: auto;
 }
 
@@ -2513,7 +2393,7 @@ a.faq-card {
     border-radius: 12px;
     padding: 4px;
     gap: 4px;
-    margin-bottom: var(--sp-3);
+    margin-bottom: var(--sp-2);
 }
 
 .auth-tab {
@@ -2542,7 +2422,7 @@ a.faq-card {
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
+    gap: var(--sp-2);
 }
 
 /* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
@@ -2567,7 +2447,9 @@ a.faq-card {
 .checkout-modal-box .form-group select {
     background-color: transparent;
     border: none;
-    border-radius: 30px;
+    /* 原本 30px 是完整藥丸形，姓名/電話這種短內容配滿版寬度的輸入框，
+       看起來空格拉得很長、不成比例，改成比較內斂的圓角矩形 */
+    border-radius: 14px;
     padding: 12px 24px;
     box-shadow:
         inset 4px 4px 8px rgba(29, 29, 31, 0.12),
@@ -2586,7 +2468,7 @@ a.faq-card {
 .checkout-modal-box .form-group textarea {
     background-color: transparent;
     border: none;
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 12px 24px;
     box-shadow:
         inset 4px 4px 8px rgba(29, 29, 31, 0.12),
@@ -2622,7 +2504,10 @@ a.faq-card {
     text-align: center;
     background: none;
     border: none;
-    padding: 0;
+    /* 原本 padding:0 只靠文字行高當觸控範圍（約20px），遠低於 44×44pt
+       的 HIG 下限；這顆只有登入表單在用，不受註冊表單高度限制，可以
+       放心補足夠的內距 */
+    padding: 12px 0;
     font-family: inherit;
     font-size: var(--fs-small);
     color: var(--ink);
@@ -2640,8 +2525,8 @@ a.faq-card {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 8px 0;
-    margin-bottom: 4px;
+    padding: 4px 0;
+    margin-bottom: 0;
     cursor: pointer;
     user-select: none;
 }
@@ -2699,6 +2584,11 @@ a.faq-card {
 .auth-remember-row {
     justify-content: space-between;
     align-items: center;
+    /* 上面 .auth-checkbox-row 共用的 padding 為了讓註冊表單塞得下已經收緊到
+       4px，但這一列（開關 26px 高 + 4px×2 內距＝34px）會低於 iOS HIG
+       44×44pt 的最小觸控目標；這一列只有登入表單在用，不受註冊表單的
+       高度限制，補回足夠的內距 */
+    padding: 12px 0;
 }
 
 .ios-toggle-track {
@@ -2770,7 +2660,7 @@ a.faq-card {
     color: var(--ink-soft);
     border: 1px solid var(--ink-line);
     padding: 12px 0;
-    border-radius: 50px;
+    border-radius: 16px;
     font-size: var(--fs-small);
     font-weight: 600;
     font-family: inherit;
@@ -2800,11 +2690,18 @@ a.faq-card {
 }
 
 /* --- 產品彈窗：加入購物車列 --- */
+/* 把加入購物車列＋登入提示＋第三方商城連結包成同一個底部區塊，桌機版靠
+   margin-top:auto 貼齊 .product-detail-body 底部；手機版另外把整個區塊
+   變成 sticky 底部列（見 ≤1024px media query），三個元素才會一起固定，
+   不會有連結被單獨捲走、CTA 卻黏住的錯位情形 */
+.product-modal-footer {
+    margin-top: var(--sp-6);
+}
+
 .cart-add-row {
     display: flex;
     align-items: center;
     gap: var(--sp-3);
-    margin-top: auto;
 }
 
 .qty-stepper {
@@ -3454,12 +3351,17 @@ a.faq-card {
     width: 100%;
     /* 關閉鍵是 20px+44px=64px 高，上邊界留 --sp-16(64px) 剛好清開，
        圖片開頭才不會被關閉鍵疊到 */
-    padding: var(--sp-16) 32px 32px;
+    padding: var(--sp-16) var(--sp-8) var(--sp-8);
 }
 
+/* align-items 預設 stretch 會把右欄文字硬拉成跟左欄圖片一樣高，文字內容
+   （標題／價格／說明／標籤）填不滿那個高度時，底部購物車列被 margin-top:auto
+   推到跟圖片齊平，中間留下一大塊沒有內容的空白——改用 flex-start 讓右欄
+   吃自己實際內容的高度，購物車列直接接在標籤下面，不再懸空 */
 .product-modal-content {
     display: flex;
-    gap: 32px;
+    align-items: flex-start;
+    gap: var(--sp-8);
 }
 
 .product-gallery {
@@ -3470,11 +3372,87 @@ a.faq-card {
 }
 
 .gallery-main {
+    position: relative;
     width: 100%;
     aspect-ratio: 4/3;
     border-radius: 12px;
     overflow: hidden;
     background-color: rgba(29, 29, 31, 0.05);
+}
+
+/* 手機版大圖左右切換箭頭，桌機版預設隱藏（見 ≤1024px media query 才顯示），
+   桌機版維持縮圖列直接跳圖，不需要一張一張切 */
+/* 使用者指定拿掉箭頭的深底圓框，只留白色圖示——沒有底托之後，靠
+   drop-shadow（不是純色 text-shadow，才能貼合圖示形狀）維持在淺色
+   照片上的可讀性，不然白色圖示疊到白色/淺色食材照片會整個糊掉 */
+.gallery-nav-btn {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    color: #ffffff;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.gallery-nav-prev { left: var(--sp-3); }
+.gallery-nav-next { right: var(--sp-3); }
+
+/* 底部圓點指示器，跟 iOS 相簿/輪播的 Page Control 同一套語言：目前這張
+   用實心＋加寬的橢圓表示，其餘用半透明小圓點——桌機版預設隱藏，只在
+   手機版（縮圖列被拿掉的地方）顯示 */
+/* 疊在圖片內部、貼底置中。使用者指定不要深底托盤，改靠 drop-shadow
+   維持在淺色照片上的可讀性——圓點顏色也改用白色系（見下面
+   .gallery-dot::before），不是疊在白色頁面背景上的深灰點 */
+.gallery-dots {
+    display: none;
+    position: absolute;
+    bottom: var(--sp-3);
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    z-index: 2;
+}
+
+/* 圓點本身視覺上維持 iOS Page Control 的細緻尺寸，但按鈕的實際可點區域
+   用 flex 置中撐大到 24px——視覺小、熱區大，避免真的做成 6px 的觸控目標 */
+.gallery-dot {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.gallery-dot::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s ease;
+}
+
+.gallery-dot.active::before {
+    width: 18px;
+    border-radius: 3px;
+    background-color: #ffffff;
 }
 
 .gallery-main img {
@@ -3547,28 +3525,47 @@ a.faq-card {
     text-align: left;
 }
 
+/* 原本標題／價格／說明／標籤全部用同一個 var(--ink) 純黑，只靠字級做區分——
+   四段文字視覺份量幾乎一樣重，讀起來是一整塊沒有主從關係的灰階文字牆。
+   改成用「色彩深淺」疊加字級做兩層對比：標題+價格維持全黑（主角），
+   說明文字降到 --ink-soft（次要資訊，退到背景），標籤從純文字列表改成
+   跟 .qty 藥丸同一套視覺語言的膠囊徽章列，才會看起來是特意設計過的
+   信任標籤區，不是隨手放的條列文字 */
+/* 標題跟價格/份量同一列，名稱靠左、價格靠右——跟商品卡片 .product-panel-row1
+   同一個排版邏輯（見 index.html 手機版排版），也讓這個區塊少佔一行高度 */
+.product-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-5);
+}
+
 .product-detail-body h3 {
     font-size: var(--fs-h3);
+    font-weight: 800;
     color: var(--ink);
-    margin-bottom: var(--sp-2);
 }
 
 .product-modal-meta {
     display: flex;
     align-items: center;
-    gap: var(--sp-4);
-    margin-bottom: var(--sp-4);
+    gap: var(--sp-3);
+    flex-shrink: 0;
 }
 
 .product-modal-meta .price {
     font-size: var(--fs-h4);
     font-weight: bold;
     color: var(--ink);
+    font-variant-numeric: tabular-nums;
 }
 
 .product-modal-meta .qty {
-    font-size: var(--fs-small);
-    color: var(--ink);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    color: var(--ink-soft);
     background-color: rgba(29, 29, 31, 0.05);
     padding: 4px 12px;
     border-radius: 20px;
@@ -3577,27 +3574,67 @@ a.faq-card {
 .product-detail-body .desc {
     font-size: var(--fs-body);
     line-height: 1.7;
-    color: var(--ink);
-    margin-bottom: var(--sp-5);
+    color: var(--ink-soft);
+    margin-bottom: var(--sp-6);
 }
 
+/* 使用者指定改成「獎狀徽章」風格：圖示放進雙圈勳章底座（實心內圈＋留白
+   間隙＋細外圈，仿認證標章的同心圓畫法），文字挪到下方置中，取代原本
+   一排水平藥丸。仍然全站黑白灰，靠邊框圈數＋軟膠浮凸陰影做出「勳章」
+   的立體感，不是靠顏色 */
+/* 原本 .tag-item 用 flex:1 把 3 個徽章硬撐滿一整排寬度，彼此之間留白
+   多到看起來像三個各自漂浮的孤島，跟上面靠左對齊的標題/說明文字也
+   對不起來。改成不撐滿、維持自己實際內容寬度，讓 3 個徽章靠左聚成
+   一組，跟整個文字區塊同一個左邊界，讀起來才是同一塊內容的延伸，
+   不是另外浮空的裝飾 */
+/* 靠左聚集留右側空白＝不平衡；space-between 硬拉開又變成間距過寬——
+   兩個都是同一個根因：3 個徽章的「內容寬度」本來就比整欄窄，硬要靠
+   對齊方式（左靠/邊對邊）去湊滿寬度，怎麼調都是妥協。改成置中：
+   徽章間距維持適中固定值（不被拉伸變形），左右自動留白對稱分配，
+   從整體畫面來看是最平衡的，不會所有空白都擠在單一側 */
+/* 從 3 個徽章增加到 5 個，原本的 gap:sp-8 單行寬度會爆版——改成允許
+   換行（flex-wrap），欄距縮到 sp-6、行距 sp-5，5 個在較窄的手機欄位
+   會自動折成 3+2 兩排，桌機版較寬的欄位通常一行就排得下 */
 .product-tags {
     display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-5) var(--sp-6);
     margin-bottom: var(--sp-6);
 }
 
 .tag-item {
-    font-size: var(--fs-small);
-    color: var(--ink);
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--sp-2);
+    text-align: center;
 }
 
-.tag-item i {
+.tag-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 1.5px solid var(--ink);
+    box-shadow:
+        0 0 0 3px #ffffff,
+        0 0 0 4.5px rgba(29, 29, 31, 0.25),
+        6px 6px 12px rgba(29, 29, 31, 0.14),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--ink);
+    font-size: 17px;
+}
+
+.tag-label {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    line-height: 1.3;
 }
 
 /* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
@@ -3606,6 +3643,9 @@ a.faq-card {
     display: none;
 }
 
+/* 跟 .btn-line-cta／.btn-submit／.btn-google-signin 同一套修正：滿版矩形容器裡的
+   全膠囊圓角看起來過度拉伸，這幾個主要 CTA 按鈕已經統一改成 16px，這顆「加入
+   購物車」原本漏改，圓角跟其他按鈕不一致 */
 .btn-modal-cta {
     display: block;
     width: 100%;
@@ -3616,7 +3656,7 @@ a.faq-card {
     font-size: var(--fs-body);
     font-weight: bold;
     padding: 12px 0;
-    border-radius: 30px;
+    border-radius: 16px;
     transition: all 0.3s ease;
     margin-top: auto;
     border: none;
@@ -3638,17 +3678,18 @@ a.faq-card {
     }
 
     /* 手機版彈窗改成 iOS 風格的底部滑出式面板（sheet），不是從畫面中央縮放出現——
-       只有上面兩角是圓角，下緣直接貼齊螢幕底部，符合 iOS Action Sheet 的外觀 */
+       跟四周留一圈間距（不再是貼齊螢幕邊緣的 Action Sheet 樣式），四個角都是
+       圓角，看起來是浮起來的卡片，不是嵌在螢幕邊緣的抽屜 */
     .modal-overlay {
         align-items: flex-end;
-        padding: 0;
+        padding: var(--sp-4);
     }
 
     .modal-container {
         width: 100%;
         max-width: 100%;
         max-height: 88vh;
-        border-radius: 24px 24px 0 0;
+        border-radius: 24px;
         transform: translateY(100%);
         transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
@@ -3696,8 +3737,7 @@ a.faq-card {
         white-space: normal;
     }
 
-    /* 手機/平板模式隱藏導覽列裡桌機專用的音效群組跟章節導覽點 */
-    .nav-sound-group,
+    /* 手機/平板模式隱藏導覽列裡桌機專用的分隔線跟章節導覽點 */
     .nav-utility-divider,
     .section-dots,
     .section-index {
@@ -3874,47 +3914,197 @@ a.faq-card {
         height: 84px;
     }
 
+    /* 使用者指定的手機專用排列順序：頭像列(order:1，見上面 .team-avatar-rail)
+       →單一合併大卡片(order:2)，卡片內依序是姓名+座右銘→立繪→四宮格數據→
+       自我介紹，全部放在同一張卡片背景裡（.team-mobile-card 當底盤），但
+       每個小節各自保留軟膠浮凸的凸起感（跟 .faq-card 同一套雙向陰影語言），
+       不是壓平成只有髮絲分隔線。桌機版 .team-info-merged 那張合併卡片、
+       .team-portrait 立繪都整個隱藏，換成 .team-mobile-card（內容由
+       script.js 的 showMember() 同步寫入，見該檔案改動）。桌機版立繪
+       .team-portrait 直接隱藏（不是搬進卡片裡），因為它是桌機版
+       .team-switcher 的直接 flex 子項、order 排版依賴這一點，搬動會讓
+       桌機版跟著壞掉——改用 .team-mobile-portrait 這個獨立複製的元素 */
     .team-portrait {
-        order: 2;
-        width: 100%;
-        height: 42vh;
-        /* 桌機版的 flex:6 1 0% 用 flex-basis:0% 決定主軸尺寸，手機版直向排列時
-           main-axis 變成高度，flex-basis:0% 會蓋掉這裡的 height:42vh，
-           整個立繪框會被壓縮成幾乎 0 高——手機版不需要用 flex-grow 分配剩餘空間，
-           直接關掉 flex，改吃自己寫的 height */
-        flex: none;
+        display: none;
     }
 
     .team-info-merged {
-        order: 3;
-        flex: none;
-        width: 100%;
-        max-width: 100%;
-        text-align: center;
+        display: none;
     }
 
+    /* 跟設計系統文件「05 元件模式・軟膠浮凸卡片」同一套配對邏輯：外層是
+       淺灰托盤（文件定義的 --surface-sunken #f1f1ef），裡面的每個小節維持
+       純白底 + 雙向陰影，才會有「從托盤浮凸出來」的矽膠感。單靠 #f1f1ef
+       跟頁面 #EBEBEC 的底色差＋髮絲邊框還是分辨不出托盤邊界，改用文件
+       定義的 --ink-line-strong（rgba(22,22,26,.3)，比一般裝飾邊框的
+       .16 更深）當邊框色、邊框加粗到 1.5px，陰影也從「模糊到看不太到」
+       的 -30px 內縮陰影，換成 .modal-container 同款、沒有負值內縮的實際
+       立體陰影，邊界才會確實浮出來 */
+    .team-mobile-card {
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-4);
+        background-color: #f1f1ef;
+        border: 1.5px solid rgba(22, 22, 26, 0.3);
+        border-radius: 20px;
+        padding: var(--sp-4);
+        box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
+    }
 
-    .team-info-quote {
-        border-left: none;
-        border-top: 3px solid var(--ink);
-        padding-left: 0;
-        padding-top: var(--sp-3);
+    /* 姓名+座右銘：姓名在左，座右銘在右——跟聯繫我們彈窗的 .contact-title-row
+       （標題+副標並排）同一個排版邏輯，姓名字級大、座右銘字級小，用 baseline
+       對齊兩者的文字基線 */
+    .team-mobile-namequote {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--sp-3);
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: var(--sp-5);
+        text-align: left;
+        box-shadow:
+            6px 6px 12px rgba(29, 29, 31, 0.14),
+            -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    .team-mobile-name {
+        font-size: var(--fs-h2);
+        font-weight: bold;
+        color: var(--ink);
+    }
+
+    .team-mobile-quote {
+        font-size: var(--fs-small);
+        font-weight: 700;
+        color: var(--ink-soft);
+        text-align: right;
+    }
+
+    /* 立繪：跟桌機版 .team-portrait 一樣用 background-image 呈現（見
+       script.js 的 loadPortraitInto()），但這是手機卡片內部的獨立元素，
+       不吃桌機版的 flex:6 1 0% 高度分配邏輯，直接寫死高度 */
+    .team-mobile-portrait {
+        width: 100%;
+        height: 42vh;
+        background-color: #ffffff;
+        background-size: contain;
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        border-radius: 16px;
+        position: relative;
+        transition: opacity 0.4s ease;
+        box-shadow:
+            6px 6px 12px rgba(29, 29, 31, 0.14),
+            -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    /* 立繪讀取失敗時才切成深底＋白色圖示佔位，跟桌機版 .team-portrait.img-fallback
+       同一套邏輯——平常（圖片正常載入）維持白底，不是預設就黑底 */
+    .team-mobile-portrait.img-fallback {
+        background-color: var(--ink);
+    }
+
+    .team-mobile-portrait.img-fallback::after {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        content: "\f007";
+        color: #ffffff;
+        font-size: 64px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* 三個框框（工作職位／戰鬥職位／專用武器）一行三欄並排，各自維持獨立的
+       軟膠浮凸卡片，跟常見問題卡片同一套材質語言（見 .faq-card） */
+    .team-mobile-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: var(--sp-2);
+    }
+
+    .team-mobile-stat-box {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-1);
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: var(--sp-3) var(--sp-2);
+        text-align: left;
+        box-shadow:
+            6px 6px 12px rgba(29, 29, 31, 0.14),
+            -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    .team-mobile-stat-label {
+        font-size: var(--fs-caption);
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--ink-soft);
+    }
+
+    .team-mobile-stat-value {
+        font-size: var(--fs-body);
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.3;
+    }
+
+    /* 自我介紹跟其他小節一樣維持凸起卡片感 */
+    .team-mobile-bio {
+        display: block;
+        font-size: var(--fs-small);
+        color: var(--ink-soft);
+        line-height: 1.6;
+        text-align: left;
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: var(--sp-5);
+        box-shadow:
+            6px 6px 12px rgba(29, 29, 31, 0.14),
+            -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    /* 原本 2 欄網格在手機上每張卡片只有半個螢幕寬，說明文字擠得要換好幾行，
+       改成單欄、一次一張滿版寬（使用者指定），犧牲「一眼看完 8 題」的總覽感，
+       換每張卡片喘息空間 */
+    /* 桌機版 40px 上下的彈窗內距在手機版沒有跟著收，比聯繫我們（已經在
+       .contact-glass-card 收到 24px/20px）鬆，全部彈窗統一收到同一組值——
+       原本只有 faq-modal-box 補了，account/auth/cart/checkout/policy
+       這五個手機版一直沒收，這裡一次補齊，全站彈窗風格才真正一致 */
+    .faq-modal-box,
+    .account-modal-box,
+    .auth-modal-box,
+    .cart-modal-box,
+    .checkout-modal-box,
+    .policy-modal-box {
+        padding: var(--sp-6) var(--sp-5);
     }
 
     .faq-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: var(--sp-3);
     }
 
     .faq-card {
-        min-height: 170px;
-        padding: 24px 16px;
+        min-height: 0;
+        padding: var(--sp-5) var(--sp-5);
     }
 
     .contact-glass-card {
         flex-direction: column;
         margin: 0;
         padding: var(--sp-6) var(--sp-5);
+        /* 桌機版的 40px 是給左右兩欄留的橫向間距，手機版直排疊起來後
+           變成 LINE 卡片跟表單之間多疊加的一段間距——「標題→LINE卡片」
+           跟「LINE卡片→姓名欄」這兩段要一樣長（使用者指定），下面那段已經
+           有 .contact-glass-form 自己的 padding-top(24px) 撐出間距，
+           這裡歸零，不要再疊加一層，兩段才會等長 */
+        gap: 0;
     }
 
     .contact-glass-intro {
@@ -3955,24 +4145,65 @@ a.faq-card {
         transform: none;
     }
 
+    /* 使用者原本要求手機版商品彈窗完全不能捲動，後來確認改成「允許捲動、
+       版面優先」——不用再靠 flex 把所有內容硬塞進 88vh，改回舒服的固定
+       比例跟正常字級/間距。.modal-container 原本就有 max-height:88vh +
+       overflow-y:auto（見基礎規則），內容多的話自然出現捲軸，不用另外
+       處理。這裡補回手機版直向堆疊（圖片在上、文字在下）的基本規則——
+       剛剛那次大改動不小心把這條規則一起刪掉了，變成手機版還在用桌機版
+       的左右並排 */
     .product-modal-content {
         flex-direction: column;
         gap: var(--sp-4);
     }
 
-    /* 手機版直向堆疊，圖片還維持桌機版 4:3 比例的話會佔掉太多高度，
-       整個彈窗就會超出螢幕、非得靠內部捲軸才看得到下面的加入購物車鍵——
-       改成更扁的比例，把高度讓給下面的商品資訊跟操作按鈕 */
-    .gallery-main {
-        aspect-ratio: 16 / 9;
+    .product-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: var(--sp-2);
     }
 
-    .product-gallery {
-        gap: var(--sp-2);
+    /* 跟桌機版同一個 4:3 比例，維持一致、舒服的商品照片比例，
+       不用再靠 flex 擠壓成不固定的形狀 */
+    .gallery-main {
+        aspect-ratio: 4 / 3;
+    }
+
+    /* 使用者指定：手機版拿掉縮圖列，改成大圖＋左右箭頭＋底部圓點的
+       輪播模式（跟 Apple/Nike/Uniqlo 行動版商品圖同一套慣例），
+       桌機版維持縮圖列可以直接跳到任一張圖，不受影響 */
+    .gallery-thumbs {
+        display: none;
+    }
+
+    .gallery-nav-btn {
+        display: flex;
+    }
+
+    .gallery-dots {
+        display: flex;
     }
 
     .product-modal-box {
         padding: var(--sp-16) var(--sp-6) var(--sp-6);
+    }
+
+    /* 手機版内容（滿版圖＋6 張縮圖＋說明＋標籤）疊起來還是常常超過螢幕高，
+       使用者看不到「加入購物車」在哪、以為捲到底了卻找不到購買入口——世界級
+       電商 App（Amazon／Shopee／Apple Store）在窄螢幕的商品詳情頁都是把
+       主要 CTA 固定黏在畫面底部、其餘內容在上面捲動，這裡比照辦理：整個
+       底部行動區塊（數量+加入購物車+登入提示+第三方連結）一起 sticky 貼底，
+       用負 margin 把左右／下方留白扣掉，讓色塊延伸到彈窗真正的邊緣，
+       圓角也只留下方兩角跟彈窗本體對齊 */
+    .product-modal-footer {
+        position: sticky;
+        bottom: calc(-1 * var(--sp-6));
+        margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
+        padding: var(--sp-4) var(--sp-6) var(--sp-6);
+        background-color: #ffffff;
+        border-top: 1px solid var(--ink-line);
+        border-radius: 0 0 24px 24px;
+        z-index: 2;
     }
 
     .form-grid {
@@ -3981,6 +4212,17 @@ a.faq-card {
     }
 
     .form-group-full { grid-column: 1; }
+
+    /* 聯繫表單姓名/性別、電話/信箱要維持兩欄並排（使用者指定），不跟其他
+       表單（登入/結帳）一樣在手機版收成單欄，用 .contact-form 提高特異度
+       蓋過上面 .form-grid 的單欄設定 */
+    .contact-form .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .contact-form .form-group-full {
+        grid-column: span 2;
+    }
 
     /* 會員資料的三欄（個人／系統／購買資訊）手機版收成單欄，直向堆疊 */
     .account-columns {
@@ -4001,13 +4243,10 @@ a.faq-card {
 .btn-google-signin:active,
 .btn-line-cta:active,
 .btn-circular:active,
-.btn-sound-toggle:active,
-.btn-copy-email:active,
 .qty-btn:active,
 .nav-icon-btn:active,
 .nav-icon-link:active,
 .footer-social a:active,
-.footer-social button:active,
 .team-nav-btn:active,
 .team-avatar-item:active,
 .thumb-item:active,
@@ -4075,6 +4314,11 @@ a.faq-card {
     .footer-social {
         flex-wrap: wrap;
         max-width: 80px;
+        /* column-gap 維持 16px（是上面算好的 80px 寬度的一部分，動了兩顆
+           icon 會塞不進一排），只縮小 row-gap——4 排 icon 疊起來的總高度
+           比左欄文字內容高出一截，兩欄視覺底部對不齊，縮小排與排的間距
+           把右欄總高度拉近左欄 */
+        row-gap: 12px;
     }
 
     /* 左欄空間有限，時間/信箱這兩行的文字前綴（「營業時間：」「官方信箱：」）

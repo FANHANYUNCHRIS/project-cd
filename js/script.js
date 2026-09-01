@@ -13,9 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-1.jpg",
                 "images/product-1-detail1.jpg",
                 "images/product-1-detail2.jpg",
-                "images/product-1-detail3.jpg",
-                "images/product-1-detail4.jpg",
-                "images/product-1-detail5.jpg"
+                "images/product-1-detail3.jpg"
+            ],
+            // 前 4 個是全系列共通的品質承諾，第 5 個換成這款商品說明裡
+            // 特別點出的主原料，5 個徽章才不會 4 個商品長得一模一樣
+            tags: [
+                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
+                { icon: "fa-shield-cat", label: "無添加防腐劑" },
+                { icon: "fa-stamp", label: "台灣在地製造" },
+                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
+                { icon: "fa-leaf", label: "台灣土鳳梨嚴選" }
             ]
         },
         '2': {
@@ -27,9 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-2.jpg",
                 "images/product-2-detail1.jpg",
                 "images/product-2-detail2.jpg",
-                "images/product-2-detail3.jpg",
-                "images/product-2-detail4.jpg",
-                "images/product-2-detail5.jpg"
+                "images/product-2-detail3.jpg"
+            ],
+            tags: [
+                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
+                { icon: "fa-shield-cat", label: "無添加防腐劑" },
+                { icon: "fa-stamp", label: "台灣在地製造" },
+                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
+                { icon: "fa-leaf", label: "馬達加斯加香草" }
             ]
         },
         '3': {
@@ -41,9 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-3.jpg",
                 "images/product-3-detail1.jpg",
                 "images/product-3-detail2.jpg",
-                "images/product-3-detail3.jpg",
-                "images/product-3-detail4.jpg",
-                "images/product-3-detail5.jpg"
+                "images/product-3-detail3.jpg"
+            ],
+            tags: [
+                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
+                { icon: "fa-shield-cat", label: "無添加防腐劑" },
+                { icon: "fa-stamp", label: "台灣在地製造" },
+                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
+                { icon: "fa-leaf", label: "夏威夷豆與核桃" }
             ]
         },
         '4': {
@@ -55,9 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-4.jpg",
                 "images/product-4-detail1.jpg",
                 "images/product-4-detail2.jpg",
-                "images/product-4-detail3.jpg",
-                "images/product-4-detail4.jpg",
-                "images/product-4-detail5.jpg"
+                "images/product-4-detail3.jpg"
+            ],
+            tags: [
+                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
+                { icon: "fa-shield-cat", label: "無添加防腐劑" },
+                { icon: "fa-stamp", label: "台灣在地製造" },
+                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
+                { icon: "fa-leaf", label: "香醇苦甜巧克力" }
             ]
         }
     };
@@ -206,6 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnUp = document.getElementById('team-nav-up');
         const btnDown = document.getElementById('team-nav-down');
 
+        // 手機專用排版（見 index.html 的 .team-mobile-* 區塊）跟桌機版是同一份
+        // teamData，只是拆開重排、各自獨立的元素，這裡另外抓一份對應的節點，
+        // 跟桌機版元素一起同步寫入，不需要另外寫一套切換邏輯
+        const mobileNameEl = document.getElementById('team-mobile-name');
+        const mobileQuoteEl = document.getElementById('team-mobile-quote');
+        const mobileJobEl = document.getElementById('team-mobile-job');
+        const mobileBattleRoleEl = document.getElementById('team-mobile-battle');
+        const mobileWeaponEl = document.getElementById('team-mobile-weapon');
+        const mobileBioEl = document.getElementById('team-mobile-bio');
+        const mobilePortraitEl = document.getElementById('team-mobile-portrait');
+
         if (!listEl || teamData.length === 0) return;
 
         let activeIndex = 0;
@@ -242,26 +275,39 @@ document.addEventListener('DOMContentLoaded', () => {
             styleEl.textContent = member.style;
             quoteEl.textContent = member.quote;
             bioEl.textContent = member.bio;
-            portraitEl.style.opacity = '0';
+
+            if (mobileNameEl) mobileNameEl.textContent = member.name;
+            if (mobileQuoteEl) mobileQuoteEl.textContent = member.quote;
+            if (mobileJobEl) mobileJobEl.textContent = member.job;
+            if (mobileBattleRoleEl) mobileBattleRoleEl.textContent = member.battleRole;
+            if (mobileWeaponEl) mobileWeaponEl.textContent = member.weapon;
+            if (mobileBioEl) mobileBioEl.textContent = member.bio;
+
+            loadPortraitInto(portraitEl, member, () => { portraitTextEl.innerHTML = ''; });
+            if (mobilePortraitEl) loadPortraitInto(mobilePortraitEl, member);
+        }
+
+        // 立繪還沒上傳時（圖片路徑 404），用通用佔位樣式取代——background-image
+        // 讀取失敗不會像 <img> 一樣自動觸發瀏覽器裂圖示，要自己用 Image()
+        // 預先載入一次才知道成不成功。桌機版立繪跟手機版複製的立繪
+        // （.team-mobile-portrait）共用這個函式，避免同一段預載邏輯寫兩次
+        function loadPortraitInto(el, member, onSettle) {
+            el.style.opacity = '0';
+            el.setAttribute('aria-label', `${member.name} 立繪`);
 
             setTimeout(() => {
-                portraitEl.setAttribute('aria-label', `${member.name} 立繪`);
-
-                // 立繪還沒上傳時（圖片路徑 404），用通用佔位樣式取代——
-                // background-image 讀取失敗不會像 <img> 一樣自動觸發瀏覽器裂圖示，
-                // 要自己用 Image() 預先載入一次才知道成不成功
                 const preload = new Image();
                 preload.onload = () => {
-                    portraitEl.classList.remove('img-fallback');
-                    portraitTextEl.innerHTML = '';
-                    portraitEl.style.backgroundImage = `url('${member.portrait}')`;
-                    portraitEl.style.opacity = '1';
+                    el.classList.remove('img-fallback');
+                    el.style.backgroundImage = `url('${member.portrait}')`;
+                    el.style.opacity = '1';
+                    if (onSettle) onSettle();
                 };
                 preload.onerror = () => {
-                    portraitEl.classList.add('img-fallback');
-                    portraitEl.style.backgroundImage = 'none';
-                    portraitTextEl.innerHTML = '';
-                    portraitEl.style.opacity = '1';
+                    el.classList.add('img-fallback');
+                    el.style.backgroundImage = 'none';
+                    el.style.opacity = '1';
+                    if (onSettle) onSettle();
                 };
                 preload.src = member.portrait;
             }, 200);
@@ -325,231 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { rootMargin: '300px' });
 
         panelsEl.querySelectorAll('.product-panel-image').forEach(el => lazyBgObserver.observe(el));
-    })();
-
-    /* =========================================
-       7. Web Audio API 音效與右下角圓形切換按鈕（含音效音量）
-       ========================================= */
-    let soundEnabled = false;
-    let audioCtx = null;
-    let sfxVolume = 0.05;
-
-    const btnSoundToggle = document.getElementById('btn-sound-toggle');
-    const sfxVolumeSlider = document.getElementById('sfx-volume-slider');
-
-    if (sfxVolumeSlider) {
-        const savedSfxVolume = localStorage.getItem('projectCD_sfxVolume');
-        if (savedSfxVolume !== null) sfxVolumeSlider.value = savedSfxVolume;
-
-        sfxVolume = parseFloat(sfxVolumeSlider.value);
-        sfxVolumeSlider.addEventListener('input', () => {
-            sfxVolume = parseFloat(sfxVolumeSlider.value);
-            localStorage.setItem('projectCD_sfxVolume', sfxVolumeSlider.value);
-        });
-    }
-
-    if (btnSoundToggle) {
-        btnSoundToggle.addEventListener('click', () => {
-            soundEnabled = !soundEnabled;
-            if (soundEnabled) {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                btnSoundToggle.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                btnSoundToggle.classList.add('active-sound');
-                playChimeSound(880, 'sine', 0.1);
-            } else {
-                btnSoundToggle.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
-                btnSoundToggle.classList.remove('active-sound');
-            }
-        });
-    }
-
-    function playChimeSound(freq = 600, type = 'sine', duration = 0.08) {
-        if (!soundEnabled || !audioCtx || sfxVolume <= 0) return;
-        try {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(sfxVolume, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch (e) {}
-    }
-
-    /* 點擊音改成微動開關式的噪訊喀嗒（不是原本的三角波鈴聲），
-       濾波噪訊本身能量分散在整個頻段，感知音量比純音低很多，所以乘上放大係數才聽得清楚 */
-    function playClickSound() {
-        if (!soundEnabled || !audioCtx || sfxVolume <= 0) return;
-        try {
-            const bufferSize = Math.floor(audioCtx.sampleRate * 0.008);
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
-            }
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            const bandpass = audioCtx.createBiquadFilter();
-            bandpass.type = 'bandpass';
-            bandpass.frequency.value = 5500;
-            bandpass.Q.value = 1.5;
-            const gain = audioCtx.createGain();
-            gain.gain.setValueAtTime(Math.min(sfxVolume * 8, 1), audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.006);
-            noise.connect(bandpass);
-            bandpass.connect(gain);
-            gain.connect(audioCtx.destination);
-            noise.start();
-        } catch (e) {}
-    }
-
-    document.querySelectorAll('.nav-links a, .nav-icon-link, .nav-icon-btn, .product-panel, .team-nav-btn, .team-avatar-item, .btn-submit, .btn-modal-cta, .btn-modal-cta-secondary, .btn-google-signin, .qty-btn, .shop-glass-card, .btn-line-cta, .btn-music-toggle, .btn-mobile-sound-toggle, .btn-sound-toggle, .btn-copy-email, .faq-card, .auth-checkbox-row, .auth-tab, .auth-forgot-link, .modal-close, .policy-link, .footer-social a, .thumb-item, .section-dot, .scroll-down-indicator, .account-logout-btn, .history-month-btn').forEach(el => {
-        el.addEventListener('click', playClickSound);
-    });
-
-    /* =========================================
-       8. HTML5 原生背景音樂控制 (#btn-music-toggle，含音量)
-       ========================================= */
-    const bgAudio = document.getElementById('bg-audio');
-    const btnMusicToggle = document.getElementById('btn-music-toggle');
-    const musicVolumeSlider = document.getElementById('music-volume-slider');
-    let isMusicPlaying = false;
-
-    if (bgAudio && musicVolumeSlider) {
-        const savedMusicVolume = localStorage.getItem('projectCD_musicVolume');
-        if (savedMusicVolume !== null) musicVolumeSlider.value = savedMusicVolume;
-
-        bgAudio.volume = parseFloat(musicVolumeSlider.value);
-        musicVolumeSlider.addEventListener('input', () => {
-            bgAudio.volume = parseFloat(musicVolumeSlider.value);
-            localStorage.setItem('projectCD_musicVolume', musicVolumeSlider.value);
-        });
-    }
-
-    if (btnMusicToggle && bgAudio) {
-        btnMusicToggle.addEventListener('click', () => {
-            if (!isMusicPlaying) {
-                bgAudio.play().then(() => {
-                    isMusicPlaying = true;
-                    btnMusicToggle.innerHTML = `<i class="fa-solid fa-compact-disc fa-spin"></i>`;
-                    btnMusicToggle.classList.add('active-music');
-                }).catch(err => {
-                    console.log("Audio playback error:", err);
-                });
-            } else {
-                bgAudio.pause();
-                isMusicPlaying = false;
-                btnMusicToggle.innerHTML = `<i class="fa-solid fa-music"></i>`;
-                btnMusicToggle.classList.remove('active-music');
-            }
-        });
-    }
-
-    /* =========================================
-       8a. 音量滑桿：點擊才展開，點旁邊的關閉鍵才收起
-       ========================================= */
-    /* 不用 :hover/:focus-within 滑鼠移過去就跳出來——滑桿是可以拖曳調整的
-       操作面板，划過去就跳出來容易誤觸。改成點擊才展開（明確的操作意圖），
-       關閉也是明確動作：點旁邊的關閉鍵，不是靠滑鼠移開範圍
-       （移開就關會跟拖曳滑桿的游標移動打架，不可靠） */
-    (function initVolumePopovers() {
-        const wraps = [
-            document.querySelector('.music-control-wrap'),
-            document.querySelector('.sound-control-wrap')
-        ].filter(Boolean);
-        if (!wraps.length) return;
-
-        function closeAll() {
-            wraps.forEach(w => {
-                w.classList.remove('open');
-                const b = w.querySelector(':scope > button');
-                if (b) b.setAttribute('aria-expanded', 'false');
-            });
-        }
-
-        wraps.forEach(wrap => {
-            // :scope > button 才是觸發按鈕本身——.volume-pop 裡面現在也有一顆
-            // 關閉鍵，同樣是 <button>，直接用 querySelector('button') 會抓錯
-            // 抓到那顆而不是外面的觸發鍵
-            const btn = wrap.querySelector(':scope > button');
-            const closeBtn = wrap.querySelector('.volume-pop-close');
-            if (!btn) return;
-
-            if (closeBtn) {
-                closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    wrap.classList.remove('open');
-                    btn.setAttribute('aria-expanded', 'false');
-                });
-            }
-
-            btn.addEventListener('click', () => {
-                const willOpen = !wrap.classList.contains('open');
-                closeAll();
-                if (willOpen) {
-                    wrap.classList.add('open');
-                    btn.setAttribute('aria-expanded', 'true');
-                }
-            });
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeAll();
-        });
-    })();
-
-    /* =========================================
-       8b. 頁尾的音樂開關、音效開關（各自獨立，不合併成一顆）
-       （桌機版音樂/音效本來就是各自獨立、各有自己的音量滑桿，見 .nav-sound-group；
-       這兩顆是簡化版單一開關，各自共用桌機版對應的播放狀態，不重複另外做一套
-       音量邏輯，也不把兩個獨立功能綁在同一顆按鈕上） */
-    (function initFooterMusicToggle() {
-        const btn = document.getElementById('footer-btn-music-toggle');
-        const icon = document.getElementById('footer-music-icon');
-        if (!btn) return;
-
-        let active = false;
-
-        btn.addEventListener('click', () => {
-            active = !active;
-
-            if (active) {
-                if (!isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
-                if (icon) icon.className = 'fa-solid fa-compact-disc fa-spin';
-            } else {
-                if (isMusicPlaying && btnMusicToggle) btnMusicToggle.click();
-                if (icon) icon.className = 'fa-solid fa-music';
-            }
-
-            btn.setAttribute('aria-expanded', String(active));
-        });
-    })();
-
-    (function initFooterSoundToggle() {
-        const btn = document.getElementById('footer-btn-sound-toggle');
-        const icon = document.getElementById('footer-sound-icon');
-        if (!btn) return;
-
-        let active = false;
-
-        btn.addEventListener('click', () => {
-            active = !active;
-
-            if (active) {
-                if (!soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (icon) icon.className = 'fa-solid fa-volume-high';
-            } else {
-                if (soundEnabled && btnSoundToggle) btnSoundToggle.click();
-                if (icon) icon.className = 'fa-solid fa-volume-xmark';
-            }
-
-            btn.setAttribute('aria-expanded', String(active));
-        });
     })();
 
     /* =========================================
@@ -704,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactForm && btnSubmit) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            playChimeSound(1318, 'sine', 0.2);
 
             const originalHTML = btnSubmit.innerHTML;
 
@@ -738,24 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
     }
-
-    /* =========================================
-       13b. 信箱一鍵複製
-       ========================================= */
-    document.querySelectorAll('.btn-copy-email').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const text = btn.dataset.copyText;
-            navigator.clipboard.writeText(text).then(() => {
-                const originalHTML = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-check"></i>`;
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                    btn.classList.remove('copied');
-                }, 1800);
-            }).catch(() => {});
-        });
-    });
 
     /* =========================================
        14. Modal 無障礙輔助 (焦點管理 + Tab 循環鎖定)
@@ -854,12 +656,19 @@ document.addEventListener('DOMContentLoaded', () => {
         terms: {
             title: "服務條款",
             content: `
-                <p><strong>1. 帳號使用：</strong>會員帳號僅供本人使用，請妥善保管您的登入密碼，因帳號外洩所生之損害由使用者自行負責。</p>
+                <p><strong>1. 帳號使用：</strong>會員帳號僅供本人使用，請妥善保管您的登入<span style="white-space: nowrap;">密碼</span>，因帳號外洩所生之損害由使用者自行負責。</p>
                 <p><strong>2. 訂購流程：</strong>官網會員訂購為現做商品，取貨日期需至少於下單後 5 個工作天，並不提供週一取貨；送出訂單即表示同意上述取貨時程安排。</p>
                 <p><strong>3. 條款修訂：</strong>我們得因應營運需要修訂本條款，修訂後將公告於本頁面，請留意最新版本內容。</p>
             `
         }
     };
+
+    // 常見問題彈窗裡的服務條款區塊固定顯示同一份內容（不像 policy-modal 要依點擊的連結
+    // 切換），直接用上面 policyData.terms 填一次即可，不用等使用者點擊才填
+    const faqTermsBody = document.getElementById('faq-terms-body');
+    if (faqTermsBody) {
+        faqTermsBody.innerHTML = policyData.terms.content;
+    }
 
     policyLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -883,16 +692,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const productModal = document.getElementById('product-modal');
     const productModalClose = document.getElementById('product-modal-close');
     const mainImg = document.getElementById('product-modal-main-img');
+    const galleryMain = document.querySelector('.gallery-main');
     const thumbsBox = document.getElementById('product-modal-thumbs');
+    const dotsBox = document.getElementById('product-modal-dots');
+    const navPrevBtn = document.getElementById('gallery-nav-prev');
+    const navNextBtn = document.getElementById('gallery-nav-next');
     const modalTitle = document.getElementById('product-modal-title');
     const modalPrice = document.getElementById('product-modal-price');
     const modalQty = document.getElementById('product-modal-qty');
     const modalDesc = document.getElementById('product-modal-desc');
+    const modalTags = document.getElementById('product-modal-tags');
     const modalCta = document.getElementById('product-modal-cta');
 
     // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
     mainImg.addEventListener('load', () => mainImg.parentElement.classList.remove('img-fallback'));
     mainImg.addEventListener('error', () => mainImg.parentElement.classList.add('img-fallback'));
+
+    // 目前開啟的商品圖片清單／索引——手機版箭頭/圓點/滑動跟桌機版縮圖列
+    // 共用同一份狀態，切換來源不同但結果一致
+    let galleryImages = [];
+    let galleryName = '';
+    let galleryIndex = 0;
+
+    function showGalleryImage(index) {
+        galleryIndex = (index + galleryImages.length) % galleryImages.length;
+        const imgSrc = galleryImages[galleryIndex];
+
+        mainImg.src = imgSrc;
+        mainImg.alt = `${galleryName}商品照片 ${galleryIndex + 1}`;
+
+        document.querySelectorAll('.thumb-item').forEach((t, i) => t.classList.toggle('active', i === galleryIndex));
+        document.querySelectorAll('.gallery-dot').forEach((d, i) => d.classList.toggle('active', i === galleryIndex));
+    }
+
+    navPrevBtn.addEventListener('click', () => showGalleryImage(galleryIndex - 1));
+    navNextBtn.addEventListener('click', () => showGalleryImage(galleryIndex + 1));
+
+    // 手機版滑動切圖：只看水平位移，避免跟彈窗本身的垂直捲動互相干擾
+    let touchStartX = 0;
+    let touchStartY = 0;
+    galleryMain.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+        touchStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+    galleryMain.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+        showGalleryImage(galleryIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
 
     function openProductModal(productId) {
         const data = productsData[productId];
@@ -906,26 +754,44 @@ document.addEventListener('DOMContentLoaded', () => {
         modalQty.textContent = data.qty;
         modalDesc.textContent = data.desc;
 
-        mainImg.src = data.images[0];
+        modalTags.innerHTML = '';
+        data.tags.forEach(tag => {
+            const item = document.createElement('div');
+            item.className = 'tag-item';
+            item.innerHTML = `
+                <span class="tag-badge"><i class="fa-solid ${tag.icon}"></i></span>
+                <span class="tag-label">${tag.label}</span>
+            `;
+            modalTags.appendChild(item);
+        });
+
+        galleryImages = data.images;
+        galleryName = data.name;
+
         thumbsBox.innerHTML = '';
+        dotsBox.innerHTML = '';
 
         data.images.forEach((imgSrc, index) => {
             const thumb = document.createElement('div');
             thumb.className = `thumb-item ${index === 0 ? 'active' : ''}`;
-            thumb.innerHTML = `<img src="${imgSrc}" alt="縮圖" loading="lazy">`;
+            thumb.innerHTML = `<img src="${imgSrc}" alt="${data.name}縮圖 ${index + 1}" loading="lazy">`;
 
             const thumbImg = thumb.querySelector('img');
             thumbImg.addEventListener('error', () => thumb.classList.add('img-fallback'), { once: true });
 
-            thumb.addEventListener('click', () => {
-                mainImg.src = imgSrc;
-                document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
-                thumb.classList.add('active');
-            });
+            thumb.addEventListener('click', () => showGalleryImage(index));
 
             thumbsBox.appendChild(thumb);
+
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = `gallery-dot ${index === 0 ? 'active' : ''}`;
+            dot.setAttribute('aria-label', `第 ${index + 1} 張圖片，共 ${data.images.length} 張`);
+            dot.addEventListener('click', () => showGalleryImage(index));
+            dotsBox.appendChild(dot);
         });
 
+        showGalleryImage(0);
         openModal(productModal);
     }
 

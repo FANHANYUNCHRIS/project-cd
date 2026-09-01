@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ㄉㄢviewport" content="width=device-width, initial-scale=1.0">
     <title>Project.CD</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
 
@@ -122,9 +122,6 @@
     <!-- 無障礙：鍵盤/螢幕閱讀器使用者可跳過導覽列直接到主內容 -->
     <a href="#home" class="skip-link">跳至主要內容</a>
 
-    <!-- HTML5 原生背景音樂播放器 -->
-    <audio id="bg-audio" loop preload="auto" src="audio/Melody.mp3"></audio>
-
     <!-- 螢幕四周 4 邊 2px 金黃色滾動進度條 -->
     <div id="scroll-progress-top" class="scroll-progress-h top"></div>
     <div id="scroll-progress-right" class="scroll-progress-v right"></div>
@@ -139,34 +136,6 @@
                 <img src="images/UNICORN LOGO.png" alt="Project.CD LOGO" class="nav-icon" loading="lazy">
                 <span class="logo-text">Project.CD</span>
             </a>
-
-            <!-- 音樂/音效：貼著 LOGO 放，弱化成次要控制項，不再跟會員/聯繫/購物車
-                 同一個視覺量級（那幾顆是核心購物操作，音效只是氛圍偏好設定） -->
-            <div class="nav-sound-group">
-                <div class="music-control-wrap">
-                    <div class="volume-pop">
-                        <input type="range" id="music-volume-slider" min="0" max="1" step="0.01" value="0.6" aria-label="音樂音量">
-                        <button type="button" class="volume-pop-close" aria-label="關閉音樂音量調整">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <button type="button" id="btn-music-toggle" class="btn-music-toggle" aria-label="播放背景音樂" aria-expanded="false">
-                        <i class="fa-solid fa-music"></i>
-                    </button>
-                </div>
-
-                <div class="sound-control-wrap">
-                    <div class="volume-pop">
-                        <input type="range" id="sfx-volume-slider" min="0" max="0.3" step="0.005" value="0.05" aria-label="按鍵音效音量">
-                        <button type="button" class="volume-pop-close" aria-label="關閉音效音量調整">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <button type="button" id="btn-sound-toggle" class="btn-sound-toggle" aria-label="切換音效" aria-expanded="false">
-                        <i class="fa-solid fa-volume-xmark"></i>
-                    </button>
-                </div>
-            </div>
         </div>
 
         <div class="nav-right">
@@ -308,6 +277,44 @@
             <div class="team-portrait" id="team-portrait" role="img" aria-label="">
                 <div class="team-portrait-text" id="team-portrait-text"></div>
             </div>
+
+            <!-- 手機版專用排版（使用者指定：頭像列→單一合併大卡片，卡片內依序是
+                 姓名+座右銘→立繪→四宮格數據→自我介紹，全部同一張卡片背景），
+                 桌機版維持原本 .team-info-merged 那張合併卡片、.team-portrait
+                 立繪不變。內容跟桌機版是同一份資料，只是拆開重排、各自獨立成
+                 .team-switcher 底下的直接子項，才能用 CSS order 排出這個順序
+                 ——沒有用 display:contents 去拆 .team-info-merged（那個技巧在
+                 Safari 上有名的相容性問題，這次改版已經踩過一次雷），改用
+                 「桌機/手機各自一份對應的元素、CSS 只顯示其中一份」，id 各自
+                 獨立，script.js 的 showMember() 會同時寫入兩份。立繪也比照
+                 辦理另外複製一份（.team-mobile-portrait），因為 .team-portrait
+                 是桌機版 .team-switcher 的直接 flex 子項、order 排版依賴這一點，
+                 搬進手機卡片裡會讓桌機版排版跟著壞掉 -->
+            <div class="team-mobile-card">
+                <div class="team-mobile-namequote">
+                    <h3 class="team-mobile-name" id="team-mobile-name"></h3>
+                    <p class="team-mobile-quote" id="team-mobile-quote"></p>
+                </div>
+
+                <div class="team-mobile-portrait" id="team-mobile-portrait" role="img" aria-label=""></div>
+
+                <div class="team-mobile-stats">
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">工作職位</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-job"></span>
+                    </div>
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">戰鬥職位</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-battle"></span>
+                    </div>
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">專用武器</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-weapon"></span>
+                    </div>
+                </div>
+
+                <p class="team-mobile-bio" id="team-mobile-bio"></p>
+            </div>
         </div>
     </section>
 
@@ -319,8 +326,8 @@
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
         <div class="modal-container faq-modal-box">
-            <button class="modal-close" id="faq-modal-close" aria-label="關閉">&times;</button>
-            <h2 class="faq-title" id="faq-modal-title">常見問題</h2>
+            <button class="modal-close" id="faq-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="faq-title" id="faq-modal-title">常見問題與服務條款</h2>
             <div class="faq-grid">
                 <div class="faq-card">
                     <div class="faq-card-icon"><i class="fa-solid fa-snowflake"></i></div>
@@ -370,6 +377,14 @@
                     <p class="faq-card-desc">僅於訂購、配送及客戶服務之必要範圍內使用您的資料，絕不提供給第三方，點擊查看完整政策。</p>
                 </a>
             </div>
+
+            <!-- 服務條款維持完整獨立一塊，不是把兩者文字混進常見問題卡片裡——
+                 內容用 script.js 既有的 policyData.terms 動態塞進 #faq-terms-body，
+                 只維護一份，不會跟 policy-link 那邊（會員註冊條款打勾等情境）分岔 -->
+            <div class="faq-terms-section">
+                <h3 class="faq-terms-title">服務條款</h3>
+                <div id="faq-terms-body" class="policy-modal-body"></div>
+            </div>
         </div>
     </div>
 
@@ -377,17 +392,19 @@
     <!-- 聯繫我們：改成彈窗，只有點選導覽列的聯繫圖示才會出現，不會排在首頁滾動流程裡 -->
     <div id="contact-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" inert>
         <div class="modal-container contact-modal-box">
-        <button class="modal-close" id="contact-modal-close" aria-label="關閉">&times;</button>
+        <button class="modal-close" id="contact-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
         <div class="contact-glass-card">
             <div class="contact-glass-intro">
-                <p class="contact-eyebrow">CONTACT</p>
-                <h2 class="contact-visual-title" id="contact-modal-title">與我聯繫</h2>
-                <p class="contact-visual-sub">有任何問題，歡迎隨時與我們聯繫</p>
+                <div class="contact-title-row">
+                    <h2 class="contact-visual-title" id="contact-modal-title">與我聯繫</h2>
+                    <p class="contact-visual-sub">有任何問題，歡迎隨時與我們聯繫</p>
+                </div>
 
+                <!-- 門市/出貨/信箱這份清單拿掉了——footer 已經有同樣的內容
+                     （地址/出貨時間/信箱），彈窗裡再放一次是重複資訊 -->
                 <div class="line-service-box">
                     <div class="line-status-bar">
                         <span class="line-status-dot">ONLINE</span>
-                        <span class="line-tag">REAL-TIME CHAT</span>
                     </div>
                     <h4 class="line-title"><i class="fa-brands fa-line"></i> LINE 官方帳號客服</h4>
                     <p class="line-desc">不想等待 Email 回覆？加入 LINE 官方帳號，專人即時為您服務。</p>
@@ -395,33 +412,6 @@
                         <span>開啟 LINE 線上對話</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                </div>
-
-                <div class="contact-details-list">
-                    <div class="contact-detail-item">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <div>
-                            <strong>門市工作室地址</strong>
-                            <p>台北市內湖區某某路 123 號</p>
-                        </div>
-                    </div>
-                    <div class="contact-detail-item">
-                        <i class="fa-solid fa-clock"></i>
-                        <div>
-                            <strong>營業時間</strong>
-                            <p>週二至週日 10:00 - 19:00 (週一公休)</p>
-                        </div>
-                    </div>
-                    <div class="contact-detail-item">
-                        <i class="fa-solid fa-envelope"></i>
-                        <div>
-                            <strong>官方客服信箱</strong>
-                            <p>contact@project.cd.com</p>
-                        </div>
-                        <button type="button" class="btn-copy-email" data-copy-text="contact@project.cd.com" aria-label="複製信箱地址">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -482,7 +472,6 @@
     <div class="shop-footer-screen">
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
-            <p class="shop-eyebrow">ONLINE STORE</p>
             <h2 class="shop-title reveal-zoom">官方線上商城</h2>
             <div class="shop-links">
                 <a href="https://shopee.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.1" style="--brand: #EE4D2D;">
@@ -512,15 +501,15 @@
                     <h3 class="footer-title">Project.CD</h3>
                     <ul class="footer-links">
                         <li><a href="#" id="footer-link-contact"><i class="fa-solid fa-comment-dots"></i> 聯繫我們</a></li>
-                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question"></i> 常見問題</a></li>
-                        <!-- 服務條款不是獨立彈窗，複用跟會員註冊條款打勾、聯繫表單隱私權
-                             連結同一顆「條款須知」彈窗（見 #policy-modal），用同一套
-                             .policy-link + data-policy 綁定機制（見 script.js 15.
-                             顧客服務條款彈窗），不用再另外寫一段開關邏輯 -->
-                        <li><a href="#" class="policy-link" data-policy="terms"><i class="fa-solid fa-file-contract"></i> 服務條款</a></li>
+                        <!-- 常見問題／服務條款合併成同一個連結、同一個彈窗（#faq-modal）——
+                             服務條款內容維持完整獨立一塊（不是把兩者文字混在一起），
+                             用 script.js 裡既有的 policyData.terms 動態塞進
+                             #faq-terms-body，內容只維護一份，不會跟 policy-link 那邊
+                             （會員註冊條款打勾、聯繫表單隱私權連結還是用得到）分岔 -->
+                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question"></i> 常見問題與服務條款</a></li>
                     </ul>
-                    <p><i class="fa-solid fa-location-dot"></i> 台北市某某區某某路 123 號</p>
-                    <p><i class="fa-solid fa-clock"></i> <span class="footer-label-prefix">營業時間：</span>10:00 - 19:00 (週一公休)</p>
+                    <p><i class="fa-solid fa-location-dot"></i> 台北市內湖區</p>
+                    <p><i class="fa-solid fa-clock"></i> <span class="footer-label-prefix">出貨時間：</span>下訂後 3 天內出貨</p>
                     <p><i class="fa-solid fa-envelope"></i> <span class="footer-label-prefix">官方信箱：</span>contact@project.cd.com</p>
                 </div>
 
@@ -533,9 +522,9 @@
                      定位全部會跑掉） -->
                 <div class="footer-section">
                     <h3 class="footer-title">更多連結</h3>
-                    <!-- 8顆icon排列（LINE+YouTube／Facebook+Instagram／Game+Education／
-                         音樂+音效開關），配合 style.css 手機版 .footer-social 的
-                         max-width 讓 flex-wrap 自動換行 -->
+                    <!-- 6顆icon排列（LINE+YouTube／Facebook+Instagram／Game+Education），
+                         配合 style.css 手機版 .footer-social 的 max-width 讓 flex-wrap
+                         自動換行 -->
                     <div class="footer-social">
                         <a href="#" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
                         <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
@@ -545,18 +534,6 @@
                              一樣的 icon，目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
                         <a href="../Project.CD遊樂場/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad"></i></a>
                         <a href="../Project.CD教育/index.html" class="social-edu" aria-label="Education"><i class="fa-solid fa-graduation-cap"></i></a>
-                        <!-- 音樂/音效不是品牌識別，跟社群/探索連結共用同一套 icon 尺寸與
-                             hover 顯色語言，顏色見 style.css 的 functional icon hover 區塊。
-                             拆成兩顆各自獨立開關（不是合併成一顆），跟桌機版 .nav-sound-group
-                             音樂/音效分開兩顆按鈕是同一個道理——各自狀態各自控制，不綁在一起；
-                             兩顆顏色也刻意不同（各用一個已核定的液態玻璃色），避免兩顆長得
-                             一樣分不清楚是在切換哪個功能 -->
-                        <button type="button" class="social-music" id="footer-btn-music-toggle" aria-label="播放或暫停背景音樂" aria-expanded="false">
-                            <i class="fa-solid fa-music" id="footer-music-icon"></i>
-                        </button>
-                        <button type="button" class="social-sound" id="footer-btn-sound-toggle" aria-label="開啟或關閉音效" aria-expanded="false">
-                            <i class="fa-solid fa-volume-xmark" id="footer-sound-icon"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -585,7 +562,7 @@
     <!-- 顧客服務條款彈窗 -->
     <div id="policy-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true" inert>
         <div class="modal-container policy-modal-box">
-            <button class="modal-close" id="policy-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="policy-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="policy-modal-title" class="modal-title">條款須知</h3>
             <div id="policy-modal-body" class="policy-modal-body"></div>
         </div>
@@ -594,36 +571,46 @@
     <!-- 產品詳細介紹與多圖藝廊彈窗 (支持 6 張縮圖) -->
     <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" aria-hidden="true" inert>
         <div class="modal-container product-modal-box">
-            <button class="modal-close" id="product-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="product-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
             <div class="product-modal-content">
                 <div class="product-gallery">
                     <div class="gallery-main">
                         <img id="product-modal-main-img" src="" alt="產品大圖">
+                        <!-- 手機版專用：大圖左右切換箭頭＋疊加在圖片內部的圓點指示器，
+                             桌機版隱藏（見 CSS），桌機版維持縮圖列可以直接跳到任一張圖。
+                             圓點疊在圖片上（不是獨立一排），省下一整排的垂直空間，
+                             手機版彈窗才塞得進一屏不用捲動 -->
+                        <button type="button" class="gallery-nav-btn gallery-nav-prev" id="gallery-nav-prev" aria-label="上一張圖片"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button type="button" class="gallery-nav-btn gallery-nav-next" id="gallery-nav-next" aria-label="下一張圖片"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="gallery-dots" id="product-modal-dots"></div>
                     </div>
                     <div class="gallery-thumbs" id="product-modal-thumbs"></div>
                 </div>
                 <div class="product-detail-body">
-                    <h3 id="product-modal-title">產品名稱</h3>
-                    <div class="product-modal-meta">
-                        <span id="product-modal-price" class="price">NT$ 0</span>
-                        <span id="product-modal-qty" class="qty">數量</span>
+                    <div class="product-title-row">
+                        <h3 id="product-modal-title">產品名稱</h3>
+                        <div class="product-modal-meta">
+                            <span id="product-modal-price" class="price">NT$ 0</span>
+                            <span id="product-modal-qty" class="qty">數量</span>
+                        </div>
                     </div>
                     <p id="product-modal-desc" class="desc">產品詳細說明</p>
-                    <div class="product-tags">
-                        <div class="tag-item"><i class="fa-solid fa-leaf"></i> 嚴選優質食材</div>
-                        <div class="tag-item"><i class="fa-solid fa-snowflake"></i> 低溫冷藏保鮮</div>
-                        <div class="tag-item"><i class="fa-solid fa-shield-cat"></i> 無添加防腐劑</div>
-                    </div>
-                    <div class="cart-add-row">
-                        <div class="qty-stepper">
-                            <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
-                            <span id="product-modal-qty-value">1</span>
-                            <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
+                    <!-- 5 個徽章依商品不同動態產生（見 script.js openProductModal()），
+                         前 4 個是全系列共通的品質承諾，第 5 個是該商品專屬的主原料，
+                         4 個商品的徽章組合才不會長得一模一樣 -->
+                    <div class="product-tags" id="product-modal-tags"></div>
+                    <div class="product-modal-footer">
+                        <div class="cart-add-row">
+                            <div class="qty-stepper">
+                                <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
+                                <span id="product-modal-qty-value">1</span>
+                                <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
+                            </div>
+                            <button type="button" class="btn-modal-cta" id="product-modal-add-cart">加入購物車</button>
                         </div>
-                        <button type="button" class="btn-modal-cta" id="product-modal-add-cart">加入購物車</button>
+                        <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
+                        <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
                     </div>
-                    <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
-                    <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
                 </div>
             </div>
         </div>
@@ -632,7 +619,7 @@
     <!-- 會員登入／註冊彈窗 -->
     <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" aria-hidden="true" inert>
         <div class="modal-container auth-modal-box">
-            <button class="modal-close" id="auth-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="auth-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="auth-modal-title" class="sr-only">會員登入</h3>
 
             <div class="auth-modal-logo">
@@ -777,7 +764,7 @@
     <!-- 會員資料彈窗：登入後點擊皇冠圖示顯示，開啟時由 member.js 從 Firestore 即時抓取並填入 -->
     <div id="account-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="account-modal-title" aria-hidden="true" inert>
         <div class="modal-container account-modal-box">
-            <button class="modal-close" id="account-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="account-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
 
             <h3 id="account-modal-title" class="sr-only">會員資料</h3>
 
@@ -885,7 +872,7 @@
     <!-- 購物車彈窗 -->
     <div id="cart-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title" aria-hidden="true" inert>
         <div class="modal-container cart-modal-box">
-            <button class="modal-close" id="cart-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="cart-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="cart-modal-title" class="modal-title">購物車</h3>
 
             <!-- 未登入時顯示的引導畫面：取代原本「一點購物車就直接跳登入彈窗」的做法，
@@ -912,7 +899,7 @@
     <!-- 結帳彈窗（含取貨日期選擇） -->
     <div id="checkout-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title" aria-hidden="true" inert>
         <div class="modal-container checkout-modal-box">
-            <button class="modal-close" id="checkout-modal-close" aria-label="關閉">&times;</button>
+            <button class="modal-close" id="checkout-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="checkout-modal-title" class="modal-title">確認訂購</h3>
 
             <div id="checkout-order-summary" class="checkout-order-summary"></div>

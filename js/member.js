@@ -16,11 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupError = document.getElementById('signup-error');
     const navAccountIconPerson = document.getElementById('nav-account-icon-person');
     const navAccountIconCrown = document.getElementById('nav-account-icon-crown');
-    const navAccountIconPersonMobile = document.getElementById('nav-account-icon-person-mobile');
-    const navAccountIconCrownMobile = document.getElementById('nav-account-icon-crown-mobile');
-    // 桌機版工具列跟手機版分頁列各有一顆獨立的會員按鈕（後者是常駐分頁，
-    // 不再收在「更多」選單裡），兩顆共用同一套開合彈窗跟登入狀態切換邏輯
-    const navAccountBtns = document.querySelectorAll('.nav-account-btn');
+    const navBtnAccount = document.getElementById('nav-btn-account');
 
     const authErrorMessages = {
         'auth/invalid-email': '信箱格式不正確',
@@ -210,14 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(accountModal);
     }
 
-    navAccountBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (currentUser) {
-                openAccountModal();
-            } else {
-                openAuthModal('login');
-            }
-        });
+    navBtnAccount.addEventListener('click', () => {
+        if (currentUser) {
+            openAccountModal();
+        } else {
+            openAuthModal('login');
+        }
     });
 
     accountModalClose.addEventListener('click', () => closeModal(accountModal));
@@ -373,21 +367,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // 賦值後畫面不會真的切換，所以這裡改用 setAttribute/removeAttribute 直接操作
             navAccountIconPerson.setAttribute('hidden', '');
             navAccountIconCrown.removeAttribute('hidden');
-            navAccountIconPersonMobile.setAttribute('hidden', '');
-            navAccountIconCrownMobile.removeAttribute('hidden');
-            navAccountBtns.forEach(btn => btn.setAttribute('aria-label', '會員專區'));
+            navBtnAccount.setAttribute('aria-label', '會員專區');
             db.collection('users').doc(user.uid).get().then(doc => {
                 const name = (doc.exists && doc.data().displayName) || user.email;
-                navAccountBtns.forEach(btn => btn.title = name + '（點擊登出）');
+                navBtnAccount.title = name + '（點擊登出）';
             });
             subscribeCart(user.uid);
         } else {
             navAccountIconPerson.removeAttribute('hidden');
             navAccountIconCrown.setAttribute('hidden', '');
-            navAccountIconPersonMobile.removeAttribute('hidden');
-            navAccountIconCrownMobile.setAttribute('hidden', '');
-            navAccountBtns.forEach(btn => btn.setAttribute('aria-label', '會員登入'));
-            navAccountBtns.forEach(btn => btn.title = '會員登入');
+            navBtnAccount.setAttribute('aria-label', '會員登入');
+            navBtnAccount.title = '會員登入';
             unsubscribeCart();
         }
     });
@@ -432,11 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartSubtotalEl = document.getElementById('cart-subtotal');
     const cartSummaryEl = document.getElementById('cart-summary');
     const cartBadge = document.getElementById('cart-badge');
-    const cartBadgeMobile = document.getElementById('cart-badge-mobile');
     const btnGoCheckout = document.getElementById('btn-go-checkout');
-    // 桌機版工具列跟手機版分頁列各有一顆獨立的購物車按鈕/徽章（後者是常駐分頁，
-    // 不再收在「更多」選單裡），兩顆共用同一套開合彈窗跟數量更新邏輯
-    const navCartBtns = document.querySelectorAll('.nav-cart-btn');
+    const navBtnCart = document.getElementById('nav-btn-cart');
     const addToCartBtn = document.getElementById('product-modal-add-cart');
     const addCartNote = document.getElementById('product-modal-add-note');
     const cartBody = document.getElementById('cart-body');
@@ -461,8 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const count = cartItems.reduce((sum, it) => sum + it.qty, 0);
         cartBadge.textContent = count;
         cartBadge.hidden = count === 0;
-        cartBadgeMobile.textContent = count;
-        cartBadgeMobile.hidden = count === 0;
     }
 
     function renderCartModal() {
@@ -523,10 +508,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartModal();
     }
 
-    navCartBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            openModal(cartModal);
-        });
+    navBtnCart.addEventListener('click', () => {
+        openModal(cartModal);
     });
 
     cartModalClose.addEventListener('click', () => closeModal(cartModal));
