@@ -2372,7 +2372,11 @@ a.faq-card {
     flex-direction: column;
     align-items: center;
     gap: var(--sp-2);
-    margin-bottom: var(--sp-2);
+    /* 原本是 --sp-2(8px)，比全站其他彈窗標題跟下方內容的間距（普遍
+       --sp-4~--sp-6，例如附近 2335 行同樣是彈窗標題的 margin-bottom:
+       var(--sp-5)）明顯窄一截，logo/品牌字這個區塊功能上等同彈窗標題，
+       間距對齊同一套慣例 */
+    margin-bottom: var(--sp-5);
 }
 
 .auth-modal-logo-icon {
