@@ -185,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 weapon: '武士刀X狙擊槍',
                 style: '任務執行到極致',
                 quote: '「用數據與匠心，重新定義這間店存在的意義。」',
+                // 手機版名字/座右銘擠在同一排（見 .team-mobile-namequote），完整版
+                // 座右銘太長會被擠到換行，另外準備一句短版專給手機版用，桌機版彈窗
+                // 的 .team-info-quote 維持用完整版 quote，不受影響
+                mobileQuote: '「數據與匠心」',
                 bio: '武裝神姬對品質近乎苛求：食材只要有一絲落差就直接退回，任何新品上市前，都必須先通過十輪盲測才准放行。她相信真正的浪漫不是天馬行空的靈感，而是把每個微小細節都做到位的紀律，是這間店最後、也最嚴格的把關者。',
                 avatar: 'images/staff01.jpg',
                 portrait: 'images/staff01-nobg.png'
@@ -196,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 weapon: '車',
                 style: '只想看戲',
                 quote: '「溫度差一度，風味就不再是那個風味。」',
+                mobileQuote: '「差一度，就不是了」',
                 bio: '強襲魔女的戰鬥職位是「移動基地」，武器欄只寫了一個字：車。戰鬥風格寫著「只想看戲」，實際上卻是店裡所有配方溫控背後最嚴謹的把關者——缺人手時補收銀、缺食材時開車去載貨，是名符其實、什麼都攬在身上的萬能雜工。',
                 // team-2.jpg 還沒真的上傳，圖片放進 images/ 資料夾就會自動生效，
                 // 在那之前 avatar/portrait 各自的錯誤處理會顯示通用佔位樣式
@@ -209,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 weapon: '車',
                 style: '只想看戲',
                 quote: '「每一次失敗的配方，都是下一次成功的線索。」',
+                mobileQuote: '「失敗是線索」',
                 bio: '貓貓，代號直白到讓人懷疑是不是隨便取的，但認識他的人都知道，這個名字其實再貼切不過。工作職位登記為「招財貓」——不是因為他負責收銀或招攬客人，而是每次新品試賣的業績都莫名特別好，久而久之大家都戲稱他是店裡真正的財運吉祥物。戰鬥職位是「偵查」，這點倒是完全符合他本人的個性：對任何風味的風吹草動都異常敏銳，市面上一有新的甜點趨勢，他總是第一個發現、第一個買回來拆解分析。專用武器同樣是車，戰鬥風格也跟強襲魔女一樣寫著「只想看戲」，兩人常被說像是同一個模子刻出來的，平時窩在研發室的角落，安安靜靜地不知道在忙什麼，直到某天突然端出一款完全不像同一個人做得出來的新配方。負責新品開發與風味實驗的他，習慣用近乎科學實驗的方式反覆測試比例——同一款塔皮他能連續烤二十幾次，只為了抓出那零點五公克奶油的差異，直到找出最平衡的那個版本才肯罷休。他常說，每一次失敗的配方，都是下一次成功的線索，這句話與其說是激勵自己，不如說是他真心相信的偵查守則：任何蛛絲馬跡，都不該被輕易放過。武裝神姬常說，三人小隊裡最讓她放心的就是貓貓——外表看起來最像來亂的一個，實際上卻是把每一次失敗都仔細記錄歸檔的那個人，這份不動聲色的執著，才是他真正的戰鬥力所在。',
                 avatar: 'images/team-3.jpg',
                 portrait: 'images/team-3.jpg'
@@ -277,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bioEl.textContent = member.bio;
 
             if (mobileNameEl) mobileNameEl.textContent = member.name;
-            if (mobileQuoteEl) mobileQuoteEl.textContent = member.quote;
+            if (mobileQuoteEl) mobileQuoteEl.textContent = member.mobileQuote || member.quote;
             if (mobileJobEl) mobileJobEl.textContent = member.job;
             if (mobileBattleRoleEl) mobileBattleRoleEl.textContent = member.battleRole;
             if (mobileWeaponEl) mobileWeaponEl.textContent = member.weapon;
