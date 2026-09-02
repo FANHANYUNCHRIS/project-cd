@@ -14,15 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-1-detail1.jpg",
                 "images/product-1-detail2.jpg",
                 "images/product-1-detail3.jpg"
-            ],
-            // 前 4 個是全系列共通的品質承諾，第 5 個換成這款商品說明裡
-            // 特別點出的主原料，5 個徽章才不會 4 個商品長得一模一樣
-            tags: [
-                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
-                { icon: "fa-shield-cat", label: "無添加防腐劑" },
-                { icon: "fa-stamp", label: "台灣在地製造" },
-                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
-                { icon: "fa-leaf", label: "台灣土鳳梨嚴選" }
             ]
         },
         '2': {
@@ -35,13 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-2-detail1.jpg",
                 "images/product-2-detail2.jpg",
                 "images/product-2-detail3.jpg"
-            ],
-            tags: [
-                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
-                { icon: "fa-shield-cat", label: "無添加防腐劑" },
-                { icon: "fa-stamp", label: "台灣在地製造" },
-                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
-                { icon: "fa-leaf", label: "馬達加斯加香草" }
             ]
         },
         '3': {
@@ -54,13 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-3-detail1.jpg",
                 "images/product-3-detail2.jpg",
                 "images/product-3-detail3.jpg"
-            ],
-            tags: [
-                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
-                { icon: "fa-shield-cat", label: "無添加防腐劑" },
-                { icon: "fa-stamp", label: "台灣在地製造" },
-                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
-                { icon: "fa-leaf", label: "夏威夷豆與核桃" }
             ]
         },
         '4': {
@@ -73,13 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-4-detail1.jpg",
                 "images/product-4-detail2.jpg",
                 "images/product-4-detail3.jpg"
-            ],
-            tags: [
-                { icon: "fa-snowflake", label: "低溫冷藏保鮮" },
-                { icon: "fa-shield-cat", label: "無添加防腐劑" },
-                { icon: "fa-stamp", label: "台灣在地製造" },
-                { icon: "fa-mortar-pestle", label: "手工新鮮現做" },
-                { icon: "fa-leaf", label: "香醇苦甜巧克力" }
             ]
         }
     };
@@ -723,7 +693,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalPrice = document.getElementById('product-modal-price');
     const modalQty = document.getElementById('product-modal-qty');
     const modalDesc = document.getElementById('product-modal-desc');
-    const modalTags = document.getElementById('product-modal-tags');
     const modalCta = document.getElementById('product-modal-cta');
 
     // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
@@ -775,17 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalPrice.textContent = data.price;
         modalQty.textContent = data.qty;
         modalDesc.textContent = data.desc;
-
-        modalTags.innerHTML = '';
-        data.tags.forEach(tag => {
-            const item = document.createElement('div');
-            item.className = 'tag-item';
-            item.innerHTML = `
-                <span class="tag-badge"><i class="fa-solid ${tag.icon}"></i></span>
-                <span class="tag-label">${tag.label}</span>
-            `;
-            modalTags.appendChild(item);
-        });
 
         galleryImages = data.images;
         galleryName = data.name;

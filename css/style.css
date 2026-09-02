@@ -80,6 +80,26 @@
     --lg-blue: #4f8ef7;
     --lg-pink: #ec5fa8;
     --lg-purple: #9b6bf2;
+
+    /* ===== 白色統整（2026-09）=====
+       原本 var(--white) / #fff / 各種 rgba(255,255,255,x) 以字面值重複出現在全站數十處，
+       這裡集中成變數方便之後統一調整,數值全部延用既有配方,純粹去重複、不改變視覺。
+       --white 只用於純黑實色色塊上的反轉文字/圖示、或不透光的純色背景（見設計系統文件 01 節）；
+       --glass-edge-* 是液態玻璃卡片「左上亮、右下暗」固定邊框配方的三個色階（見設計系統文件 05 節），
+       同一數值不分邊框方向/box-shadow/邊角光暈，共用同一個變數。
+       托盤底色是刻意的非純白灰階,獨立用 --surface-sunken 管理,不屬於這組白色變數 */
+    --white: #ffffff;
+    --glass-edge-light: rgba(255, 255, 255, 0.9);
+    --glass-edge-mid: rgba(255, 255, 255, 0.5);
+    --glass-edge-dark: rgba(255, 255, 255, 0.15);
+
+    /* ===== 玻璃托盤分層對比（2026-09）=====
+       原本托盤 #f1f1ef 跟區塊背景 #EBEBEC 只差 6/255（不到 3%），肉眼分不出
+       「這是另一層」，托盤／背景／玻璃小卡／浮島 icon 四種白疊在一起會糊成一片。
+       比照 iOS HIG 分組背景（systemGroupedBackground vs secondaryGroupedBackground）
+       的做法：拉開每一階之間的落差，不是靠更多種白，是靠夠明顯的階梯，肉眼才讀得出
+       疊放順序。這裡把托盤從 #f1f1ef 拉亮到 #F7F7F6，跟 #EBEBEC 拉開約 12 個色階 */
+    --surface-sunken: #F7F7F6;
 }
 
 /* =========================================
@@ -124,7 +144,7 @@
     border: none;
     border-radius: 14px;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.2s ease;
@@ -139,7 +159,7 @@
         linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22%),
         linear-gradient(180deg, #4a4a4e 0%, #202024 48%, #050506 100%);
     box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.5),
+        inset 0 1.5px 1px var(--glass-edge-mid),
         inset 0 -8px 16px -9px rgba(0, 0, 0, 0.7),
         0 14px 26px -10px rgba(0, 0, 0, 0.45),
         0 4px 10px rgba(0, 0, 0, 0.2);
@@ -175,7 +195,7 @@ body {
     left: 16px;
     z-index: 2100;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     padding: 12px 20px;
     border-radius: 6px;
     font-weight: bold;
@@ -339,7 +359,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid rgba(22, 22, 26, 0.08);
     border-radius: 100px;
     padding: 4px;
@@ -366,7 +386,7 @@ body {
 
 .nav-links a.active {
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
 }
 
 .nav-links a.nav-icon-link.active {
@@ -408,7 +428,7 @@ body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #fff;
+    background-color: var(--white);
     border: 1px solid rgba(22, 22, 26, 0.08);
     outline: none;
     cursor: pointer;
@@ -472,7 +492,7 @@ body {
     top: -4px;
     right: -2px;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     font-size: var(--fs-caption);
     font-weight: bold;
     min-width: 18px;
@@ -609,7 +629,7 @@ body {
 }
 
 /* 商品卡跟人物卡（.team-mobile-card）套用同一套液態玻璃材質：淺灰托盤
-   （#f1f1ef）疊四個灰階光暈當底（不是色相，跟設計系統文件 P03「黑白灰
+   （var(--surface-sunken)）疊四個灰階光暈當底（不是色相，跟設計系統文件 P03「黑白灰
    是唯一色彩語言」對齊），照片／資訊各自是內縮的半透明玻璃面板——
    backdrop-filter 模糊 + 邊角高光 + 四邊不等寬邊框模擬光線折射，圓角
    維持 20px 外層／8px 內層的同一組巢狀比例。hover/press 的位移跟陰影
@@ -623,7 +643,7 @@ body {
     gap: var(--sp-4);
     cursor: pointer;
     overflow: hidden;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
     /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
        看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
     background-image:
@@ -657,7 +677,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -679,15 +699,15 @@ body {
     -webkit-backdrop-filter: blur(30px);
     background-size: cover;
     background-position: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 8px;
     overflow: hidden;
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
     transition: transform 0.5s ease;
 }
 
@@ -719,16 +739,16 @@ body {
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 8px;
     padding: var(--sp-3) var(--sp-2);
     text-align: left;
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .product-panel-stat-label {
@@ -815,7 +835,7 @@ body {
     height: 44px;
     border-radius: 50%;
     border: 1px solid var(--ink-line);
-    background-color: #ffffff;
+    background-color: var(--white);
     color: var(--ink-soft);
     cursor: pointer;
     display: flex;
@@ -850,13 +870,13 @@ body {
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 2px solid rgba(255, 255, 255, 0.9);
-    border-left: 2px solid rgba(255, 255, 255, 0.5);
-    border-right: 2px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+    border-top: 2px solid var(--glass-edge-light);
+    border-left: 2px solid var(--glass-edge-mid);
+    border-right: 2px solid var(--glass-edge-dark);
+    border-bottom: 2px solid var(--glass-edge-dark);
     box-shadow:
         0 8px 20px -6px rgba(22, 22, 26, 0.28),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
     opacity: 0.55;
     transition: all 0.3s ease;
 }
@@ -867,7 +887,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
     z-index: 1;
 }
@@ -961,13 +981,13 @@ body {
    .team-info-header／.team-stat-row／.team-info-bio），底盤本身不該是
    玻璃。原本誤把底盤也做成半透明+blur，兩層玻璃疊在一起，跟手機版「不透明
    托盤＋玻璃卡」的材質語言不一致——改回跟 .team-mobile-card／.product-panel
-   同一套底盤配方：實色 #f1f1ef ＋ 四個灰階光暈，不用 backdrop-filter */
+   同一套底盤配方：實色 var(--surface-sunken) ＋ 四個灰階光暈，不用 backdrop-filter */
 .team-info-merged {
     flex: 3 1 0%;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
     /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
        看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
     background-image:
@@ -995,16 +1015,16 @@ body {
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 12px;
     padding: var(--sp-5);
     margin-bottom: var(--sp-10);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 /* 姓名字級大、字重粗、用高對比 --ink，不會踩到淺灰內文被高光墊亮變淡的
@@ -1013,7 +1033,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -1048,16 +1068,16 @@ body {
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 12px;
     padding: var(--sp-4) var(--sp-3);
     text-align: left;
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .team-stat-label {
@@ -1086,15 +1106,15 @@ body {
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 12px;
     padding: var(--sp-5);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .team-file-tab {
@@ -1138,17 +1158,17 @@ body {
     background-size: contain;
     background-position: center bottom;
     background-repeat: no-repeat;
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 20px;
     overflow: hidden;
     position: relative;
     transition: opacity 0.4s ease;
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 /* 跟手機版立繪同一套液態玻璃邊角高光——這裡是圖片沒有內文，不會踩到
@@ -1157,7 +1177,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -1183,7 +1203,7 @@ body {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     content: "\f007";
-    color: #ffffff;
+    color: var(--white);
     font-size: 96px;
 }
 
@@ -1205,10 +1225,10 @@ body {
 /* 用 .modal-container.contact-modal-box 而不是單一 class——這條規則在原始碼位置
    比 .modal-container 的白底規則早，class 數量一樣時特異度打平，會被後面的白底贏過去，
    複合選擇器多算一個 class，特異度確實更高才能贏。托盤色改用跟其他液態
-   玻璃托盤同一個 #f1f1ef（原本的 var(--paper) 是 #ebebec，色調很接近但
+   玻璃托盤同一個 var(--surface-sunken)（原本的 var(--paper) 是 #ebebec，色調很接近但
    不是同一個 token，統一成同一個值） */
 .modal-container.contact-modal-box {
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 .contact-glass-card {
@@ -1294,20 +1314,20 @@ body {
     background-color: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .line-service-box::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -1375,7 +1395,7 @@ body {
     width: 120px;
     height: 120px;
     border-radius: 12px;
-    background-color: #ffffff;
+    background-color: var(--white);
     padding: 8px;
     box-sizing: border-box;
     border: 1px solid var(--ink-line);
@@ -1457,7 +1477,7 @@ body {
     padding: 16px 12px;
     border: 1px solid var(--ink-line);
     border-radius: 6px;
-    background-color: #ffffff;
+    background-color: var(--white);
     color: var(--ink);
     font-size: var(--fs-small);
     font-family: inherit;
@@ -1485,7 +1505,7 @@ body {
     outline: none;
     border-color: var(--ink) !important;
     box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.08);
-    background-color: #ffffff;
+    background-color: var(--white);
 }
 
 /* 密碼欄「顯示/隱藏」切換：右側疊一顆眼睛圖示按鈕，輸入框右內距讓出空間避免文字被蓋住 */
@@ -1632,7 +1652,7 @@ body {
     list-style: none;
     margin: 0;
     padding: 8px;
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     border-radius: 18px;
     box-shadow: 0 20px 40px -16px rgba(22, 22, 26, 0.35), 0 6px 16px rgba(22, 22, 26, 0.1);
@@ -1666,7 +1686,7 @@ body {
 
 .custom-select-option.selected {
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     font-weight: 700;
 }
 
@@ -1683,7 +1703,7 @@ body {
        讓每顆日期都能達到 44px，符合 iOS HIG 最小觸控目標（見下面 .date-picker-day）；
        min() 裡的 100vw-32px 是窄螢幕安全上限，避免面板在很窄的手機上左右溢出 */
     width: min(364px, calc(100vw - 32px));
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     border-radius: 18px;
     padding: 16px;
@@ -1718,7 +1738,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     color: var(--ink);
     font-size: var(--fs-small);
@@ -1772,7 +1792,7 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 14px;
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     font-family: inherit;
     font-size: var(--fs-small);
@@ -1810,7 +1830,7 @@ body {
     background-color: var(--ink);
     border-color: var(--ink);
     box-shadow: none;
-    color: #ffffff;
+    color: var(--white);
     font-weight: 700;
 }
 
@@ -1837,7 +1857,7 @@ body {
     min-height: 44px;
     padding: 0 var(--sp-4);
     border-radius: 100px;
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     font-family: inherit;
     font-size: var(--fs-small);
@@ -1872,7 +1892,7 @@ body {
     justify-content: center;
     gap: 12px;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     border: none;
     padding: 12px 36px;
     font-size: var(--fs-body);
@@ -1929,7 +1949,7 @@ body {
     max-width: 960px;
     width: 100%;
     padding: 40px;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 /* 跟 .modal-title（購物車/結帳/條款須知用的）統一成同一個字級——彈窗本身是
@@ -1980,13 +2000,13 @@ body {
     background-color: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
     transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
 }
 
@@ -2003,7 +2023,7 @@ body {
     transform: translateY(-4px);
     box-shadow:
         0 18px 40px -12px rgba(22, 22, 26, 0.4),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .faq-terms-title {
@@ -2031,13 +2051,13 @@ body {
     background-color: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
     transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
 }
 
@@ -2054,7 +2074,7 @@ a.faq-card {
     transform: translateY(-4px);
     box-shadow:
         0 18px 40px -12px rgba(22, 22, 26, 0.4),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .faq-card-icon {
@@ -2239,7 +2259,7 @@ a.faq-card {
 }
 
 .footer-title {
-    color: #ffffff;
+    color: var(--white);
     font-size: var(--fs-h4);
     font-weight: bold;
     margin-bottom: var(--sp-4);
@@ -2287,7 +2307,7 @@ a.faq-card {
 }
 
 .footer-links a:hover {
-    color: #ffffff;
+    color: var(--white);
 }
 
 /* 電腦版排成 2 欄（目前 6 顆剛好排 3 排，2/2/2），用 grid 而不是
@@ -2383,7 +2403,7 @@ a.faq-card {
     font-size: var(--fs-caption);
     font-weight: bold;
     color: var(--ink);
-    background-color: #ffffff;
+    background-color: var(--white);
     padding: 4px 12px;
     border-radius: 20px;
     white-space: nowrap;
@@ -2409,7 +2429,7 @@ a.faq-card {
 
 /* 疊在深色區塊上方時反轉配色 */
 .section-dots.on-dark .section-dot {
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: var(--glass-edge-mid);
 }
 
 .section-dots.on-dark .section-dot:hover {
@@ -2417,8 +2437,8 @@ a.faq-card {
 }
 
 .section-dots.on-dark .section-dot.active {
-    background-color: #ffffff;
-    border-color: #ffffff;
+    background-color: var(--white);
+    border-color: var(--white);
 }
 
 /* =========================================
@@ -2464,7 +2484,7 @@ a.faq-card {
 }
 
 .section-index.on-dark .section-index-current {
-    color: #ffffff;
+    color: var(--white);
 }
 
 .section-index.on-dark .section-index-sep {
@@ -2472,7 +2492,7 @@ a.faq-card {
 }
 
 .section-index.on-dark .section-index-total {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--glass-edge-mid);
 }
 
 /* =========================================
@@ -2484,7 +2504,7 @@ a.faq-card {
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    background-color: #fff;
+    background-color: var(--white);
     color: var(--ink);
     border: 1px solid rgba(22, 22, 26, 0.08);
     font-size: 18px;
@@ -2541,12 +2561,17 @@ a.faq-card {
 /* 所有彈窗共用同一套實色白材質——拿掉毛玻璃透明+模糊，背景是乾淨的純白，
    文字對比不會被背後透出的顏色跟模糊稀釋，字看起來更扎實 */
 .modal-container {
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid rgba(29, 29, 31, 0.08);
     border-radius: 22px;
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    /* 商品彈窗的圖片改滿版貼齊容器左側（見 .gallery-main），這裡補上
+       overflow-x:hidden 讓圖片的直角邊被容器 22px 圓角裁切，不用在圖片
+       本身重複算一次圓角半徑；其他彈窗本來就沒有水平方向的內容，加這條
+       不影響它們 */
+    overflow-x: hidden;
     /* 可以滑動但不要看到捲軸本身，捲軸會壓在 22px 圓角上，畫面不乾淨 */
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -2653,7 +2678,7 @@ a.faq-card {
        列的間距一起收緊，把不必要的空白擠出來，目標是完整顯示不用捲動 */
     padding: var(--sp-6) var(--sp-8) var(--sp-6);
     text-align: center;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 .auth-modal-logo {
@@ -2708,7 +2733,7 @@ a.faq-card {
 
 .auth-tab.active {
     color: var(--ink);
-    background-color: #ffffff;
+    background-color: var(--white);
     box-shadow: 0 1px 4px rgba(29, 29, 31, 0.16);
 }
 
@@ -2742,7 +2767,7 @@ a.faq-card {
 .contact-modal-box .form-group select,
 .checkout-modal-box .form-group input,
 .checkout-modal-box .form-group select {
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     /* 原本 30px 是完整藥丸形，姓名/電話這種短內容配滿版寬度的輸入框，
        看起來空格拉得很長、不成比例，改成比較內斂的圓角矩形 */
@@ -2761,7 +2786,7 @@ a.faq-card {
 
 .contact-modal-box .form-group textarea,
 .checkout-modal-box .form-group textarea {
-    background-color: #ffffff;
+    background-color: var(--white);
     border: 1px solid var(--ink-line);
     border-radius: 16px;
     padding: 12px 24px;
@@ -2840,7 +2865,7 @@ a.faq-card {
     margin-top: 1px;
     border-radius: 50%;
     border: 1.5px solid var(--ink-line);
-    background-color: #ffffff;
+    background-color: var(--white);
     box-shadow: none;
     display: flex;
     align-items: center;
@@ -2854,7 +2879,7 @@ a.faq-card {
 .auth-checkbox-row input[type="checkbox"]:checked + .auth-checkbox-mark {
     background-color: var(--ink);
     border-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     box-shadow: none;
 }
 
@@ -2902,7 +2927,7 @@ a.faq-card {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: #ffffff;
+    background-color: var(--white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
@@ -2984,12 +3009,17 @@ a.faq-card {
 }
 
 /* --- 產品彈窗：加入購物車列 --- */
-/* 把加入購物車列＋登入提示＋第三方商城連結包成同一個底部區塊，桌機版靠
-   margin-top:auto 貼齊 .product-detail-body 底部；手機版另外把整個區塊
-   變成 sticky 底部列（見 ≤1024px media query），三個元素才會一起固定，
-   不會有連結被單獨捲走、CTA 卻黏住的錯位情形 */
+/* 把加入購物車列＋登入提示＋第三方商城連結包成同一個底部區塊。桌機版靠
+   .desc 的 flex-grow（見上面）把這個區塊推到欄位底部，加一條分隔線劃出
+   「商品資訊」跟「購買動作」兩個區塊的邊界——世界電商 PDP（Amazon／
+   Shopify Buy Box）常見的兩段式版面，不管上面說明文字多短，購物車列都
+   貼齊底部且有清楚的視覺邊界。手機版另外把整個區塊變成 sticky 底部列
+   （見 ≤1024px media query），三個元素才會一起固定，不會有連結被單獨
+   捲走、CTA 卻黏住的錯位情形 */
 .product-modal-footer {
     margin-top: var(--sp-6);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--ink-line);
 }
 
 .cart-add-row {
@@ -3027,7 +3057,7 @@ a.faq-card {
 
 .qty-btn:hover {
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
 }
 
 .qty-stepper span {
@@ -3063,7 +3093,7 @@ a.faq-card {
 
 /* --- 會員資料彈窗 --- */
 /* 原本是軟膠擬物質感（Neumorphism）：靠雙向陰影做出浮凸層次。改成跟
-   人物卡／商品卡／FAQ 同一套液態玻璃托盤——底色統一用 #f1f1ef，裡面
+   人物卡／商品卡／FAQ 同一套液態玻璃托盤——底色統一用 var(--surface-sunken)，裡面
    的統計卡／資訊列改用玻璃材質（見下方 .account-hud-card／
    .account-info-row）。用複合選擇器保險，避免跟 .modal-container 的
    白底規則比源碼順序 */
@@ -3073,7 +3103,7 @@ a.faq-card {
     max-width: 1100px;
     width: 100%;
     padding: 44px 40px 32px;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 /* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
@@ -3132,7 +3162,7 @@ a.faq-card {
     height: 92px;
     border-radius: 26px;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3186,20 +3216,20 @@ a.faq-card {
     background-color: rgba(255, 255, 255, 0.86);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .account-hud-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -3252,20 +3282,20 @@ a.faq-card {
     background-color: rgba(255, 255, 255, 0.86);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .account-info-row::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -3487,7 +3517,7 @@ a.faq-card {
     padding: 40px;
     display: flex;
     flex-direction: column;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 /* 未登入引導畫面：跟 #cart-body 是互斥的兩個狀態，同一個 .cart-modal-box 底下切換 hidden，
@@ -3505,20 +3535,20 @@ a.faq-card {
     background-color: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .cart-login-gate::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -3646,7 +3676,7 @@ a.faq-card {
     max-width: 480px;
     width: 100%;
     padding: 40px;
-    background-color: #f1f1ef;
+    background-color: var(--surface-sunken);
 }
 
 /* 跟人物卡／商品卡同一套液態玻璃材質，取代原本的軟膠浮凸雙向陰影 */
@@ -3661,20 +3691,20 @@ a.faq-card {
     background-color: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        inset 0 1px 1px var(--glass-edge-light);
 }
 
 .checkout-order-summary::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
 
@@ -3715,48 +3745,62 @@ a.faq-card {
     margin-bottom: var(--sp-4);
 }
 
+/* 桌機版改成左右對半、左欄圖片滿版出血（見 .gallery-main）——容器本身的
+   padding 拿掉，改由 .product-detail-body 自己帶右欄的留白，左欄圖片才
+   能真正貼齊容器邊緣，不被容器的 padding 卡出一圈白邊。手機版維持原本
+   「容器統一留白、上下堆疊」的版型，見 ≤1024px media query 裡整組復原 */
 .product-modal-box {
-    max-width: 850px;
+    max-width: 900px;
     width: 100%;
-    /* 關閉鍵是 20px+44px=64px 高，上邊界留 --sp-16(64px) 剛好清開，
-       圖片開頭才不會被關閉鍵疊到 */
-    padding: var(--sp-16) var(--sp-8) var(--sp-8);
+    padding: 0;
 }
 
-/* align-items 預設 stretch 會把右欄文字硬拉成跟左欄圖片一樣高，文字內容
-   （標題／價格／說明／標籤）填不滿那個高度時，底部購物車列被 margin-top:auto
-   推到跟圖片齊平，中間留下一大塊沒有內容的空白——改用 flex-start 讓右欄
-   吃自己實際內容的高度，購物車列直接接在標籤下面，不再懸空 */
+/* 桌機版左右對半：align-items 改回 stretch，讓兩欄一樣高——右欄文字決定
+   整個彈窗的高度，左欄圖片用 height:100% + object-fit:cover 跟著撐滿，
+   這正是「滿版出血圖」要的效果，不是舊版那種「圖片決定高度、文字自己
+   矮一截」的排法，兩者是不同的版面邏輯，不能沿用舊註解的理由。
+   gap 拿掉：欄與欄之間的留白改由 .product-detail-body 自己的左內距負責，
+   不然會跟出血圖的預期效果衝突（見下方 .product-detail-body） */
 .product-modal-content {
     display: flex;
-    align-items: flex-start;
-    gap: var(--sp-8);
+    align-items: stretch;
+    gap: 0;
 }
 
+/* 55/45 而不是對半：商品攝影是主角，文字欄只要夠放標題/價格/說明/
+   徽章列就好，不用跟圖片搶版面——照片為主導的電商彈窗慣例（Apple／Aesop
+   這類商品快速預覽）圖片通常分配比一半再多一點，太極端（例如 65/35）
+   會逼窄文字欄，55/45 是兩者之間的折衷。flex-basis 用 0（flex:N 簡寫
+   的預設值），純粹按比例分配，不看內容自身寬度 */
 .product-gallery {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex: 55;
+    position: relative;
 }
 
+/* 桌機版滿版出血：不再用 aspect-ratio 決定高度，改用 height:100% 跟著
+   .product-modal-content stretch 出來的欄高走，圖片用 object-fit:cover
+   （見下面 .gallery-main img）裁滿整欄，不管文字內容長短都不會露白邊。
+   圓角只留左側兩角（跟 .modal-container 的 22px 對齊），右側兩角是直角，
+   因為那一側緊貼右欄文字面板，不是容器的外緣。手機版堆疊排版不適用
+   這套滿版邏輯，見 ≤1024px media query 復原成獨立卡片式圖片 */
 .gallery-main {
     position: relative;
     width: 100%;
-    aspect-ratio: 4/3;
-    border-radius: 12px;
+    height: 100%;
+    min-height: 420px;
+    border-radius: 22px 0 0 22px;
     overflow: hidden;
     background-color: rgba(29, 29, 31, 0.05);
 }
 
-/* 手機版大圖左右切換箭頭，桌機版預設隱藏（見 ≤1024px media query 才顯示），
-   桌機版維持縮圖列直接跳圖，不需要一張一張切 */
+/* 桌機版改滿版出血圖後縮圖列拿掉了（見 .gallery-thumbs），左右切換箭頭
+   跟手機版共用同一套疊在圖片上的做法，不用再區分斷點各顯示各的 */
 /* 使用者指定拿掉箭頭的深底圓框，只留白色圖示——沒有底托之後，靠
    drop-shadow（不是純色 text-shadow，才能貼合圖示形狀）維持在淺色
    照片上的可讀性，不然白色圖示疊到白色/淺色食材照片會整個糊掉 */
 /* 44px＝iOS HIG 最小觸控目標（跟 .qty-btn 同一條規則），原本 36px 漏套用 */
 .gallery-nav-btn {
-    display: none;
+    display: flex;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -3765,7 +3809,7 @@ a.faq-card {
     border-radius: 50%;
     border: none;
     background-color: transparent;
-    color: #ffffff;
+    color: var(--white);
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
     align-items: center;
     justify-content: center;
@@ -3778,13 +3822,13 @@ a.faq-card {
 .gallery-nav-next { right: var(--sp-3); }
 
 /* 底部圓點指示器，跟 iOS 相簿/輪播的 Page Control 同一套語言：目前這張
-   用實心＋加寬的橢圓表示，其餘用半透明小圓點——桌機版預設隱藏，只在
-   手機版（縮圖列被拿掉的地方）顯示 */
+   用實心＋加寬的橢圓表示，其餘用半透明小圓點——桌機版滿版出血圖同樣
+   靠這排圓點切換，不再是手機版專屬 */
 /* 疊在圖片內部、貼底置中。使用者指定不要深底托盤，改靠 drop-shadow
    維持在淺色照片上的可讀性——圓點顏色也改用白色系（見下面
    .gallery-dot::before），不是疊在白色頁面背景上的深灰點 */
 .gallery-dots {
-    display: none;
+    display: flex;
     position: absolute;
     bottom: var(--sp-3);
     left: 50%;
@@ -3823,7 +3867,7 @@ a.faq-card {
 .gallery-dot.active::before {
     width: 18px;
     border-radius: 3px;
-    background-color: #ffffff;
+    background-color: var(--white);
 }
 
 .gallery-main img {
@@ -3853,17 +3897,18 @@ a.faq-card {
     content: "\f03e";
     /* 圖示顏色原本誤寫成跟底色一樣的 var(--ink)，深色背景疊深色圖示等於看不見，
        改成白色才看得出佔位圖示 */
-    color: #ffffff;
+    color: var(--white);
 }
 
 .gallery-main.img-fallback::after { font-size: 32px; }
 .thumb-item.img-fallback::after { font-size: 14px; }
 
-/* 產品彈窗縮圖 - 支持 6 張縮圖排版 */
+/* 縮圖列改用滿版出血圖 + 疊圖箭頭/圓點（.gallery-nav-btn／.gallery-dots）
+   切換，兩種切圖方式並存會互相干擾，縮圖列直接收掉不顯示；script.js
+   還是照常把縮圖塞進 #product-modal-thumbs（沒有壞處，只是這個容器
+   一直是隱藏的），不用連動改 JS */
 .gallery-thumbs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: none;
 }
 
 .thumb-item {
@@ -3889,11 +3934,16 @@ a.faq-card {
     object-fit: cover;
 }
 
+/* 跟左欄圖片 55/45（見 .product-gallery），容器本身的 padding 拿掉了（見
+   .product-modal-box），這裡補上自己的留白：上緣 --sp-16(64px) 對齊關閉鍵
+   的清空高度（20px+44px），右／下緣 --sp-8，左緣也是 --sp-8——不用跟圖片
+   共用容器留白，圖片才能真正貼齊左邊界出血 */
 .product-detail-body {
-    flex: 1.2;
+    flex: 45;
     display: flex;
     flex-direction: column;
     text-align: left;
+    padding: var(--sp-16) var(--sp-8) var(--sp-8);
 }
 
 /* 原本標題／價格／說明／標籤全部用同一個 var(--ink) 純黑，只靠字級做區分——
@@ -3943,71 +3993,17 @@ a.faq-card {
     border-radius: 20px;
 }
 
+/* 說明文字下面原本接的是信任徽章列，2026-09 拿掉徽章後直接接購物車列
+   （見 .product-modal-footer 的分隔線），這裡不用再靠 margin 空出徽章
+   的位置，改成 flex-grow 把剩餘垂直空間都推給說明文字下方，購物車列
+   自然貼底——世界電商 PDP 常見的「內容區／購買動作區」兩段式版面，
+   分隔線負責劃出兩者的邊界，不是靠隨意的留白硬擠出來的 */
 .product-detail-body .desc {
     font-size: var(--fs-body);
     line-height: 1.7;
     color: var(--ink-soft);
-    margin-bottom: var(--sp-6);
-}
-
-/* 使用者指定改成「獎狀徽章」風格：圖示放進雙圈勳章底座（實心內圈＋留白
-   間隙＋細外圈，仿認證標章的同心圓畫法），文字挪到下方置中，取代原本
-   一排水平藥丸。仍然全站黑白灰，靠邊框圈數＋軟膠浮凸陰影做出「勳章」
-   的立體感，不是靠顏色 */
-/* 原本 .tag-item 用 flex:1 把 3 個徽章硬撐滿一整排寬度，彼此之間留白
-   多到看起來像三個各自漂浮的孤島，跟上面靠左對齊的標題/說明文字也
-   對不起來。改成不撐滿、維持自己實際內容寬度，讓 3 個徽章靠左聚成
-   一組，跟整個文字區塊同一個左邊界，讀起來才是同一塊內容的延伸，
-   不是另外浮空的裝飾 */
-/* 靠左聚集留右側空白＝不平衡；space-between 硬拉開又變成間距過寬——
-   兩個都是同一個根因：3 個徽章的「內容寬度」本來就比整欄窄，硬要靠
-   對齊方式（左靠/邊對邊）去湊滿寬度，怎麼調都是妥協。改成置中：
-   徽章間距維持適中固定值（不被拉伸變形），左右自動留白對稱分配，
-   從整體畫面來看是最平衡的，不會所有空白都擠在單一側 */
-/* 從 3 個徽章增加到 5 個，原本的 gap:sp-8 單行寬度會爆版——改成允許
-   換行（flex-wrap），欄距縮到 sp-6、行距 sp-5，5 個在較窄的手機欄位
-   會自動折成 3+2 兩排，桌機版較寬的欄位通常一行就排得下 */
-.product-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--sp-5) var(--sp-6);
-    margin-bottom: var(--sp-6);
-}
-
-.tag-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-2);
-    text-align: center;
-}
-
-/* 同心圓勳章底座維持（雙圈是刻意的認證標章語彙，不是軟膠擬物），拿掉
-   的是後面兩層模擬「從背景浮出來」的雙向軟膠陰影，改成單一方向的淡陰影 */
-.tag-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    border: 1.5px solid var(--ink);
-    box-shadow:
-        0 0 0 3px #ffffff,
-        0 0 0 4.5px rgba(29, 29, 31, 0.25),
-        0 3px 8px rgba(22, 22, 26, 0.14);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink);
-    font-size: 17px;
-}
-
-.tag-label {
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--ink-soft);
-    line-height: 1.3;
+    margin: 0;
+    flex-grow: 1;
 }
 
 /* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
@@ -4023,7 +4019,7 @@ a.faq-card {
     display: block;
     width: 100%;
     background-color: var(--ink);
-    color: #ffffff;
+    color: var(--white);
     text-align: center;
     text-decoration: none;
     font-size: var(--fs-body);
@@ -4039,7 +4035,7 @@ a.faq-card {
 
 .btn-modal-cta:hover {
     background-color: #333336;
-    color: #ffffff;
+    color: var(--white);
 }
 
 /* =========================================
@@ -4206,7 +4202,7 @@ a.faq-card {
         border-left: 1px solid rgba(255, 255, 255, 0.7);
         border-right: 1px solid rgba(255, 255, 255, 0.35);
         border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9);
+        box-shadow: inset 0 1px 1px var(--glass-edge-light);
     }
 
     .nav-links a.active::before {
@@ -4232,7 +4228,7 @@ a.faq-card {
     /* 購物車數量徽章原本是黑底白字（配桌機版白色圓鈕），疊在這裡深色的
        分頁圓鈕上會整個隱形，改成白底深字才在深色藥丸列上看得見 */
     .nav-cart-tab-wrap .cart-badge {
-        background-color: #ffffff;
+        background-color: var(--white);
         color: var(--ink);
     }
 
@@ -4349,7 +4345,7 @@ a.faq-card {
         display: flex;
         flex-direction: column;
         gap: var(--sp-4);
-        background-color: #f1f1ef;
+        background-color: var(--surface-sunken);
         /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
            看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
         background-image:
@@ -4382,7 +4378,7 @@ a.faq-card {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+        background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
         pointer-events: none;
     }
 
@@ -4404,16 +4400,16 @@ a.faq-card {
         background-color: rgba(255, 255, 255, 0.42);
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid rgba(255, 255, 255, 0.9);
-        border-left: 1px solid rgba(255, 255, 255, 0.5);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-top: 1px solid var(--glass-edge-light);
+        border-left: 1px solid var(--glass-edge-mid);
+        border-right: 1px solid var(--glass-edge-dark);
+        border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
         padding: var(--sp-5);
         text-align: left;
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            inset 0 1px 1px var(--glass-edge-light);
     }
 
     .team-mobile-name {
@@ -4446,16 +4442,16 @@ a.faq-card {
         background-size: contain;
         background-position: center bottom;
         background-repeat: no-repeat;
-        border-top: 1px solid rgba(255, 255, 255, 0.9);
-        border-left: 1px solid rgba(255, 255, 255, 0.5);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-top: 1px solid var(--glass-edge-light);
+        border-left: 1px solid var(--glass-edge-mid);
+        border-right: 1px solid var(--glass-edge-dark);
+        border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
         position: relative;
         transition: opacity 0.4s ease;
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            inset 0 1px 1px var(--glass-edge-light);
     }
 
     /* 立繪讀取失敗時才切成深底＋白色圖示佔位，跟桌機版 .team-portrait.img-fallback
@@ -4468,7 +4464,7 @@ a.faq-card {
         font-family: "Font Awesome 6 Free";
         font-weight: 900;
         content: "\f007";
-        color: #ffffff;
+        color: var(--white);
         font-size: 64px;
         position: absolute;
         top: 50%;
@@ -4493,16 +4489,16 @@ a.faq-card {
         background-color: rgba(255, 255, 255, 0.42);
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid rgba(255, 255, 255, 0.9);
-        border-left: 1px solid rgba(255, 255, 255, 0.5);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-top: 1px solid var(--glass-edge-light);
+        border-left: 1px solid var(--glass-edge-mid);
+        border-right: 1px solid var(--glass-edge-dark);
+        border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
         padding: var(--sp-3) var(--sp-2);
         text-align: left;
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            inset 0 1px 1px var(--glass-edge-light);
     }
 
     .team-mobile-stat-label {
@@ -4536,15 +4532,15 @@ a.faq-card {
         background-color: rgba(255, 255, 255, 0.42);
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid rgba(255, 255, 255, 0.9);
-        border-left: 1px solid rgba(255, 255, 255, 0.5);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-top: 1px solid var(--glass-edge-light);
+        border-left: 1px solid var(--glass-edge-mid);
+        border-right: 1px solid var(--glass-edge-dark);
+        border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
         padding: var(--sp-5);
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            inset 0 1px 1px var(--glass-edge-light);
     }
 
     /* 原本 2 欄網格在手機上每張卡片只有半個螢幕寬，說明文字擠得要換好幾行，
@@ -4641,29 +4637,29 @@ a.faq-card {
         gap: var(--sp-2);
     }
 
-    /* 跟桌機版同一個 4:3 比例，維持一致、舒服的商品照片比例，
-       不用再靠 flex 擠壓成不固定的形狀 */
+    /* 桌機版是左右對半的滿版出血圖（height:100% 跟著欄高走，22px 只留左側
+       圓角），手機版改回堆疊排版後這套邏輯不適用——復原成獨立卡片式圖片：
+       固定 4:3 比例、四角都是 12px、高度不跟父層拉伸 */
     .gallery-main {
         aspect-ratio: 4 / 3;
+        height: auto;
+        min-height: 0;
+        border-radius: 12px;
     }
 
-    /* 使用者指定：手機版拿掉縮圖列，改成大圖＋左右箭頭＋底部圓點的
-       輪播模式（跟 Apple/Nike/Uniqlo 行動版商品圖同一套慣例），
-       桌機版維持縮圖列可以直接跳到任一張圖，不受影響 */
-    .gallery-thumbs {
-        display: none;
-    }
-
-    .gallery-nav-btn {
-        display: flex;
-    }
-
-    .gallery-dots {
-        display: flex;
-    }
+    /* 箭頭／圓點切圖、隱藏縮圖列，桌機版現在也是同一套（見基礎規則），
+       這裡不用再重複宣告一次 */
 
     .product-modal-box {
         padding: var(--sp-16) var(--sp-6) var(--sp-6);
+    }
+
+    /* 桌機版左右對半才需要 .product-detail-body 自己留白（圖片要貼齊左
+       邊界出血），手機版堆疊排版沒有這個問題，留白統一交回容器本身的
+       padding（上面 .product-modal-box 那條），這裡歸零蓋掉桌機版的值，
+       不然兩層 padding 疊加會把手機版內容擠得太窄 */
+    .product-detail-body {
+        padding: 0;
     }
 
     /* 手機版内容（滿版圖＋6 張縮圖＋說明＋標籤）疊起來還是常常超過螢幕高，
@@ -4678,7 +4674,7 @@ a.faq-card {
         bottom: calc(-1 * var(--sp-6));
         margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
         padding: var(--sp-4) var(--sp-6) var(--sp-6);
-        background-color: #ffffff;
+        background-color: var(--white);
         border-top: 1px solid var(--ink-line);
         border-radius: 0 0 24px 24px;
         z-index: 2;
