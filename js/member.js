@@ -16,7 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupError = document.getElementById('signup-error');
     const navAccountIconPerson = document.getElementById('nav-account-icon-person');
     const navAccountIconCrown = document.getElementById('nav-account-icon-crown');
-    const navBtnAccount = document.getElementById('nav-btn-account');
+    const navAccountIconPersonMobile = document.getElementById('nav-account-icon-person-mobile');
+    const navAccountIconCrownMobile = document.getElementById('nav-account-icon-crown-mobile');
+    // 桌機版跟手機版分頁列各自有一顆會員圖示按鈕（見 index.html 裡的
+    // #nav-btn-account／#nav-btn-account-mobile，都共用 class="nav-account-btn"），
+    // 但這裡原本只綁定桌機版那顆的 id，手機版分頁列的會員鈕從來沒有真的
+    // 接上開合彈窗的邏輯——點了完全沒反應。改成用 class 選取兩顆，事件/
+    // 圖示切換/title 提示文字都同步套用，不用維護兩份重複邏輯、也不用
+    // 再單獨保留桌機版那個 id 變數
+    const navAccountBtns = document.querySelectorAll('.nav-account-btn');
 
     const authErrorMessages = {
         'auth/invalid-email': '信箱格式不正確',
@@ -206,13 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(accountModal);
     }
 
-    navBtnAccount.addEventListener('click', () => {
+    navAccountBtns.forEach(btn => btn.addEventListener('click', () => {
         if (currentUser) {
             openAccountModal();
         } else {
             openAuthModal('login');
         }
-    });
+    }));
 
     accountModalClose.addEventListener('click', () => closeModal(accountModal));
 
@@ -358,26 +366,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 桌機／手機各一組人像/皇冠圖示，登入狀態切換時兩組要同步——用陣列
+    // 迴圈取代手動各寫一次，之後不會再漏掉某一邊（同一類疏漏今天已經
+    // 在點擊事件、購物車徽章上各踩過一次）
+    const navAccountIconPairs = [
+        [navAccountIconPerson, navAccountIconCrown],
+        [navAccountIconPersonMobile, navAccountIconCrownMobile],
+    ];
+
     auth.onAuthStateChanged(user => {
         currentUser = user;
         if (user) {
             // 登入後：人像圖示換成皇冠，代表已是會員；滑鼠移上去看得到姓名。
-            // 這兩個是 <svg>，不是普通 HTML 元素——實測 SVGElement 的 .hidden
-            // 屬性賦值不會反映到實際的 hidden attribute（跟 HTMLElement 不一樣），
-            // 賦值後畫面不會真的切換，所以這裡改用 setAttribute/removeAttribute 直接操作
-            navAccountIconPerson.setAttribute('hidden', '');
-            navAccountIconCrown.removeAttribute('hidden');
-            navBtnAccount.setAttribute('aria-label', '會員專區');
+            // 桌機版這兩個是 <svg>，不是普通 HTML 元素——實測 SVGElement 的
+            // .hidden 屬性賦值不會反映到實際的 hidden attribute（跟
+            // HTMLElement 不一樣），賦值後畫面不會真的切換，所以這裡改用
+            // setAttribute/removeAttribute 直接操作
+            navAccountIconPairs.forEach(([person, crown]) => {
+                person.setAttribute('hidden', '');
+                crown.removeAttribute('hidden');
+            });
+            navAccountBtns.forEach(btn => btn.setAttribute('aria-label', '會員專區'));
             db.collection('users').doc(user.uid).get().then(doc => {
                 const name = (doc.exists && doc.data().displayName) || user.email;
-                navBtnAccount.title = name + '（點擊登出）';
+                navAccountBtns.forEach(btn => { btn.title = name + '（點擊登出）'; });
             });
             subscribeCart(user.uid);
         } else {
-            navAccountIconPerson.removeAttribute('hidden');
-            navAccountIconCrown.setAttribute('hidden', '');
-            navBtnAccount.setAttribute('aria-label', '會員登入');
-            navBtnAccount.title = '會員登入';
+            navAccountIconPairs.forEach(([person, crown]) => {
+                person.removeAttribute('hidden');
+                crown.setAttribute('hidden', '');
+            });
+            navAccountBtns.forEach(btn => {
+                btn.setAttribute('aria-label', '會員登入');
+                btn.title = '會員登入';
+            });
             unsubscribeCart();
         }
     });
@@ -422,8 +445,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartSubtotalEl = document.getElementById('cart-subtotal');
     const cartSummaryEl = document.getElementById('cart-summary');
     const cartBadge = document.getElementById('cart-badge');
+    const cartBadgeMobile = document.getElementById('cart-badge-mobile');
     const btnGoCheckout = document.getElementById('btn-go-checkout');
-    const navBtnCart = document.getElementById('nav-btn-cart');
+    // 跟會員鈕同一個問題：手機版分頁列的購物車鈕（#nav-btn-cart-mobile，
+    // 共用 class="nav-cart-btn"）原本沒有真的綁定開合彈窗的邏輯
+    const navCartBtns = document.querySelectorAll('.nav-cart-btn');
     const addToCartBtn = document.getElementById('product-modal-add-cart');
     const addCartNote = document.getElementById('product-modal-add-note');
     const cartBody = document.getElementById('cart-body');
@@ -446,8 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCartBadge() {
         const count = cartItems.reduce((sum, it) => sum + it.qty, 0);
-        cartBadge.textContent = count;
-        cartBadge.hidden = count === 0;
+        [cartBadge, cartBadgeMobile].forEach(badge => {
+            badge.textContent = count;
+            badge.hidden = count === 0;
+        });
     }
 
     function renderCartModal() {
@@ -508,9 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartModal();
     }
 
-    navBtnCart.addEventListener('click', () => {
+    navCartBtns.forEach(btn => btn.addEventListener('click', () => {
         openModal(cartModal);
-    });
+    }));
 
     cartModalClose.addEventListener('click', () => closeModal(cartModal));
 

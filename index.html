@@ -219,6 +219,7 @@
 
     <!-- 首頁區塊 -->
     <header id="home" class="hero-banner fullscreen-section dark-section">
+        <h1 class="sr-only">Project.CD｜品味純粹的甜蜜時光，嚴選頂級食材、每日新鮮手工烘焙甜點</h1>
         <div class="hero-video-bg">
             <video class="hero-video" muted playsinline preload="auto"></video>
             <video class="hero-video" muted playsinline preload="auto"></video>
@@ -408,7 +409,13 @@
                     </div>
                     <h4 class="line-title"><i class="fa-brands fa-line"></i> LINE 官方帳號客服</h4>
                     <p class="line-desc">不想等待 Email 回覆？加入 LINE 官方帳號，專人即時為您服務。</p>
-                    <a href="#" class="btn-line-cta" target="_blank" rel="noopener noreferrer">
+                    <!-- QR Code 用 api.qrserver.com 即時產生，data 是官方帳號 @572bkqdy
+                         的加好友連結，跟下面 .btn-line-cta 指向同一個網址 -->
+                    <div class="line-qr-wrap">
+                        <img class="line-qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Fline.me%2FR%2Fti%2Fp%2F%40572bkqdy" alt="LINE 官方帳號 QR Code" loading="lazy" width="120" height="120">
+                        <span class="line-qr-caption">掃描加入好友</span>
+                    </div>
+                    <a href="https://line.me/R/ti/p/@572bkqdy" class="btn-line-cta" target="_blank" rel="noopener noreferrer">
                         <span>開啟 LINE 線上對話</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
@@ -526,14 +533,14 @@
                          配合 style.css 手機版 .footer-social 的 max-width 讓 flex-wrap
                          自動換行 -->
                     <div class="footer-social">
-                        <a href="#" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
+                        <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
                         <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
                         <a href="#" class="social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#" class="social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                         <!-- 原本「探索更多」區塊的 Game/Education 文字連結，併進來改成跟社群
                              一樣的 icon，目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
-                        <a href="../Project.CD遊樂場/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad"></i></a>
-                        <a href="../Project.CD教育/index.html" class="social-edu" aria-label="Education"><i class="fa-solid fa-graduation-cap"></i></a>
+                        <a href="../project-cd-playground/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad"></i></a>
+                        <a href="../project-cd-education/index.html" class="social-edu" aria-label="Education"><i class="fa-solid fa-graduation-cap"></i></a>
                     </div>
                 </div>
             </div>

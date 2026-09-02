@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: '武裝神姬',
                 job: '咖啡甜點專家',
                 battleRole: '戰鬥專家',
-                weapon: '武士刀X狙擊槍',
+                weapon: '武士刀×狙擊槍',
                 style: '任務執行到極致',
                 quote: '「用數據與匠心，重新定義這間店存在的意義。」',
                 // 手機版名字/座右銘擠在同一排（見 .team-mobile-namequote），完整版
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             {
                 name: '強襲魔女',
-                job: '職代理店長X最強雜工',
+                job: '職代理店長×最強雜工',
                 battleRole: '移動基地',
                 weapon: '車',
                 style: '只想看戲',
@@ -344,13 +344,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             panel.innerHTML = `
                 <div class="product-panel-image" data-bg="${product.images[0]}"></div>
-                <div class="product-panel-body">
-                    <div class="product-panel-row1">
+                <div class="product-panel-stats">
+                    <div class="product-panel-stat-box">
+                        <span class="product-panel-stat-label">品名</span>
                         <h3 class="product-panel-name">${product.name}</h3>
-                        <div class="product-panel-meta">
-                            <span class="product-panel-price">${product.price}</span>
-                            <span class="product-panel-qty">${product.qty}</span>
-                        </div>
+                    </div>
+                    <div class="product-panel-stat-box">
+                        <span class="product-panel-stat-label">價格</span>
+                        <span class="product-panel-price">${product.price}</span>
+                    </div>
+                    <div class="product-panel-stat-box">
+                        <span class="product-panel-stat-label">份量</span>
+                        <span class="product-panel-qty">${product.qty}</span>
                     </div>
                 </div>
             `;

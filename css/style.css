@@ -339,7 +339,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color: #ffffff;
     border: 1px solid rgba(22, 22, 26, 0.08);
     border-radius: 100px;
     padding: 4px;
@@ -366,7 +366,7 @@ body {
 
 .nav-links a.active {
     background-color: var(--ink);
-    color: #fff;
+    color: #ffffff;
 }
 
 .nav-links a.nav-icon-link.active {
@@ -431,7 +431,8 @@ body {
 }
 
 /* 會員／聯繫／購物車：Lucide 風格線條圖示，手繪 SVG（2px筆畫、圓角），
-   不吃字型檔，顏色直接用 currentColor 跟著 .nav-icon-btn/.nav-icon-link 的 color 走 */
+   不吃字型檔，顏色直接用 currentColor 跟著 .nav-icon-btn/.nav-icon-link
+   的 color 走 */
 .nav-icon-svg {
     width: 24px;
     height: 24px;
@@ -443,11 +444,8 @@ body {
     display: none;
 }
 
-/* SVG 天生就吃 [hidden] 的內建隱藏行為，這裡不需要再補 !important，
-   但明確寫出來避免日後其他樣式蓋過去，登入/登出切換人像↔皇冠才會真的只顯示一個。
-   .nav-icon-svg 的 display:block 是一般優先度的作者樣式，會蓋掉瀏覽器內建
-   [hidden]{display:none} 的 UA 樣式（作者樣式永遠贏過 UA 樣式，不管選擇器優先度），
-   所以人像圖示也要補上同一條規則，不然登入後人像會跟皇冠疊在一起 */
+/* 登入/登出切換人像↔皇冠：兩顆 SVG 疊在同個位置，用 [hidden] 屬性切換顯示，
+   瀏覽器對 SVG 元素的 [hidden] 內建行為不一致，這裡補一條規則強制生效 */
 #nav-account-icon-crown[hidden],
 #nav-account-icon-person[hidden] {
     display: none;
@@ -608,23 +606,38 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--sp-6);
     width: 100%;
-    height: 640px;
+    /* 原本 640px，四欄窄版寬度下商品照被 cover 裁成快 1:2 的細長直幅，
+       視覺上偏長不自然。縮到 500px，照片區塊比例落在接近 4:3 的合理
+       商品照範圍，資訊小卡高度不變（本來就是內容自身撐出來的高度，
+       不受這個值影響） */
+    height: 500px;
 }
 
-/* hover/press 的位移跟陰影改用設計系統文件「04 四感設計・互動」定義的
-   iOS 彈簧回彈曲線 cubic-bezier(.34,1.56,.64,1)，跟彈窗/開關元件同一套
-   語言——原本的 cubic-bezier(0.16,1,0.3,1) 是純 ease-out，沒有回彈尾韻，
-   跟全站其他互動元件的手感不一致 */
+/* 商品卡跟人物卡（.team-mobile-card）套用同一套液態玻璃材質：淺灰托盤
+   （#f1f1ef）疊四個灰階光暈當底（不是色相，跟設計系統文件 P03「黑白灰
+   是唯一色彩語言」對齊），照片／資訊各自是內縮的半透明玻璃面板——
+   backdrop-filter 模糊 + 邊角高光 + 四邊不等寬邊框模擬光線折射，圓角
+   維持 20px 外層／8px 內層的同一組巢狀比例。hover/press 的位移跟陰影
+   用設計系統文件「04 四感設計・互動」定義的 iOS 彈簧回彈曲線
+   cubic-bezier(.34,1.56,.64,1)，跟彈窗/開關元件同一套語言 */
 .product-panel {
     position: relative;
     min-width: 0;
     display: flex;
     flex-direction: column;
+    gap: var(--sp-4);
     cursor: pointer;
     overflow: hidden;
-    background-color: #EBEBEC;
+    background-color: #f1f1ef;
+    /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
+       看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
+    background-image:
+        radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
+        radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
+    border: 1.5px solid rgba(22, 22, 26, 0.3);
     border-radius: 20px;
-    box-shadow: 0 20px 50px -30px rgba(22, 22, 26, 0.35);
+    padding: var(--sp-4);
+    box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
     transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
                 opacity 0.6s ease;
@@ -632,18 +645,54 @@ body {
 
 .product-panel:hover {
     transform: translateY(-8px);
-    box-shadow: 0 28px 60px -28px rgba(22, 22, 26, 0.45);
+    box-shadow: 0 20px 40px rgba(22, 22, 26, 0.24);
 }
 
+/* 玻璃面板共用的邊角高光，跟人物卡的 ::before 同一套技巧——疊在面板
+   最上層左上角的柔光，才是玻璃本身反光的關鍵，不是靠 backdrop-filter
+   模糊托盤就足夠。原本是貫穿整張卡片的對角線性漸層，會掃過卡片中段的
+   內文文字，跟底下較淺的 --ink-soft 文字疊在一起時，肉眼會出現「同一
+   排文字左右深淺不一」的錯覺（simultaneous contrast，背景亮暗不均讓
+   同一個灰階文字顏色看起來不同）——改成集中在角落、快速衰減到透明的
+   放射狀光暈。半徑用固定的 140px（不是百分比）：radial-gradient 預設
+   用「到最遠角落」決定範圍，又寬又扁的卡片（例如服務條款那種滿版寬
+   卡）最遠角落距離很長，百分比範圍會等比例放大、又掃回文字區，固定
+   像素半徑才不會隨卡片寬高比跑掉 */
+.product-panel-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
+}
+
+/* .product-panel-stat-box 刻意不加邊角高光——這顆卡很小（品名/價格/份量），
+   140px 半徑的高光幾乎蓋滿整顆卡，label 用的 --ink-soft 淺灰字剛好落在
+   高光最亮的左上角，會被墊亮到跟其他行不一致（跟 .faq-terms-section
+   .policy-modal-body p 同一個成因，見那裡的說明），玻璃感靠邊框+模糊+
+   陰影撐起來就好 */
+
 .product-panel-image {
+    position: relative;
     flex: 1;
     min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--ink);
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
     background-size: cover;
     background-position: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
     transition: transform 0.5s ease;
 }
 
@@ -651,49 +700,81 @@ body {
     transform: scale(1.05);
 }
 
-.product-panel-body {
+/* 品名／價格／份量拆成三個各自獨立的玻璃面板，跟人物卡「三宮格」
+   （.team-mobile-stats／.team-mobile-stat-box）同一套元件語言與材質配方，
+   不是原本合併在同一個 .product-panel-body 裡的一行文字 */
+/* 原本三欄等寬，「品名」通常是 4-6 個中文字（例如「經典鳳梨酥」），
+   欄寬不夠常常被迫換行、斷得很難看（例如「經典鳳／梨酥」）。改成品名
+   單獨佔滿第一排、價格／份量分兩欄擠第二排——品名欄寬變成整張卡寬度，
+   幾乎不會再被迫換行；價格／份量本來就有 white-space:nowrap 不會換行，
+   欄寬變窄也不受影響 */
+.product-panel-stats {
     flex-shrink: 0;
-    background-color: var(--ink);
-    padding: var(--sp-8) var(--sp-5);
-    text-align: left;
-}
-
-/* 名稱靠左、價錢／數量靠右，同一行對齊 */
-.product-panel-row1 {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--sp-3);
-}
-
-.product-panel-name {
-    font-size: var(--fs-h4);
-    font-weight: bold;
-    color: var(--paper);
-    margin: 0;
-}
-
-.product-panel-meta {
-    display: flex;
-    align-items: baseline;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: var(--sp-2);
-    flex-shrink: 0;
+}
+
+.product-panel-stats .product-panel-stat-box:first-child {
+    grid-column: 1 / -1;
+}
+
+.product-panel-stat-box {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: var(--sp-3) var(--sp-2);
+    text-align: left;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.product-panel-stat-label {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+}
+
+/* 三格欄寬窄，品名長度不一時 text-wrap:balance 讓斷行點平均分配，
+   避免最後一行吊孤字——跟 .team-mobile-stat-value 同一招 */
+.product-panel-name {
+    font-size: var(--fs-body);
+    font-weight: bold;
+    color: var(--ink);
+    line-height: 1.3;
+    text-wrap: balance;
+    margin: 0;
 }
 
 /* 跟 .account-hud-num／.mock-stat-num 同一套「數字等寬」處理：4 張卡片
    並排時，價格數字才會在同一個視覺基準上對齊，不會因為每個數字本身
    寬度不同（1 比 8 窄）而讓整排價格看起來歪斜 */
 .product-panel-price {
-    font-size: var(--fs-small);
+    font-size: var(--fs-body);
     font-weight: bold;
-    color: #ffffff;
+    color: var(--ink);
+    line-height: 1.3;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 
 .product-panel-qty {
-    font-size: var(--fs-caption);
-    color: var(--paper);
+    font-size: var(--fs-body);
+    font-weight: bold;
+    color: var(--ink);
+    line-height: 1.3;
     white-space: nowrap;
 }
 
@@ -762,21 +843,48 @@ body {
     gap: 16px;
 }
 
+/* 液態玻璃版本：跟人物卡／商品卡同一套材質配方（半透明白 + blur(30px) +
+   邊角高光 + 不等寬邊框模擬光線折射），有照片的頭像因為 object-fit:cover
+   填滿整個圓框，這層玻璃底色平常看不太到，主要是圓框邊緣的斜切邊框在
+   起作用；沒照片的佔位頭像才是玻璃感真正明顯的地方 */
 .team-avatar-item {
+    position: relative;
+    overflow: hidden;
     width: 140px;
     height: 140px;
     border-radius: 50%;
     padding: 0;
-    border: 3px solid transparent;
-    overflow: hidden;
     cursor: pointer;
-    background-color: rgba(29, 29, 31, 0.06);
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 2px solid rgba(255, 255, 255, 0.9);
+    border-left: 2px solid rgba(255, 255, 255, 0.5);
+    border-right: 2px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 8px 20px -6px rgba(22, 22, 26, 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
     opacity: 0.55;
     transition: all 0.3s ease;
 }
 
-/* 頭像圓框裁切點往上移到臉部，避免半身照置中裁切時臉被推到框外 */
+/* 邊角高光，跟其他玻璃面板同一招——玻璃本身的反光，疊在圖片/圖示之上 */
+.team-avatar-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 頭像圓框裁切點往上移到臉部，避免半身照置中裁切時臉被推到框外——
+   z-index 墊在邊角高光下面，照片本身才不會被高光整個蓋住看不清楚 */
 .team-avatar-item img {
+    position: relative;
+    z-index: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -788,9 +896,12 @@ body {
 }
 
 /* 照片還沒上傳時的通用佔位樣式，取代瀏覽器預設的裂圖示——
-   跟產品圖片的 .img-fallback 是同一套邏輯，圖片準備好上傳後會自動換回真的照片 */
+   跟產品圖片的 .img-fallback 是同一套邏輯，圖片準備好上傳後會自動換回真的照片。
+   opacity 蓋回 1，不要疊加在基礎規則的 0.55 之上——底色的透明感已經靠
+   rgba(255,255,255,.42) 自己表達，再疊一層 CSS opacity 會讓玻璃質感
+   雙重稀釋，反而看起來只是模糊的淺灰色 */
 .team-avatar-item.img-fallback {
-    background-color: var(--ink);
+    opacity: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -804,20 +915,28 @@ body {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     content: "\f007";
-    color: #ffffff;
+    color: rgba(22, 22, 26, 0.7);
     font-size: 44px;
+    position: relative;
+    z-index: 2;
 }
 
 /* 選中的頭像加一圈實色描邊，像選角畫面裡「目前選到誰」的高亮框——
-   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯。
-   切換時額外播一次放大晃動動畫，每次 class 一加上就會重新觸發，
-   停下來時停在跟原本一樣的 scale(1.08)，不會跟 hover/選中狀態打架 */
+   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯。切換時
+   額外播一次放大晃動動畫，每次 class 一加上就會重新觸發，停下來時停在
+   跟原本一樣的 scale(1.08)，不會跟 hover/選中狀態打架。這圈實色框刻意
+   不套玻璃——「目前選到誰」是功能性的強訊號，半透明材質會削弱辨識度，
+   所以維持不透明實色；邊角高光也調淡，避免蓋過選中框本身的存在感 */
 .team-avatar-item.active {
     opacity: 1;
     transform: scale(1.08);
-    border-color: var(--ink);
+    border: 3px solid var(--ink);
     box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12);
     animation: team-avatar-wobble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.team-avatar-item.active::before {
+    opacity: 0.4;
 }
 
 @keyframes team-avatar-wobble {
@@ -845,29 +964,69 @@ body {
    縮圖列:立繪:此卡＝1:6:3（flex-grow 比例），不再需要 .team-info-panel 這層
    中介 wrapper 去左右拆兩張卡。內容本身夠長（標題＋數據＋引言＋簡介），
    靠自己就能撐滿卡片高度，用不到人工撐空白的招數；超出高度時卡片自己捲動 */
+/* 這張卡片的角色，其實是手機版 .team-mobile-card 那張「不透明底盤」——
+   姓名／數據／自介三個小節各自是浮在上面的獨立液態玻璃卡（見下面
+   .team-info-header／.team-stat-row／.team-info-bio），底盤本身不該是
+   玻璃。原本誤把底盤也做成半透明+blur，兩層玻璃疊在一起，跟手機版「不透明
+   托盤＋玻璃卡」的材質語言不一致——改回跟 .team-mobile-card／.product-panel
+   同一套底盤配方：實色 #f1f1ef ＋ 四個灰階光暈，不用 backdrop-filter */
 .team-info-merged {
     flex: 3 1 0%;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
-    border: 1px solid var(--ink-line);
+    background-color: #f1f1ef;
+    /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
+       看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
+    background-image:
+        radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
+        radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
+    border: 1.5px solid rgba(22, 22, 26, 0.3);
     border-radius: 20px;
     padding: var(--sp-6) var(--sp-6);
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
 }
 
 .team-info-merged::-webkit-scrollbar {
     display: none;
 }
 
+/* 跟手機版 .team-mobile-namequote 同一套液態玻璃小卡——原本姓名是裸文字
+   直接貼在 .team-info-merged 卡片背景上，沒有自己的玻璃卡，跟手機版姓名
+   列有獨立玻璃卡不一致 */
 .team-info-header {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: var(--sp-5);
     margin-bottom: var(--sp-10);
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* 姓名字級大、字重粗、用高對比 --ink，不會踩到淺灰內文被高光墊亮變淡的
+   問題，可以放心加邊角高光 */
+.team-info-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .team-info-name {
+    position: relative;
     font-size: var(--fs-h1);
     font-weight: bold;
     color: var(--ink);
@@ -877,33 +1036,38 @@ body {
    不是各自獨立、有間距的卡片。改成單欄（不是 2 欄並排）——2 欄並排時，短內容的格子
    會被同一列裡較長的鄰居拖著撐高，露出一截用不到的空白；單欄讓每一列高度只跟著
    自己的內容走。橫向排列（標籤左、內容右）跟會員資料彈窗的 .account-info-row 同一套語言 */
-/* flex-shrink:0——這裡的 overflow:hidden 只是拿來裁圓角用的，但在直向 flex 排列裡
-   會讓瀏覽器把這塊當成唯一「可以縮到 0」的項目（其他區塊是文字，天生有 min-height:auto
-   頂住不會縮），結果合併卡片高度不夠時，只有這個清單被硬壓扁、四個欄位被自己的
-   overflow 裁掉只剩一行——加 flex-shrink:0 讓它維持原本高度，改交給外層卡片自己捲動 */
+/* 改成跟手機版 .team-mobile-stats／.team-mobile-stat-box 同一套「並排獨立
+   玻璃小卡」語言（原本是 iOS 設定 App 那種單欄清單＋髮絲分隔線，跟手機版
+   排版不一致）。四欄位排成 2×2（手機版三欄位是 1 排 3 欄——桌機這裡欄位
+   較多、卡片也較寬，2 欄比 4 欄一排更有餘裕放下「戰鬥風格」「任務執行到
+   極致」這種較長的標籤/內容，不會被擠到頻繁換行） */
 .team-stat-list {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    background-color: var(--ink-line);
-    border: 1px solid var(--ink-line);
-    border-radius: 16px;
-    overflow: hidden;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
     flex-shrink: 0;
     margin-bottom: var(--sp-10);
 }
 
-/* 固定寬度兩欄 grid，四列共用同一個欄寬——原本用 flex + space-between，
-   label/value 中間的留白是靠彈性間距吃掉剩餘空間，每列數值長度不同，
-   中間的分界線位置就跟著每列亂跑，看起來像沒對齊。改成固定欄寬，
-   四列的分隔線才會落在同一條垂直線上 */
 .team-stat-row {
-    display: grid;
-    grid-template-columns: 88px 1fr;
-    align-items: baseline;
-    gap: 12px;
-    padding: 24px 16px;
-    background-color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: var(--sp-4) var(--sp-3);
+    text-align: left;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 .team-stat-label {
@@ -915,18 +1079,33 @@ body {
 }
 
 .team-stat-value {
-    text-align: right;
     font-size: var(--fs-body);
     font-weight: 700;
     color: var(--ink);
     line-height: 1.3;
-    border-left: 1px solid var(--ink-line);
-    padding-left: 12px;
+    text-wrap: balance;
 }
 
-/* 角色檔案區塊：現在是合併卡片下半段（跟姓名數據同一張卡），不再是獨立邊框卡片。
-   不額外加 margin-top——跟姓名→數據表同一套 sp-8 節奏，靠 .team-stat-list 自己的
-   margin-bottom 撐開就好，兩段落間距才會一致，不是各自加總出兩種不同的留白量 */
+/* 角色檔案（標籤＋引言＋簡介）補上跟手機版 .team-mobile-bio 同一套液態
+   玻璃小卡——原本是裸文字直接貼在 .team-info-merged 托盤背景上，跟手機版
+   自介有自己獨立玻璃卡不一致。標籤用的 --ink-soft 貼齊卡片左上角，跟
+   .faq-terms-section .policy-modal-body p 同一個成因，不加邊角高光 */
+.team-file-block {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: var(--sp-5);
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
 
 .team-file-tab {
     display: block;
@@ -963,15 +1142,33 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
     background-size: contain;
     background-position: center bottom;
     background-repeat: no-repeat;
-    border: 1px solid var(--ink-line);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     overflow: hidden;
     position: relative;
     transition: opacity 0.4s ease;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* 跟手機版立繪同一套液態玻璃邊角高光——這裡是圖片沒有內文，不會踩到
+   .team-info-merged 那種文字被蓋到變淡的問題，可以放心加 */
+.team-portrait::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .team-portrait-text {
@@ -1017,9 +1214,11 @@ body {
 
 /* 用 .modal-container.contact-modal-box 而不是單一 class——這條規則在原始碼位置
    比 .modal-container 的白底規則早，class 數量一樣時特異度打平，會被後面的白底贏過去，
-   複合選擇器多算一個 class，特異度確實更高才能贏 */
+   複合選擇器多算一個 class，特異度確實更高才能贏。托盤色改用跟其他液態
+   玻璃托盤同一個 #f1f1ef（原本的 var(--paper) 是 #ebebec，色調很接近但
+   不是同一個 token，統一成同一個值） */
 .modal-container.contact-modal-box {
-    background-color: var(--paper);
+    background-color: #f1f1ef;
 }
 
 .contact-glass-card {
@@ -1036,6 +1235,8 @@ body {
 .contact-glass-intro {
     flex: 0 0 300px;
     max-width: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .contact-glass-form {
@@ -1083,17 +1284,41 @@ body {
     font-size: var(--fs-small);
 }
 
-/* 跟會員彈窗的 .account-hud-card 同一套軟膠浮凸卡片——不靠邊框分層，靠雙向陰影
-   從灰底浮出來。LINE 綠只保留在文件核准的兩個地方：狀態文字（#006600）跟
-   按鈕底色（#00C300，見下方 .btn-line-cta） */
+/* 跟人物卡／商品卡／常見問題卡同一套液態玻璃材質。LINE 綠只保留在文件
+   核准的兩個地方：狀態文字（#006600）跟按鈕底色（#00C300，見下方
+   .btn-line-cta） */
+/* 撐滿 .contact-glass-intro 剩下的高度——原本是固定高度貼在說明文字
+   下面，右欄表單比左欄高很多時，左欄下半段會留一大塊沒作用的空白。
+   flex 直向排列＋按鈕 margin-top:auto，讓卡片內容自然分成「頂部資訊群組」
+   跟「貼齊底部的按鈕」，多出來的空間變成兩者之間有目的的留白，
+   不是隨機的一大塊空氣感 */
 .line-service-box {
+    position: relative;
+    overflow: hidden;
     color: var(--ink);
     padding: 20px;
     border-radius: 16px;
-    margin-bottom: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.line-service-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .line-status-bar {
@@ -1146,6 +1371,33 @@ body {
     margin-bottom: var(--sp-4);
 }
 
+/* 說明文字跟按鈕中間原本是一大塊沒作用的空白（按鈕靠 margin-top:auto
+   貼底），補上真的用得到的 QR Code，掃了直接加好友，不是純裝飾填空 */
+.line-qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-4) 0;
+}
+
+.line-qr-code {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid var(--ink-line);
+}
+
+.line-qr-caption {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+}
+
 /* 白字在 #00C300 上實測只有 2.39:1，離網站自訂的 AAA 7:1 門檻很遠，
    連基本 AA（4.5:1）都不到。改成 var(--ink) 深字，同一個綠底上實測約 7.6:1，達到 AAA */
 .btn-line-cta {
@@ -1153,6 +1405,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    margin-top: auto;
     background-color: #00C300;
     color: var(--ink);
     text-decoration: none;
@@ -1233,15 +1486,16 @@ body {
     cursor: pointer;
 }
 
-/* 點下去不是黑色外框，是「凹陷感」——用內陰影模擬輸入框被按進畫面裡，
-   呼應整體「靠陰影深度傳達回饋，不靠顏色」的互動語言 */
+/* 原本是內陰影模擬「按進畫面裡」的凹陷感，跟現在站上液態玻璃的扁平/
+   邊框語言不搭——改成邊框變深＋淡淡的外光暈，扁平材質常見的對焦回饋，
+   不再靠陰影深度表示凹陷 */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: transparent !important;
-    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.16), inset 0 1px 2px rgba(29, 29, 31, 0.1);
-    background-color: rgba(29, 29, 31, 0.025);
+    border-color: var(--ink) !important;
+    box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.08);
+    background-color: #ffffff;
 }
 
 /* 密碼欄「顯示/隱藏」切換：右側疊一顆眼睛圖示按鈕，輸入框右內距讓出空間避免文字被蓋住 */
@@ -1338,9 +1592,9 @@ body {
 .date-picker-trigger:focus-visible,
 .date-picker-trigger[aria-expanded="true"] {
     outline: none;
-    border-color: transparent;
-    box-shadow: inset 0 2px 6px rgba(29, 29, 31, 0.16), inset 0 1px 2px rgba(29, 29, 31, 0.1);
-    background-color: rgba(29, 29, 31, 0.025);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.08);
+    background-color: rgba(0, 0, 0, 0.045);
 }
 
 .date-picker-trigger span {
@@ -1475,21 +1729,22 @@ body {
     align-items: center;
     justify-content: center;
     background-color: #ffffff;
-    border: none;
+    border: 1px solid var(--ink-line);
     color: var(--ink);
     font-size: var(--fs-small);
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.14), -2px -2px 5px rgba(255, 255, 255, 0.85);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 1px 3px rgba(22, 22, 26, 0.08);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
 }
 
 .date-picker-nav:hover {
-    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.18), -3px -3px 7px rgba(255, 255, 255, 0.95);
+    background-color: rgba(22, 22, 26, 0.04);
+    box-shadow: 0 2px 6px rgba(22, 22, 26, 0.12);
 }
 
 .date-picker-nav:active {
     transform: scale(0.96);
-    box-shadow: inset 1.5px 1.5px 3px rgba(29, 29, 31, 0.25), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.1);
 }
 
 .date-picker-month-label {
@@ -1518,9 +1773,8 @@ body {
 
 /* 7 欄 × 44px + 6 條 4px 間隙 = 面板寬度反推的依據（見 .date-picker-panel），
    確保每顆日期都達到 iOS HIG 44×44pt 最小觸控目標，跟旁邊的上一月/下一月箭頭一致。
-   軟膠浮凸感：跟會員彈窗的 .account-hud-card 同一套語彙（亮面陰影在左上、
-   暗面陰影在右下，同一個白底就能做出「從面板浮出來」的立體感），只是把陰影
-   數值按比例縮小到適合 44px 這種小尺寸按鈕，不是照搬大卡片的數值 */
+   原本是軟膠浮凸感（雙向陰影模擬從面板浮出來），跟站上液態玻璃的扁平/
+   邊框語言不搭，改成扁平白底＋細邊框＋單一方向的淡陰影 */
 .date-picker-day {
     aspect-ratio: 1;
     min-height: 44px;
@@ -1529,18 +1783,18 @@ body {
     justify-content: center;
     border-radius: 14px;
     background-color: #ffffff;
-    border: none;
+    border: 1px solid var(--ink-line);
     font-family: inherit;
     font-size: var(--fs-small);
     color: var(--ink);
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 1px 3px rgba(22, 22, 26, 0.06);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
 }
 
 .date-picker-day:hover {
-    transform: translateY(-1px);
-    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.16), -3px -3px 7px rgba(255, 255, 255, 0.9);
+    background-color: rgba(22, 22, 26, 0.04);
+    box-shadow: 0 2px 6px rgba(22, 22, 26, 0.1);
 }
 
 .date-picker-day:active {
@@ -1557,14 +1811,15 @@ body {
 }
 
 .date-picker-day.today {
-    box-shadow: inset 0 0 0 1.5px var(--ink), 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 0 0 1.5px var(--ink), 0 1px 3px rgba(22, 22, 26, 0.06);
 }
 
-/* 選中：反過來用「壓進面板裡」的內陰影，跟其他還沒選的浮凸日期方向相反，
-   一眼就能分辨「這顆已經被按下去了」 */
+/* 選中：改成純色實心填滿，靠顏色本身（不是內陰影方向）分辨「這顆已經
+   被選了」——跟其他還沒選的扁平白底日期形成清楚對比 */
 .date-picker-day.selected {
     background-color: var(--ink);
-    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.15);
+    border-color: var(--ink);
+    box-shadow: none;
     color: #ffffff;
     font-weight: 700;
 }
@@ -1583,8 +1838,9 @@ body {
    --fs-small + --ink，不再套用給次要資訊用的 --fs-caption + --ink-soft。
    另外加 padding 把觸控熱區撐到 44px；不用負 margin 把它抵銷回原本位置，
    讓文字比面板本來的 16px 內距再多留一點空間，跟版面邊界不要貼太近 */
-/* 從文字連結改成實際的浮凸按鈕——跟面板裡其他元件（日期格子、上下月箭頭）
-   同一套軟膠語彙，拿掉底線，靠立體感本身表示「這是可以按的」 */
+/* 從文字連結改成實際的按鈕，拿掉底線，靠邊框+陰影本身表示「這是可以按的」——
+   原本是浮凸軟膠語彙，跟站上液態玻璃的扁平/邊框語言不搭，改成扁平白底＋
+   細邊框＋單一方向的淡陰影，跟同一個面板裡的日期格子、上下月箭頭一致 */
 .date-picker-text-btn {
     display: flex;
     align-items: center;
@@ -1592,23 +1848,24 @@ body {
     padding: 0 var(--sp-4);
     border-radius: 100px;
     background-color: #ffffff;
-    border: none;
+    border: 1px solid var(--ink-line);
     font-family: inherit;
     font-size: var(--fs-small);
     font-weight: 600;
     color: var(--ink);
     cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(29, 29, 31, 0.12), -2px -2px 5px rgba(255, 255, 255, 0.8);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 1px 3px rgba(22, 22, 26, 0.08);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
 }
 
 .date-picker-text-btn:hover {
-    box-shadow: 3px 3px 7px rgba(29, 29, 31, 0.16), -3px -3px 7px rgba(255, 255, 255, 0.9);
+    background-color: rgba(22, 22, 26, 0.04);
+    box-shadow: 0 2px 6px rgba(22, 22, 26, 0.12);
 }
 
 .date-picker-text-btn:active {
     transform: scale(0.96);
-    box-shadow: inset 1.5px 1.5px 3px rgba(29, 29, 31, 0.25), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.1);
 }
 
 .form-submit-area {
@@ -1670,10 +1927,19 @@ body {
 /* =========================================
    8b. 常見問題 FAQ
    ========================================= */
-.faq-modal-box {
+/* 跟人物卡／商品卡同一套液態玻璃托盤——但這個彈窗內容會捲動
+   （.modal-container 本身 overflow-y:auto），托盤如果用位置百分比定位
+   的光暈漸層，捲動時光暈會跟著內容一起移動、位置對不上，所以這裡改用
+   單一平面色（不做光暈），玻璃感靠卡片自己的邊角高光 + 斜切邊框撐起來，
+   不依賴 backdrop-filter 模糊出來的明暗反差。用 .modal-container.faq-modal-box
+   複合選擇器（不是單一 class）——跟 .contact-modal-box 同一個原因：
+   單一 class 特異度打平時，源碼位置比 .modal-container 的白底規則早，
+   會被白底贏過去，要多算一個 class 才能贏 */
+.modal-container.faq-modal-box {
     max-width: 960px;
     width: 100%;
     padding: 40px;
+    background-color: #f1f1ef;
 }
 
 /* 跟 .modal-title（購物車/結帳/條款須知用的）統一成同一個字級——彈窗本身是
@@ -1714,24 +1980,40 @@ body {
 }
 
 .faq-terms-section .policy-modal-body p {
+    position: relative;
+    overflow: hidden;
     margin-bottom: 0;
     padding: 20px;
     border-radius: 16px;
     color: var(--ink-soft);
     text-align: justify;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
     transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
 }
+
+/* 這裡刻意不加邊角高光 ::before——這張卡片是純文字段落，20px 內距扣掉後
+   幾乎整張卡片都是內文，高光（半徑 140px）不管怎麼縮都會蓋到文字，讓
+   左上角那幾行看起來比其他行淡（simultaneous contrast：高光把底色墊亮，
+   同一個 --ink-soft 灰階文字疊上去對比度變低，肉眼讀成「字變淡」）。
+   人物卡/商品卡有圖片區域能讓高光獨立存在，這張卡沒有留白可以閃，玻璃感
+   改靠邊框（左上亮、右下暗）＋模糊＋陰影撐起來，不靠高光 */
 
 /* 跟上面常見問題卡片同一個「游標碰到都要浮起來」規則，服務條款的
    每條條款卡片也要一致 */
 .faq-terms-section .policy-modal-body p:hover {
     transform: translateY(-4px);
     box-shadow:
-        8px 8px 16px rgba(29, 29, 31, 0.18),
-        -8px -8px 16px rgba(255, 255, 255, 0.85);
+        0 18px 40px -12px rgba(22, 22, 26, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 .faq-terms-title {
@@ -1741,9 +2023,11 @@ body {
     margin-bottom: var(--sp-4);
 }
 
-/* 原本是白底+邊框的扁平卡片，跟聯繫我們/會員彈窗用的軟膠浮凸材質
-   （.line-service-box／.account-hud-card，靠雙向陰影營造凸起感、不靠邊框）
-   是兩套不同語彙——改成同一套，全站彈窗的卡片材質才真正統一 */
+/* 跟人物卡／商品卡同一套液態玻璃材質——半透明白 + blur(30px) + 邊角高光
+   + 不等寬邊框，取代原本的軟膠浮凸雙向陰影，全站卡片材質統一成同一套
+   語彙。彈窗本身會捲動，托盤用單一平面色（見上面 .faq-modal-box），
+   玻璃感靠卡片自己的高光/邊框撐起來，不依賴 backdrop-filter 模糊出
+   明暗反差 */
 .faq-card {
     position: relative;
     display: flex;
@@ -1754,11 +2038,21 @@ body {
     min-height: 200px;
     text-decoration: none;
     overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
     transition: transform 0.3s var(--ease-tech, cubic-bezier(0.16, 1, 0.3, 1)), box-shadow 0.3s ease;
 }
+
+/* 刻意不加邊角高光——卡片不大，高光會蓋到 .faq-card-desc 用的 --ink-soft
+   淺灰內文，同一個成因見 .faq-terms-section .policy-modal-body p 的說明 */
 
 a.faq-card {
     cursor: pointer;
@@ -1769,8 +2063,8 @@ a.faq-card {
 .faq-card:hover {
     transform: translateY(-4px);
     box-shadow:
-        8px 8px 16px rgba(29, 29, 31, 0.18),
-        -8px -8px 16px rgba(255, 255, 255, 0.85);
+        0 18px 40px -12px rgba(22, 22, 26, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 .faq-card-icon {
@@ -2356,7 +2650,12 @@ a.faq-card {
 
 /* --- 會員登入／註冊彈窗：參考 Spotify 登入視窗排版（置中LOGO＋膠囊輸入框＋分頁）。
    毛邊玻璃材質現在是 .modal-container 共用的基礎樣式，這裡只留版面相關設定 */
-.auth-modal-box {
+/* 用 .modal-container.auth-modal-box 複合選擇器（不是單一 class）——避免
+   重蹈 .faq-modal-box 那次的覆轍：單一 class 特異度打平時源碼位置若比
+   .modal-container 的白底規則早，會被白底贏過去。這裡雖然目前源碼位置
+   在白底規則之後、單一 class 也贏得了，但為了不用每次改動都重新驗證
+   源碼順序，統一用複合選擇器保險 */
+.modal-container.auth-modal-box {
     max-width: 440px;
     width: 100%;
     /* 註冊表單欄位多，實測過（DevTools 量高度）在一般桌機視窗高度下內容
@@ -2364,7 +2663,7 @@ a.faq-card {
        列的間距一起收緊，把不必要的空白擠出來，目標是完整顯示不用捲動 */
     padding: var(--sp-6) var(--sp-8) var(--sp-6);
     text-align: center;
-    background-color: var(--paper);
+    background-color: #f1f1ef;
 }
 
 .auth-modal-logo {
@@ -2442,24 +2741,24 @@ a.faq-card {
     gap: var(--sp-2) var(--sp-4);
 }
 
-/* 跟會員彈窗同一套軟膠擬物語言：不靠邊框分層，靠內凹陰影表示「可以輸入的凹槽」——
-   跟 .account-info-row 那種「浮凸」相反，輸入框是往下凹，語意上更像現實中的按鍵/凹槽。
-   同一套凹陷造型套用到所有彈窗裡的表單（登入/聯繫/結帳），不只登入視窗自己有 */
+/* 原本是跟會員彈窗同一套軟膠擬物語言：不靠邊框分層，靠內凹陰影表示
+   「可以輸入的凹槽」。站上材質語言改成液態玻璃之後，凹陷擬物感已經
+   不合——輸入框本身不套玻璃（半透明模糊會干擾使用者正在輸入的文字
+   辨識度），改用乾淨扁平的白底＋細邊框，跟玻璃卡片並存但不衝突。
+   同一套扁平樣式套用到所有彈窗裡的表單（登入/聯繫/結帳） */
 .auth-modal-box .form-group input,
 .auth-modal-box .form-group select,
 .contact-modal-box .form-group input,
 .contact-modal-box .form-group select,
 .checkout-modal-box .form-group input,
 .checkout-modal-box .form-group select {
-    background-color: transparent;
-    border: none;
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
     /* 原本 30px 是完整藥丸形，姓名/電話這種短內容配滿版寬度的輸入框，
        看起來空格拉得很長、不成比例，改成比較內斂的圓角矩形 */
     border-radius: 14px;
     padding: 12px 24px;
-    box-shadow:
-        inset 4px 4px 8px rgba(29, 29, 31, 0.12),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+    box-shadow: none;
 }
 
 /* 註冊表單欄位較多，垂直內距單獨抓緊一點，減少整體高度需要捲動的機率；
@@ -2472,13 +2771,11 @@ a.faq-card {
 
 .contact-modal-box .form-group textarea,
 .checkout-modal-box .form-group textarea {
-    background-color: transparent;
-    border: none;
+    background-color: #ffffff;
+    border: 1px solid var(--ink-line);
     border-radius: 16px;
     padding: 12px 24px;
-    box-shadow:
-        inset 4px 4px 8px rgba(29, 29, 31, 0.12),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+    box-shadow: none;
 }
 
 .auth-modal-box .form-group input::placeholder,
@@ -2489,6 +2786,8 @@ a.faq-card {
     color: var(--ink-soft);
 }
 
+/* 對焦回饋改成邊框變深＋淡淡外光暈，跟上面通用版的 .form-group input:focus
+   同一套語言，不再靠內陰影模擬凹陷 */
 .auth-modal-box .form-group input:focus,
 .auth-modal-box .form-group select:focus,
 .contact-modal-box .form-group input:focus,
@@ -2497,10 +2796,8 @@ a.faq-card {
 .checkout-modal-box .form-group input:focus,
 .checkout-modal-box .form-group select:focus,
 .checkout-modal-box .form-group textarea:focus {
-    border-color: transparent !important;
-    box-shadow:
-        inset 5px 5px 10px rgba(29, 29, 31, 0.16),
-        inset -5px -5px 10px rgba(255, 255, 255, 0.7);
+    border-color: var(--ink) !important;
+    box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.08);
 }
 
 
@@ -2552,9 +2849,9 @@ a.faq-card {
     height: 20px;
     margin-top: 1px;
     border-radius: 50%;
-    border: none;
+    border: 1.5px solid var(--ink-line);
     background-color: #ffffff;
-    box-shadow: 1.5px 1.5px 3px rgba(29, 29, 31, 0.15), -1.5px -1.5px 3px rgba(255, 255, 255, 0.8);
+    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2563,11 +2860,12 @@ a.faq-card {
     transition: all 0.2s ease;
 }
 
-/* 打勾：反過來用內陰影「壓進去」，跟未勾選的浮凸方向相反 */
+/* 打勾：改成純色實心填滿，靠顏色分辨勾選狀態，不再靠內陰影方向 */
 .auth-checkbox-row input[type="checkbox"]:checked + .auth-checkbox-mark {
     background-color: var(--ink);
+    border-color: var(--ink);
     color: #ffffff;
-    box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.4), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.15);
+    box-shadow: none;
 }
 
 .auth-checkbox-row input[type="checkbox"]:focus-visible + .auth-checkbox-mark {
@@ -2774,15 +3072,18 @@ a.faq-card {
 }
 
 /* --- 會員資料彈窗 --- */
-/* 軟膠擬物質感（Neumorphism）：靠雙向陰影（亮面左上、暗面右下）做出浮凸/凹陷層次，
-   不靠邊框或色彩分辨層級，所以底色要換成不是純白的淺灰，陰影才有地方「藏」 */
+/* 原本是軟膠擬物質感（Neumorphism）：靠雙向陰影做出浮凸層次。改成跟
+   人物卡／商品卡／FAQ 同一套液態玻璃托盤——底色統一用 #f1f1ef，裡面
+   的統計卡／資訊列改用玻璃材質（見下方 .account-hud-card／
+   .account-info-row）。用複合選擇器保險，避免跟 .modal-container 的
+   白底規則比源碼順序 */
 /* 跟頁尾三欄 grid（.footer-container，max-width 1100px）同一個寬度基準，
    全站尺度一致，不是另外挑的數字 */
-.account-modal-box {
+.modal-container.account-modal-box {
     max-width: 1100px;
     width: 100%;
     padding: 44px 40px 32px;
-    background-color: var(--paper);
+    background-color: #f1f1ef;
 }
 
 /* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
@@ -2846,9 +3147,7 @@ a.faq-card {
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-    box-shadow:
-        8px 8px 16px rgba(29, 29, 31, 0.22),
-        -6px -6px 14px rgba(255, 255, 255, 0.7);
+    box-shadow: 0 6px 16px rgba(22, 22, 26, 0.22);
 }
 
 .account-avatar svg {
@@ -2884,13 +3183,32 @@ a.faq-card {
     gap: 12px;
 }
 
+/* 跟人物卡／商品卡同一套液態玻璃材質——半透明白 + blur(30px) + 邊角高光 +
+   不等寬邊框，取代原本的軟膠浮凸雙向陰影 */
 .account-hud-card {
+    position: relative;
+    overflow: hidden;
     padding: var(--sp-5) var(--sp-4) var(--sp-4);
     border-radius: 14px;
     text-align: center;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.account-hud-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .account-hud-icon {
@@ -2920,8 +3238,7 @@ a.faq-card {
     color: var(--ink);
 }
 
-/* 軟膠浮凸卡片：亮面陰影在左上、暗面陰影在右下，同一個底色就能做出「從背景浮出來」的層次，
-   不靠邊框分辨卡片邊界 */
+/* 跟人物卡／商品卡同一套液態玻璃材質，取代原本的軟膠浮凸雙向陰影 */
 /* 固定寬度兩欄 grid，不是 flex+space-between——原本靠彈性間距把值推到最右邊，
    每一列值的長度不同（姓名很短、信箱很長），中間的分界線就跟著每列跑，六列對不齊。
    改成固定 66px 標籤欄 + 分隔線，值一律左對齊、從同一個 x 位置起排，
@@ -2929,6 +3246,7 @@ a.faq-card {
    是為了讓信箱這種最長的值仍然單行放得下，不用截斷也不用換行 */
 .account-info-row {
     position: relative;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 58px 1fr;
     align-items: center;
@@ -2937,9 +3255,24 @@ a.faq-card {
     border-radius: 14px;
     font-size: var(--fs-small);
     min-width: 0;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.account-info-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .account-info-label {
@@ -3154,27 +3487,45 @@ a.faq-card {
 }
 
 /* --- 購物車彈窗 --- */
-.cart-modal-box {
+.modal-container.cart-modal-box {
     max-width: 480px;
     width: 100%;
     padding: 40px;
     display: flex;
     flex-direction: column;
-    background-color: var(--paper);
+    background-color: #f1f1ef;
 }
 
 /* 未登入引導畫面：跟 #cart-body 是互斥的兩個狀態，同一個 .cart-modal-box 底下切換 hidden，
-   不額外開新彈窗、不改變既有 480px 版面尺寸 */
+   不額外開新彈窗、不改變既有 480px 版面尺寸。跟人物卡／商品卡／FAQ 卡
+   同一套液態玻璃材質 */
 .cart-login-gate {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     padding: 32px 24px;
     border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.cart-login-gate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .cart-login-gate-cat {
@@ -3297,22 +3648,40 @@ a.faq-card {
 }
 
 /* --- 結帳彈窗 --- */
-.checkout-modal-box {
+.modal-container.checkout-modal-box {
     max-width: 480px;
     width: 100%;
     padding: 40px;
-    background-color: var(--paper);
+    background-color: #f1f1ef;
 }
 
+/* 跟人物卡／商品卡同一套液態玻璃材質，取代原本的軟膠浮凸雙向陰影 */
 .checkout-order-summary {
+    position: relative;
+    overflow: hidden;
     border-radius: 14px;
     padding: var(--sp-4);
     margin-bottom: var(--sp-5);
     font-size: var(--fs-small);
     color: var(--ink);
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow:
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.checkout-order-summary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+    pointer-events: none;
 }
 
 .checkout-order-summary .summary-line {
@@ -3391,13 +3760,14 @@ a.faq-card {
 /* 使用者指定拿掉箭頭的深底圓框，只留白色圖示——沒有底托之後，靠
    drop-shadow（不是純色 text-shadow，才能貼合圖示形狀）維持在淺色
    照片上的可讀性，不然白色圖示疊到白色/淺色食材照片會整個糊掉 */
+/* 44px＝iOS HIG 最小觸控目標（跟 .qty-btn 同一條規則），原本 36px 漏套用 */
 .gallery-nav-btn {
     display: none;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     border: none;
     background-color: transparent;
@@ -3432,10 +3802,11 @@ a.faq-card {
 }
 
 /* 圓點本身視覺上維持 iOS Page Control 的細緻尺寸，但按鈕的實際可點區域
-   用 flex 置中撐大到 24px——視覺小、熱區大，避免真的做成 6px 的觸控目標 */
+   用 flex 置中撐大到 44px（iOS HIG 最小觸控目標）——視覺小、熱區大，
+   避免真的做成 6px 的觸控目標 */
 .gallery-dot {
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3537,8 +3908,9 @@ a.faq-card {
    說明文字降到 --ink-soft（次要資訊，退到背景），標籤從純文字列表改成
    跟 .qty 藥丸同一套視覺語言的膠囊徽章列，才會看起來是特意設計過的
    信任標籤區，不是隨手放的條列文字 */
-/* 標題跟價格/份量同一列，名稱靠左、價格靠右——跟商品卡片 .product-panel-row1
-   同一個排版邏輯（見 index.html 手機版排版），也讓這個區塊少佔一行高度 */
+/* 標題跟價格/份量同一列，名稱靠左、價格靠右，讓這個區塊少佔一行高度——
+   商品卡片（.product-panel）品名/價格/份量已經拆成三個獨立玻璃面板，
+   跟這裡的合併排版是不同元件，各自獨立維護 */
 .product-title-row {
     display: flex;
     align-items: baseline;
@@ -3617,6 +3989,8 @@ a.faq-card {
     text-align: center;
 }
 
+/* 同心圓勳章底座維持（雙圈是刻意的認證標章語彙，不是軟膠擬物），拿掉
+   的是後面兩層模擬「從背景浮出來」的雙向軟膠陰影，改成單一方向的淡陰影 */
 .tag-badge {
     width: 48px;
     height: 48px;
@@ -3626,8 +4000,7 @@ a.faq-card {
     box-shadow:
         0 0 0 3px #ffffff,
         0 0 0 4.5px rgba(29, 29, 31, 0.25),
-        6px 6px 12px rgba(29, 29, 31, 0.14),
-        -6px -6px 12px rgba(255, 255, 255, 0.8);
+        0 3px 8px rgba(22, 22, 26, 0.14);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3823,9 +4196,37 @@ a.faq-card {
         transition: background-color 0.2s ease, color 0.2s ease;
     }
 
+    /* 選中的圖示圓鈕改成液態玻璃——這裡跟整條分頁列本身不一樣：分頁列
+       疊在頁面任意內容上（影片、卡片、頁尾都可能），玻璃化實測會整條
+       融進深色背景消失，所以維持不透明；但這顆圓鈕底下永遠是「分頁列
+       自己不透明的深色底」這個固定、可預期的背景，跟卡片托盤同一個道理，
+       玻璃在這裡才穩定看得見 */
     .nav-links a.active {
+        position: relative;
+        overflow: hidden;
         color: var(--ink);
-        background-color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.95);
+        border-left: 1px solid rgba(255, 255, 255, 0.7);
+        border-right: 1px solid rgba(255, 255, 255, 0.35);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .nav-links a.active::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.6), transparent);
+        pointer-events: none;
+    }
+
+    .nav-links a.active .nav-icon-mobile {
+        position: relative;
+        z-index: 1;
     }
 
     /* 購物車分頁跟會員分頁共用同一顆 .nav-more-btn 圓底樣式（見下面該規則），
@@ -3879,8 +4280,12 @@ a.faq-card {
         display: none;
     }
 
-    .product-panel {
-        min-height: 480px;
+    /* 手機版沒有桌機版 .product-panels 那個固定 640px 高度的網格容器撐著，
+       圖片改用跟商品彈窗大圖（.gallery-main）同一組 4:3 比例自己決定高度，
+       不再需要原本 min-height:480px 硬撐卡片高度的做法 */
+    .product-panel-image {
+        flex: none;
+        aspect-ratio: 4 / 3;
     }
 
     .product-panel:hover {
@@ -3938,46 +4343,87 @@ a.faq-card {
         display: none;
     }
 
-    /* 跟設計系統文件「05 元件模式・軟膠浮凸卡片」同一套配對邏輯：外層是
-       淺灰托盤（文件定義的 --surface-sunken #f1f1ef），裡面的每個小節維持
-       純白底 + 雙向陰影，才會有「從托盤浮凸出來」的矽膠感。單靠 #f1f1ef
-       跟頁面 #EBEBEC 的底色差＋髮絲邊框還是分辨不出托盤邊界，改用文件
-       定義的 --ink-line-strong（rgba(22,22,26,.3)，比一般裝飾邊框的
-       .16 更深）當邊框色、邊框加粗到 1.5px，陰影也從「模糊到看不太到」
-       的 -30px 內縮陰影，換成 .modal-container 同款、沒有負值內縮的實際
-       立體陰影，邊界才會確實浮出來 */
+    /* 液態玻璃版本：版面（托盤＋姓名列／立繪／三宮格／自介四個區塊的順序、
+       尺寸、間距）跟原本的軟膠浮凸卡片完全一樣，只換掉文字卡片的材質。
+       托盤底色加四個灰階光暈（不是色相）——跟設計系統文件「00 設計方向
+       與目標」P03 對齊：黑白灰是唯一色彩語言，立繪本身才是全站唯一的
+       色彩時刻。光暈明暗對比拉大（亮部 .95、暗部 .16），因為毛玻璃這個
+       材質的可辨識度很吃底下的明暗反差，第一版光暈對比太保守，在實機
+       螢幕亮度下幾乎感覺不到模糊在起作用，才調到這個強度 */
     .team-mobile-card {
         order: 2;
         display: flex;
         flex-direction: column;
         gap: var(--sp-4);
         background-color: #f1f1ef;
+        /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
+           看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
+        background-image:
+            radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
+            radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
         border: 1.5px solid rgba(22, 22, 26, 0.3);
         border-radius: 20px;
         padding: var(--sp-4);
         box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
     }
 
+    /* 液態玻璃面板共用的「邊角高光」：玻璃本身的反光，不是靠底下托盤透
+       上來的顏色——只靠 backdrop-filter 模糊托盤，實機肉眼幾乎看不出來，
+       這道疊在面板最上層左上角的放射狀柔光才是玻璃感真正明顯起來的關鍵。
+       原本是貫穿整張卡片的對角線性漸層，會掃過 .team-mobile-bio 這種
+       多行 --ink-soft 內文，肉眼會出現「同一段文字左右深淺不一」的錯覺
+       （simultaneous contrast）——改成集中在角落、快速衰減到透明，不再
+       掃過內文區域。半徑用固定 140px，不是百分比：radial-gradient 預設
+       用「到最遠角落」決定範圍，姓名列這種偏寬的區塊最遠角落距離較長，
+       百分比範圍會等比例放大、又掃回文字，固定像素半徑不會隨寬高比跑掉。
+       靠 overflow:hidden 裁到面板自己的圓角範圍內。三宮格／自介這兩個面板
+       不套這道高光——面板矮小、--ink-soft 內文幾乎貼齊左上角，140px 半徑
+       還是會蓋到文字，跟固定像素半徑要解決的「隨寬高比跑掉」是不同問題，
+       這裡靠面板自己的邊框+模糊+陰影撐玻璃感就好（同一個成因見
+       .faq-terms-section .policy-modal-body p 的說明）。姓名列跟立繪維持
+       原本的高光：姓名列的 --ink-soft 座右銘靠右對齊，離高光原點夠遠；
+       立繪是圖片沒有文字，兩者都不會踩到這個問題 */
+    .team-mobile-namequote::before,
+    .team-mobile-portrait::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.5), transparent);
+        pointer-events: none;
+    }
+
     /* 姓名+座右銘：姓名在左，座右銘在右——跟聯繫我們彈窗的 .contact-title-row
        （標題+副標並排）同一個排版邏輯，姓名字級大、座右銘字級小，用 baseline
-       對齊兩者的文字基線 */
+       對齊兩者的文字基線。液態玻璃材質：半透明白＋模糊＋邊角高光，不加
+       saturate()——托盤光暈本身就是純灰階，沒有色相可以提升，維持全站
+       黑白灰的規則。邊框改成四邊不同深淺（左上亮、右下暗），模擬光從
+       左上照過來、玻璃邊緣因為厚度產生的折射，比四邊同色的細邊框更有
+       玻璃的立體感 */
     .team-mobile-namequote {
+        position: relative;
+        overflow: hidden;
         display: flex;
         align-items: baseline;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: var(--sp-3);
-        background-color: #ffffff;
-        border-radius: 16px;
+        background-color: rgba(255, 255, 255, 0.42);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.9);
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         padding: var(--sp-5);
         text-align: left;
         box-shadow:
-            6px 6px 12px rgba(29, 29, 31, 0.14),
-            -6px -6px 12px rgba(255, 255, 255, 0.8);
+            0 12px 32px -10px rgba(22, 22, 26, 0.32),
+            inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     .team-mobile-name {
-        font-size: var(--fs-h2);
+        font-size: var(--fs-h3);
         font-weight: bold;
         color: var(--ink);
     }
@@ -3991,20 +4437,31 @@ a.faq-card {
 
     /* 立繪：跟桌機版 .team-portrait 一樣用 background-image 呈現（見
        script.js 的 loadPortraitInto()），但這是手機卡片內部的獨立元素，
-       不吃桌機版的 flex:6 1 0% 高度分配邏輯，直接寫死高度 */
+       不吃桌機版的 flex:6 1 0% 高度分配邏輯，直接寫死高度。跟其他三張卡
+       同一套液態玻璃材質（含邊角高光 ::before、斜切邊框）——backdrop-filter
+       模糊的是這個元素「後面」的托盤光暈，立繪本身是疊在最上層的不透明
+       圖層，不會被模糊到，只有立繪四周原本留白的區域會透出光暈跟高光。
+       overflow:hidden 除了裁圓角，也裁掉 ::before 高光超出邊界的部分 */
     .team-mobile-portrait {
         width: 100%;
         height: 42vh;
-        background-color: #ffffff;
+        overflow: hidden;
+        background-color: rgba(255, 255, 255, 0.42);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
         background-size: contain;
         background-position: center bottom;
         background-repeat: no-repeat;
-        border-radius: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.9);
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         position: relative;
         transition: opacity 0.4s ease;
         box-shadow:
-            6px 6px 12px rgba(29, 29, 31, 0.14),
-            -6px -6px 12px rgba(255, 255, 255, 0.8);
+            0 12px 32px -10px rgba(22, 22, 26, 0.32),
+            inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     /* 立繪讀取失敗時才切成深底＋白色圖示佔位，跟桌機版 .team-portrait.img-fallback
@@ -4025,8 +4482,8 @@ a.faq-card {
         transform: translate(-50%, -50%);
     }
 
-    /* 三個框框（工作職位／戰鬥職位／專用武器）一行三欄並排，各自維持獨立的
-       軟膠浮凸卡片，跟常見問題卡片同一套材質語言（見 .faq-card） */
+    /* 三個框框（工作職位／戰鬥職位／專用武器）一行三欄並排，跟姓名列／
+       自介同一套液態玻璃材質 */
     .team-mobile-stats {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
@@ -4034,16 +4491,24 @@ a.faq-card {
     }
 
     .team-mobile-stat-box {
+        position: relative;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         gap: var(--sp-1);
-        background-color: #ffffff;
-        border-radius: 16px;
+        background-color: rgba(255, 255, 255, 0.42);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.9);
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         padding: var(--sp-3) var(--sp-2);
         text-align: left;
         box-shadow:
-            6px 6px 12px rgba(29, 29, 31, 0.14),
-            -6px -6px 12px rgba(255, 255, 255, 0.8);
+            0 12px 32px -10px rgba(22, 22, 26, 0.32),
+            inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     .team-mobile-stat-label {
@@ -4053,26 +4518,39 @@ a.faq-card {
         color: var(--ink-soft);
     }
 
+    /* 三宮格欄寬窄，較長的職位/武器名稱常換行，text-wrap:balance 讓斷行點
+       平均分配，避免最後一行只吊一個孤字（例如「咖啡甜點專／家」），跟設計
+       系統文件裡 h1.doc-title／.type-sample 同一招，是漸進增強寫法，不支援
+       的瀏覽器會退回原本的自然換行 */
     .team-mobile-stat-value {
         font-size: var(--fs-body);
         font-weight: 700;
         color: var(--ink);
         line-height: 1.3;
+        text-wrap: balance;
     }
 
-    /* 自我介紹跟其他小節一樣維持凸起卡片感 */
+    /* 自我介紹跟其他小節一樣維持同一套液態玻璃材質 */
     .team-mobile-bio {
+        position: relative;
+        overflow: hidden;
         display: block;
         font-size: var(--fs-small);
         color: var(--ink-soft);
         line-height: 1.6;
         text-align: left;
-        background-color: #ffffff;
-        border-radius: 16px;
+        background-color: rgba(255, 255, 255, 0.42);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.9);
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
         padding: var(--sp-5);
         box-shadow:
-            6px 6px 12px rgba(29, 29, 31, 0.14),
-            -6px -6px 12px rgba(255, 255, 255, 0.8);
+            0 12px 32px -10px rgba(22, 22, 26, 0.32),
+            inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     /* 原本 2 欄網格在手機上每張卡片只有半個螢幕寬，說明文字擠得要換好幾行，
