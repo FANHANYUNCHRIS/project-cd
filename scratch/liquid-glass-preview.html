@@ -1,0 +1,378 @@
+<title>Liquid Glass Buttons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ink: #16161a;
+    --ink-soft: rgba(22, 22, 26, 0.78);
+    --ink-line: rgba(22, 22, 26, 0.16);
+    --paper: #ebebec;
+    --stage-bg: #0c0c10;
+    --stage-text: rgba(255, 255, 255, 0.92);
+    --stage-text-soft: rgba(255, 255, 255, 0.6);
+    --lg-blue: #4f8ef7;
+    --lg-pink: #ec5fa8;
+    --lg-purple: #9b6bf2;
+    --code-bg: rgba(255, 255, 255, 0.06);
+    --code-text: rgba(255, 255, 255, 0.75);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 72px 32px 120px;
+  }
+
+  header.intro {
+    max-width: 640px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    font-family: 'League Spartan', 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 5vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .lede code {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    background: rgba(22, 22, 26, 0.06);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  /* ===== Stage: photographic-style blurred backdrop, where the site actually
+     deploys .liquid-glass-btn (hero banners) ===== */
+  .stage {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--stage-bg);
+    padding: 64px 40px;
+    isolation: isolate;
+  }
+
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    z-index: -1;
+    background:
+      radial-gradient(38% 45% at 18% 22%, rgba(79, 142, 247, 0.55), transparent 70%),
+      radial-gradient(42% 50% at 82% 18%, rgba(236, 95, 168, 0.5), transparent 70%),
+      radial-gradient(46% 55% at 50% 88%, rgba(155, 107, 242, 0.45), transparent 70%),
+      linear-gradient(160deg, #0c0c10, #050506 60%);
+    filter: blur(60px) saturate(140%);
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage::before { animation: none; }
+  }
+
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(2%, -3%, 0) scale(1.06); }
+  }
+
+  .stage-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--stage-text-soft);
+    margin: 0 0 28px;
+    text-align: center;
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* ===== Liquid glass button system ===== */
+  .lg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .lg-btn:hover { transform: translateY(-2px); }
+  .lg-btn:active { transform: translateY(0) scale(0.97); transition-duration: 0.08s; }
+
+  .lg-btn-black {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22%),
+      linear-gradient(180deg, #4a4a4e 0%, #202024 48%, #050506 100%);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.5),
+      inset 0 -8px 16px -9px rgba(0, 0, 0, 0.7),
+      0 14px 26px -10px rgba(0, 0, 0, 0.45),
+      0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .lg-btn-blue {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 24%),
+      linear-gradient(180deg, #85b3fb 0%, var(--lg-blue) 46%, #2c66c9 100%);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -8px 16px -9px rgba(15, 40, 90, 0.7),
+      0 14px 26px -10px rgba(24, 66, 150, 0.55),
+      0 4px 10px rgba(24, 66, 150, 0.25);
+  }
+
+  .lg-btn-pink {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 24%),
+      linear-gradient(180deg, #f6a0cb 0%, var(--lg-pink) 46%, #b53574 100%);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -8px 16px -9px rgba(110, 20, 65, 0.7),
+      0 14px 26px -10px rgba(150, 40, 95, 0.55),
+      0 4px 10px rgba(150, 40, 95, 0.25);
+  }
+
+  .lg-btn-purple {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 24%),
+      linear-gradient(180deg, #c3a9fb 0%, var(--lg-purple) 46%, #6538b8 100%);
+    box-shadow:
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -8px 16px -9px rgba(55, 20, 100, 0.7),
+      0 14px 26px -10px rgba(85, 40, 150, 0.55),
+      0 4px 10px rgba(85, 40, 150, 0.25);
+  }
+
+  .swatch-token {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--stage-text-soft);
+    letter-spacing: 0.2px;
+  }
+
+  /* ===== On-paper section: the same buttons over the site's real white bg ===== */
+  .paper-section {
+    margin-top: 56px;
+  }
+
+  .paper-card {
+    background: #ffffff;
+    border: 1px solid var(--ink-line);
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  /* ===== Spec strip ===== */
+  .spec-section {
+    margin-top: 64px;
+  }
+
+  h2 {
+    font-family: 'League Spartan', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin: 0 0 6px;
+  }
+
+  .spec-note {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 24px;
+    line-height: 1.6;
+  }
+
+  .code-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .code-card {
+    background: var(--stage-bg);
+    border-radius: 14px;
+    padding: 18px 20px;
+    overflow-x: auto;
+  }
+
+  .code-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--stage-text);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  pre {
+    margin: 0;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--code-text);
+    white-space: pre;
+  }
+
+  .footnote {
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.7;
+  }
+</style>
+
+<div class="page">
+  <header class="intro">
+    <p class="eyebrow">Project.CD 液態玻璃系統</p>
+    <h1>三個還沒上工的顏色</h1>
+    <p class="lede">
+      站上的 <code>--lg-blue</code>、<code>--lg-pink</code>、<code>--lg-purple</code>
+      三色去年就核准了，規格寫明「藍紫粉三色只准出現在按鈕背景上」——但目前只有黑色版本
+      <code>.lg-btn-black</code> 真的被拿來用。這頁把三色補齊，跟黑色版放在一起比對。
+    </p>
+  </header>
+
+  <section class="stage">
+    <p class="stage-label">深色情境（實際部署場景：Hero 圖片上）</p>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <button class="lg-btn lg-btn-black">立即預訂</button>
+        <span class="swatch-token">.lg-btn-black（已上線）</span>
+      </div>
+      <div class="swatch">
+        <button class="lg-btn lg-btn-blue">立即預訂</button>
+        <span class="swatch-token">.lg-btn-blue · --lg-blue</span>
+      </div>
+      <div class="swatch">
+        <button class="lg-btn lg-btn-pink">立即預訂</button>
+        <span class="swatch-token">.lg-btn-pink · --lg-pink</span>
+      </div>
+      <div class="swatch">
+        <button class="lg-btn lg-btn-purple">立即預訂</button>
+        <span class="swatch-token">.lg-btn-purple · --lg-purple</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="paper-section">
+    <div class="paper-card">
+      <button class="lg-btn lg-btn-black" style="color:#fff;">立即預訂</button>
+      <button class="lg-btn lg-btn-blue">立即預訂</button>
+      <button class="lg-btn lg-btn-pink">立即預訂</button>
+      <button class="lg-btn lg-btn-purple">立即預訂</button>
+    </div>
+  </section>
+
+  <section class="spec-section">
+    <h2>套用方式</h2>
+    <p class="spec-note">
+      三個都延用 <code>.liquid-glass-btn</code> 的結構（模糊、飽和、頂部高光、92% 白字），只換底色漸層——跟黑色版是同一套配方，不是另外發明的樣式。
+    </p>
+    <div class="code-grid">
+      <div class="code-card">
+        <p class="code-card-title"><span class="dot" style="background:var(--lg-blue);"></span>.lg-btn-blue</p>
+        <pre>background:
+  linear-gradient(180deg,
+    rgba(255,255,255,.45) 0%,
+    rgba(255,255,255,0) 24%),
+  linear-gradient(180deg,
+    #85b3fb 0%,
+    var(--lg-blue) 46%,
+    #2c66c9 100%);</pre>
+      </div>
+      <div class="code-card">
+        <p class="code-card-title"><span class="dot" style="background:var(--lg-pink);"></span>.lg-btn-pink</p>
+        <pre>background:
+  linear-gradient(180deg,
+    rgba(255,255,255,.45) 0%,
+    rgba(255,255,255,0) 24%),
+  linear-gradient(180deg,
+    #f6a0cb 0%,
+    var(--lg-pink) 46%,
+    #b53574 100%);</pre>
+      </div>
+      <div class="code-card">
+        <p class="code-card-title"><span class="dot" style="background:var(--lg-purple);"></span>.lg-btn-purple</p>
+        <pre>background:
+  linear-gradient(180deg,
+    rgba(255,255,255,.45) 0%,
+    rgba(255,255,255,0) 24%),
+  linear-gradient(180deg,
+    #c3a9fb 0%,
+    var(--lg-purple) 46%,
+    #6538b8 100%);</pre>
+      </div>
+    </div>
+  </section>
+
+  <p class="footnote">這頁只是預覽，還沒寫進 css/style.css。想用在哪裡（例如產品卡的「加入購物車」、行銷活動限定按鈕）跟我說一聲就能接上。</p>
+</div>
