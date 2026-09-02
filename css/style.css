@@ -327,10 +327,9 @@ body {
     transition: color 0s;
 }
 
-/* iOS×Tesla：導覽列從「透明+文字跟著深淺背景變色」改成液態玻璃膠囊浮島——
-   不是即時運算背景深淺，是準備好 Light/Dark 兩組固定材質，靠 .navbar.on-dark
-   這個既有的 class（navObserver 統一驅動，見 logo-text 同一套邏輯）切換用哪一組，
-   不會重踩「即時偵測背景深淺→閃爍」的舊坑（詳見上方導覽列架構說明） */
+/* iOS×Tesla：導覽列從「透明+文字跟著深淺背景變色」改成「不透明白色膠囊浮島」，
+   本身永遠是白底，不管疊在深色影片還是淺色內容上面，都不需要再判斷背景深淺——
+   今天一整天在追的閃爍/不同步問題，根源就是背景深淺判斷，這個做法直接讓問題不存在 */
 .nav-links {
     display: flex;
     list-style: none;
@@ -340,45 +339,11 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: #ffffff;
+    border: 1px solid rgba(22, 22, 26, 0.08);
     border-radius: 100px;
     padding: 4px;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* 左上角光暈，跟其他液態玻璃卡片同一套手法（固定 140px 半徑，不用百分比，
-   不會隨膠囊寬度跑掉），疊出玻璃厚度的立體感 */
-.nav-links::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.6), transparent);
-    pointer-events: none;
-}
-
-.navbar.on-dark .nav-links {
-    background-color: rgba(22, 22, 26, 0.55);
-    border-top-color: rgba(255, 255, 255, 0.35);
-    border-left-color: rgba(255, 255, 255, 0.18);
-    border-right-color: rgba(255, 255, 255, 0.08);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 12px 32px -10px rgba(0, 0, 0, 0.5),
-        inset 0 1px 1px rgba(255, 255, 255, 0.25);
-}
-
-.navbar.on-dark .nav-links::before {
-    background: radial-gradient(circle 140px at 0% 0%, rgba(255, 255, 255, 0.16), transparent);
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
 }
 
 /* 手機版分頁列專用的滑動泡泡，桌機版膠囊不需要 */
@@ -397,10 +362,6 @@ body {
     border-radius: 100px;
     display: inline-block;
     transition: background-color 0.15s linear, color 0.15s linear;
-}
-
-.navbar.on-dark .nav-links a:not(.active) {
-    color: var(--paper-soft);
 }
 
 .nav-links a.active {
@@ -438,9 +399,8 @@ body {
     gap: 8px;
 }
 
-/* 跟導覽膠囊同一個道理，圖示按鈕改成液態玻璃圓底浮島——固定 Light/Dark
-   兩組材質，靠 .navbar.on-dark 切換，不即時偵測背景（見上方 .nav-links
-   同一套架構說明） */
+/* iOS×Tesla：跟導覽膠囊同一個道理，圖示按鈕改成不透明白色圓底浮島，
+   不再需要跟著背景深淺切換顏色 */
 .nav-icon-link,
 .nav-icon-btn {
     /* <button> 瀏覽器預設會帶內距/邊距，<a> 沒有，兩邊寬高不一致就是導致三個圖示
@@ -448,13 +408,8 @@ body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: #fff;
+    border: 1px solid rgba(22, 22, 26, 0.08);
     outline: none;
     cursor: pointer;
     font-family: inherit;
@@ -471,43 +426,8 @@ body {
     position: relative;
     font-size: 21px;
     text-decoration: none;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9);
-    transition: transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* 左上角光暈，半徑依 44px 圓的比例縮小（其他玻璃卡片用 140px 是對應更大的
-   卡片尺寸，這裡照比例縮，不然一顆小圓鈕會被光暈整個蓋滿） */
-.nav-icon-link::before,
-.nav-icon-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    /* 自己補一圈 border-radius:50%，不能靠父層 overflow:hidden 裁切——
-       購物車數量徽章 .cart-badge 是刻意用負值 top/right 探出圓鈕邊緣的
-       絕對定位子元素，父層一旦 overflow:hidden 會把徽章也裁掉 */
-    border-radius: 50%;
-    background: radial-gradient(circle 22px at 15% 15%, rgba(255, 255, 255, 0.7), transparent);
-    pointer-events: none;
-}
-
-.navbar.on-dark .nav-icon-link,
-.navbar.on-dark .nav-icon-btn {
-    background-color: rgba(22, 22, 26, 0.55);
-    color: var(--paper);
-    border-top-color: rgba(255, 255, 255, 0.35);
-    border-left-color: rgba(255, 255, 255, 0.18);
-    border-right-color: rgba(255, 255, 255, 0.08);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 12px 32px -10px rgba(0, 0, 0, 0.5),
-        inset 0 1px 1px rgba(255, 255, 255, 0.25);
-}
-
-.navbar.on-dark .nav-icon-link::before,
-.navbar.on-dark .nav-icon-btn::before {
-    background: radial-gradient(circle 22px at 15% 15%, rgba(255, 255, 255, 0.2), transparent);
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
+    transition: transform 0.2s ease;
 }
 
 /* 會員／聯繫／購物車：Lucide 風格線條圖示，手繪 SVG（2px筆畫、圓角），
