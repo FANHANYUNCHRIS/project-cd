@@ -3189,7 +3189,9 @@ a.faq-card {
     padding: var(--sp-5) var(--sp-4) var(--sp-4);
     border-radius: 14px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.55);
+    /* 提高到跟文件裡 mock-glass-card 示範值(.86)接近，卡片對灰色托盤的
+       對比更明顯，不會整片糊成同一片灰——仍是灰階，不加色相 */
+    background-color: rgba(255, 255, 255, 0.86);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border-top: 1px solid rgba(255, 255, 255, 0.9);
@@ -3253,7 +3255,9 @@ a.faq-card {
     border-radius: 14px;
     font-size: var(--fs-small);
     min-width: 0;
-    background-color: rgba(255, 255, 255, 0.55);
+    /* 同 .account-hud-card，提高到接近文件 mock-glass-card 的 .86，
+       跟灰色托盤拉開對比 */
+    background-color: rgba(255, 255, 255, 0.86);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     border-top: 1px solid rgba(255, 255, 255, 0.9);
