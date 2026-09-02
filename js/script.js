@@ -366,6 +366,22 @@ document.addEventListener('DOMContentLoaded', () => {
             panelsEl.appendChild(panel);
         });
 
+        // 品名欄寬只有卡片寬度的 1/3，字數多的品名（例如「經典鳳梨酥」）
+        // 塞不進一行時，不換行也不溢出，改成一階一階縮小字級直到塞得進去；
+        // 要等 appendChild 完、瀏覽器算完版面才能量到正確的 scrollWidth，
+        // 所以放在 forEach 迴圈跑完之後統一處理
+        function fitProductName(el) {
+            const maxFontSize = 16;
+            const minFontSize = 11;
+            let fontSize = maxFontSize;
+            el.style.fontSize = fontSize + 'px';
+            while (el.scrollWidth > el.clientWidth && fontSize > minFontSize) {
+                fontSize -= 1;
+                el.style.fontSize = fontSize + 'px';
+            }
+        }
+        panelsEl.querySelectorAll('.product-panel-name').forEach(fitProductName);
+
         // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量
         const lazyBgObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {

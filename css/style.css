@@ -698,20 +698,16 @@ body {
 /* 品名／價格／份量拆成三個各自獨立的玻璃面板，跟人物卡「三宮格」
    （.team-mobile-stats／.team-mobile-stat-box）同一套元件語言與材質配方，
    不是原本合併在同一個 .product-panel-body 裡的一行文字 */
-/* 原本三欄等寬，「品名」通常是 4-6 個中文字（例如「經典鳳梨酥」），
-   欄寬不夠常常被迫換行、斷得很難看（例如「經典鳳／梨酥」）。改成品名
-   單獨佔滿第一排、價格／份量分兩欄擠第二排——品名欄寬變成整張卡寬度，
-   幾乎不會再被迫換行；價格／份量本來就有 white-space:nowrap 不會換行，
-   欄寬變窄也不受影響 */
+/* 一排三欄等寬（使用者指定）。品名欄寬會比較窄，4-6 個中文字容易被迫
+   斷行斷得難看（例如「經典鳳／梨酥」）——解法不是靠換行，是靠
+   .product-panel-name 的 white-space:nowrap + JS 自動縮字（見
+   script.js initProductPanels() 裡的 fitProductName()），字太長就縮小
+   字級塞進一行，不換行、也不溢出欄寬 */
 .product-panel-stats {
     flex-shrink: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--sp-2);
-}
-
-.product-panel-stats .product-panel-stat-box:first-child {
-    grid-column: 1 / -1;
 }
 
 .product-panel-stat-box {
@@ -742,14 +738,15 @@ body {
     color: var(--ink-soft);
 }
 
-/* 三格欄寬窄，品名長度不一時 text-wrap:balance 讓斷行點平均分配，
-   避免最後一行吊孤字——跟 .team-mobile-stat-value 同一招 */
+/* 不換行、不溢出欄寬——字太長時靠 JS（fitProductName()）把 font-size
+   往下調到塞得進去為止，起始字級就是這裡的 --fs-body */
 .product-panel-name {
     font-size: var(--fs-body);
     font-weight: bold;
     color: var(--ink);
     line-height: 1.3;
-    text-wrap: balance;
+    white-space: nowrap;
+    overflow: hidden;
     margin: 0;
 }
 
