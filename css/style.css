@@ -1038,12 +1038,10 @@ body {
    自己的內容走。橫向排列（標籤左、內容右）跟會員資料彈窗的 .account-info-row 同一套語言 */
 /* 改成跟手機版 .team-mobile-stats／.team-mobile-stat-box 同一套「並排獨立
    玻璃小卡」語言（原本是 iOS 設定 App 那種單欄清單＋髮絲分隔線，跟手機版
-   排版不一致）。四欄位排成 2×2（手機版三欄位是 1 排 3 欄——桌機這裡欄位
-   較多、卡片也較寬，2 欄比 4 欄一排更有餘裕放下「戰鬥風格」「任務執行到
-   極致」這種較長的標籤/內容，不會被擠到頻繁換行） */
+   排版不一致）。3 欄一排跟手機版一致，拿掉「戰鬥風格」後剛好 3 張卡 */
 .team-stat-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--sp-3);
     flex-shrink: 0;
     margin-bottom: var(--sp-10);
