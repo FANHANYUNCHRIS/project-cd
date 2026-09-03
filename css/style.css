@@ -4513,18 +4513,19 @@ a.faq-card {
         color: var(--ink-soft);
     }
 
-    /* 三宮格欄寬窄，職位/武器名稱字數一多就會被逼換行，改成強制單行——
-       字級縮到 --fs-small、加窄字距，寬度真的不夠時用 ellipsis 截斷而不是
-       硬換行變兩行卡片高度不一致。min-width:0（見上面 .team-mobile-stat-box）
-       是必要條件，不然 grid 欄寬會被 nowrap 文字撐開，破版 */
+    /* 三宮格欄寬窄，職位/武器名稱字數一多就會被逼換行——與其硬擠成單行、
+       靠 ellipsis 把字截掉看不全，改成統一都保留兩行高度（min-height），
+       三個框框不管內容長短都一樣高，排整齊；text-wrap:balance 讓真的需要
+       換行的內容把斷行點平均分配，不會有「咖啡甜／點專家」這種孤字吊在
+       第二行的醜斷法 */
     .team-mobile-stat-value {
+        display: block;
         font-size: var(--fs-small);
         font-weight: 700;
         color: var(--ink);
         line-height: 1.3;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        min-height: calc(1.3em * 2);
+        text-wrap: balance;
     }
 
     /* 自我介紹跟其他小節一樣維持同一套液態玻璃材質 */
