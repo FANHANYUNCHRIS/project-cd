@@ -1088,11 +1088,16 @@ body {
     white-space: nowrap;
 }
 
+/* 三張卡片內容長短不一（「戰鬥專家」4 字 vs 「咖啡甜點專家」6 字），沒有
+   保留高度的話，字數少的卡片明顯比字數多的矮一截，三張並排看起來不齊——
+   統一保留兩行高度，跟手機版 .team-mobile-stat-value 同一招 */
 .team-stat-value {
+    display: block;
     font-size: var(--fs-body);
     font-weight: 700;
     color: var(--ink);
     line-height: 1.3;
+    min-height: calc(1.3em * 2);
     text-wrap: balance;
 }
 
@@ -4481,7 +4486,7 @@ a.faq-card {
     .team-mobile-stats {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: var(--sp-1);
+        gap: var(--sp-2);
     }
 
     .team-mobile-stat-box {
@@ -4498,9 +4503,8 @@ a.faq-card {
         border-right: 1px solid var(--glass-edge-dark);
         border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
-        padding: var(--sp-3) var(--sp-1);
+        padding: var(--sp-3) var(--sp-2);
         text-align: left;
-        min-width: 0;
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
             inset 0 1px 1px var(--glass-edge-light);
@@ -4513,18 +4517,11 @@ a.faq-card {
         color: var(--ink-soft);
     }
 
-    /* 三宮格欄寬窄，職位/武器名稱字數一多就會被逼換行——與其硬擠成單行、
-       靠 ellipsis 把字截掉看不全，改成統一都保留兩行高度（min-height），
-       三個框框不管內容長短都一樣高，排整齊；text-wrap:balance 讓真的需要
-       換行的內容把斷行點平均分配，不會有「咖啡甜／點專家」這種孤字吊在
-       第二行的醜斷法 */
     .team-mobile-stat-value {
-        display: block;
-        font-size: var(--fs-small);
+        font-size: var(--fs-body);
         font-weight: 700;
         color: var(--ink);
         line-height: 1.3;
-        min-height: calc(1.3em * 2);
         text-wrap: balance;
     }
 
