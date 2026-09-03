@@ -4141,8 +4141,12 @@ a.faq-card {
         /* 深色藥丸疊在同樣深色的區塊（例如頁尾）上時，原本唯一的區隔線索
            box-shadow 是深色陰影，跟深色背景幾乎沒有對比度，整顆會融進背景。
            加一圈固定的髮絲級亮邊框（不是即時偵測背景深淺再換色，那是已經
-           踩過的雷，見上面導覽列架構說明），不管背景多深都能把輪廓切出來 */
-        border: 0.5px solid rgba(255, 255, 255, 0.14);
+           踩過的雷，見上面導覽列架構說明），不管背景多深都能把輪廓切出來。
+           用 1px 而不是理論上更細緻的 0.5px：0.5px 只有在 Retina(2x) 螢幕
+           才能真的畫出半像素，一般 Windows 非 HiDPI 螢幕會被瀏覽器四捨五入
+           成 0px、邊框整個消失——這裡「看得到」比「更細」重要，改用兩種
+           螢幕都保證顯示的 1px */
+        border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 32px;
         box-shadow: 0 12px 28px -10px rgba(22, 22, 26, 0.5);
         flex-direction: row;
@@ -4477,7 +4481,7 @@ a.faq-card {
     .team-mobile-stats {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: var(--sp-2);
+        gap: var(--sp-1);
     }
 
     .team-mobile-stat-box {
@@ -4494,8 +4498,9 @@ a.faq-card {
         border-right: 1px solid var(--glass-edge-dark);
         border-bottom: 1px solid var(--glass-edge-dark);
         border-radius: 8px;
-        padding: var(--sp-3) var(--sp-2);
+        padding: var(--sp-3) var(--sp-1);
         text-align: left;
+        min-width: 0;
         box-shadow:
             0 12px 32px -10px rgba(22, 22, 26, 0.32),
             inset 0 1px 1px var(--glass-edge-light);
@@ -4508,16 +4513,18 @@ a.faq-card {
         color: var(--ink-soft);
     }
 
-    /* 三宮格欄寬窄，較長的職位/武器名稱常換行，text-wrap:balance 讓斷行點
-       平均分配，避免最後一行只吊一個孤字（例如「咖啡甜點專／家」），跟設計
-       系統文件裡 h1.doc-title／.type-sample 同一招，是漸進增強寫法，不支援
-       的瀏覽器會退回原本的自然換行 */
+    /* 三宮格欄寬窄，職位/武器名稱字數一多就會被逼換行，改成強制單行——
+       字級縮到 --fs-small、加窄字距，寬度真的不夠時用 ellipsis 截斷而不是
+       硬換行變兩行卡片高度不一致。min-width:0（見上面 .team-mobile-stat-box）
+       是必要條件，不然 grid 欄寬會被 nowrap 文字撐開，破版 */
     .team-mobile-stat-value {
-        font-size: var(--fs-body);
+        font-size: var(--fs-small);
         font-weight: 700;
         color: var(--ink);
         line-height: 1.3;
-        text-wrap: balance;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* 自我介紹跟其他小節一樣維持同一套液態玻璃材質 */
