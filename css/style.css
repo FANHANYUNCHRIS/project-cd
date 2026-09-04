@@ -3782,17 +3782,23 @@ a.faq-card {
     position: relative;
 }
 
-/* 桌機版滿版出血：不再用 aspect-ratio 決定高度，改用 height:100% 跟著
-   .product-modal-content stretch 出來的欄高走，圖片用 object-fit:cover
-   （見下面 .gallery-main img）裁滿整欄，不管文字內容長短都不會露白邊。
-   圓角只留左側兩角（跟 .modal-container 的 22px 對齊），右側兩角是直角，
-   因為那一側緊貼右欄文字面板，不是容器的外緣。手機版堆疊排版不適用
-   這套滿版邏輯，見 ≤1024px media query 復原成獨立卡片式圖片 */
+/* 桌機版滿版出血：原本用 height:100% 跟著 .product-modal-content stretch
+   出來的欄高走，圖片用 object-fit:cover 裁滿整欄——立意是「右欄文字決定
+   彈窗高度」，但 <img> 是替代元素，祖先高度未定時 height:100% 會失效、
+   退回用「目前寬度 ÷ 照片自己的原始長寬比」決定高度，反而是圖片自己的
+   比例在決定彈窗高度：四張商品照片原始比例橫直不一（1.51／0.77／0.67／
+   1.50），直向的焦糖堅果塔（0.67）撐出的欄高遠高於其他張，文字內容填不滿，
+   四個商品的彈窗高度因此各自不同、還會在右欄留下大小不一的空白。改成
+   固定 aspect-ratio 2/3（比照焦糖堅果塔目前最高的那張，以大圖為準，不
+   讓它變矮），四張照片統一裁成同一個形狀，彈窗高度不再看個別照片的原始
+   比例，四個商品一致。圓角只留左側兩角（跟 .modal-container 的 22px
+   對齊），右側兩角是直角，因為那一側緊貼右欄文字面板，不是容器的外緣。
+   手機版堆疊排版不適用這套滿版邏輯，見 ≤1024px media query 復原成獨立
+   卡片式圖片（固定 4:3，不受這裡影響） */
 .gallery-main {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 420px;
+    aspect-ratio: 2 / 3;
     border-radius: 22px 0 0 22px;
     overflow: hidden;
     background-color: rgba(29, 29, 31, 0.05);
