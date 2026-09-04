@@ -4003,12 +4003,89 @@ a.faq-card {
    的位置，改成 flex-grow 把剩餘垂直空間都推給說明文字下方，購物車列
    自然貼底——世界電商 PDP 常見的「內容區／購買動作區」兩段式版面，
    分隔線負責劃出兩者的邊界，不是靠隨意的留白硬擠出來的 */
+/* flex-grow 從 .desc 移到 .product-modal-info-wrap（見下方）：現在說明文字
+   下面接了產地/保存/過敏原資訊卡，會撐開實際內容高度，不該再由 .desc 自己
+   一路長到底——改成整個資訊區塊當一組被推到底部前的內容，資訊不夠長時
+   剩餘空間才留在資訊卡下方、購物車列上方，不是憑空出現在說明文字正下方 */
 .product-detail-body .desc {
     font-size: var(--fs-body);
     line-height: 1.7;
     color: var(--ink-soft);
     margin: 0;
+}
+
+/* 說明文字 + 產地/保存/過敏原，三段當一組被 flex-grow 推頂購物車列，跟
+   .product-panel-stat-box 同一套液態玻璃小卡配方（見該處註解），不重新發明 */
+.product-modal-info-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
     flex-grow: 1;
+    margin-top: var(--sp-4);
+}
+
+.product-modal-info-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
+    border-radius: 12px;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px var(--glass-edge-light);
+}
+
+.info-item {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    min-width: 0;
+}
+
+.info-divider {
+    width: 1px;
+    align-self: stretch;
+    margin: var(--sp-2) 0;
+    background-color: var(--ink-line);
+    flex-shrink: 0;
+}
+
+.info-label {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.info-value {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 過敏原用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
+   #B30000，7.2:1 AAA，不是隨手挑的紅 */
+.product-modal-allergen {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: #B30000;
+    margin: 0;
+}
+
+.product-modal-allergen strong {
+    font-weight: 700;
 }
 
 /* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
