@@ -543,13 +543,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => {
                     if (!response.ok) throw new Error('submit failed');
                     btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> <span>發送成功！</span>`;
-                    btnSubmit.style.backgroundColor = '#28a745';
+                    btnSubmit.style.backgroundColor = '#1F5C23';
                     btnSubmit.style.color = '#ffffff';
                     contactForm.reset();
                 })
                 .catch(() => {
                     btnSubmit.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>發送失敗，請稍後再試</span>`;
-                    btnSubmit.style.backgroundColor = '#e60000';
+                    btnSubmit.style.backgroundColor = '#B30000';
                     btnSubmit.style.color = '#ffffff';
                 })
                 .finally(() => {
