@@ -200,16 +200,16 @@
                 <div class="nav-utility-divider" aria-hidden="true"></div>
 
                 <button type="button" class="nav-icon-btn nav-account-btn" id="nav-btn-account" aria-label="會員登入">
-                    <svg class="nav-icon-svg" id="nav-account-icon-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
-                    <svg class="nav-icon-svg nav-account-icon-crown" id="nav-account-icon-crown" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l-1.2-8.6L7.6 12 12 5l4.4 7 5.8-3.6L21 17"/><path d="M5 19.5h14"/></svg>
+                    <svg class="nav-icon-svg" id="nav-account-icon-person" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.3"/><path d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"/></svg>
+                    <svg class="nav-icon-svg nav-account-icon-crown" id="nav-account-icon-crown" hidden aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l-1.2-8.6L7.6 12 12 5l4.4 7 5.8-3.6L21 17"/><path d="M5 19.5h14"/></svg>
                     <span class="nav-utility-label">會員</span>
                 </button>
                 <a href="#contact" class="nav-icon-link" id="nav-btn-contact" aria-label="聯繫我們">
-                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="1.6"/><path d="M4 7l8 6 8-6"/></svg>
+                    <svg class="nav-icon-svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="1.6"/><path d="M4 7l8 6 8-6"/></svg>
                     <span class="nav-utility-label">聯繫我們</span>
                 </a>
                 <button type="button" class="nav-icon-btn nav-cart-btn" id="nav-btn-cart" aria-label="購物車">
-                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 11.6a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.6L20.8 8H6.2"/><circle cx="9.6" cy="20" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.8" cy="20" r="1.1" fill="currentColor" stroke="none"/></svg>
+                    <svg class="nav-icon-svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 11.6a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.6L20.8 8H6.2"/><circle cx="9.6" cy="20" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.8" cy="20" r="1.1" fill="currentColor" stroke="none"/></svg>
                     <span class="cart-badge" id="cart-badge" hidden>0</span>
                     <span class="nav-utility-label">購物車</span>
                 </button>
@@ -227,7 +227,7 @@
 
         <a href="#brand" class="scroll-down-indicator" aria-label="往下滾動">
             <span>SCROLL DOWN</span>
-            <i class="fa-solid fa-chevron-down"></i>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </a>
     </header>
 
@@ -236,11 +236,11 @@
         <div class="team-switcher reveal-element">
             <div class="team-avatar-rail">
                 <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
-                    <i class="fa-solid fa-chevron-up"></i>
+                    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
                 </button>
                 <div class="team-avatar-list" id="team-avatar-list"></div>
                 <button class="team-nav-btn" id="team-nav-down" aria-label="下一位成員" type="button">
-                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
             </div>
 
@@ -317,59 +317,60 @@
 
     <!-- 產品區塊 (滿版直向分割選單) -->
     <section id="products" class="fullscreen-section">
+        <h2 class="section-title reveal-zoom">產品介紹</h2>
         <div class="product-panels" id="product-panels"></div>
     </section>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
         <div class="modal-container faq-modal-box">
-            <button class="modal-close" id="faq-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="faq-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <h2 class="faq-title" id="faq-modal-title">常見問題與服務條款</h2>
             <div class="faq-grid">
                 <div class="faq-card">
-                    <div class="faq-card-icon"><i class="fa-solid fa-snowflake"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-snowflake" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">保存期限與方式</h3>
                     <p class="faq-card-desc">建議冷藏保存，賞味期限依產品不同約 5-7 天，收到後請盡快冷藏並於期限內享用完畢。</p>
                 </div>
 
                 <a href="#" class="faq-card policy-link" data-policy="shipping">
-                    <div class="faq-card-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">全台配送與冷藏須知</h3>
                     <p class="faq-card-desc">商品透過蝦皮購物、iOpen Mall、全家好賣+ 等平台販售並全程低溫配送，點擊查看完整配送須知。</p>
                 </a>
 
                 <div class="faq-card">
-                    <div class="faq-card-icon"><i class="fa-solid fa-leaf"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">無添加防腐劑</h3>
                     <p class="faq-card-desc">所有甜點皆為新鮮手工現做，堅持無添加防腐劑，正因如此才需要全程冷藏配送與保存。</p>
                 </div>
 
                 <div class="faq-card">
-                    <div class="faq-card-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">素食與過敏原選項</h3>
                     <p class="faq-card-desc">部分品項含有奶油、堅果等成分，若有特殊飲食需求或過敏原顧慮，歡迎透過 LINE 或聯絡表單洽詢。</p>
                 </div>
 
                 <div class="faq-card">
-                    <div class="faq-card-icon"><i class="fa-solid fa-gift"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-gift" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">客製化與大量訂購</h3>
                     <p class="faq-card-desc">無論是節慶禮盒、企業訂購或客製化需求，歡迎透過 LINE 官方帳號或聯絡表單與我們討論細節。</p>
                 </div>
 
                 <a href="#" class="faq-card policy-link" data-policy="returns">
-                    <div class="faq-card-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">退換貨政策</h3>
                     <p class="faq-card-desc">烘焙食品不適用七天鑑賞期；若商品有嚴重毀損或品項不符，點擊查看完整退換貨規定。</p>
                 </a>
 
                 <div class="faq-card">
-                    <div class="faq-card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">會員線上訂購與取貨</h3>
                     <p class="faq-card-desc">登入會員即可線上選購並指定取貨日期（至少 5 個工作天後，週一公休除外），完成後至超商取貨付款。</p>
                 </div>
 
                 <a href="#" class="faq-card policy-link" data-policy="privacy">
-                    <div class="faq-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="faq-card-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">隱私權政策</h3>
                     <p class="faq-card-desc">僅於訂購、配送及客戶服務之必要範圍內使用您的資料，絕不提供給第三方，點擊查看完整政策。</p>
                 </a>
@@ -389,7 +390,7 @@
     <!-- 聯繫我們：改成彈窗，只有點選導覽列的聯繫圖示才會出現，不會排在首頁滾動流程裡 -->
     <div id="contact-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" inert>
         <div class="modal-container contact-modal-box">
-        <button class="modal-close" id="contact-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+        <button class="modal-close" id="contact-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
         <div class="contact-glass-card">
             <div class="contact-glass-intro">
                 <div class="contact-title-row">
@@ -403,7 +404,7 @@
                     <div class="line-status-bar">
                         <span class="line-status-dot">ONLINE</span>
                     </div>
-                    <h4 class="line-title"><i class="fa-brands fa-line"></i> LINE 官方帳號客服</h4>
+                    <h4 class="line-title"><i class="fa-brands fa-line" aria-hidden="true"></i> LINE 官方帳號客服</h4>
                     <p class="line-desc">不想等待 Email 回覆？加入 LINE 官方帳號，專人即時為您服務。</p>
                     <!-- QR Code 用 api.qrserver.com 即時產生，data 是官方帳號 @572bkqdy
                          的加好友連結，跟下面 .btn-line-cta 指向同一個網址 -->
@@ -413,7 +414,7 @@
                     </div>
                     <a href="https://line.me/R/ti/p/@572bkqdy" class="btn-line-cta" target="_blank" rel="noopener noreferrer">
                         <span>開啟 LINE 線上對話</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
@@ -461,7 +462,7 @@
                     <div class="form-submit-area">
                         <button type="submit" class="btn-submit" id="btn-contact-submit">
                             <span class="btn-text">發送留言</span>
-                            <i class="fa-solid fa-paper-plane"></i>
+                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
                         </button>
                         <p class="form-note">我們通常會在 24 小時內回覆您。</p>
                     </div>
@@ -475,24 +476,24 @@
     <div class="shop-footer-screen">
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
-            <h2 class="shop-title reveal-zoom">官方線上商城</h2>
+            <h2 class="section-title reveal-zoom">官方線上商城</h2>
             <div class="shop-links">
                 <a href="https://shopee.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.1" style="--brand: #EE4D2D;">
-                    <i class="fa-solid fa-bag-shopping shop-link-icon"></i>
+                    <i class="fa-solid fa-bag-shopping shop-link-icon" aria-hidden="true"></i>
                     <span class="shop-link-name">蝦皮購物</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
                 <a href="https://mall.iopenmall.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.22" style="--brand: #008163;">
-                    <i class="fa-solid fa-box-open shop-link-icon"></i>
+                    <i class="fa-solid fa-box-open shop-link-icon" aria-hidden="true"></i>
                     <span class="shop-link-name">iOpen Mall</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
                 <a href="https://famishop.fami.life/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.34" style="--brand: #0091D4;">
-                    <i class="fa-solid fa-store shop-link-icon"></i>
+                    <i class="fa-solid fa-store shop-link-icon" aria-hidden="true"></i>
                     <span class="shop-link-name">全家好賣+</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right"></i></span>
+                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
                 </a>
             </div>
         </section>
@@ -503,17 +504,17 @@
                 <div class="footer-section">
                     <h3 class="footer-title">Project.CD</h3>
                     <ul class="footer-links">
-                        <li><a href="#" id="footer-link-contact"><i class="fa-solid fa-comment-dots"></i> 聯繫我們</a></li>
+                        <li><a href="#" id="footer-link-contact"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> 聯繫我們</a></li>
                         <!-- 常見問題／服務條款合併成同一個連結、同一個彈窗（#faq-modal）——
                              服務條款內容維持完整獨立一塊（不是把兩者文字混在一起），
                              用 script.js 裡既有的 policyData.terms 動態塞進
                              #faq-terms-body，內容只維護一份，不會跟 policy-link 那邊
                              （會員註冊條款打勾、聯繫表單隱私權連結還是用得到）分岔 -->
-                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question"></i> 常見問題與服務條款</a></li>
+                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> 常見問題與服務條款</a></li>
                     </ul>
-                    <p><i class="fa-solid fa-location-dot"></i> 台北市內湖區</p>
-                    <p><i class="fa-solid fa-clock"></i> <span class="footer-label-prefix">出貨時間：</span>下訂後 3 天內出貨</p>
-                    <p><i class="fa-solid fa-envelope"></i> <span class="footer-label-prefix">官方信箱：</span>contact@project.cd.com</p>
+                    <p><i class="fa-solid fa-location-dot" aria-hidden="true"></i> 台北市內湖區</p>
+                    <p><i class="fa-solid fa-clock" aria-hidden="true"></i> <span class="footer-label-prefix">出貨時間：</span>下訂後 3 天內出貨</p>
+                    <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> <span class="footer-label-prefix">官方信箱：</span>contact@project.cd.com</p>
                 </div>
 
                 <!-- 手機版單欄斷點（≤600px）改成左右兩欄：左邊 Project.CD 品牌資訊，右邊
@@ -529,14 +530,14 @@
                          配合 style.css 手機版 .footer-social 的 max-width 讓 flex-wrap
                          自動換行 -->
                     <div class="footer-social">
-                        <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" class="social-line" aria-label="LINE"><i class="fa-brands fa-line"></i></a>
-                        <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#" class="social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" class="social-line" aria-label="LINE"><i class="fa-brands fa-line" aria-hidden="true"></i></a>
+                        <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                        <a href="#" class="social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+                        <a href="#" class="social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
                         <!-- 原本「探索更多」區塊的 Game/Education 文字連結，併進來改成跟社群
                              一樣的 icon，目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
-                        <a href="../project-cd-playground/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad"></i></a>
-                        <a href="../project-cd-education/index.html" class="social-edu" aria-label="Education"><i class="fa-solid fa-graduation-cap"></i></a>
+                        <a href="../project-cd-playground/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad" aria-hidden="true"></i></a>
+                        <a href="../project-cd-education/index.html" class="social-edu" aria-label="Education"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -565,7 +566,7 @@
     <!-- 顧客服務條款彈窗 -->
     <div id="policy-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true" inert>
         <div class="modal-container policy-modal-box">
-            <button class="modal-close" id="policy-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="policy-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <h3 id="policy-modal-title" class="modal-title">條款須知</h3>
             <div id="policy-modal-body" class="policy-modal-body"></div>
         </div>
@@ -574,7 +575,7 @@
     <!-- 產品詳細介紹與多圖藝廊彈窗 (支持 6 張縮圖) -->
     <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" aria-hidden="true" inert>
         <div class="modal-container product-modal-box">
-            <button class="modal-close" id="product-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="product-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <div class="product-modal-content">
                 <div class="product-gallery">
                     <div class="gallery-main">
@@ -583,8 +584,8 @@
                              桌機版隱藏（見 CSS），桌機版維持縮圖列可以直接跳到任一張圖。
                              圓點疊在圖片上（不是獨立一排），省下一整排的垂直空間，
                              手機版彈窗才塞得進一屏不用捲動 -->
-                        <button type="button" class="gallery-nav-btn gallery-nav-prev" id="gallery-nav-prev" aria-label="上一張圖片"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button type="button" class="gallery-nav-btn gallery-nav-next" id="gallery-nav-next" aria-label="下一張圖片"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="gallery-nav-btn gallery-nav-prev" id="gallery-nav-prev" aria-label="上一張圖片"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                        <button type="button" class="gallery-nav-btn gallery-nav-next" id="gallery-nav-next" aria-label="下一張圖片"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
                         <div class="gallery-dots" id="product-modal-dots"></div>
                     </div>
                     <div class="gallery-thumbs" id="product-modal-thumbs"></div>
@@ -618,7 +619,7 @@
     <!-- 會員登入／註冊彈窗 -->
     <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" aria-hidden="true" inert>
         <div class="modal-container auth-modal-box">
-            <button class="modal-close" id="auth-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="auth-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <h3 id="auth-modal-title" class="sr-only">會員登入</h3>
 
             <div class="auth-modal-logo">
@@ -641,7 +642,7 @@
                     <div class="password-input-wrap">
                         <input type="password" id="login-password" required autocomplete="current-password">
                         <button type="button" class="password-toggle-btn" data-target="login-password" aria-label="顯示密碼" aria-pressed="false">
-                            <i class="fa-solid fa-eye"></i>
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -678,7 +679,7 @@
                         <div class="password-input-wrap">
                             <input type="password" id="signup-password" minlength="6" required autocomplete="new-password">
                             <button type="button" class="password-toggle-btn" data-target="signup-password" aria-label="顯示密碼" aria-pressed="false">
-                                <i class="fa-solid fa-eye"></i>
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -687,14 +688,14 @@
                         <div class="date-picker-wrap" id="signup-birthday-wrap">
                             <button type="button" class="date-picker-trigger" id="signup-birthday-trigger" aria-haspopup="dialog" aria-expanded="false">
                                 <span id="signup-birthday-display">月 / 日</span>
-                                <i class="fa-regular fa-calendar"></i>
+                                <i class="fa-regular fa-calendar" aria-hidden="true"></i>
                             </button>
                             <input type="hidden" id="signup-birthday">
                             <div class="date-picker-panel" id="signup-birthday-panel" role="dialog" aria-label="選擇生日（月/日）" hidden>
                                 <div class="date-picker-header">
-                                    <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
                                     <span class="date-picker-month-label" id="signup-birthday-label"></span>
-                                    <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個月"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個月"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
                                 </div>
                                 <div class="date-picker-weekdays">
                                     <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
@@ -714,7 +715,7 @@
                         <div class="custom-select-wrap" id="signup-store-wrap">
                             <button type="button" class="date-picker-trigger custom-select-trigger" id="signup-store-trigger" aria-haspopup="listbox" aria-expanded="false">
                                 <span id="signup-store-display">請選擇</span>
-                                <i class="fa-solid fa-chevron-down"></i>
+                                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                             </button>
                             <input type="hidden" id="signup-store" name="signup-store" value="">
                             <ul class="custom-select-panel" id="signup-store-panel" role="listbox" aria-label="偏好取貨超商" hidden>
@@ -729,12 +730,12 @@
 
                 <label class="auth-checkbox-row">
                     <input type="checkbox" id="signup-terms" required>
-                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check"></i></span>
+                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
                     <span class="auth-checkbox-text">我同意 <a href="#" class="policy-link" data-policy="terms">服務條款</a> 與 <a href="#" class="policy-link" data-policy="privacy">隱私權政策</a><span class="required-star">*</span></span>
                 </label>
                 <label class="auth-checkbox-row">
                     <input type="checkbox" id="signup-marketing">
-                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check"></i></span>
+                    <span class="auth-checkbox-mark"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
                     <span class="auth-checkbox-text">我願意收到優惠活動簡訊／LINE 通知（選填）</span>
                 </label>
 
@@ -763,7 +764,7 @@
     <!-- 會員資料彈窗：登入後點擊皇冠圖示顯示，開啟時由 member.js 從 Firestore 即時抓取並填入 -->
     <div id="account-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="account-modal-title" aria-hidden="true" inert>
         <div class="modal-container account-modal-box">
-            <button class="modal-close" id="account-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="account-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
             <h3 id="account-modal-title" class="sr-only">會員資料</h3>
 
@@ -790,14 +791,14 @@
                             <div class="date-picker-wrap account-birthday-wrap" id="account-birthday-wrap">
                                 <button type="button" class="account-info-value account-info-edit-trigger" id="account-birthday-trigger" aria-haspopup="dialog" aria-expanded="false">
                                     <span id="account-birthday-display">—</span>
-                                    <i class="fa-solid fa-chevron-down"></i>
+                                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                                 </button>
                                 <input type="hidden" id="account-birthday-input">
                                 <div class="date-picker-panel account-birthday-panel" id="account-birthday-panel" role="dialog" aria-label="選擇生日（月/日）" hidden>
                                     <div class="date-picker-header">
-                                        <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left"></i></button>
+                                        <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
                                         <span class="date-picker-month-label" id="account-birthday-label"></span>
-                                        <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個月"><i class="fa-solid fa-chevron-right"></i></button>
+                                        <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個月"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
                                     </div>
                                     <div class="date-picker-weekdays">
                                         <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
@@ -831,12 +832,12 @@
                     <p class="account-column-title">會員權益</p>
                     <div class="account-hud-list">
                         <div class="account-hud-card">
-                            <svg class="account-hud-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L26 8 V15 C26 22 21 27 16 29 C11 27 6 22 6 15 V8 Z"/></svg>
+                            <svg class="account-hud-icon" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L26 8 V15 C26 22 21 27 16 29 C11 27 6 22 6 15 V8 Z"/></svg>
                             <span class="account-hud-num" id="account-info-tier">—</span>
                             <span class="account-hud-label">會員等級</span>
                         </div>
                         <div class="account-hud-card">
-                            <svg class="account-hud-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><path d="M16 10.5 L17.8 14.3 L22 14.9 L18.9 17.7 L19.7 21.9 L16 19.8 L12.3 21.9 L13.1 17.7 L10 14.9 L14.2 14.3 Z"/></svg>
+                            <svg class="account-hud-icon" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><path d="M16 10.5 L17.8 14.3 L22 14.9 L18.9 17.7 L19.7 21.9 L16 19.8 L12.3 21.9 L13.1 17.7 L10 14.9 L14.2 14.3 Z"/></svg>
                             <span class="account-hud-num" id="account-info-points">—</span>
                             <span class="account-hud-label">購物點數</span>
                         </div>
@@ -849,17 +850,17 @@
 
                     <div class="account-history-month-nav">
                         <button type="button" class="history-month-btn" id="history-month-prev" aria-label="上個月">
-                            <i class="fa-solid fa-chevron-left"></i>
+                            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
                         </button>
                         <span class="history-month-label" id="history-month-label">2026年08月</span>
                         <button type="button" class="history-month-btn" id="history-month-next" aria-label="下個月">
-                            <i class="fa-solid fa-chevron-right"></i>
+                            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
                         </button>
                     </div>
 
                     <div class="account-history-list" id="account-history-list">
                         <div class="account-history-empty" id="account-history-empty" hidden>
-                            <span class="account-empty-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12 L11 6 H21 L23 12"/><rect x="7" y="12" width="18" height="14" rx="2"/><path d="M12 16 Q12 20 16 20 Q20 20 20 16"/></svg></span>
+                            <span class="account-empty-icon"><svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12 L11 6 H21 L23 12"/><rect x="7" y="12" width="18" height="14" rx="2"/><path d="M12 16 Q12 20 16 20 Q20 20 20 16"/></svg></span>
                             <p class="account-empty-text" id="account-history-empty-text">這個月尚無購買紀錄</p>
                         </div>
                     </div>
@@ -871,7 +872,7 @@
     <!-- 購物車彈窗 -->
     <div id="cart-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title" aria-hidden="true" inert>
         <div class="modal-container cart-modal-box">
-            <button class="modal-close" id="cart-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="cart-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <h3 id="cart-modal-title" class="modal-title">購物車</h3>
 
             <!-- 未登入時顯示的引導畫面：取代原本「一點購物車就直接跳登入彈窗」的做法，
@@ -898,7 +899,7 @@
     <!-- 結帳彈窗（含取貨日期選擇） -->
     <div id="checkout-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title" aria-hidden="true" inert>
         <div class="modal-container checkout-modal-box">
-            <button class="modal-close" id="checkout-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+            <button class="modal-close" id="checkout-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <h3 id="checkout-modal-title" class="modal-title">確認訂購</h3>
 
             <div id="checkout-order-summary" class="checkout-order-summary"></div>

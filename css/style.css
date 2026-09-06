@@ -612,8 +612,10 @@ body {
 #products.fullscreen-section {
     background-color: #EBEBEC;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .product-panels {
@@ -621,11 +623,6 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--sp-6);
     width: 100%;
-    /* 原本 640px，四欄窄版寬度下商品照被 cover 裁成快 1:2 的細長直幅，
-       視覺上偏長不自然。縮到 500px，照片區塊比例落在接近 4:3 的合理
-       商品照範圍，資訊小卡高度不變（本來就是內容自身撐出來的高度，
-       不受這個值影響） */
-    height: 500px;
 }
 
 /* 商品卡跟人物卡（.team-mobile-card）套用同一套液態玻璃材質：淺灰托盤
@@ -687,10 +684,16 @@ body {
    .policy-modal-body p 同一個成因，見那裡的說明），玻璃感靠邊框+模糊+
    陰影撐起來就好 */
 
+/* 原本靠 .product-panels 的固定 height:500px 讓 flex:1 的圖片區塊「大概」
+   撐出接近 4:3 的比例，但欄寬會隨螢幕寬度變動、高度卻是定值，實際比例
+   在不同桌機寬度下並不一致。改用真正的 aspect-ratio 直接鎖定比例，不論
+   螢幕多寬都準確；4:5 直式比例比原本偏橫的比例更適合四欄窄版排版，跟
+   手機版單欄卡片的 4:3（見下面 max-width:1024px 那組）是刻意不同的選擇——
+   手機版單欄不受欄寬擠壓，橫式比例還撐得住 */
 .product-panel-image {
     position: relative;
-    flex: 1;
-    min-height: 0;
+    flex: none;
+    aspect-ratio: 4 / 5;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2139,7 +2142,7 @@ a.faq-card {
     margin-bottom: var(--sp-4);
 }
 
-.shop-title {
+.section-title {
     font-size: var(--fs-h2);
     font-weight: bold;
     color: var(--ink);
@@ -2165,33 +2168,49 @@ a.faq-card {
     gap: 16px;
     padding: 48px 24px;
     text-decoration: none;
-    color: var(--brand);
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    color: var(--ink);
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.45s ease,
-                opacity 0.4s ease,
-                filter 0.4s ease,
-                border-color 0.4s ease;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px var(--glass-edge-light);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 
-.shop-links:hover .shop-glass-card {
-    opacity: 0.5;
-    filter: saturate(0.6) brightness(0.96);
-    transform: scale(0.96);
-}
-
-.shop-links .shop-glass-card:hover {
-    opacity: 1;
-    filter: none;
-    transform: scale(1.08);
+.shop-glass-card:hover {
+    transform: translateY(-4px);
     border-color: var(--brand);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    box-shadow:
+        0 18px 40px -12px rgba(22, 22, 26, 0.4),
+        inset 0 1px 1px var(--glass-edge-light);
+}
+
+/* 商品卡「道具卡」編號牌——呼應品牌團隊卡片的角色能力值語言（見設計系統文件），
+   用遊戲道具欄常見的「No.01」編號標籤把商品框成收藏道具，而不是單純的商品照。
+   數字用跟價格同一套 tabular-nums，維持黑白灰不引入新色相 */
+.product-panel-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
     z-index: 2;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(22, 22, 26, 0.3);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
 }
 
 .shop-link-icon {
@@ -2210,6 +2229,7 @@ a.faq-card {
     font-size: var(--fs-lead);
     font-weight: 700;
     letter-spacing: 0.5px;
+    color: var(--brand);
 }
 
 .shop-link-arrow {
@@ -4279,9 +4299,9 @@ a.faq-card {
         display: none;
     }
 
-    /* 手機版沒有桌機版 .product-panels 那個固定 640px 高度的網格容器撐著，
-       圖片改用跟商品彈窗大圖（.gallery-main）同一組 4:3 比例自己決定高度，
-       不再需要原本 min-height:480px 硬撐卡片高度的做法 */
+    /* 手機版單欄卡片改用跟商品彈窗大圖（.gallery-main）同一組 4:3 比例，
+       蓋過桌機版的 4:5——單欄不受欄寬擠壓，橫式比例還撐得住，跟桌機版
+       四欄窄版故意選用直式比例是不同情境（見桌機版規則的說明） */
     .product-panel-image {
         flex: none;
         aspect-ratio: 4 / 3;
@@ -4618,9 +4638,7 @@ a.faq-card {
         padding: var(--sp-8) var(--sp-6);
     }
 
-    .shop-links:hover .shop-glass-card {
-        opacity: 1;
-        filter: none;
+    .shop-glass-card:hover {
         transform: none;
     }
 
@@ -4838,7 +4856,7 @@ a.faq-card {
         box-shadow: none;
     }
 
-    .shop-links .shop-glass-card:hover {
+    .shop-glass-card:hover {
         box-shadow: none;
     }
 

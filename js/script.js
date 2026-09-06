@@ -308,7 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.setAttribute('aria-label', `查看${product.name}詳細介紹`);
 
             panel.innerHTML = `
-                <div class="product-panel-image" data-bg="${product.images[0]}"></div>
+                <div class="product-panel-image" data-bg="${product.images[0]}">
+                    <span class="product-panel-tag">No.${String(index + 1).padStart(2, '0')}</span>
+                </div>
                 <div class="product-panel-stats">
                     <div class="product-panel-stat-box">
                         <span class="product-panel-stat-label">品名</span>
@@ -340,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 塞不進一行時，不換行也不溢出，改成一階一階縮小字級直到塞得進去；
         // 要等 appendChild 完、瀏覽器算完版面才能量到正確的 scrollWidth，
         // 所以放在 forEach 迴圈跑完之後統一處理
-        function fitProductName(el) {
+        function fitPanelText(el) {
             const maxFontSize = 16;
             const minFontSize = 11;
             let fontSize = maxFontSize;
@@ -350,7 +352,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.style.fontSize = fontSize + 'px';
             }
         }
-        panelsEl.querySelectorAll('.product-panel-name').forEach(fitProductName);
+        // 品名／價格／份量三欄都可能因為窄版桌機（例如 1280px 筆電）欄寬不夠而被
+        // .product-panel-stat-box 的 overflow:hidden 裁掉尾端文字，不是只有品名
+        // 會遇到這個問題——三欄都套用同一套「先撐最大字級、塞不下才縮小」的邏輯
+        panelsEl.querySelectorAll('.product-panel-name, .product-panel-price, .product-panel-qty').forEach(fitPanelText);
 
         // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量
         const lazyBgObserver = new IntersectionObserver((entries, observer) => {
