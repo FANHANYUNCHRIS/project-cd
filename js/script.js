@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 500",
             qty: "10入/盒",
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國 Isigny 發酵奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
+            origin: "台灣手作",
+            storage: "常溫 14 天",
+            allergens: "蛋、奶、麩質",
             images: [
                 "images/product-1.jpg",
                 "images/product-1-detail1.jpg",
@@ -21,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 400",
             qty: "1條/盒",
             desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
+            origin: "台灣手作",
+            storage: "冷藏 7 天",
+            allergens: "蛋、奶、麩質",
             images: [
                 "images/product-2.jpg",
                 "images/product-2-detail1.jpg",
@@ -33,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 600",
             qty: "10入/盒",
             desc: "手工熬煮法國海鹽焦糖醬，均勻裹覆夏威夷豆與核桃，放在香脆塔皮上，口感層次豐富，香氣四溢。",
+            origin: "台灣手作",
+            storage: "常溫 21 天",
+            allergens: "蛋、奶、堅果、麩質",
             images: [
                 "images/product-3.jpg",
                 "images/product-3-detail1.jpg",
@@ -45,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 650",
             qty: "8吋/顆",
             desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
+            origin: "台灣手作",
+            storage: "冷藏 5 天",
+            allergens: "蛋、奶、麩質",
             images: [
                 "images/product-4.jpg",
                 "images/product-4-detail1.jpg",
@@ -536,13 +548,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => {
                     if (!response.ok) throw new Error('submit failed');
                     btnSubmit.innerHTML = `<i class="fa-solid fa-check"></i> <span>發送成功！</span>`;
-                    btnSubmit.style.backgroundColor = '#28a745';
+                    btnSubmit.style.backgroundColor = '#1F5C23';
                     btnSubmit.style.color = '#ffffff';
                     contactForm.reset();
                 })
                 .catch(() => {
                     btnSubmit.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>發送失敗，請稍後再試</span>`;
-                    btnSubmit.style.backgroundColor = '#e60000';
+                    btnSubmit.style.backgroundColor = '#B30000';
                     btnSubmit.style.color = '#ffffff';
                 })
                 .finally(() => {
@@ -698,6 +710,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalPrice = document.getElementById('product-modal-price');
     const modalQty = document.getElementById('product-modal-qty');
     const modalDesc = document.getElementById('product-modal-desc');
+    const modalOrigin = document.getElementById('product-modal-origin');
+    const modalStorage = document.getElementById('product-modal-storage');
+    const modalAllergen = document.getElementById('product-modal-allergen-text');
     const modalCta = document.getElementById('product-modal-cta');
 
     // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
@@ -749,6 +764,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modalPrice.textContent = data.price;
         modalQty.textContent = data.qty;
         modalDesc.textContent = data.desc;
+        modalOrigin.textContent = data.origin;
+        modalStorage.textContent = data.storage;
+        modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
 
         galleryImages = data.images;
         galleryName = data.name;

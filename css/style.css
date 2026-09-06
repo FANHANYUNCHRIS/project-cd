@@ -3802,17 +3802,23 @@ a.faq-card {
     position: relative;
 }
 
-/* 桌機版滿版出血：不再用 aspect-ratio 決定高度，改用 height:100% 跟著
-   .product-modal-content stretch 出來的欄高走，圖片用 object-fit:cover
-   （見下面 .gallery-main img）裁滿整欄，不管文字內容長短都不會露白邊。
-   圓角只留左側兩角（跟 .modal-container 的 22px 對齊），右側兩角是直角，
-   因為那一側緊貼右欄文字面板，不是容器的外緣。手機版堆疊排版不適用
-   這套滿版邏輯，見 ≤1024px media query 復原成獨立卡片式圖片 */
+/* 桌機版滿版出血：原本用 height:100% 跟著 .product-modal-content stretch
+   出來的欄高走，圖片用 object-fit:cover 裁滿整欄——立意是「右欄文字決定
+   彈窗高度」，但 <img> 是替代元素，祖先高度未定時 height:100% 會失效、
+   退回用「目前寬度 ÷ 照片自己的原始長寬比」決定高度，反而是圖片自己的
+   比例在決定彈窗高度：四張商品照片原始比例橫直不一（1.51／0.77／0.67／
+   1.50），直向的焦糖堅果塔（0.67）撐出的欄高遠高於其他張，文字內容填不滿，
+   四個商品的彈窗高度因此各自不同、還會在右欄留下大小不一的空白。改成
+   固定 aspect-ratio 2/3（比照焦糖堅果塔目前最高的那張，以大圖為準，不
+   讓它變矮），四張照片統一裁成同一個形狀，彈窗高度不再看個別照片的原始
+   比例，四個商品一致。圓角只留左側兩角（跟 .modal-container 的 22px
+   對齊），右側兩角是直角，因為那一側緊貼右欄文字面板，不是容器的外緣。
+   手機版堆疊排版不適用這套滿版邏輯，見 ≤1024px media query 復原成獨立
+   卡片式圖片（固定 4:3，不受這裡影響） */
 .gallery-main {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 420px;
+    aspect-ratio: 2 / 3;
     border-radius: 22px 0 0 22px;
     overflow: hidden;
     background-color: rgba(29, 29, 31, 0.05);
@@ -4023,12 +4029,89 @@ a.faq-card {
    的位置，改成 flex-grow 把剩餘垂直空間都推給說明文字下方，購物車列
    自然貼底——世界電商 PDP 常見的「內容區／購買動作區」兩段式版面，
    分隔線負責劃出兩者的邊界，不是靠隨意的留白硬擠出來的 */
+/* flex-grow 從 .desc 移到 .product-modal-info-wrap（見下方）：現在說明文字
+   下面接了產地/保存/過敏原資訊卡，會撐開實際內容高度，不該再由 .desc 自己
+   一路長到底——改成整個資訊區塊當一組被推到底部前的內容，資訊不夠長時
+   剩餘空間才留在資訊卡下方、購物車列上方，不是憑空出現在說明文字正下方 */
 .product-detail-body .desc {
     font-size: var(--fs-body);
     line-height: 1.7;
     color: var(--ink-soft);
     margin: 0;
+}
+
+/* 說明文字 + 產地/保存/過敏原，三段當一組被 flex-grow 推頂購物車列，跟
+   .product-panel-stat-box 同一套液態玻璃小卡配方（見該處註解），不重新發明 */
+.product-modal-info-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
     flex-grow: 1;
+    margin-top: var(--sp-4);
+}
+
+.product-modal-info-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
+    border-radius: 12px;
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px var(--glass-edge-light);
+}
+
+.info-item {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-4);
+    min-width: 0;
+}
+
+.info-divider {
+    width: 1px;
+    align-self: stretch;
+    margin: var(--sp-2) 0;
+    background-color: var(--ink-line);
+    flex-shrink: 0;
+}
+
+.info-label {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.info-value {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 過敏原用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
+   #B30000，7.2:1 AAA，不是隨手挑的紅 */
+.product-modal-allergen {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: #B30000;
+    margin: 0;
+}
+
+.product-modal-allergen strong {
+    font-weight: 700;
 }
 
 /* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
