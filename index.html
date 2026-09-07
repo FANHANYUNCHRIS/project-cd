@@ -892,7 +892,9 @@
             <!-- 未登入時顯示的引導畫面：取代原本「一點購物車就直接跳登入彈窗」的做法，
                  先讓使用者看到購物車彈窗本身，再用這個畫面引導去登入，體感比較不突兀 -->
             <div id="cart-login-gate" class="cart-login-gate" hidden>
-                <img class="cart-login-gate-cat" src="images/cart-login-cat.png" alt="貓咪插畫" width="160" height="160">
+                <div class="cart-login-gate-cat-wrap">
+                    <img class="cart-login-gate-cat" id="cart-login-gate-cat-img" src="images/cart-login-cat.png" alt="貓咪插畫" width="160" height="160">
+                </div>
                 <h4 class="cart-login-gate-title">請先登入會員</h4>
                 <p class="cart-login-gate-desc">登入後即可將商品加入購物車，並查看訂單紀錄</p>
                 <button type="button" class="btn-modal-cta" id="cart-login-gate-cta">前往登入</button>

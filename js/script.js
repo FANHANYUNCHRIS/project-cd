@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================= */
     const productsData = {
         '1': {
-            name: "經典鳳梨酥",
+            name: "鳳梨酥",
             price: "NT$ 500",
             qty: "10入/盒",
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國 Isigny 發酵奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
@@ -20,12 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         '2': {
-            name: "法式磅蛋糕",
-            price: "NT$ 400",
-            qty: "1條/盒",
-            desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
+            // 蛋黃酥的真實商品照還沒找到合適的（見對話紀錄：Pexels/Pixabay 上
+            // 幾乎沒有真正符合「金黃酥皮＋鹹蛋黃內餡」外觀的免費素材，寧可維持
+            // 圖片缺件、套用既有的 .img-fallback 佔位樣式，也不要放一張根本不是
+            // 蛋黃酥的照片上去混淆消費者——跟 team-2.jpg／team-3.jpg 同一個處理
+            // 原則：等真正拍好照片放進 images/ 資料夾就會自動生效
+            name: "蛋黃酥",
+            price: "NT$ 450",
+            qty: "6入/盒",
+            desc: "選用紅心鹹蛋黃搭配細緻烏豆沙餡，外層酥皮層層酥脆，鹹甜交織是經典中式節慶點心的代表。",
             origin: "台灣手作",
-            storage: "冷藏 7 天",
+            storage: "常溫 7 天",
             allergens: "蛋、奶、麩質",
             images: [
                 "images/product-2.jpg",
@@ -35,13 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         '3': {
-            name: "焦糖堅果塔",
-            price: "NT$ 600",
-            qty: "10入/盒",
-            desc: "手工熬煮法國海鹽焦糖醬，均勻裹覆夏威夷豆與核桃，放在香脆塔皮上，口感層次豐富，香氣四溢。",
+            name: "磅蛋糕",
+            price: "NT$ 400",
+            qty: "1條/盒",
+            desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
             origin: "台灣手作",
-            storage: "常溫 21 天",
-            allergens: "蛋、奶、堅果、麩質",
+            storage: "冷藏 7 天",
+            allergens: "蛋、奶、麩質",
             images: [
                 "images/product-3.jpg",
                 "images/product-3-detail1.jpg",
@@ -320,21 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
             panel.setAttribute('aria-label', `查看${product.name}詳細介紹`);
 
             panel.innerHTML = `
-                <div class="product-panel-image" data-bg="${product.images[0]}">
-                    <span class="product-panel-tag">No.${String(index + 1).padStart(2, '0')}</span>
-                </div>
-                <div class="product-panel-stats">
-                    <div class="product-panel-stat-box">
-                        <span class="product-panel-stat-label">品名</span>
-                        <h3 class="product-panel-name">${product.name}</h3>
-                    </div>
-                    <div class="product-panel-stat-box">
-                        <span class="product-panel-stat-label">價格</span>
+                <div class="product-panel-image" data-bg="${product.images[0]}"></div>
+                <div class="product-panel-infobar">
+                    <h3 class="product-panel-name">${product.name}</h3>
+                    <div class="product-panel-meta">
                         <span class="product-panel-price">${product.price}</span>
-                    </div>
-                    <div class="product-panel-stat-box">
-                        <span class="product-panel-stat-label">份量</span>
-                        <span class="product-panel-qty">${product.qty}</span>
+                        <span class="product-panel-qty">（${product.qty}）</span>
                     </div>
                 </div>
             `;
@@ -350,24 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
             panelsEl.appendChild(panel);
         });
 
-        // 品名欄寬只有卡片寬度的 1/3，字數多的品名（例如「經典鳳梨酥」）
-        // 塞不進一行時，不換行也不溢出，改成一階一階縮小字級直到塞得進去；
-        // 要等 appendChild 完、瀏覽器算完版面才能量到正確的 scrollWidth，
-        // 所以放在 forEach 迴圈跑完之後統一處理
-        function fitPanelText(el) {
-            const maxFontSize = 16;
-            const minFontSize = 11;
-            let fontSize = maxFontSize;
-            el.style.fontSize = fontSize + 'px';
-            while (el.scrollWidth > el.clientWidth && fontSize > minFontSize) {
-                fontSize -= 1;
-                el.style.fontSize = fontSize + 'px';
-            }
-        }
-        // 品名／價格／份量三欄都可能因為窄版桌機（例如 1280px 筆電）欄寬不夠而被
-        // .product-panel-stat-box 的 overflow:hidden 裁掉尾端文字，不是只有品名
-        // 會遇到這個問題——三欄都套用同一套「先撐最大字級、塞不下才縮小」的邏輯
-        panelsEl.querySelectorAll('.product-panel-name, .product-panel-price, .product-panel-qty').forEach(fitPanelText);
+        // 品名現在統一是 2-4 個字的短名稱（鳳梨酥／蛋黃酥／磅蛋糕／巧克力派），
+        // 不再需要依名稱長短動態縮放字級的邏輯——四張卡片的品名固定用同一個
+        // font-size（見 .product-panel-name），視覺大小才會完全一致，不會因為
+        // 字數或右側價格寬度不同而每張卡各自縮出不同大小
 
         // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量
         const lazyBgObserver = new IntersectionObserver((entries, observer) => {
@@ -566,6 +548,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 2500);
                 });
         });
+    }
+
+    /* =========================================
+       13b. 購物車未登入引導畫面的貓咪插畫，還沒上傳時的優雅預留樣式
+       ========================================= */
+    const cartLoginGateCatImg = document.getElementById('cart-login-gate-cat-img');
+    if (cartLoginGateCatImg) {
+        // 這張是寫死在 HTML 裡的靜態 <img>，瀏覽器在 parse 到這個標籤時就會立刻開始
+        // 抓取，很可能在這支 script 執行以前就已經抓取失敗、error 事件已經錯過了——
+        // 跟其他張用 JS 動態塞 innerHTML 才設 src 的圖片（監聽器一定先掛好）不同，
+        // 這裡要先補判斷 complete + naturalWidth===0（已經載入失敗過的訊號），
+        // 不能只靠 addEventListener('error', ...) 賭監聽器掛的時機夠早
+        const markFallback = () => cartLoginGateCatImg.parentElement.classList.add('img-fallback');
+        if (cartLoginGateCatImg.complete && cartLoginGateCatImg.naturalWidth === 0) {
+            markFallback();
+        } else {
+            cartLoginGateCatImg.addEventListener('error', markFallback, { once: true });
+        }
     }
 
     /* =========================================

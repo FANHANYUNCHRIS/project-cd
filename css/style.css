@@ -655,8 +655,12 @@ body {
                 opacity 0.6s ease;
 }
 
+/* 原本是卡片本身位移 + 內部圖片各自 scale(1.05)（見下面 .product-panel-image
+   的說明），兩個動作疊在一起等於「卡片浮起來、圖片同時又放大」，視覺上像
+   兩層各自的動畫互相搶戲。改成整張卡片(含圖片、資訊列)一起等比放大，
+   .product-panel-image 不再單獨處理 hover */
 .product-panel:hover {
-    transform: translateY(-8px);
+    transform: translateY(-8px) scale(1.03);
     box-shadow: 0 20px 40px rgba(22, 22, 26, 0.24);
 }
 
@@ -677,12 +681,6 @@ body {
     background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
     pointer-events: none;
 }
-
-/* .product-panel-stat-box 刻意不加邊角高光——這顆卡很小（品名/價格/份量），
-   140px 半徑的高光幾乎蓋滿整顆卡，label 用的 --ink-soft 淺灰字剛好落在
-   高光最亮的左上角，會被墊亮到跟其他行不一致（跟 .faq-terms-section
-   .policy-modal-body p 同一個成因，見那裡的說明），玻璃感靠邊框+模糊+
-   陰影撐起來就好 */
 
 /* 原本靠 .product-panels 的固定 height:500px 讓 flex:1 的圖片區塊「大概」
    撐出接近 4:3 的比例，但欄寬會隨螢幕寬度變動、高度卻是定值，實際比例
@@ -711,34 +709,20 @@ body {
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
         inset 0 1px 1px var(--glass-edge-light);
-    transition: transform 0.5s ease;
 }
 
-.product-panel:hover .product-panel-image {
-    transform: scale(1.05);
-}
-
-/* 品名／價格／份量拆成三個各自獨立的玻璃面板，跟人物卡「三宮格」
-   （.team-mobile-stats／.team-mobile-stat-box）同一套元件語言與材質配方，
-   不是原本合併在同一個 .product-panel-body 裡的一行文字 */
-/* 一排三欄等寬（使用者指定）。品名欄寬會比較窄，4-6 個中文字容易被迫
-   斷行斷得難看（例如「經典鳳／梨酥」）——解法不是靠換行，是靠
-   .product-panel-name 的 white-space:nowrap + JS 自動縮字（見
-   script.js initProductPanels() 裡的 fitProductName()），字太長就縮小
-   字級塞進一行，不換行、也不溢出欄寬 */
-.product-panel-stats {
+/* 品名／價格／份量原本拆成三個各自獨立的玻璃面板（三宮格），改成單一
+   長方形玻璃面板：左邊品名、右邊價格＋份量，跟商品詳情彈窗的
+   .product-modal-meta（標題列同樣是左品名、右價格＋份量）版面邏輯一致，
+   不再是另一套獨立設計 */
+.product-panel-infobar {
     flex-shrink: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--sp-2);
-}
-
-.product-panel-stat-box {
     position: relative;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
-    gap: var(--sp-1);
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
     background-color: rgba(255, 255, 255, 0.42);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
@@ -747,23 +731,19 @@ body {
     border-right: 1px solid var(--glass-edge-dark);
     border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 8px;
-    padding: var(--sp-3) var(--sp-2);
-    text-align: left;
+    padding: var(--sp-3) var(--sp-4);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
         inset 0 1px 1px var(--glass-edge-light);
 }
 
-.product-panel-stat-label {
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--ink-soft);
-}
-
-/* 不換行、不溢出欄寬——字太長時靠 JS（fitProductName()）把 font-size
-   往下調到塞得進去為止，起始字級就是這裡的 --fs-body */
+/* 不換行、不溢出欄寬——字太長時靠 JS（fitPanelText()）把 font-size
+   往下調到塞得進去為止，起始字級就是這裡的 --fs-body。min-width:0 讓
+   flex 子項可以縮到比內容窄，不然 white-space:nowrap 的文字會撐開
+   flex-basis，把右邊的價格/份量擠出去 */
 .product-panel-name {
+    flex: 1;
+    min-width: 0;
     font-size: var(--fs-body);
     font-weight: bold;
     color: var(--ink);
@@ -773,7 +753,19 @@ body {
     margin: 0;
 }
 
-/* 跟 .account-hud-num／.mock-stat-num 同一套「數字等寬」處理：4 張卡片
+/* 價格＋份量右側一組，跟品名之間留白，不搶主要資訊（品名）的視覺份量。
+   試過的方案：灰底膠囊（太像獨立按鈕）、點號分隔（使用者不要點）、
+   純文字並排無分隔（太黏、不好讀）、上下疊放（可讀但卡片變高）——
+   最後定案：份量用括號包起來當價格的附註，回到單行，括號本身就是
+   夠清楚的視覺區隔，不用額外的點號或底色 */
+.product-panel-meta {
+    flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+/* 跟 .account-hud-num／.mock-stat-num 同一套「數字等寬」處理：四張卡片
    並排時，價格數字才會在同一個視覺基準上對齊，不會因為每個數字本身
    寬度不同（1 比 8 窄）而讓整排價格看起來歪斜 */
 .product-panel-price {
@@ -786,10 +778,9 @@ body {
 }
 
 .product-panel-qty {
-    font-size: var(--fs-body);
-    font-weight: bold;
-    color: var(--ink);
-    line-height: 1.3;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--ink-soft);
     white-space: nowrap;
 }
 
@@ -2191,28 +2182,6 @@ a.faq-card {
         inset 0 1px 1px var(--glass-edge-light);
 }
 
-/* 商品卡「道具卡」編號牌——呼應品牌團隊卡片的角色能力值語言（見設計系統文件），
-   用遊戲道具欄常見的「No.01」編號標籤把商品框成收藏道具，而不是單純的商品照。
-   數字用跟價格同一套 tabular-nums，維持黑白灰不引入新色相 */
-.product-panel-tag {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 2;
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(22, 22, 26, 0.3);
-    border-radius: 6px;
-    padding: 3px 9px;
-    font-family: 'Inter', sans-serif;
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-}
-
 .shop-link-icon {
     font-size: var(--fs-h2);
     color: var(--brand);
@@ -3577,11 +3546,39 @@ a.faq-card {
     pointer-events: none;
 }
 
-.cart-login-gate-cat {
+.cart-login-gate-cat-wrap {
     width: 160px;
     height: 160px;
-    object-fit: contain;
     margin-bottom: var(--sp-6);
+}
+
+.cart-login-gate-cat {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 貓咪插畫還沒上傳時的優雅預留樣式，跟商品圖 .gallery-main.img-fallback、
+   人物頭像 .team-avatar-item.img-fallback 同一套邏輯：容器負責顯示 icon，
+   圖片準備好上傳後會自動換回真的插畫 */
+.cart-login-gate-cat-wrap.img-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-sunken);
+    border-radius: 50%;
+}
+
+.cart-login-gate-cat-wrap.img-fallback .cart-login-gate-cat {
+    display: none;
+}
+
+.cart-login-gate-cat-wrap.img-fallback::after {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f6be";
+    color: rgba(22, 22, 26, 0.4);
+    font-size: 56px;
 }
 
 .cart-login-gate-title {
@@ -4041,7 +4038,7 @@ a.faq-card {
 }
 
 /* 說明文字 + 產地/保存/過敏原，三段當一組被 flex-grow 推頂購物車列，跟
-   .product-panel-stat-box 同一套液態玻璃小卡配方（見該處註解），不重新發明 */
+   .product-panel-infobar 同一套液態玻璃小卡配方，不重新發明 */
 .product-modal-info-wrap {
     display: flex;
     flex-direction: column;
