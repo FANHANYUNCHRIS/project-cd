@@ -59,16 +59,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* --- 會員資料彈窗：登入後點擊皇冠圖示顯示，開啟時即時從 Firestore 抓資料填入。
        大頭貼切換／封號／會員等級／優惠券在資料庫裡沒有對應欄位（從沒建過後端），
-       畫面上已經拿掉，只接了真的有資料的欄位：姓名/信箱/電話/生日/加入日期/購物點數/購買紀錄/登出 --- */
+       畫面上已經拿掉，只接了真的有資料的欄位：姓名/信箱/電話/生日/加入日期/會員等級/累積金額/購買紀錄/登出 --- */
     const accountModal = document.getElementById('account-modal');
     const accountModalClose = document.getElementById('account-modal-close');
     const accountInfoName = document.getElementById('account-info-name');
     const accountInfoEmail = document.getElementById('account-info-email');
     const accountInfoPhone = document.getElementById('account-info-phone');
+    const accountInfoBirthday = document.getElementById('account-info-birthday');
     const accountInfoCreated = document.getElementById('account-info-created');
-    const accountInfoMemberno = document.getElementById('account-info-memberno');
-    const accountInfoPoints = document.getElementById('account-info-points');
     const accountInfoTier = document.getElementById('account-info-tier');
+    const accountInfoSpend = document.getElementById('account-info-spend');
+    const accountTierProgressFill = document.getElementById('account-tier-progress-fill');
+    const accountTierProgressText = document.getElementById('account-tier-progress-text');
     const btnAccountLogout = document.getElementById('btn-account-logout');
     const historyMonthPrev = document.getElementById('history-month-prev');
     const historyMonthNext = document.getElementById('history-month-next');
@@ -94,32 +96,45 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
     }
 
-    // 會員等級用現有的 points 欄位即時換算，不用另外存欄位——
-    // 門檻：銅 0-999／銀 1000-4999／金 5000+
+    // 會員等級用現有的 points 欄位即時換算，不用另外存欄位。點數是消費金額
+    // /10（見 admin.js 的 earnedPoints），門檻原本是銀 1000／金 5000 點，
+    // 換算回消費金額要 1 萬／5 萬元，以商品均價 NT$400-650 來看等於要買
+    // 75-125 次才有金卡，等級制度形同虛設——改成銀 300／金 1000 點，
+    // 對應消費滿 3,000／10,000 元，大約買 5-8 次、15-20 次就能感受到升級
     function getMemberTier(points) {
-        if (points >= 5000) return '金卡會員';
-        if (points >= 1000) return '銀卡會員';
+        if (points >= 1000) return '金卡會員';
+        if (points >= 300) return '銀卡會員';
         return '銅卡會員';
     }
 
-    /* 會員彈窗本來整份資料都是唯讀，生日又只有註冊當下那個表單能填一次——
-       沒填的話就永遠卡在「—」，沒有回頭補填的路。重用 script.js 的月曆元件（見
-       window.createBirthdayPicker），選好日期直接寫回 Firestore，不用另外做一個
-       「儲存」按鈕，跟這個彈窗其他欄位「即點即用」的互動節奏一致 */
-    const accountBirthdayPicker = window.createBirthdayPicker ? window.createBirthdayPicker({
-        wrap: 'account-birthday-wrap',
-        trigger: 'account-birthday-trigger',
-        display: 'account-birthday-display',
-        hidden: 'account-birthday-input',
-        panel: 'account-birthday-panel',
-        label: 'account-birthday-label',
-        grid: 'account-birthday-grid',
-        clear: 'account-birthday-clear',
-        today: 'account-birthday-today'
-    }, (value) => {
-        if (!currentUser) return;
-        db.collection('users').doc(currentUser.uid).set({ birthday: value || null }, { merge: true });
-    }) : null;
+    // 進度條門檻直接用消費金額（累積金額 completedSpend），跟 getMemberTier
+    // 的 points 門檻（300／1000）換算成消費金額是同一組數字（points = 消費
+    // /10，見 admin.js 的 earnedPoints），只是這裡不用再繞回點數
+    const TIER_SPEND_THRESHOLDS = { silver: 3000, gold: 10000 };
+
+    function getTierProgress(spend) {
+        if (spend >= TIER_SPEND_THRESHOLDS.gold) {
+            return { percent: 100, text: '已達最高等級' };
+        }
+        const target = spend >= TIER_SPEND_THRESHOLDS.silver ? TIER_SPEND_THRESHOLDS.gold : TIER_SPEND_THRESHOLDS.silver;
+        const base = spend >= TIER_SPEND_THRESHOLDS.silver ? TIER_SPEND_THRESHOLDS.silver : 0;
+        const percent = Math.min(100, Math.max(0, ((spend - base) / (target - base)) * 100));
+        const remaining = target - spend;
+        const nextTier = target === TIER_SPEND_THRESHOLDS.gold ? '金卡會員' : '銀卡會員';
+        return { percent, text: `再消費 NT$ ${remaining.toLocaleString()} 升級${nextTier}` };
+    }
+
+    // 生日跟姓名/信箱/電話一樣是唯讀欄位，只顯示註冊當下填的值——原本這格
+    // 做成可以直接點開月曆重新選日期並寫回 Firestore，但跟其他唯讀欄位混在
+    // 同一份清單裡，只有這格有可點的樣式/箭頭，使用者容易誤會是排版錯誤。
+    // 值存成 'MM-DD'（見 script.js 的 signup 生日選擇器），這裡轉成跟原本
+    // 顯示格式一致的 'MM / DD'
+    function formatBirthdayDisplay(value) {
+        if (!value || typeof value !== 'string') return '—';
+        const parts = value.split('-');
+        if (parts.length !== 2) return '—';
+        return `${parts[0]} / ${parts[1]}`;
+    }
 
     function renderAccountProfile(uid) {
         db.collection('users').doc(uid).get().then(doc => {
@@ -127,13 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
             accountInfoName.textContent = data.displayName || '—';
             accountInfoEmail.textContent = data.email || (currentUser && currentUser.email) || '—';
             accountInfoPhone.textContent = data.phone || '—';
-            if (accountBirthdayPicker) accountBirthdayPicker.setValue(data.birthday || null);
+            accountInfoBirthday.textContent = formatBirthdayDisplay(data.birthday);
             accountInfoCreated.textContent = formatDateSlash(data.createdAt);
-            // 資料庫沒有獨立的會員編號欄位，用帳號 uid 前 8 碼推導出穩定、唯一的顯示 ID
-            accountInfoMemberno.textContent = 'CD' + uid.slice(0, 8).toUpperCase();
             const points = data.points || 0;
-            accountInfoPoints.textContent = points.toLocaleString();
+            const spend = data.completedSpend || 0;
             if (accountInfoTier) accountInfoTier.textContent = getMemberTier(points);
+            if (accountInfoSpend) accountInfoSpend.textContent = 'NT$ ' + spend.toLocaleString();
+            if (accountTierProgressFill && accountTierProgressText) {
+                const progress = getTierProgress(spend);
+                accountTierProgressFill.style.width = progress.percent + '%';
+                accountTierProgressText.textContent = progress.text;
+            }
         });
     }
 
@@ -411,25 +430,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const qtyMinus = document.getElementById('product-modal-qty-minus');
     const qtyPlus = document.getElementById('product-modal-qty-plus');
     const qtyValue = document.getElementById('product-modal-qty-value');
+    const modalPriceEl = document.getElementById('product-modal-price');
+    const productModalEl = document.getElementById('product-modal');
+
+    // 價錢跟著數量+/-即時變化，顯示「單價 × 數量」的小計，不是固定的單價——
+    // 單價由 script.js 的 openProductModal() 寫進 productModalEl.dataset.unitPrice
+    function updateModalPrice() {
+        const unitPrice = parseInt(productModalEl.dataset.unitPrice, 10) || 0;
+        const qty = parseInt(qtyValue.textContent, 10) || 1;
+        modalPriceEl.textContent = 'NT$ ' + (unitPrice * qty).toLocaleString();
+    }
 
     function resetProductQty() {
         qtyValue.textContent = '1';
+        updateModalPrice();
     }
 
     qtyMinus.addEventListener('click', () => {
         const current = parseInt(qtyValue.textContent, 10);
         if (current > 1) qtyValue.textContent = current - 1;
+        updateModalPrice();
     });
 
     qtyPlus.addEventListener('click', () => {
         const current = parseInt(qtyValue.textContent, 10);
         qtyValue.textContent = current + 1;
+        updateModalPrice();
     });
 
-    // 每次開啟產品彈窗時，數量重置為 1。
+    // 每次開啟產品彈窗時，數量重置為 1、價錢跟著重算回單價。
     // openProductModal() 是 script.js 內部（DOMContentLoaded 閉包）的區域函式，
     // 這裡拿不到參照，改用 MutationObserver 監看 #product-modal 的 active class 變化來偵測開啟。
-    const productModalEl = document.getElementById('product-modal');
     if (productModalEl) {
         new MutationObserver(() => {
             if (productModalEl.classList.contains('active')) resetProductQty();
@@ -527,6 +558,16 @@ document.addEventListener('DOMContentLoaded', () => {
         cartUnsubscribe = db.collection('carts').doc(uid).onSnapshot(doc => {
             cartItems = (doc.exists && doc.data().items) || [];
             renderCartModal();
+        }, err => {
+            // 原本沒有錯誤處理：onSnapshot 失敗（例如 Firestore 權限規則擋下讀取）
+            // 會靜默失敗，success callback 永遠不會觸發，renderCartModal() 就
+            // 沒機會重新執行，購物車彈窗會卡在登入前的「請先登入會員」畫面，
+            // 即使 currentUser 其實已經是登入狀態——先印出錯誤方便排查，
+            // 並且仍然呼叫 renderCartModal() 讓「已登入」這件事至少能正確反映
+            // 在畫面上（只是購物車內容讀不到、視為空清單），不要整個卡住
+            console.error('讀取購物車失敗，請檢查 Firestore 權限規則：', err);
+            cartItems = [];
+            renderCartModal();
         });
     }
 
@@ -542,7 +583,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cartModalClose.addEventListener('click', () => closeModal(cartModal));
 
-    cartLoginGateCta.addEventListener('click', () => openAuthModal('login'));
+    // 兩個彈窗 z-index 相同（都是 .modal-overlay 共用的 2000），疊層順序只看
+    // HTML 裡誰寫在後面——auth-modal 在 cart-modal 之前，購物車沒關就直接疊開
+    // 登入彈窗，登入表單會被還開著的購物車彈窗蓋在下面，畫面上看起來像
+    // 「按了沒反應」。先關購物車再開登入彈窗，避免兩個 .active 彈窗疊在一起
+    cartLoginGateCta.addEventListener('click', () => {
+        closeModal(cartModal);
+        openAuthModal('login');
+    });
 
     addToCartBtn.addEventListener('click', () => {
         if (!currentUser) {
@@ -554,8 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const productId = productModalEl.dataset.productId;
         const name = document.getElementById('product-modal-title').textContent;
-        const priceText = document.getElementById('product-modal-price').textContent;
-        const price = parseInt(priceText.replace(/[^\d]/g, ''), 10) || 0;
+        // 讀 dataset 存的單價，不是 #product-modal-price 畫面上的文字——
+        // 那格現在顯示的是「單價×數量」小計（見上面 updateModalPrice），
+        // 購物車每一行需要的是單價本身，乘法留給 renderCartModal 自己算
+        const price = parseInt(productModalEl.dataset.unitPrice, 10) || 0;
         const qty = parseInt(qtyValue.textContent, 10) || 1;
 
         const existing = cartItems.find(it => it.productId === productId);
@@ -636,6 +686,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkoutModalClose.addEventListener('click', () => closeModal(checkoutModal));
 
+    /* 複製匯款帳號：跟設計系統文件裡定案的「複製成功文字 #1F5C24」同一套語意色，
+       不是隨手挑的綠色。圖示 1.2 秒後自動換回原本的複製圖示 */
+    const checkoutCopyBtn = document.getElementById('checkout-copy-account');
+    const checkoutAccountNum = document.getElementById('checkout-payment-account-num');
+    if (checkoutCopyBtn && checkoutAccountNum) {
+        checkoutCopyBtn.addEventListener('click', () => {
+            const raw = checkoutAccountNum.textContent.replace(/-/g, '');
+            navigator.clipboard.writeText(raw).then(() => {
+                const icon = checkoutCopyBtn.querySelector('i');
+                const originalClass = icon.className;
+                icon.className = 'fa-solid fa-check';
+                checkoutCopyBtn.style.color = '#1F5C23';
+                setTimeout(() => {
+                    icon.className = originalClass;
+                    checkoutCopyBtn.style.color = '';
+                }, 1200);
+            });
+        });
+    }
+
     checkoutDateInput.addEventListener('change', () => {
         if (isValidPickupDate(checkoutDateInput.value)) {
             checkoutDateError.hidden = true;
@@ -679,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(() => {
                 checkoutForm.reset();
                 closeModal(checkoutModal);
-                alert('訂單已送出！我們會於出貨前透過 LINE 提供取貨資訊。');
+                alert('訂單已送出！請依彈窗內的帳戶資訊完成匯款，我們確認款項後會於出貨前透過 LINE 提供取貨資訊。');
             })
             .catch(err => {
                 checkoutError.textContent = '訂單送出失敗，請稍後再試（' + err.code + '）';

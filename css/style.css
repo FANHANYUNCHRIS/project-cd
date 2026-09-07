@@ -134,12 +134,15 @@
    原本借用全站液態玻璃膠囊按鈕（.liquid-glass-btn/.lg-btn-black），但那是
    模糊+漸層+高光的花俏材質，跟會員彈窗軟膠擬物的安靜語言不搭——改成一般純黑按鈕，
    圓角跟卡片同一套 14px，不做滿版膠囊 */
+/* 原本在三欄裡最左欄的底部（登出只跟會員資訊那欄的內容對齊），現在移到
+   卡片外面、置中對齊整張卡片寬度——登出是整個會員身分的操作，不該從屬於
+   某一欄的資訊，獨立置中更清楚 */
 .account-logout-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     width: fit-content;
-    margin: 0 auto;
+    margin: var(--sp-6) auto 0;
     padding: 12px 40px;
     border: none;
     border-radius: 14px;
@@ -596,6 +599,13 @@ body {
     gap: 8px;
     opacity: 0.85;
     animation: floatDown 2s infinite ease-in-out;
+}
+
+/* 品牌／產品兩個區塊底色是淺灰（body 預設 #EBEBEC），var(--paper) 是給深色
+   影片背景用的淺色文字，疊在淺底上幾乎看不見——這裡改用 --ink-soft，跟
+   區塊裡其他次要文字（例如 .team-stat-label）同一階 */
+.scroll-down-indicator.on-light {
+    color: var(--ink-soft);
 }
 
 @keyframes floatDown {
@@ -3002,24 +3012,32 @@ a.faq-card {
     color: #0F4A24;
 }
 
-/* --- 產品彈窗：加入購物車列 --- */
-/* 把加入購物車列＋登入提示＋第三方商城連結包成同一個底部區塊。桌機版靠
-   .desc 的 flex-grow（見上面）把這個區塊推到欄位底部，加一條分隔線劃出
-   「商品資訊」跟「購買動作」兩個區塊的邊界——世界電商 PDP（Amazon／
-   Shopify Buy Box）常見的兩段式版面，不管上面說明文字多短，購物車列都
-   貼齊底部且有清楚的視覺邊界。手機版另外把整個區塊變成 sticky 底部列
-   （見 ≤1024px media query），三個元素才會一起固定，不會有連結被單獨
-   捲走、CTA 卻黏住的錯位情形 */
+/* --- 產品彈窗：購買動作區（價錢＋數量＋進入匯款資訊） --- */
+/* 把價錢/數量列＋CTA按鈕＋登入提示＋第三方商城連結包成同一個區塊，緊接在
+   標題下方（原物料／注意事項加進來後說明內容變長，購買動作留在最上面，
+   使用者不用捲到底才找得到）。手機版另外把整個區塊變成 sticky 底部列
+   （見 ≤1024px media query），不管往下滑多少說明文字都固定貼在畫面底部
+   看得到、按得到——世界電商 App（Amazon／Shopee／Apple Store）在窄螢幕
+   商品詳情頁的常見做法，避免使用者滑到最後找不到購買入口 */
 .product-modal-footer {
-    margin-top: var(--sp-6);
-    padding-top: var(--sp-6);
+    margin-top: var(--sp-5);
+    padding-top: var(--sp-5);
     border-top: 1px solid var(--ink-line);
 }
 
-.cart-add-row {
+.product-purchase-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--sp-3);
+    margin-bottom: var(--sp-4);
+}
+
+.product-purchase-row .price {
+    font-size: var(--fs-h4);
+    font-weight: bold;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
 }
 
 .qty-stepper {
@@ -3060,9 +3078,11 @@ a.faq-card {
     font-weight: bold;
 }
 
-.cart-add-row .btn-modal-cta {
+/* 蓋掉 .btn-modal-cta 基礎規則的 margin-top:auto——那是給桌機版商品彈窗
+   舊版「內容推底部」版面用的，這顆按鈕現在緊接在 .product-purchase-row
+   下面，不需要再自動撐開推到彈窗最底部 */
+.product-modal-footer .btn-modal-cta {
     margin-top: 0;
-    flex: 1;
 }
 
 .cart-add-note {
@@ -3086,39 +3106,48 @@ a.faq-card {
 }
 
 /* --- 會員資料彈窗 --- */
-/* 原本是軟膠擬物質感（Neumorphism）：靠雙向陰影做出浮凸層次。改成跟
-   人物卡／商品卡／FAQ 同一套液態玻璃托盤——底色統一用 var(--surface-sunken)，裡面
-   的統計卡／資訊列改用玻璃材質（見下方 .account-hud-card／
-   .account-info-row）。用複合選擇器保險，避免跟 .modal-container 的
-   白底規則比源碼順序 */
+/* 原本是軟膠擬物質感（Neumorphism）：靠雙向陰影做出浮凸層次。後來改成液態玻璃托盤，
+   現在整份資料統一收進同一張卡片（見下方 .account-columns），內部改用扁平的
+   底線分隔列表（見下方 .account-info-row），不再有獨立的玻璃小卡。用複合選擇器
+   保險，避免跟 .modal-container 的白底規則比源碼順序 */
 /* 跟頁尾三欄 grid（.footer-container，max-width 1100px）同一個寬度基準，
    全站尺度一致，不是另外挑的數字 */
+/* 右上角關閉鍵是 44×44px 圓形按鈕，中心點在容器 top/right 20px 處，
+   實際佔據範圍是 20-64px；上內距要拉開到超過 64px，.account-columns
+   卡片的直角邊框才不會被圓形按鈕的範圍蓋到 */
 .modal-container.account-modal-box {
     max-width: 1100px;
     width: 100%;
-    padding: 44px 40px 32px;
+    padding: 72px 40px 32px;
     background-color: var(--surface-sunken);
 }
 
-/* 三欄式版面：左會員資訊／中會員權益／右購買紀錄，分工清楚，不用捲動就能看完整份資料。
-   左欄欄位最多（頭像到會員 ID 共 8 項），比例吃重；中欄只有三個數據，比例最窄；
-   右欄購買紀錄長度不定，取中間值。
-   每欄都用簡單邊框卡片包成獨立的資訊面板，就算內容量不同（例如購買紀錄是空的），
-   版面看起來還是「三個對等的面板」，不會因為內容多寡就顯得失衡 */
+/* 三欄式內容：左會員資訊／中會員權益（等級／累積金額）／右購買紀錄，分工清楚，
+   不用捲動就能看完整份資料。等級跟累積金額用大數字＋圖示的卡片突顯重點，
+   跟左欄逐行條列的個人資料在視覺上區分開。三欄共用同一張卡片
+   （邊框/圓角在這裡），欄與欄之間改用內部分隔線區隔，看起來是「一張會員
+   資料卡」而不是各自獨立的面板拼在一起 */
 .account-columns {
     display: grid;
     grid-template-columns: 1.15fr 0.8fr 1.05fr;
     gap: 24px;
     margin-bottom: var(--sp-6);
     text-align: left;
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid var(--ink-line);
 }
 
 .account-column {
     display: flex;
     flex-direction: column;
-    padding: 24px 24px;
-    border-radius: 20px;
-    border: 1px solid var(--ink-line);
+    padding: 0 24px;
+    border-left: 1px solid var(--ink-line);
+}
+
+.account-column:first-child {
+    padding-left: 0;
+    border-left: none;
 }
 
 .account-column-title {
@@ -3186,7 +3215,7 @@ a.faq-card {
 
 /* 中欄「會員權益」圖像化：碩大數字＋簡單標籤，用字級取代圖示/色彩傳達重點。
    數字在左、文字在右的橫向排列在這欄（~0.8fr 寬）會太擠，改成數字在上、標籤在下的直向堆疊 */
-/* flex:1 + align-content:center：中欄只有 3 張卡片，內容量比左欄（8 個欄位）少很多，
+/* flex:1 + align-content:center：中欄只有 2 張卡片，內容量比左欄（5 個欄位）少很多，
    三欄用同一個 grid row 撐開高度後，中欄卡片原本全部貼頂，下面留一大塊空白。
    讓清單吃滿欄位剩餘高度、卡片群組整體置中，跟右欄「購買紀錄」空狀態置中是同一個處理邏輯 */
 .account-hud-list {
@@ -3197,34 +3226,9 @@ a.faq-card {
     gap: 12px;
 }
 
-/* 跟人物卡／商品卡同一套液態玻璃材質——半透明白 + blur(30px) + 邊角高光 +
-   不等寬邊框，取代原本的軟膠浮凸雙向陰影 */
 .account-hud-card {
-    position: relative;
-    overflow: hidden;
     padding: var(--sp-5) var(--sp-4) var(--sp-4);
-    border-radius: 14px;
     text-align: center;
-    /* 提高到跟文件裡 mock-glass-card 示範值(.86)接近，卡片對灰色托盤的
-       對比更明顯，不會整片糊成同一片灰——仍是灰階，不加色相 */
-    background-color: rgba(255, 255, 255, 0.86);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-.account-hud-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
 }
 
 .account-hud-icon {
@@ -3254,43 +3258,76 @@ a.faq-card {
     color: var(--ink);
 }
 
+/* 等級卡新增的升級進度條：把靜態徽章變成有目標感的東西——用已經算好的
+   completedSpend／下一階門檻算出百分比與還差多少錢（見 member.js 的
+   getTierProgress）。純黑白灰，不引入新色相：軌道用 --ink-line、
+   填色用 --ink 實色，跟間距章節示範的 space-bar 是同一套語言，
+   只是改成 100px 圓角的膠囊形狀，呼應 iOS 開關元件的圓角語彙 */
+.account-tier-progress {
+    width: 100%;
+    margin-top: var(--sp-3);
+}
+
+.account-tier-progress-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 100px;
+    background: var(--ink-line);
+    overflow: hidden;
+}
+
+.account-tier-progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--ink);
+    width: 0%;
+    transition: width 0.6s ease;
+}
+
+.account-tier-progress-text {
+    margin: var(--sp-2) 0 0;
+    font-size: var(--fs-caption);
+    font-weight: 400;
+    color: var(--ink-soft);
+}
+
+/* 累積金額併進等級卡片下方，用分隔線隔開——比照 .account-info-row 的
+   標籤淡、數值深邏輯，但這裡只有一行，不需要 grid 版位 */
+.account-tier-spend {
+    margin: var(--sp-3) 0 0;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--ink-line);
+    font-size: var(--fs-caption);
+    color: var(--ink-soft);
+}
+
+.account-tier-spend strong {
+    color: var(--ink);
+    font-weight: 700;
+}
+
 /* 跟人物卡／商品卡同一套液態玻璃材質，取代原本的軟膠浮凸雙向陰影 */
 /* 固定寬度兩欄 grid，不是 flex+space-between——原本靠彈性間距把值推到最右邊，
    每一列值的長度不同（姓名很短、信箱很長），中間的分界線就跟著每列跑，六列對不齊。
    改成固定 66px 標籤欄 + 分隔線，值一律左對齊、從同一個 x 位置起排，
    六列的分界線落在同一條垂直線上；標籤欄縮到 66px、分隔線內距縮到 8px，
    是為了讓信箱這種最長的值仍然單行放得下，不用截斷也不用換行 */
+/* 原本是液態玻璃小卡，跟 .account-hud-card 同一個理由拿掉：整份會員資料
+   已經收進一張卡片裡，六列資訊各自再頂一層玻璃背景，卡中卡疊得很厚重。
+   改成扁平列表，靠下面的底線分隔行與行，不需要自己的底色/邊框/陰影 */
 .account-info-row {
-    position: relative;
-    overflow: hidden;
     display: grid;
     grid-template-columns: 58px 1fr;
     align-items: center;
     gap: 12px;
-    padding: 16px 16px;
-    border-radius: 14px;
+    padding: 12px 4px;
     font-size: var(--fs-small);
     min-width: 0;
-    /* 同 .account-hud-card，提高到接近文件 mock-glass-card 的 .86，
-       跟灰色托盤拉開對比 */
-    background-color: rgba(255, 255, 255, 0.86);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
+    border-bottom: 1px solid var(--ink-line);
 }
 
-.account-info-row::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
+.account-info-row:last-child {
+    border-bottom: none;
 }
 
 .account-info-label {
@@ -3312,43 +3349,6 @@ a.faq-card {
     text-overflow: ellipsis;
     padding-left: 8px;
     border-left: 1px solid var(--ink-line);
-}
-
-/* 生日這格是唯一可編輯的欄位，值本身就是觸發按鈕——蓋掉瀏覽器 button 預設樣式，
-   讓它看起來還是跟其他唯讀欄位一樣，只用右邊一個小箭頭暗示「這格可以點」 */
-.account-info-edit-trigger {
-    background: none;
-    border: none;
-    border-left: 1px solid var(--ink-line);
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.account-info-edit-trigger i {
-    font-size: 11px;
-    color: var(--ink-soft);
-    flex-shrink: 0;
-}
-
-.account-birthday-wrap {
-    min-width: 0;
-}
-
-/* 「生日」這排離卡片底部只剩不到一排的高度，面板往下展開的話，
-   底下「清除／回到今天」那排會被 .modal-container 的 overflow-y:auto 從畫面裁掉——
-   改成往上展開（bottom 而不是 top），觸發按鈕上方空間比較夠。
-   寬度不再縮窄——維持跟 .date-picker-panel 一樣的寬度，才能讓日期格子維持 44px 觸控目標；
-   這個彈窗本身有 1100px 寬，貼右邊界展開不會超出卡片邊界 */
-.account-birthday-panel {
-    top: auto;
-    bottom: calc(100% + 8px);
-    left: auto;
-    right: 0;
 }
 
 /* 單月查詢：上一月／下一月箭頭夾著月份標籤，不用另外做日期選擇器彈窗——
@@ -3517,6 +3517,15 @@ a.faq-card {
 /* 未登入引導畫面：跟 #cart-body 是互斥的兩個狀態，同一個 .cart-modal-box 底下切換 hidden，
    不額外開新彈窗、不改變既有 480px 版面尺寸。跟人物卡／商品卡／FAQ 卡
    同一套液態玻璃材質 */
+/* display:flex 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none——跟
+   .auth-modal-box .auth-form[hidden] 同一種坑，這裡漏補。renderCartModal()
+   會用 cartLoginGate.hidden = loggedIn 切換顯示，登入後 hidden 屬性正確被設成
+   true，但沒有這條 [hidden] 規則的話，class 特異度打平時 display:flex
+   贏過瀏覽器預設，畫面上還是看得到這張卡片，即使邏輯上已經正確隱藏 */
+.cart-login-gate[hidden] {
+    display: none;
+}
+
 .cart-login-gate {
     position: relative;
     overflow: hidden;
@@ -3741,6 +3750,85 @@ a.faq-card {
     border-top: 1px solid var(--ink-line);
     margin-top: 8px;
     padding-top: 8px;
+}
+
+/* 匯款資訊卡：跟 .checkout-order-summary 同一套液態玻璃托盤配方，兩張卡
+   前後排列、視覺上是同一組「訂單摘要→付款方式」資訊，不是各自獨立的元件 */
+.checkout-payment-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    padding: var(--sp-4);
+    margin-bottom: var(--sp-5);
+    background-color: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--glass-edge-light);
+    border-left: 1px solid var(--glass-edge-mid);
+    border-right: 1px solid var(--glass-edge-dark);
+    border-bottom: 1px solid var(--glass-edge-dark);
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.32),
+        inset 0 1px 1px var(--glass-edge-light);
+}
+
+.checkout-payment-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-small);
+    font-weight: bold;
+    color: var(--ink);
+    margin: 0 0 var(--sp-3);
+}
+
+.checkout-payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: var(--fs-small);
+}
+
+.checkout-payment-label {
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.checkout-payment-value {
+    color: var(--ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.checkout-payment-account {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+/* 44px＝iOS HIG 最小觸控目標，視覺上維持小巧圖示，靠 padding 撐大熱區 */
+.checkout-copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.checkout-payment-note {
+    font-size: var(--fs-caption);
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: var(--sp-2) 0 0;
 }
 
 .field-hint {
@@ -3980,7 +4068,8 @@ a.faq-card {
    說明文字降到 --ink-soft（次要資訊，退到背景），標籤從純文字列表改成
    跟 .qty 藥丸同一套視覺語言的膠囊徽章列，才會看起來是特意設計過的
    信任標籤區，不是隨手放的條列文字 */
-/* 標題跟價格/份量同一列，名稱靠左、價格靠右，讓這個區塊少佔一行高度——
+/* 標題跟份量同一列，名稱靠左、份量標籤靠右，讓這個區塊少佔一行高度——
+   價錢改移到下面的 .product-purchase-row 跟數量+/-按鈕同一列（見該處），
    商品卡片（.product-panel）品名/價格/份量已經拆成三個獨立玻璃面板，
    跟這裡的合併排版是不同元件，各自獨立維護 */
 .product-title-row {
@@ -4005,13 +4094,6 @@ a.faq-card {
     flex-shrink: 0;
 }
 
-.product-modal-meta .price {
-    font-size: var(--fs-h4);
-    font-weight: bold;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-}
-
 .product-modal-meta .qty {
     font-size: var(--fs-caption);
     font-weight: 700;
@@ -4021,15 +4103,6 @@ a.faq-card {
     border-radius: 20px;
 }
 
-/* 說明文字下面原本接的是信任徽章列，2026-09 拿掉徽章後直接接購物車列
-   （見 .product-modal-footer 的分隔線），這裡不用再靠 margin 空出徽章
-   的位置，改成 flex-grow 把剩餘垂直空間都推給說明文字下方，購物車列
-   自然貼底——世界電商 PDP 常見的「內容區／購買動作區」兩段式版面，
-   分隔線負責劃出兩者的邊界，不是靠隨意的留白硬擠出來的 */
-/* flex-grow 從 .desc 移到 .product-modal-info-wrap（見下方）：現在說明文字
-   下面接了產地/保存/過敏原資訊卡，會撐開實際內容高度，不該再由 .desc 自己
-   一路長到底——改成整個資訊區塊當一組被推到底部前的內容，資訊不夠長時
-   剩餘空間才留在資訊卡下方、購物車列上方，不是憑空出現在說明文字正下方 */
 .product-detail-body .desc {
     font-size: var(--fs-body);
     line-height: 1.7;
@@ -4037,8 +4110,21 @@ a.faq-card {
     margin: 0;
 }
 
-/* 說明文字 + 產地/保存/過敏原，三段當一組被 flex-grow 推頂購物車列，跟
-   .product-panel-infobar 同一套液態玻璃小卡配方，不重新發明 */
+/* 每個資訊小節（產品介紹／原物料介紹／產品注意事項）共用的小標籤，
+   跟 .account-column-title 同一套「大寫小字＋粗體」語言，分量刻意壓低——
+   內文才是主角，標籤只負責分隔區塊 */
+.product-modal-section-title {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 var(--sp-2);
+}
+
+/* 產品介紹／產地保存卡／原物料介紹／產品注意事項，四段當一組排在購買動作
+   （.product-modal-footer）下方，跟 .product-panel-infobar 同一套液態
+   玻璃小卡配方，不重新發明 */
 .product-modal-info-wrap {
     display: flex;
     flex-direction: column;
@@ -4099,12 +4185,13 @@ a.faq-card {
 }
 
 /* 過敏原用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
-   #B30000，7.2:1 AAA，不是隨手挑的紅 */
+   #B30000，7.2:1 AAA，不是隨手挑的紅。下面接一般注意事項文字
+   （#product-modal-notice），margin-bottom 空出兩者的間距 */
 .product-modal-allergen {
     font-size: var(--fs-small);
     line-height: 1.6;
     color: #B30000;
-    margin: 0;
+    margin: 0 0 var(--sp-2);
 }
 
 .product-modal-allergen strong {
@@ -4765,21 +4852,24 @@ a.faq-card {
         padding: 0;
     }
 
-    /* 手機版内容（滿版圖＋6 張縮圖＋說明＋標籤）疊起來還是常常超過螢幕高，
-       使用者看不到「加入購物車」在哪、以為捲到底了卻找不到購買入口——世界級
-       電商 App（Amazon／Shopee／Apple Store）在窄螢幕的商品詳情頁都是把
-       主要 CTA 固定黏在畫面底部、其餘內容在上面捲動，這裡比照辦理：整個
-       底部行動區塊（數量+加入購物車+登入提示+第三方連結）一起 sticky 貼底，
-       用負 margin 把左右／下方留白扣掉，讓色塊延伸到彈窗真正的邊緣，
-       圓角也只留下方兩角跟彈窗本體對齊 */
+    /* 加了原物料／注意事項後，手機版說明內容常常超過螢幕高，使用者看不到
+       「進入匯款資訊」在哪、以為捲到底了卻找不到購買入口——世界級電商 App
+       （Amazon／Shopee／Apple Store）在窄螢幕的商品詳情頁都是把主要購買動作
+       固定黏住、其餘內容在下面捲動，這裡比照辦理。這個區塊現在排在標題正
+       下方（不是內容最後），所以是 sticky 貼「頂」不是貼「底」——往下捲動
+       時圖片／標題先捲出視野，這個區塊會黏在畫面頂端，下面的產品介紹／
+       原物料／注意事項在它底下繼續捲動，購買動作全程看得到、按得到。
+       （這裡曾經誤用 bottom 當貼底處理，但這個區塊已經不是內容最後一項，
+       bottom 只在元素本身就在容器尾端時才有效，套在這裡完全不會觸發，
+       捲到底反而看不到黏住效果——貼頂用 top 才是正確方向） */
     .product-modal-footer {
         position: sticky;
-        bottom: calc(-1 * var(--sp-6));
-        margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
-        padding: var(--sp-4) var(--sp-6) var(--sp-6);
+        top: 0;
+        margin: var(--sp-4) calc(-1 * var(--sp-6)) 0;
+        padding: var(--sp-4) var(--sp-6) var(--sp-5);
         background-color: var(--white);
-        border-top: 1px solid var(--ink-line);
-        border-radius: 0 0 24px 24px;
+        border-top: none;
+        border-bottom: 1px solid var(--ink-line);
         z-index: 2;
     }
 
@@ -4801,10 +4891,22 @@ a.faq-card {
         grid-column: span 2;
     }
 
-    /* 會員資料的三欄（個人／系統／購買資訊）手機版收成單欄，直向堆疊 */
+    /* 會員資料的三欄（會員資訊／會員權益／購買紀錄）手機版收成單欄，直向堆疊——
+       欄與欄之間的分隔線桌機版是左邊框（左右並排），這裡改成上邊框
+       （直向堆疊），不然直向排列時側邊那條線看起來會不知所云 */
     .account-columns {
         grid-template-columns: 1fr;
         gap: var(--sp-6);
+    }
+
+    .account-column {
+        padding: 0;
+        border-left: none;
+    }
+
+    .account-column:not(:first-child) {
+        padding-top: var(--sp-6);
+        border-top: 1px solid var(--ink-line);
     }
 }
 

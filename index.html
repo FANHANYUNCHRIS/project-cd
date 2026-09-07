@@ -10,7 +10,7 @@
     <link rel="canonical" href="https://your-domain.com/">
 
     <!-- SEO 與社群分享標籤 (OG Tags) -->
-    <meta name="description" content="Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。">
+    <meta name="description" content="Project.CD 嚴選頂級食材，每日新鮮手工烘自焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。">
     <meta name="keywords" content="Project.CD, 手工甜點, 烘焙, 鳳梨酥, 磅蛋糕, 堅果塔, 馬卡龍">
     <meta property="og:title" content="Project.CD | 品味純粹的甜蜜時光">
     <meta property="og:description" content="嚴選頂級食材，每日新鮮手工烘焙。點擊了解更多品牌故事與熱門甜點。">
@@ -313,12 +313,22 @@
                 <p class="team-mobile-bio" id="team-mobile-bio"></p>
             </div>
         </div>
+
+        <a href="#products" class="scroll-down-indicator on-light" aria-label="往下滾動">
+            <span>SCROLL DOWN</span>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </a>
     </section>
 
     <!-- 產品區塊 (滿版直向分割選單) -->
     <section id="products" class="fullscreen-section">
         <h2 class="section-title reveal-zoom">產品介紹</h2>
         <div class="product-panels" id="product-panels"></div>
+
+        <a href="#shop" class="scroll-down-indicator on-light" aria-label="往下滾動">
+            <span>SCROLL DOWN</span>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </a>
     </section>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
@@ -594,12 +604,35 @@
                     <div class="product-title-row">
                         <h3 id="product-modal-title">產品名稱</h3>
                         <div class="product-modal-meta">
-                            <span id="product-modal-price" class="price">NT$ 0</span>
                             <span id="product-modal-qty" class="qty">數量</span>
                         </div>
                     </div>
+
+                    <!-- 數量／進入匯款資訊這組購買動作維持在標題正下方（桌機／手機都是），
+                         跟 .product-modal-info-wrap 的說明內容分開——手機版另外用 CSS
+                         把這整塊 sticky 貼在畫面底部（見 ≤1024px media query），不管往下
+                         滑多少說明文字／原物料／注意事項都看得到、按得到，避免使用者
+                         滑到最後找不到購買入口 -->
+                    <div class="product-modal-footer">
+                        <div class="product-purchase-row">
+                            <span id="product-modal-price" class="price">NT$ 0</span>
+                            <div class="qty-stepper">
+                                <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
+                                <span id="product-modal-qty-value">1</span>
+                                <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-modal-cta" id="product-modal-add-cart">進入匯款資訊</button>
+                        <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
+                        <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
+                    </div>
+
                     <div class="product-modal-info-wrap">
-                        <p id="product-modal-desc" class="desc">產品詳細說明</p>
+                        <section class="product-modal-section">
+                            <h4 class="product-modal-section-title">產品介紹</h4>
+                            <p id="product-modal-desc" class="desc">產品詳細說明</p>
+                        </section>
+
                         <div class="product-modal-info-card">
                             <div class="info-item">
                                 <span class="info-label">產地</span>
@@ -611,19 +644,17 @@
                                 <span class="info-value" id="product-modal-storage">常溫 14 天</span>
                             </div>
                         </div>
-                        <p class="product-modal-allergen"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></p>
-                    </div>
-                    <div class="product-modal-footer">
-                        <div class="cart-add-row">
-                            <div class="qty-stepper">
-                                <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
-                                <span id="product-modal-qty-value">1</span>
-                                <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
-                            </div>
-                            <button type="button" class="btn-modal-cta" id="product-modal-add-cart">加入購物車</button>
-                        </div>
-                        <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
-                        <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
+
+                        <section class="product-modal-section">
+                            <h4 class="product-modal-section-title">原物料介紹</h4>
+                            <p id="product-modal-ingredients" class="desc">—</p>
+                        </section>
+
+                        <section class="product-modal-section">
+                            <h4 class="product-modal-section-title">產品注意事項</h4>
+                            <p class="product-modal-allergen"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></p>
+                            <p id="product-modal-notice" class="desc">—</p>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -783,7 +814,7 @@
             <h3 id="account-modal-title" class="sr-only">會員資料</h3>
 
             <div class="account-columns">
-                <!-- 左欄：會員資訊（頭像／姓名／信箱／電話／生日／加入日期／會員ID，依重要順序排列） -->
+                <!-- 左欄：會員資訊（頭像／姓名／信箱／電話／生日／加入日期，依重要順序排列） -->
                 <div class="account-column">
                     <p class="account-column-title">會員資訊</p>
 
@@ -802,46 +833,20 @@
                         </div>
                         <div class="account-info-row">
                             <span class="account-info-label">生日</span>
-                            <div class="date-picker-wrap account-birthday-wrap" id="account-birthday-wrap">
-                                <button type="button" class="account-info-value account-info-edit-trigger" id="account-birthday-trigger" aria-haspopup="dialog" aria-expanded="false">
-                                    <span id="account-birthday-display">—</span>
-                                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                                </button>
-                                <input type="hidden" id="account-birthday-input">
-                                <div class="date-picker-panel account-birthday-panel" id="account-birthday-panel" role="dialog" aria-label="選擇生日（月/日）" hidden>
-                                    <div class="date-picker-header">
-                                        <button type="button" class="date-picker-nav" data-nav="prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-                                        <span class="date-picker-month-label" id="account-birthday-label"></span>
-                                        <button type="button" class="date-picker-nav" data-nav="next" aria-label="下一個月"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-                                    </div>
-                                    <div class="date-picker-weekdays">
-                                        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
-                                    </div>
-                                    <div class="date-picker-grid" id="account-birthday-grid"></div>
-                                    <div class="date-picker-footer">
-                                        <button type="button" class="date-picker-text-btn" id="account-birthday-clear">清除</button>
-                                        <button type="button" class="date-picker-text-btn" id="account-birthday-today">回到今天</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <span class="account-info-value" id="account-info-birthday">—</span>
                         </div>
                         <div class="account-info-row">
                             <span class="account-info-label">加入</span>
                             <span class="account-info-value" id="account-info-created">—</span>
                         </div>
-                        <div class="account-info-row">
-                            <span class="account-info-label">會員ID</span>
-                            <span class="account-info-value" id="account-info-memberno">—</span>
-                        </div>
                     </div>
-
-                    <button type="button" class="account-logout-btn" id="btn-account-logout">
-                        <span class="btn-text">登出</span>
-                    </button>
                 </div>
 
-                <!-- 中欄：會員權益（等級由購物點數即時換算，不用後端另存欄位；
-                     優惠券目前沒有對應的資料模型，還沒加進來） -->
+                <!-- 中欄：會員權益（等級由 points 換算，累積金額直接讀 completedSpend，
+                     兩者都不用另外存欄位；合併成一張卡片是因為兩者是同一件事的
+                     一體兩面——等級是累積金額換算出來的結果，分開兩張卡看起來像
+                     兩個獨立數據，其實是因果關係。優惠券目前沒有對應的資料模型，
+                     還沒加進來） -->
                 <div class="account-column">
                     <p class="account-column-title">會員權益</p>
                     <div class="account-hud-list">
@@ -849,11 +854,13 @@
                             <svg class="account-hud-icon" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L26 8 V15 C26 22 21 27 16 29 C11 27 6 22 6 15 V8 Z"/></svg>
                             <span class="account-hud-num" id="account-info-tier">—</span>
                             <span class="account-hud-label">會員等級</span>
-                        </div>
-                        <div class="account-hud-card">
-                            <svg class="account-hud-icon" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><path d="M16 10.5 L17.8 14.3 L22 14.9 L18.9 17.7 L19.7 21.9 L16 19.8 L12.3 21.9 L13.1 17.7 L10 14.9 L14.2 14.3 Z"/></svg>
-                            <span class="account-hud-num" id="account-info-points">—</span>
-                            <span class="account-hud-label">購物點數</span>
+                            <div class="account-tier-progress">
+                                <div class="account-tier-progress-track">
+                                    <div class="account-tier-progress-fill" id="account-tier-progress-fill"></div>
+                                </div>
+                                <p class="account-tier-progress-text" id="account-tier-progress-text">—</p>
+                            </div>
+                            <p class="account-tier-spend">累積金額 <strong id="account-info-spend">—</strong></p>
                         </div>
                     </div>
                 </div>
@@ -880,6 +887,10 @@
                     </div>
                 </div>
             </div>
+
+            <button type="button" class="account-logout-btn" id="btn-account-logout">
+                <span class="btn-text">登出</span>
+            </button>
         </div>
     </div>
 
@@ -920,6 +931,26 @@
 
             <div id="checkout-order-summary" class="checkout-order-summary"></div>
 
+            <div class="checkout-payment-card">
+                <p class="checkout-payment-title"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> 付款方式：匯款</p>
+                <div class="checkout-payment-row">
+                    <span class="checkout-payment-label">銀行</span>
+                    <span class="checkout-payment-value">台新銀行 (812)</span>
+                </div>
+                <div class="checkout-payment-row">
+                    <span class="checkout-payment-label">帳號</span>
+                    <span class="checkout-payment-value checkout-payment-account">
+                        <span id="checkout-payment-account-num">2888-10-0072036-7</span>
+                        <button type="button" class="checkout-copy-btn" id="checkout-copy-account" aria-label="複製帳號"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+                <div class="checkout-payment-row">
+                    <span class="checkout-payment-label">戶名</span>
+                    <span class="checkout-payment-value">范漢雲</span>
+                </div>
+                <p class="checkout-payment-note">送出訂單後請完成匯款，並於下方備註欄填寫匯款帳號後五碼，我們確認款項後將盡速安排出貨。</p>
+            </div>
+
             <form id="checkout-form">
                 <div class="form-group">
                     <label for="checkout-pickup-date">取貨日期 <span class="required-star">*</span></label>
@@ -937,14 +968,14 @@
                 </div>
                 <div class="form-group">
                     <label for="checkout-note">備註</label>
-                    <textarea id="checkout-note" rows="2"></textarea>
+                    <textarea id="checkout-note" rows="2" placeholder="匯款帳號後五碼、指定取貨時間等備註"></textarea>
                 </div>
                 <p class="auth-error" id="checkout-error" hidden></p>
                 <div class="form-submit-area">
                     <button type="submit" class="btn-submit" id="btn-checkout-submit" disabled>
                         <span class="btn-text">送出訂單</span>
                     </button>
-                    <p class="form-note">訂單送出後，我們將於出貨前透過 LINE 提供取貨資訊，恕不支援線上付款。</p>
+                    <p class="form-note">送出訂單後請依上方帳戶資訊完成匯款，我們確認款項後將於出貨前透過 LINE 提供取貨資訊。</p>
                 </div>
             </form>
         </div>

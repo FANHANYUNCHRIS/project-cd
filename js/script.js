@@ -3,6 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        1. 產品資料 (共用於滿版選單與詳情彈窗)
        ========================================= */
+    // ingredients（原物料介紹）／notice（產品注意事項）是草擬內容：ingredients
+    // 根據 desc／allergens 既有資訊合理推敲，不是實際配方單；notice 是共用的
+    // 通用提醒文字。兩者都還沒經過老闆本人核對，正式上線前務必比對實際配方
+    // 表修改，食品原料/過敏原標示需要跟實際販售商品完全一致，不能只是「合理猜測」
+    const genericProductNotice = "本產品為手工新鮮現做，不添加防腐劑；請依上方保存方式盡快冷藏或於期限內食用完畢。因應手工製作與食材天然差異，商品外觀、顏色可能略有不同，以實際到貨為準。";
+
     const productsData = {
         '1': {
             name: "鳳梨酥",
@@ -12,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             origin: "台灣手作",
             storage: "常溫 14 天",
             allergens: "蛋、奶、麩質",
+            ingredients: "土鳳梨餡、法國 Isigny 發酵奶油、中筋麵粉、雞蛋、細砂糖、鹽",
+            notice: genericProductNotice,
             images: [
                 "images/product-1.jpg",
                 "images/product-1-detail1.jpg",
@@ -32,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             origin: "台灣手作",
             storage: "常溫 7 天",
             allergens: "蛋、奶、麩質",
+            ingredients: "紅心鹹蛋黃、烏豆沙餡、奶油酥皮（中筋麵粉、奶油）、雞蛋、細砂糖",
+            notice: genericProductNotice,
             images: [
                 "images/product-2.jpg",
                 "images/product-2-detail1.jpg",
@@ -47,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
             origin: "台灣手作",
             storage: "冷藏 7 天",
             allergens: "蛋、奶、麩質",
+            ingredients: "奶油、雞蛋、中筋麵粉、細砂糖、伯爵茶葉、馬達加斯加香草籽",
+            notice: genericProductNotice,
             images: [
                 "images/product-3.jpg",
                 "images/product-3-detail1.jpg",
@@ -62,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
             origin: "台灣手作",
             storage: "冷藏 5 天",
             allergens: "蛋、奶、麩質",
+            ingredients: "苦甜巧克力、奶油、雞蛋、中筋麵粉、鮮奶油、細砂糖",
+            notice: genericProductNotice,
             images: [
                 "images/product-4.jpg",
                 "images/product-4-detail1.jpg",
@@ -713,6 +727,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOrigin = document.getElementById('product-modal-origin');
     const modalStorage = document.getElementById('product-modal-storage');
     const modalAllergen = document.getElementById('product-modal-allergen-text');
+    const modalIngredients = document.getElementById('product-modal-ingredients');
+    const modalNotice = document.getElementById('product-modal-notice');
     const modalCta = document.getElementById('product-modal-cta');
 
     // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
@@ -759,6 +775,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 記錄目前開啟的商品 id，供 js/member.js 的「加入購物車」功能讀取
         productModal.dataset.productId = productId;
+        // 單價存成純數字放進 dataset，供 js/member.js 的數量+/-即時換算小計、
+        // 以及「進入匯款資訊」寫入購物車時讀取——不要反過來從畫面上已經格式化
+        // 好的 modalPrice.textContent 去 parse，那個欄位之後會顯示「單價×數量」
+        // 的小計，不再是單價本身
+        productModal.dataset.unitPrice = parseInt(data.price.replace(/[^\d]/g, ''), 10) || 0;
 
         modalTitle.textContent = data.name;
         modalPrice.textContent = data.price;
@@ -767,6 +788,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOrigin.textContent = data.origin;
         modalStorage.textContent = data.storage;
         modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
+        modalIngredients.textContent = data.ingredients;
+        modalNotice.textContent = data.notice;
 
         galleryImages = data.images;
         galleryName = data.name;
