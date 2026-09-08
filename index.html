@@ -608,53 +608,43 @@
                         </div>
                     </div>
 
-                    <!-- 數量／進入匯款資訊這組購買動作維持在標題正下方（桌機／手機都是），
-                         跟 .product-modal-info-wrap 的說明內容分開——手機版另外用 CSS
-                         把這整塊 sticky 貼在畫面底部（見 ≤1024px media query），不管往下
-                         滑多少說明文字／原物料／注意事項都看得到、按得到，避免使用者
-                         滑到最後找不到購買入口 -->
+                    <!-- 使用者要求整個彈窗不能出現捲動軸，資訊要一次在畫面上看完——
+                         改成分段控制器（segmented control，跟導覽列首頁/品牌/產品/
+                         商城那顆膠囊同一套視覺語言，見 .nav-links），同時間只顯示
+                         一段文字，用切換取代堆疊。產地/保存資訊卡使用者要求刪除，
+                         成分（原「原物料」）分頁刪除後又要求加回來，標題下方直接
+                         接分段控制器 -->
+                    <div class="product-modal-info-wrap">
+                        <div class="product-modal-tabs" role="tablist">
+                            <button type="button" class="product-modal-tab active" role="tab" aria-selected="true" data-panel="desc">產品介紹</button>
+                            <button type="button" class="product-modal-tab" role="tab" aria-selected="false" data-panel="ingredients">成分</button>
+                            <button type="button" class="product-modal-tab" role="tab" aria-selected="false" data-panel="notice">注意事項</button>
+                        </div>
+
+                        <div class="product-modal-tab-panel" id="product-modal-panel-desc" role="tabpanel">
+                            <p id="product-modal-desc" class="desc">產品詳細說明</p>
+                        </div>
+                        <div class="product-modal-tab-panel" id="product-modal-panel-ingredients" role="tabpanel" hidden>
+                            <p id="product-modal-ingredients" class="desc">—</p>
+                        </div>
+                        <div class="product-modal-tab-panel" id="product-modal-panel-notice" role="tabpanel" hidden>
+                            <p class="product-modal-allergen"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></p>
+                            <p id="product-modal-notice" class="desc">—</p>
+                        </div>
+                    </div>
+
                     <div class="product-modal-footer">
                         <div class="product-purchase-row">
-                            <span id="product-modal-price" class="price">NT$ 0</span>
                             <div class="qty-stepper">
                                 <button type="button" class="qty-btn" id="product-modal-qty-minus" aria-label="減少數量">&minus;</button>
                                 <span id="product-modal-qty-value">1</span>
                                 <button type="button" class="qty-btn" id="product-modal-qty-plus" aria-label="增加數量">&plus;</button>
                             </div>
+                            <span id="product-modal-price" class="price">NT$ 0</span>
                         </div>
                         <button type="button" class="btn-modal-cta" id="product-modal-add-cart">進入匯款資訊</button>
                         <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
                         <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
-                    </div>
-
-                    <div class="product-modal-info-wrap">
-                        <section class="product-modal-section">
-                            <h4 class="product-modal-section-title">產品介紹</h4>
-                            <p id="product-modal-desc" class="desc">產品詳細說明</p>
-                        </section>
-
-                        <div class="product-modal-info-card">
-                            <div class="info-item">
-                                <span class="info-label">產地</span>
-                                <span class="info-value" id="product-modal-origin">台灣</span>
-                            </div>
-                            <div class="info-divider" aria-hidden="true"></div>
-                            <div class="info-item">
-                                <span class="info-label">保存</span>
-                                <span class="info-value" id="product-modal-storage">常溫 14 天</span>
-                            </div>
-                        </div>
-
-                        <section class="product-modal-section">
-                            <h4 class="product-modal-section-title">原物料介紹</h4>
-                            <p id="product-modal-ingredients" class="desc">—</p>
-                        </section>
-
-                        <section class="product-modal-section">
-                            <h4 class="product-modal-section-title">產品注意事項</h4>
-                            <p class="product-modal-allergen"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></p>
-                            <p id="product-modal-notice" class="desc">—</p>
-                        </section>
                     </div>
                 </div>
             </div>
@@ -913,6 +903,16 @@
 
             <div id="cart-body">
                 <ul id="cart-items-list" class="cart-items-list"></ul>
+
+                <!-- 已登入但購物車是空的：原本這裡什麼都不會顯示（標題底下直接空白，
+                     見對話紀錄的截圖），跟右邊購買紀錄的空狀態同一套視覺語言
+                     （.account-empty-icon／.account-empty-text），另外加一個
+                     「去看看有什麼好吃的」連結，不是讓使用者停在死路 -->
+                <div id="cart-empty" class="cart-empty" hidden>
+                    <span class="account-empty-icon"><svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12 L11 6 H21 L23 12"/><rect x="7" y="12" width="18" height="14" rx="2"/><path d="M12 16 Q12 20 16 20 Q20 20 20 16"/></svg></span>
+                    <p class="account-empty-text">購物車是空的</p>
+                    <a href="#products" class="btn-modal-cta-secondary" id="cart-empty-cta">去看看有什麼好吃的</a>
+                </div>
 
                 <div class="cart-summary" id="cart-summary">
                     <span>小計</span>

@@ -619,6 +619,8 @@ body {
 /* =========================================
    7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
    ========================================= */
+/* padding-bottom 同 #brand 的理由蓋掉基礎值：這裡也新增了 SCROLL DOWN
+   指示器，保留固定 96px 底部留白跟商品卡片保持距離，不用看螢幕高度夠不夠 */
 #products.fullscreen-section {
     background-color: #EBEBEC;
     display: flex;
@@ -626,6 +628,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding-bottom: calc(var(--sp-16) + var(--sp-8));
 }
 
 .product-panels {
@@ -797,10 +800,16 @@ body {
 /* =========================================
    7b. 品牌團隊人物切換器
    ========================================= */
+/* padding-bottom 蓋掉 .fullscreen-section 基礎值的 32px，加大到 96px——
+   #brand 底下新增了 SCROLL DOWN 指示器，32px 只夠指示器自己站的位置，
+   跟人物卡幾乎貼在一起。用 padding-bottom 保留固定的底部留白區，不管
+   卡片是被 640px 上限卡住還是被可視高度壓縮（見下面 .team-switcher 的
+   height 算式），跟指示器之間都保證有這一段呼吸空間，不用看螢幕高度 */
 #brand {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: calc(var(--sp-16) + var(--sp-8));
 }
 
 /* 原本固定 height:640px，不會因為螢幕高矮跟著縮放；但角色檔案文字現在動輒 500 字，
@@ -813,8 +822,10 @@ body {
     width: 100%;
     /* 用 min() 取「理想高度 640px」跟「這台裝置實際可視高度扣掉區塊上下留白」兩者較小值——
        瀏覽器工具列高度不同（例如 Safari 比 Chrome 矮）會讓可視高度縮水，固定 640px
-       會讓角色檔案文字被推出畫面外，又因為外層是 scroll-snap 沒辦法捲動補看 */
-    height: min(640px, calc(100vh - 88px - 32px));
+       會讓角色檔案文字被推出畫面外，又因為外層是 scroll-snap 沒辦法捲動補看。
+       扣除量要跟 #brand 的 padding-bottom（96px）對齊，不然這裡跟那邊各自
+       認定的留白對不上，算出來的高度反而會蓋掉 padding-bottom 保留的空間 */
+    height: min(640px, calc(100vh - 88px - 96px));
     gap: 48px;
 }
 
@@ -1107,8 +1118,10 @@ body {
 
 /* 角色檔案（標籤＋引言＋簡介）補上跟手機版 .team-mobile-bio 同一套液態
    玻璃小卡——原本是裸文字直接貼在 .team-info-merged 托盤背景上，跟手機版
-   自介有自己獨立玻璃卡不一致。標籤用的 --ink-soft 貼齊卡片左上角，跟
-   .faq-terms-section .policy-modal-body p 同一個成因，不加邊角高光 */
+   自介有自己獨立玻璃卡不一致。跟 .faq-terms-section .policy-modal-body p
+   同一個成因，不加邊角高光。padding 從 --sp-5 拉大到 --sp-6：使用者實測
+   反應「// 角色檔案」標籤離卡片邊框太近，20px 對這種小字級的標籤感覺
+   侷促，加大一階留白比較舒服 */
 .team-file-block {
     position: relative;
     overflow: hidden;
@@ -1120,7 +1133,7 @@ body {
     border-right: 1px solid var(--glass-edge-dark);
     border-bottom: 1px solid var(--glass-edge-dark);
     border-radius: 12px;
-    padding: var(--sp-5);
+    padding: var(--sp-6);
     box-shadow:
         0 12px 32px -10px rgba(22, 22, 26, 0.32),
         inset 0 1px 1px var(--glass-edge-light);
@@ -3013,15 +3026,17 @@ a.faq-card {
 }
 
 /* --- 產品彈窗：購買動作區（價錢＋數量＋進入匯款資訊） --- */
-/* 把價錢/數量列＋CTA按鈕＋登入提示＋第三方商城連結包成同一個區塊，緊接在
-   標題下方（原物料／注意事項加進來後說明內容變長，購買動作留在最上面，
-   使用者不用捲到底才找得到）。手機版另外把整個區塊變成 sticky 底部列
-   （見 ≤1024px media query），不管往下滑多少說明文字都固定貼在畫面底部
-   看得到、按得到——世界電商 App（Amazon／Shopee／Apple Store）在窄螢幕
-   商品詳情頁的常見做法，避免使用者滑到最後找不到購買入口 */
+/* 把價錢/數量列＋CTA按鈕＋登入提示＋第三方商城連結包成同一個區塊，排在
+   商品內容（介紹／規格／原物料／注意事項）最後——電商規格頁常見的「先
+   看完商品資訊，最後決定買」順序，跟上面內容區用分隔線劃出界線。內容區
+   （.product-modal-info-wrap）的 flex-grow:1 會把這塊自然推到欄位底部，
+   不管上面內容多短，購買動作都貼齊底部。手機版另外把整個區塊變成 sticky
+   底部列（見 ≤1024px media query），不管往上滑多少說明文字都固定貼在
+   畫面底部看得到、按得到——世界電商 App（Amazon／Shopee／Apple Store）
+   在窄螢幕商品詳情頁的常見做法，避免使用者滑到最後找不到購買入口 */
 .product-modal-footer {
-    margin-top: var(--sp-5);
-    padding-top: var(--sp-5);
+    margin-top: var(--sp-4);
+    padding-top: var(--sp-4);
     border-top: 1px solid var(--ink-line);
 }
 
@@ -3033,8 +3048,11 @@ a.faq-card {
     margin-bottom: var(--sp-4);
 }
 
+/* 電商商品頁慣例：價錢是頁面上視覺份量最重的數字，通常比品名字級更大——
+   原本用跟品名同一階的 --fs-h4，價錢/品名分不出主從。改用 --fs-h2，
+   跟人物卡「數字比文字大」的 iOS 數值卡語言一致（見設計系統 05 元件模式） */
 .product-purchase-row .price {
-    font-size: var(--fs-h4);
+    font-size: var(--fs-h2);
     font-weight: bold;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
@@ -3284,11 +3302,17 @@ a.faq-card {
     transition: width 0.6s ease;
 }
 
+/* 中欄卡片窄（0.8fr），文案已經盡量縮短（見 member.js 的 getTierProgress），
+   這裡再用 nowrap 鎖住不換行；萬一極窄的螢幕寬度還是放不下，靠 ellipsis
+   優雅截斷，不要讓文字擠出卡片跟旁邊欄位重疊 */
 .account-tier-progress-text {
     margin: var(--sp-2) 0 0;
     font-size: var(--fs-caption);
     font-weight: 400;
     color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 累積金額併進等級卡片下方，用分隔線隔開——比照 .account-info-row 的
@@ -3633,6 +3657,25 @@ a.faq-card {
     padding: 0;
     max-height: 40vh;
     overflow-y: auto;
+}
+
+/* display:flex 蓋過 [hidden] 的 display:none——同一種坑這裡也補一次
+   （見上面 .cart-login-gate[hidden] 的說明） */
+.cart-empty[hidden] {
+    display: none;
+}
+
+.cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sp-3);
+    padding: var(--sp-8) 0;
+}
+
+.cart-empty .btn-modal-cta-secondary {
+    margin-top: var(--sp-2);
 }
 
 .cart-line-item {
@@ -4110,21 +4153,11 @@ a.faq-card {
     margin: 0;
 }
 
-/* 每個資訊小節（產品介紹／原物料介紹／產品注意事項）共用的小標籤，
-   跟 .account-column-title 同一套「大寫小字＋粗體」語言，分量刻意壓低——
-   內文才是主角，標籤只負責分隔區塊 */
-.product-modal-section-title {
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin: 0 0 var(--sp-2);
-}
-
-/* 產品介紹／產地保存卡／原物料介紹／產品注意事項，四段當一組排在購買動作
-   （.product-modal-footer）下方，跟 .product-panel-infobar 同一套液態
-   玻璃小卡配方，不重新發明 */
+/* 產地保存卡／分段控制器／內容面板，三段當一組排在標題正下方，跟
+   .product-panel-infobar 同一套液態玻璃小卡配方，不重新發明。flex-grow:1
+   把這塊往下撐開，購買動作區（.product-modal-footer）不管內容多短都會
+   自然貼齊欄位底部，是世界電商 PDP 常見的「內容區／購買動作區」兩段式
+   版面，兩者之間用 .product-modal-footer 自己的 border-top 分隔線劃界 */
 .product-modal-info-wrap {
     display: flex;
     flex-direction: column;
@@ -4133,55 +4166,52 @@ a.faq-card {
     margin-top: var(--sp-4);
 }
 
-.product-modal-info-card {
-    position: relative;
-    overflow: hidden;
+/* 分段控制器：跟導覽列 .nav-links 同一套視覺語言（白底膠囊容器＋選中態
+   實心黑底），三個按鈕平分寬度（flex:1），同一時間只有一段內容面板顯示——
+   使用者要求整個彈窗不能出現捲動軸，產品介紹／原物料／注意事項三段文字
+   全部攤開容易超過手機螢幕高度，改成切換式面板，垂直空間固定不隨內容
+   量疊高 */
+.product-modal-tabs {
     display: flex;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 12px;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
+    gap: 2px;
+    background-color: var(--white);
+    border: 1px solid rgba(22, 22, 26, 0.08);
+    border-radius: 100px;
+    padding: 4px;
+    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
 }
 
-.info-item {
+.product-modal-tab {
     flex: 1;
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    padding: var(--sp-3) var(--sp-4);
-    min-width: 0;
-}
-
-.info-divider {
-    width: 1px;
-    align-self: stretch;
-    margin: var(--sp-2) 0;
-    background-color: var(--ink-line);
-    flex-shrink: 0;
-}
-
-.info-label {
-    font-size: var(--fs-caption);
-    font-weight: 700;
+    background: none;
+    border: none;
     color: var(--ink-soft);
-    flex-shrink: 0;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: var(--fs-caption);
+    padding: 8px 4px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background-color 0.15s linear, color 0.15s linear;
 }
 
-.info-value {
-    font-size: var(--fs-small);
-    font-weight: 700;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.product-modal-tab.active {
+    background-color: var(--ink);
+    color: var(--white);
+}
+
+/* 原本用 JS 量出三段面板裡最長的一段（通常是含過敏原的「注意事項」），
+   套成三個面板共用的 min-height，避免切換分頁時購買動作區跟著上下彈跳。
+   但這樣一來，文字短的面板（例如「產品介紹」只有兩行）會被撐出一大塊
+   空白，使用者反應「文字太少空白太多」——拿掉共用 min-height，改回每個
+   面板照自己的內容高度顯示，短面板不再有多餘留白；代價是切換分頁時
+   購買動作區的位置會跟著內容多寡小幅上下移動，兩者取捨後這裡選不留白 */
+.product-modal-tab-panel {
+    min-height: 0;
+}
+
+.product-modal-tab-panel[hidden] {
+    display: none;
 }
 
 /* 過敏原用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
@@ -4811,14 +4841,16 @@ a.faq-card {
 
     /* 使用者原本要求手機版商品彈窗完全不能捲動，後來確認改成「允許捲動、
        版面優先」——不用再靠 flex 把所有內容硬塞進 88vh，改回舒服的固定
-       比例跟正常字級/間距。.modal-container 原本就有 max-height:88vh +
-       overflow-y:auto（見基礎規則），內容多的話自然出現捲軸，不用另外
-       處理。這裡補回手機版直向堆疊（圖片在上、文字在下）的基本規則——
-       剛剛那次大改動不小心把這條規則一起刪掉了，變成手機版還在用桌機版
-       的左右並排 */
+       比例跟正常字級/間距。這裡補回手機版直向堆疊（圖片在上、文字在下）
+       的基本規則——剛剛那次大改動不小心把這條規則一起刪掉了，變成手機版
+       還在用桌機版的左右並排。
+       （.modal-container 原本靠 max-height:88vh + overflow-y:auto，內容
+       多的話自然出現捲軸，但使用者後來明確要求整個彈窗不准出現捲動軸，
+       圖片改固定 120px、三段說明文字改分段控制器、這裡的 gap 也跟著收緊，
+       把內容壓進一屏，不再依賴捲動） */
     .product-modal-content {
         flex-direction: column;
-        gap: var(--sp-4);
+        gap: var(--sp-3);
     }
 
     .product-gallery {
@@ -4828,12 +4860,15 @@ a.faq-card {
     }
 
     /* 桌機版是左右對半的滿版出血圖（height:100% 跟著欄高走，22px 只留左側
-       圓角），手機版改回堆疊排版後這套邏輯不適用——復原成獨立卡片式圖片：
-       固定 4:3 比例、四角都是 12px、高度不跟父層拉伸 */
+       圓角），手機版改回堆疊排版後這套邏輯不適用——復原成獨立卡片式圖片。
+       改成固定高度（不是 aspect-ratio 比例）：使用者要求整個彈窗不能出現
+       捲動軸，圖片是版面裡佔最多垂直空間的區塊，比例式的高度會隨螢幕寬度
+       等比放大、寬螢幕手機反而佔更多高度，改成固定 120px（靠 object-fit:
+       cover 裁切，見 .gallery-main img），把高度控制權交回來，確保下面的
+       分段控制器/購買動作區永遠有足夠空間 */
     .gallery-main {
-        aspect-ratio: 4 / 3;
-        height: auto;
-        min-height: 0;
+        aspect-ratio: auto;
+        height: 120px;
         border-radius: 12px;
     }
 
@@ -4844,6 +4879,40 @@ a.faq-card {
         padding: var(--sp-16) var(--sp-6) var(--sp-6);
     }
 
+    /* 使用者要求整個彈窗不准出現捲動軸，手機版單欄堆疊比桌機雙欄版更容易
+       超出畫面高度——內文字級/行高從 fs-body(16px/1.7) 收到 fs-small
+       (14px/1.5)，連同下面幾處間距一起收緊，把三段說明文字＋規格卡＋
+       購買動作全部壓進一屏 */
+    .product-detail-body .desc {
+        font-size: var(--fs-small);
+        line-height: 1.5;
+    }
+
+    .product-title-row {
+        margin-bottom: var(--sp-4);
+    }
+
+    .product-modal-info-wrap {
+        margin-top: var(--sp-3);
+    }
+
+    .product-modal-footer {
+        margin-top: var(--sp-3);
+        padding-top: var(--sp-3);
+    }
+
+    .product-modal-footer .qty-stepper {
+        padding: 4px 8px;
+    }
+
+    .product-modal-footer .btn-modal-cta {
+        padding: 10px 0;
+    }
+
+    .btn-modal-cta-secondary {
+        margin-top: 8px;
+    }
+
     /* 桌機版左右對半才需要 .product-detail-body 自己留白（圖片要貼齊左
        邊界出血），手機版堆疊排版沒有這個問題，留白統一交回容器本身的
        padding（上面 .product-modal-box 那條），這裡歸零蓋掉桌機版的值，
@@ -4852,26 +4921,12 @@ a.faq-card {
         padding: 0;
     }
 
-    /* 加了原物料／注意事項後，手機版說明內容常常超過螢幕高，使用者看不到
-       「進入匯款資訊」在哪、以為捲到底了卻找不到購買入口——世界級電商 App
-       （Amazon／Shopee／Apple Store）在窄螢幕的商品詳情頁都是把主要購買動作
-       固定黏住、其餘內容在下面捲動，這裡比照辦理。這個區塊現在排在標題正
-       下方（不是內容最後），所以是 sticky 貼「頂」不是貼「底」——往下捲動
-       時圖片／標題先捲出視野，這個區塊會黏在畫面頂端，下面的產品介紹／
-       原物料／注意事項在它底下繼續捲動，購買動作全程看得到、按得到。
-       （這裡曾經誤用 bottom 當貼底處理，但這個區塊已經不是內容最後一項，
-       bottom 只在元素本身就在容器尾端時才有效，套在這裡完全不會觸發，
-       捲到底反而看不到黏住效果——貼頂用 top 才是正確方向） */
-    .product-modal-footer {
-        position: sticky;
-        top: 0;
-        margin: var(--sp-4) calc(-1 * var(--sp-6)) 0;
-        padding: var(--sp-4) var(--sp-6) var(--sp-5);
-        background-color: var(--white);
-        border-top: none;
-        border-bottom: 1px solid var(--ink-line);
-        z-index: 2;
-    }
+    /* 曾經用 position:sticky 讓購買動作區固定貼在畫面底部，是給「內容需要
+       捲動」的情境用的補救做法。使用者後來直接要求整個彈窗不准出現捲動軸，
+       資訊要一次在畫面上顯示完——圖片改固定 120px、三段說明文字改分段
+       控制器切換（見 .product-modal-tabs），內容量已經壓進一屏，不會捲動
+       了，sticky 的負 margin／貼底位移這些技巧沒有存在意義，拿掉回歸單純
+       的區塊排版 */
 
     .form-grid {
         grid-template-columns: 1fr;

@@ -120,8 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const base = spend >= TIER_SPEND_THRESHOLDS.silver ? TIER_SPEND_THRESHOLDS.silver : 0;
         const percent = Math.min(100, Math.max(0, ((spend - base) / (target - base)) * 100));
         const remaining = target - spend;
-        const nextTier = target === TIER_SPEND_THRESHOLDS.gold ? '金卡會員' : '銀卡會員';
-        return { percent, text: `再消費 NT$ ${remaining.toLocaleString()} 升級${nextTier}` };
+        // 中欄卡片較窄，文字要短到不會換行（見 CSS 的 white-space:nowrap）——
+        // 拿掉「會員」跟多餘空格，金額前不留空格，比原本「再消費 NT$ X 升級XX會員」
+        // 短了近 1/4
+        const nextTier = target === TIER_SPEND_THRESHOLDS.gold ? '金卡' : '銀卡';
+        return { percent, text: `還差 NT$${remaining.toLocaleString()} 升${nextTier}` };
     }
 
     // 生日跟姓名/信箱/電話一樣是唯讀欄位，只顯示註冊當下填的值——原本這格
@@ -473,6 +476,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartModal = document.getElementById('cart-modal');
     const cartModalClose = document.getElementById('cart-modal-close');
     const cartItemsList = document.getElementById('cart-items-list');
+    const cartEmptyEl = document.getElementById('cart-empty');
+    const cartEmptyCta = document.getElementById('cart-empty-cta');
     const cartSubtotalEl = document.getElementById('cart-subtotal');
     const cartSummaryEl = document.getElementById('cart-summary');
     const cartBadge = document.getElementById('cart-badge');
@@ -516,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cartItemsList.innerHTML = '';
         const hasItems = cartItems.length > 0;
+        cartEmptyEl.hidden = hasItems;
         cartSummaryEl.hidden = !hasItems;
         btnGoCheckout.hidden = !hasItems;
         btnGoCheckout.disabled = !hasItems;
@@ -591,6 +597,14 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal(cartModal);
         openAuthModal('login');
     });
+
+    // 購物車是空的時候「去看看有什麼好吃的」連結：先關掉購物車彈窗再捲到
+    // 產品區塊，不然彈窗還開著會擋住捲動後的畫面
+    if (cartEmptyCta) {
+        cartEmptyCta.addEventListener('click', () => {
+            closeModal(cartModal);
+        });
+    }
 
     addToCartBtn.addEventListener('click', () => {
         if (!currentUser) {

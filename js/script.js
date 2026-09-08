@@ -3,11 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        1. 產品資料 (共用於滿版選單與詳情彈窗)
        ========================================= */
-    // ingredients（原物料介紹）／notice（產品注意事項）是草擬內容：ingredients
+    // ingredients（成分）／notice（產品注意事項）是草擬內容：ingredients
     // 根據 desc／allergens 既有資訊合理推敲，不是實際配方單；notice 是共用的
     // 通用提醒文字。兩者都還沒經過老闆本人核對，正式上線前務必比對實際配方
     // 表修改，食品原料/過敏原標示需要跟實際販售商品完全一致，不能只是「合理猜測」
-    const genericProductNotice = "本產品為手工新鮮現做，不添加防腐劑；請依上方保存方式盡快冷藏或於期限內食用完畢。因應手工製作與食材天然差異，商品外觀、顏色可能略有不同，以實際到貨為準。";
+    const genericProductNotice = "本產品為手工新鮮現做，不添加防腐劑，請盡快冷藏保存並於期限內食用完畢。因應手工製作與食材天然差異，商品外觀、顏色可能略有不同，以實際到貨為準。";
 
     const productsData = {
         '1': {
@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 500",
             qty: "10入/盒",
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國 Isigny 發酵奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
-            origin: "台灣手作",
-            storage: "常溫 14 天",
             allergens: "蛋、奶、麩質",
             ingredients: "土鳳梨餡、法國 Isigny 發酵奶油、中筋麵粉、雞蛋、細砂糖、鹽",
             notice: genericProductNotice,
@@ -37,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 450",
             qty: "6入/盒",
             desc: "選用紅心鹹蛋黃搭配細緻烏豆沙餡，外層酥皮層層酥脆，鹹甜交織是經典中式節慶點心的代表。",
-            origin: "台灣手作",
-            storage: "常溫 7 天",
             allergens: "蛋、奶、麩質",
             ingredients: "紅心鹹蛋黃、烏豆沙餡、奶油酥皮（中筋麵粉、奶油）、雞蛋、細砂糖",
             notice: genericProductNotice,
@@ -54,8 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 400",
             qty: "1條/盒",
             desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
-            origin: "台灣手作",
-            storage: "冷藏 7 天",
             allergens: "蛋、奶、麩質",
             ingredients: "奶油、雞蛋、中筋麵粉、細砂糖、伯爵茶葉、馬達加斯加香草籽",
             notice: genericProductNotice,
@@ -71,8 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
             price: "NT$ 650",
             qty: "8吋/顆",
             desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
-            origin: "台灣手作",
-            storage: "冷藏 5 天",
             allergens: "蛋、奶、麩質",
             ingredients: "苦甜巧克力、奶油、雞蛋、中筋麵粉、鮮奶油、細砂糖",
             notice: genericProductNotice,
@@ -724,12 +716,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalPrice = document.getElementById('product-modal-price');
     const modalQty = document.getElementById('product-modal-qty');
     const modalDesc = document.getElementById('product-modal-desc');
-    const modalOrigin = document.getElementById('product-modal-origin');
-    const modalStorage = document.getElementById('product-modal-storage');
-    const modalAllergen = document.getElementById('product-modal-allergen-text');
     const modalIngredients = document.getElementById('product-modal-ingredients');
+    const modalAllergen = document.getElementById('product-modal-allergen-text');
     const modalNotice = document.getElementById('product-modal-notice');
     const modalCta = document.getElementById('product-modal-cta');
+
+    // 分段控制器：產品介紹／注意事項同時間只顯示一個面板，取代
+    // 原本文字全部攤開的做法（見 CSS 的 .product-modal-tabs 說明）
+    const productModalTabs = document.querySelectorAll('.product-modal-tab');
+    const productModalPanels = document.querySelectorAll('.product-modal-tab-panel');
+
+    function setProductModalTab(panelName) {
+        productModalTabs.forEach(tab => {
+            const isActive = tab.dataset.panel === panelName;
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+        productModalPanels.forEach(panel => {
+            panel.hidden = panel.id !== `product-modal-panel-${panelName}`;
+        });
+    }
+
+    productModalTabs.forEach(tab => {
+        tab.addEventListener('click', () => setProductModalTab(tab.dataset.panel));
+    });
 
     // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
     mainImg.addEventListener('load', () => mainImg.parentElement.classList.remove('img-fallback'));
@@ -785,10 +795,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modalPrice.textContent = data.price;
         modalQty.textContent = data.qty;
         modalDesc.textContent = data.desc;
-        modalOrigin.textContent = data.origin;
-        modalStorage.textContent = data.storage;
-        modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
         modalIngredients.textContent = data.ingredients;
+        modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
         modalNotice.textContent = data.notice;
 
         galleryImages = data.images;
@@ -818,6 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         showGalleryImage(0);
+        setProductModalTab('desc');
         openModal(productModal);
     }
 
