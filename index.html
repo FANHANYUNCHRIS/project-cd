@@ -611,13 +611,14 @@
                     <!-- 使用者要求整個彈窗不能出現捲動軸，資訊要一次在畫面上看完——
                          改成分段控制器（segmented control，跟導覽列首頁/品牌/產品/
                          商城那顆膠囊同一套視覺語言，見 .nav-links），同時間只顯示
-                         一段文字，用切換取代堆疊。產地/保存資訊卡使用者要求刪除，
-                         成分（原「原物料」）分頁刪除後又要求加回來，標題下方直接
-                         接分段控制器 -->
+                         一段文字，用切換取代堆疊。產地/保存資訊卡使用者要求刪除；
+                         成分原本是獨立分頁，後來使用者要求併入「產品介紹」面板
+                         下方（減少分頁數量，也讓桌機版右欄內容不會太短、跟左邊
+                         圖片高度差太多）。注意事項改成條列式，比一整段文字好掃 -->
                     <div class="product-modal-info-wrap">
                         <div class="product-modal-tabs" role="tablist">
                             <button type="button" class="product-modal-tab active" role="tab" aria-selected="true" data-panel="desc">產品介紹</button>
-                            <button type="button" class="product-modal-tab" role="tab" aria-selected="false" data-panel="ingredients">成分</button>
+                            <button type="button" class="product-modal-tab" role="tab" aria-selected="false" data-panel="ingredients">成分使用</button>
                             <button type="button" class="product-modal-tab" role="tab" aria-selected="false" data-panel="notice">注意事項</button>
                         </div>
 
@@ -625,11 +626,12 @@
                             <p id="product-modal-desc" class="desc">產品詳細說明</p>
                         </div>
                         <div class="product-modal-tab-panel" id="product-modal-panel-ingredients" role="tabpanel" hidden>
-                            <p id="product-modal-ingredients" class="desc">—</p>
+                            <div class="product-modal-ingredients-badges" id="product-modal-ingredients"></div>
                         </div>
                         <div class="product-modal-tab-panel" id="product-modal-panel-notice" role="tabpanel" hidden>
-                            <p class="product-modal-allergen"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></p>
-                            <p id="product-modal-notice" class="desc">—</p>
+                            <ul class="product-modal-notice-list" id="product-modal-notice-list">
+                                <li class="product-modal-allergen-item"><strong>過敏原</strong> <span id="product-modal-allergen-text">本產品含蛋、奶、麩質，不適合對其過敏體質者食用</span></li>
+                            </ul>
                         </div>
                     </div>
 

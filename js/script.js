@@ -7,17 +7,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // 根據 desc／allergens 既有資訊合理推敲，不是實際配方單；notice 是共用的
     // 通用提醒文字。兩者都還沒經過老闆本人核對，正式上線前務必比對實際配方
     // 表修改，食品原料/過敏原標示需要跟實際販售商品完全一致，不能只是「合理猜測」
-    const genericProductNotice = "本產品為手工新鮮現做，不添加防腐劑，請盡快冷藏保存並於期限內食用完畢。因應手工製作與食材天然差異，商品外觀、顏色可能略有不同，以實際到貨為準。";
+    // 注意事項改成條列式（見 setProductModalNotices），notice 欄位對應改成陣列，
+    // 每個元素是一條列點
+    const genericProductNotices = [
+        "本產品為手工新鮮現做，不添加防腐劑，請盡快冷藏保存並於期限內食用完畢。",
+        "因應手工製作與食材天然差異，商品外觀、顏色可能略有不同，以實際到貨為準。"
+    ];
+
+    // 成分徽章的圖示對照表：逐一挑跟該食材最接近的 Font Awesome Free 圖示
+    // （沒有完全對應的品項就挑意象相近的，例如巧克力沒有專屬圖示，用
+    // fa-cookie-bite 代表「咬一口的甜點」）。找不到對照的品項退回
+    // defaultIngredientIcon（嫩芽，代表食材/原料的通用意象）
+    const ingredientIcons = {
+        '土鳳梨餡': 'fa-lemon',
+        '法國奶油': 'fa-cheese',
+        '中筋麵粉': 'fa-wheat-awn',
+        '雞蛋': 'fa-egg',
+        '細砂糖': 'fa-cube',
+        '鹽': 'fa-mound',
+        '紅心鹹蛋黃': 'fa-egg',
+        '烏豆沙餡': 'fa-seedling',
+        '奶油酥皮': 'fa-layer-group',
+        '奶油': 'fa-cheese',
+        '伯爵茶葉': 'fa-mug-hot',
+        '香草籽': 'fa-leaf',
+        '苦甜巧克力': 'fa-cookie-bite',
+        '鮮奶油': 'fa-ice-cream'
+    };
+    const defaultIngredientIcon = 'fa-seedling';
 
     const productsData = {
         '1': {
             name: "鳳梨酥",
             price: "NT$ 500",
             qty: "10入/盒",
-            desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國 Isigny 發酵奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
+            desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
             allergens: "蛋、奶、麩質",
-            ingredients: "土鳳梨餡、法國 Isigny 發酵奶油、中筋麵粉、雞蛋、細砂糖、鹽",
-            notice: genericProductNotice,
+            ingredients: ["土鳳梨餡", "法國奶油", "中筋麵粉", "雞蛋", "細砂糖", "鹽"],
+            notice: genericProductNotices,
             images: [
                 "images/product-1.jpg",
                 "images/product-1-detail1.jpg",
@@ -36,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             qty: "6入/盒",
             desc: "選用紅心鹹蛋黃搭配細緻烏豆沙餡，外層酥皮層層酥脆，鹹甜交織是經典中式節慶點心的代表。",
             allergens: "蛋、奶、麩質",
-            ingredients: "紅心鹹蛋黃、烏豆沙餡、奶油酥皮（中筋麵粉、奶油）、雞蛋、細砂糖",
-            notice: genericProductNotice,
+            ingredients: ["紅心鹹蛋黃", "烏豆沙餡", "奶油酥皮", "雞蛋", "細砂糖"],
+            notice: genericProductNotices,
             images: [
                 "images/product-2.jpg",
                 "images/product-2-detail1.jpg",
@@ -49,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "磅蛋糕",
             price: "NT$ 400",
             qty: "1條/盒",
-            desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與馬達加斯加香草籽，甜而不膩，是下午茶的最佳伴侶。",
+            desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與香草籽，甜而不膩，是下午茶的最佳伴侶。",
             allergens: "蛋、奶、麩質",
-            ingredients: "奶油、雞蛋、中筋麵粉、細砂糖、伯爵茶葉、馬達加斯加香草籽",
-            notice: genericProductNotice,
+            ingredients: ["奶油", "雞蛋", "中筋麵粉", "細砂糖", "伯爵茶葉", "香草籽"],
+            notice: genericProductNotices,
             images: [
                 "images/product-3.jpg",
                 "images/product-3-detail1.jpg",
@@ -66,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             qty: "8吋/顆",
             desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
             allergens: "蛋、奶、麩質",
-            ingredients: "苦甜巧克力、奶油、雞蛋、中筋麵粉、鮮奶油、細砂糖",
-            notice: genericProductNotice,
+            ingredients: ["苦甜巧克力", "奶油", "雞蛋", "中筋麵粉", "鮮奶油", "細砂糖"],
+            notice: genericProductNotices,
             images: [
                 "images/product-4.jpg",
                 "images/product-4-detail1.jpg",
@@ -718,8 +745,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDesc = document.getElementById('product-modal-desc');
     const modalIngredients = document.getElementById('product-modal-ingredients');
     const modalAllergen = document.getElementById('product-modal-allergen-text');
-    const modalNotice = document.getElementById('product-modal-notice');
+    const modalNoticeList = document.getElementById('product-modal-notice-list');
     const modalCta = document.getElementById('product-modal-cta');
+
+    // 成分改用 icon 徽章：每個成分各自一顆膠囊，跟 .product-modal-meta .qty
+    // 那顆「10入/盒」份量徽章同一套視覺語言（淺灰底、20px 圓角），圖示依
+    // ingredientIcons 對照表逐一挑對應的圖示，查不到的退回 defaultIngredientIcon
+    function setProductModalIngredients(items) {
+        modalIngredients.innerHTML = '';
+        items.forEach(text => {
+            const badge = document.createElement('span');
+            badge.className = 'ingredient-badge';
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid ' + (ingredientIcons[text] || defaultIngredientIcon);
+            icon.setAttribute('aria-hidden', 'true');
+            badge.appendChild(icon);
+            badge.appendChild(document.createTextNode(text));
+            modalIngredients.appendChild(badge);
+        });
+    }
+
+    // 注意事項改條列式：過敏原那條 <li> 固定寫在 HTML 裡不用重建，這裡只
+    // 負責清掉舊商品留下的其餘列點、依新商品的 notices 陣列補上新的
+    function setProductModalNotices(notices) {
+        modalNoticeList.querySelectorAll('.product-modal-notice-item').forEach(li => li.remove());
+        notices.forEach(text => {
+            const li = document.createElement('li');
+            li.className = 'product-modal-notice-item';
+            li.textContent = text;
+            modalNoticeList.appendChild(li);
+        });
+    }
 
     // 分段控制器：產品介紹／注意事項同時間只顯示一個面板，取代
     // 原本文字全部攤開的做法（見 CSS 的 .product-modal-tabs 說明）
@@ -795,9 +851,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modalPrice.textContent = data.price;
         modalQty.textContent = data.qty;
         modalDesc.textContent = data.desc;
-        modalIngredients.textContent = data.ingredients;
+        setProductModalIngredients(data.ingredients);
         modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
-        modalNotice.textContent = data.notice;
+        setProductModalNotices(data.notice);
 
         galleryImages = data.images;
         galleryName = data.name;

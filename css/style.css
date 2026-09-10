@@ -4153,11 +4153,15 @@ a.faq-card {
     margin: 0;
 }
 
-/* 產地保存卡／分段控制器／內容面板，三段當一組排在標題正下方，跟
-   .product-panel-infobar 同一套液態玻璃小卡配方，不重新發明。flex-grow:1
-   把這塊往下撐開，購買動作區（.product-modal-footer）不管內容多短都會
-   自然貼齊欄位底部，是世界電商 PDP 常見的「內容區／購買動作區」兩段式
-   版面，兩者之間用 .product-modal-footer 自己的 border-top 分隔線劃界 */
+/* 分段控制器／內容面板，排在標題正下方，跟 .product-panel-infobar
+   同一套液態玻璃小卡配方，不重新發明。flex-grow:1 把這塊往下撐開，
+   購買動作區（.product-modal-footer）不管內容多短都會自然貼齊欄位
+   底部，是世界電商 PDP 常見的「內容區／購買動作區」兩段式版面，兩者
+   之間用 .product-modal-footer 自己的 border-top 分隔線劃界。
+   （曾經拿掉這條試圖解決短文字時內容區留白的問題，但使用者要求購買
+   動作區的位置固定貼底、不能因為內容變短就往上移動，所以留著。內容
+   變長變短造成的空白改從別的地方處理——見「成分」併入產品介紹段落、
+   注意事項改條列式，這兩項改動已經讓內容量增加不少，留白比原本少很多） */
 .product-modal-info-wrap {
     display: flex;
     flex-direction: column;
@@ -4200,32 +4204,140 @@ a.faq-card {
     color: var(--white);
 }
 
-/* 原本用 JS 量出三段面板裡最長的一段（通常是含過敏原的「注意事項」），
-   套成三個面板共用的 min-height，避免切換分頁時購買動作區跟著上下彈跳。
-   但這樣一來，文字短的面板（例如「產品介紹」只有兩行）會被撐出一大塊
-   空白，使用者反應「文字太少空白太多」——拿掉共用 min-height，改回每個
-   面板照自己的內容高度顯示，短面板不再有多餘留白；代價是切換分頁時
-   購買動作區的位置會跟著內容多寡小幅上下移動，兩者取捨後這裡選不留白 */
+/* 曾經用 JS 量出三段面板裡最長的一段，套成共用 min-height，後來拿掉改
+   成貼合自己內容高度（短文字不留白），現在購買動作區又要求固定貼底
+   （.product-modal-info-wrap 的 flex-grow），面板自己也要跟著撐滿剩餘
+   空間，不然撐開的空間會全部擠成一塊留在面板下方——改成 flex-grow:1，
+   讓面板本身撐滿，內部版面（例如「產品介紹」的上下對半）才有空間可以
+   分配，不是整塊留白堆在最後面 */
 .product-modal-tab-panel {
     min-height: 0;
+    flex-grow: 1;
+}
+
+/* 「產品介紹」「成分使用」現在各自是獨立分頁（見 index.html 的三個
+   tab），各自只裝一段內容，用 flex + align-items:center 把內容在面板
+   剩餘高度（.product-modal-tab-panel 的 flex-grow:1）裡置中，不再是
+   貼齊頂端、下面留一大截空白 */
+/* 曾經試過置中／平均分配空間讓面板「看起來填滿」，但短文字/徽章被拉開
+   跟頂端分頁、底部分隔線都脫節，飄在一大塊空白正中間，使用者反應「很醜」
+   ——改回貼齊頂端的簡單排版，剩餘空間留在內容下方、分隔線上方，變成單一
+   一塊乾淨的留白邊界，而不是刻意置中或拆散間距硬要填滿。這才是簡約/
+   編輯式設計真正的留白邏輯：留白是內容的邊界，不是拿來撐開內容本身 */
+#product-modal-panel-desc,
+#product-modal-panel-ingredients {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 讓 .product-modal-notice-list 的 flex:1 能生效——面板本身要是 flex
+   容器，清單才能撐滿面板剩餘高度（見該規則的說明） */
+#product-modal-panel-notice {
+    display: flex;
+    flex-direction: column;
 }
 
 .product-modal-tab-panel[hidden] {
     display: none;
 }
 
-/* 過敏原用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
-   #B30000，7.2:1 AAA，不是隨手挑的紅。下面接一般注意事項文字
-   （#product-modal-notice），margin-bottom 空出兩者的間距 */
-.product-modal-allergen {
-    font-size: var(--fs-small);
-    line-height: 1.6;
-    color: #B30000;
-    margin: 0 0 var(--sp-2);
+/* #product-modal-panel-desc／#product-modal-panel-ingredients／
+   #product-modal-panel-notice 都用 ID 選擇器設 display:flex，單一 ID 的
+   特異度 (1,0,0) 比 .product-modal-tab-panel[hidden] 的 (0,2,0) 高，導致
+   切分頁時被設定 hidden=true 的那個面板畫面上卻還是顯示著（display:flex
+   贏過 display:none）——使用者反應「產品介紹重複出現」就是這個 bug，
+   跟這個專案已經踩過好幾次的 [hidden] 特異度坑同一種成因。這裡補特異度
+   更高的 [hidden] 規則蓋掉三個 ID 選擇器 */
+#product-modal-panel-desc[hidden],
+#product-modal-panel-ingredients[hidden],
+#product-modal-panel-notice[hidden] {
+    display: none;
 }
 
-.product-modal-allergen strong {
+/* 曾經改成固定 3 欄的 grid，但徽章本身是緊湊寬度（justify-self:start），
+   欄位比徽章寬時，欄位剩餘的空間會留在徽章右邊變成看得出來的缺口
+   （尤其最後一欄如果只有短短兩個字，右邊那塊空白特別明顯）。改回
+   flex-wrap：膠囊各自照文字內容決定寬度，一個接一個往右排，排滿就
+   自動換行，不會有格線切出來的人為空隙。成分文字已經縮短過（見
+   productsData 的註解），一般寬度下自然也會落在每排三個左右，效果
+   接近但沒有 grid 的缺口問題 */
+.product-modal-ingredients-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+}
+
+/* 每個成分各自一顆膠囊，跟 .product-modal-meta .qty 那顆「10入/盒」份量
+   徽章同一套視覺語言（淺灰底、20px 圓角），圖示逐一對應該食材（見
+   script.js 的 ingredientIcons 對照表） */
+.ingredient-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-caption);
     font-weight: 700;
+    color: var(--ink-soft);
+    background-color: rgba(29, 29, 31, 0.05);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.ingredient-badge i {
+    font-size: 11px;
+    color: var(--ink-soft);
+}
+
+/* 注意事項改條列式：全站沒有用瀏覽器預設的 disc 圓點清單，這裡也不例外，
+   改用跟 --ink-soft 同色的小圓點 ::before，維持全站扁平無裝飾的清單語言。
+   過敏原那一條用語意錯誤色（見設計系統 01b），跟 .cart-add-note 共用同一個
+   #B30000，7.2:1 AAA，不是隨手挑的紅——圓點也跟著變紅，第一眼就能跟其他
+   列點分開 */
+/* flex:1 讓清單撐滿面板剩餘高度（面板本身已經靠 flex-grow:1 撐滿欄位，
+   見 .product-modal-tab-panel），justify-content:space-between 把撐出來的
+   空間平均分配成三條列點「之間」的間距，取代原本置中整塊、下面留一大截
+   空白的做法——多餘的高度變成列點間距延展開，不是堆在清單最後面 */
+/* 同上：曾經用 flex:1 + space-between 把三條列點的間距拉開填滿面板，
+   結果列點彼此距離太遠，看起來像三段各自獨立的碎片，不像同一份清單。
+   改回貼齊頂端、固定的緊湊間距（跟其他清單同一套節奏），面板多出來的
+   高度留在清單下方，不強行拆進列點之間 */
+.product-modal-notice-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+}
+
+.product-modal-notice-list li {
+    position: relative;
+    padding-left: var(--sp-4);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+}
+
+.product-modal-notice-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--ink-soft);
+}
+
+.product-modal-notice-list strong {
+    font-weight: 700;
+}
+
+.product-modal-allergen-item {
+    color: #B30000;
+}
+
+.product-modal-allergen-item::before {
+    background-color: #B30000;
 }
 
 /* display:block 蓋過了瀏覽器對 [hidden] 屬性內建的 display:none，
@@ -4879,15 +4991,13 @@ a.faq-card {
         padding: var(--sp-16) var(--sp-6) var(--sp-6);
     }
 
-    /* 使用者要求整個彈窗不准出現捲動軸，手機版單欄堆疊比桌機雙欄版更容易
-       超出畫面高度——內文字級/行高從 fs-body(16px/1.7) 收到 fs-small
-       (14px/1.5)，連同下面幾處間距一起收緊，把三段說明文字＋規格卡＋
-       購買動作全部壓進一屏 */
-    .product-detail-body .desc {
-        font-size: var(--fs-small);
-        line-height: 1.5;
-    }
-
+    /* 原本這裡把內文字級/行高從 fs-body(16px/1.7) 壓到 fs-small(14px/1.5)，
+       是為了在「整個彈窗不准出現捲動軸」的限制下，把三段說明文字＋規格卡＋
+       購買動作全部壓進一屏。但內文（要完整閱讀的段落文字）比照多數網頁
+       易讀性慣例（Nielsen Norman Group 等）應該至少 16px，11-12px 那種
+       小字級是給標籤/badge 用的下限（Apple HIG），不該套在要讀完整句子
+       的內文上——改回標準字級，改從圖片高度/其他間距擠出空間，見下面
+       .gallery-main／.product-modal-footer 等處的調整 */
     .product-title-row {
         margin-bottom: var(--sp-4);
     }
@@ -4896,9 +5006,13 @@ a.faq-card {
         margin-top: var(--sp-3);
     }
 
+    .product-modal-notice-list {
+        gap: 4px;
+    }
+
     .product-modal-footer {
-        margin-top: var(--sp-3);
-        padding-top: var(--sp-3);
+        margin-top: 8px;
+        padding-top: 8px;
     }
 
     .product-modal-footer .qty-stepper {
