@@ -2128,6 +2128,14 @@ a.faq-card {
 /* =========================================
    9. 官方線上商城
    ========================================= */
+/* 商城＋Footer 合併成一個滿版面板，原本 .shopping-section 用 flex:1 +
+   justify-content:center 把自己撐滿剩餘高度、內容置中——螢幕越高，
+   商城卡片上下留白就越誇張（見對話紀錄裡 1080px 高度的截圖，卡片飄在
+   一大片空白正中間）；螢幕矮的時候又反過來，商城+footer 兩者的實際內容
+   一旦超過 100vh，footer 最下面的版權列會被裁掉看不到。改成商城區塊
+   照自己內容的高度顯示（不撐滿、不置中），footer 緊接在後面；如果兩者
+   加起來還沒到 100vh，剩餘空間留在 footer 下方（頁尾多一點留白是正常的，
+   不會像卡片飄在空白中間那樣像排版錯誤），矮螢幕也不會再裁到版權列 */
 .shop-footer-screen {
     min-height: 100vh;
     display: flex;
@@ -2137,10 +2145,6 @@ a.faq-card {
 }
 
 .shopping-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding: 112px 5% 96px;
     text-align: center;
     box-sizing: border-box;
