@@ -168,10 +168,19 @@
         0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* overflow-x:hidden 原本只設在 body，但捲動的 scroll-snap-type 是設在
+   html 上——實際捲動的容器是 html，不是 body，手機版左右還能拖動就是
+   這個沒對齊：body 擋住了橫向捲動，html 自己卻沒有同樣的限制，觸控
+   裝置上還是拖得動。overscroll-behavior-y:none 是另一個手機版問題：
+   往上滑到底、繼續往上拖會觸發 iOS 的「橡皮筋」回彈效果，回彈區域會
+   露出瀏覽器預設的白色背景（不是這個網站的 #EBEBEC），關掉這個彈性
+   回彈效果就不會再露白 */
 html {
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory; /* 全頁靈敏對齊 */
     background-color: #EBEBEC;
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
 }
 
 /* 無障礙：使用者於系統設定關閉動態效果時，取消所有動畫/轉場/平滑捲動 */
@@ -189,6 +198,7 @@ body {
     color: var(--ink);
     font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
 }
 
 /* 無障礙跳轉連結：預設藏在畫面外，鍵盤 Tab 到才出現 */
