@@ -405,11 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const pBottom = document.getElementById('scroll-progress-bottom');
     const pLeft = document.getElementById('scroll-progress-left');
 
-    window.addEventListener('scroll', () => {
-        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    // 真正在捲動的元素從 html 換成 body 了（見 style.css 開頭的說明，修
+    // Safari 往上拖到底露白的問題），監聽對象跟著從 window 改成 body——
+    // 'scroll' 事件不會從內層元素冒泡到 window，監聽 window 會完全收不到
+    document.body.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop;
+        const height = document.body.scrollHeight - document.body.clientHeight;
         const scrolled = (winScroll / height) * 100;
-        
+
         if (pTop) pTop.style.width = `${scrolled}%`;
         if (pRight) pRight.style.height = `${scrolled}%`;
         if (pBottom) pBottom.style.width = `${scrolled}%`;

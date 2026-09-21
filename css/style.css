@@ -168,19 +168,22 @@
         0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* overflow-x:hidden 原本只設在 body，但捲動的 scroll-snap-type 是設在
-   html 上——實際捲動的容器是 html，不是 body，手機版左右還能拖動就是
-   這個沒對齊：body 擋住了橫向捲動，html 自己卻沒有同樣的限制，觸控
-   裝置上還是拖得動。overscroll-behavior-y:none 是另一個手機版問題：
-   往上滑到底、繼續往上拖會觸發 iOS 的「橡皮筋」回彈效果，回彈區域會
-   露出瀏覽器預設的白色背景（不是這個網站的 #EBEBEC），關掉這個彈性
-   回彈效果就不會再露白 */
+/* 先前用 overflow-x:hidden + overscroll-behavior-y:none 修手機版左右
+   滑動／往上拖到底露白，結果 overscroll-behavior 在 Safari／WebKit 上
+   對「html/body 這層」的捲動支援一直不完整（已知的瀏覽器限制，不是
+   設定漏了什麼），Safari 使用者還是看得到白色回彈。改成更徹底的做法：
+   html 本身固定在 100% 視窗高度、完全不能捲動（overflow:hidden），
+   真正負責捲動的換成 body（overflow-y:auto）——html 既然自己不會被
+   拖出邊界，就不會再露出邊界外瀏覽器預設的白色背景，這個技巧不依賴
+   overscroll-behavior 在各家瀏覽器的支援度，相容性更可靠。
+   scroll-snap-type／scroll-behavior 也跟著從 html 搬到 body，因為
+   scroll-snap 抓的是「實際在捲動的那個元素」，現在是 body 不是 html。
+   js/script.js 裡所有讀捲動位置的地方（4 邊捲動進度條）也要跟著改成
+   讀 body 的捲動狀態，不然對不起來 */
 html {
-    scroll-behavior: smooth;
-    scroll-snap-type: y mandatory; /* 全頁靈敏對齊 */
+    height: 100%;
+    overflow: hidden;
     background-color: #EBEBEC;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
 }
 
 /* 無障礙：使用者於系統設定關閉動態效果時，取消所有動畫/轉場/平滑捲動 */
@@ -194,11 +197,15 @@ html {
 }
 
 body {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory; /* 全頁靈敏對齊，原本設在 html 上 */
     background-color: #EBEBEC;
     color: var(--ink);
     font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
 }
 
 /* 無障礙跳轉連結：預設藏在畫面外，鍵盤 Tab 到才出現 */
@@ -4419,8 +4426,8 @@ a.faq-card {
    13. 響應式設定 (行動版底欄純 5 個 ICON，無文字)
    ========================================= */
 @media (max-width: 1024px) {
-    html {
-        scroll-snap-type: none; /* 手機版還原流暢自然滑動 */
+    body {
+        scroll-snap-type: none; /* 手機版還原流暢自然滑動，原本設在 html 上 */
     }
 
     /* 手機版彈窗改成 iOS 風格的底部滑出式面板（sheet），不是從畫面中央縮放出現——
