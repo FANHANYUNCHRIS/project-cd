@@ -2136,6 +2136,16 @@ a.faq-card {
    照自己內容的高度顯示（不撐滿、不置中），footer 緊接在後面；如果兩者
    加起來還沒到 100vh，剩餘空間留在 footer 下方（頁尾多一點留白是正常的，
    不會像卡片飄在空白中間那樣像排版錯誤），矮螢幕也不會再裁到版權列 */
+/* min-height:100vh 是必要的下限，不能拿掉：這裡是全站 scroll-snap 流程
+   裡的「最後一頁」，如果面板矮於一個螢幕，文件可捲動的總高度會不夠，
+   瀏覽器物理上捲不到讓它貼齊視窗頂端的位置——捲到底時上一頁的內容會
+   卡在頂端一截露出來（使用者截圖回報過這個現象）。只有不是最後一頁的
+   區塊才能安全拿掉 min-height（後面還有內容可以繼續捲）。
+   多出來的高度怎麼分配試過三種都被打回票：置中讓卡片浮在空白正中間、
+   footer 背景拉伸變成一大塊黑、兩塊中間插一段空隙——都會讓使用者覺得
+   「這裡排版怪怪的」。改成卡片跟 footer 維持固定的緊湊間距（不隨視窗
+   高度伸縮），多出來的高度全部推到最上面、標題跟導覽列之間，讀起來
+   像是「這一頁上方留白比較多」，不會被誤會成中間排版錯位 */
 .shop-footer-screen {
     min-height: 100vh;
     display: flex;
@@ -2144,11 +2154,24 @@ a.faq-card {
     scroll-snap-stop: always;
 }
 
+/* flex-grow:1 撐滿面板剩餘高度，justify-content:flex-end 把內容（標題+
+   卡片）貼齊自己這塊區域的底部——跟 footer 之間永遠只隔著固定的
+   padding-bottom（32px）+ footer 自己的 padding-top（32px），不會隨
+   視窗高度伸縮；多出來的高度全部留在標題上方，變成導覽列跟標題之間
+   比較寬鬆的留白，不是卡在內容中間的一段空隙 */
 .shopping-section {
-    padding: 112px 5% 96px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px 5% 32px;
     text-align: center;
     box-sizing: border-box;
     position: relative;
+}
+
+.shopping-section .section-title {
+    margin-bottom: var(--sp-6);
 }
 
 .shop-eyebrow {
@@ -2248,11 +2271,17 @@ a.faq-card {
 /* =========================================
    10. Footer 頁尾區塊
    ========================================= */
+/* padding 從 48px/24px 收到 32px/16px，理由同上面 .shopping-section 的
+   註解——矮一點的桌機視窗會把這裡（含版權列）擠出可視範圍。
+   曾經加過 flex-grow:1 想讓深色背景撐滿面板剩餘高度，但拿掉
+   .shop-footer-screen 的 min-height:100vh 之後這裡不會再有「剩餘高度」
+   需要撐，footer 照自己內容的高度顯示就好——維持 flex-shrink:0 純粹是
+   避免這個面板萬一空間不夠時 footer 被壓扁 */
 .footer {
     flex-shrink: 0;
     background-color: var(--ink);
     color: var(--paper);
-    padding: 48px 5% 24px;
+    padding: 32px 5% 16px;
     border-top: 1px solid #333;
 }
 
@@ -2271,7 +2300,7 @@ a.faq-card {
     justify-content: space-evenly;
     max-width: 1100px;
     margin: 0 auto;
-    padding-bottom: 32px;
+    padding-bottom: 16px;
     border-bottom: 1px solid #333;
 }
 
@@ -2335,7 +2364,7 @@ a.faq-card {
    flex-wrap+固定容器寬度去湊，欄數不會因為圖示總數變動而跑掉 */
 .footer-social {
     display: grid;
-    grid-template-columns: repeat(2, var(--sp-8));
+    grid-template-columns: repeat(3, var(--sp-8));
     gap: 16px;
 }
 
@@ -2378,7 +2407,7 @@ a.faq-card {
 
 .footer-bottom {
     text-align: center;
-    padding-top: var(--sp-6);
+    padding-top: var(--sp-3);
     font-size: var(--fs-caption);
     color: var(--paper);
 }
@@ -4932,7 +4961,6 @@ a.faq-card {
     }
 
     .shop-footer-screen {
-        min-height: auto;
         scroll-snap-align: none;
     }
 

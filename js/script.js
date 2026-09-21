@@ -511,14 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactModal = document.getElementById('contact-modal');
     const contactModalClose = document.getElementById('contact-modal-close');
     const contactTrigger = document.getElementById('nav-btn-contact');
-    const footerLinkContact = document.getElementById('footer-link-contact');
 
-    if (contactModal && contactModalClose) {
-        [contactTrigger, footerLinkContact].filter(Boolean).forEach(trigger => {
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal(contactModal);
-            });
+    if (contactModal && contactModalClose && contactTrigger) {
+        contactTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(contactModal);
         });
 
         contactModalClose.addEventListener('click', () => closeModal(contactModal));
