@@ -306,12 +306,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // font-size（見 .product-panel-name），視覺大小才會完全一致，不會因為
         // 字數或右側價格寬度不同而每張卡各自縮出不同大小
 
-        // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量
+        // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量。
+        // CSS background-image 讀取失敗不會像 <img> 一樣觸發 error 事件，
+        // 直接設 bgEl.style.backgroundImage 就算圖片 404 也偵測不到、永遠不會
+        // 套用 .img-fallback——改成先用一個不塞進畫面的 Image() 物件試讀，
+        // 讀成功才設背景圖，讀失敗就加 .img-fallback class（對應樣式見下方
+        // .product-panel-image.img-fallback，跟商品彈窗大圖 .gallery-main 同一套
+        // 圖示佔位語言），圖片準備好上傳後會自動換回真的照片
         const lazyBgObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) return;
                 const bgEl = entry.target;
-                bgEl.style.backgroundImage = `url('${bgEl.dataset.bg}')`;
+                const src = bgEl.dataset.bg;
+                const probe = new Image();
+                probe.addEventListener('load', () => {
+                    bgEl.style.backgroundImage = `url('${src}')`;
+                });
+                probe.addEventListener('error', () => {
+                    bgEl.classList.add('img-fallback');
+                });
+                probe.src = src;
                 observer.unobserve(bgEl);
             });
         }, { rootMargin: '300px' });
