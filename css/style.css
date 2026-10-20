@@ -632,8 +632,12 @@ body {
    7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
    ========================================= */
 /* padding-bottom 同 #brand 的理由蓋掉基礎值：這裡也新增了 SCROLL DOWN
-   指示器，保留固定 96px 底部留白跟商品卡片保持距離，不用看螢幕高度夠不夠 */
-#products.fullscreen-section {
+   指示器，保留固定 96px 底部留白跟商品卡片保持距離，不用看螢幕高度夠不夠。
+   改成 class 選擇器而不是 #products id：現在一個產品一個滿版畫面
+   （js/script.js 的 initProductPanels() 依 productsData 動態產生多個
+   <section>），只有第一個維持 id="products"（給導覽列/章節小圓點定位用，
+   見該函式的註解），其餘的 id 各自不同，版面樣式要套用在全部產品畫面上 */
+.product-fullscreen-section {
     background-color: #EBEBEC;
     display: flex;
     flex-direction: column;
@@ -643,16 +647,12 @@ body {
     padding-bottom: calc(var(--sp-16) + var(--sp-8));
 }
 
-/* 產品只剩鳳梨酥／蛋黃酥兩樣，欄數跟著從 4 欄改 2 欄；原本 4 欄時
-   width:100% 鋪滿區塊兩側標準留白就夠，2 欄若同樣鋪滿，寬螢幕上每張卡
-   會被拉得比原本大一倍，改用 max-width + margin:0 auto 讓卡片維持
-   接近原本的視覺大小、置中顯示，跟 .shop-links 限制寬度置中同一個做法 */
-.product-panels {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--sp-6);
+/* 原本 2 張卡並排用 grid 置中，現在一個畫面只放大顯示一張卡，改用簡單的
+   max-width + margin:0 auto 置中，420px 是在桌機版視窗高度內（含標題／
+   上下留白）還能完整容納 4:5 圖片+資訊列、不會逼出額外捲動的尺寸 */
+.product-panel-solo {
     width: 100%;
-    max-width: 680px;
+    max-width: 420px;
     margin: 0 auto;
 }
 
@@ -4484,11 +4484,6 @@ a.faq-card {
     }
 
     .team-switcher {
-        height: auto;
-    }
-
-    .product-panels {
-        grid-template-columns: 1fr;
         height: auto;
     }
 

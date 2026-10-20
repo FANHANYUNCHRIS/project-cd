@@ -233,33 +233,51 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     /* =========================================
-       5. 產品區塊滿版分割選單
+       5. 產品區塊：一個產品一個滿版畫面
        ========================================= */
     (function initProductPanels() {
-        const panelsEl = document.getElementById('product-panels');
-        if (!panelsEl) return;
+        const placeholder = document.getElementById('products-placeholder');
+        if (!placeholder) return;
 
-        Object.keys(productsData).forEach((id, index) => {
+        // 第一個產品沿用原本的 id="products"，讓導覽列「產品」連結／右側章節
+        // 小圓點不用跟著改；後面的產品各自是獨立滿版畫面，但沒有自己的導覽
+        // 項目，用 data-nav-group 歸類回 "products"（見 11. Scrollspy 的
+        // navObserver，currentId 優先讀 data-nav-group，捲到這些畫面時
+        // 「產品」連結／小圓點照樣維持高亮）
+        const productIds = Object.keys(productsData);
+        const sectionIds = productIds.map((_, i) => i === 0 ? 'products' : `product-${i + 1}`);
+
+        const sections = productIds.map((id, index) => {
             const product = productsData[id];
+            const nextHref = index < productIds.length - 1 ? `#${sectionIds[index + 1]}` : '#shop';
 
-            const panel = document.createElement('div');
-            panel.className = `product-panel ${index % 2 === 0 ? 'reveal-slide-left' : 'reveal-slide-right'}`;
-            panel.dataset.revealDelay = String(index * 0.12);
-            panel.setAttribute('role', 'button');
-            panel.setAttribute('tabindex', '0');
-            panel.setAttribute('aria-label', `查看${product.name}詳細介紹`);
+            const section = document.createElement('section');
+            section.className = 'fullscreen-section product-fullscreen-section';
+            section.id = sectionIds[index];
+            if (index > 0) section.dataset.navGroup = 'products';
 
-            panel.innerHTML = `
-                <div class="product-panel-image" data-bg="${product.images[0]}"></div>
-                <div class="product-panel-infobar">
-                    <h3 class="product-panel-name">${product.name}</h3>
-                    <div class="product-panel-meta">
-                        <span class="product-panel-price">${product.price}</span>
-                        <span class="product-panel-qty">（${product.qty}）</span>
+            section.innerHTML = `
+                <h2 class="section-title reveal-zoom">產品介紹</h2>
+                <div class="product-panel-solo reveal-zoom">
+                    <div class="product-panel" role="button" tabindex="0" aria-label="查看${product.name}詳細介紹">
+                        <div class="product-panel-image" data-bg="${product.images[0]}"></div>
+                        <div class="product-panel-infobar">
+                            <h3 class="product-panel-name">${product.name}</h3>
+                            <div class="product-panel-meta">
+                                <span class="product-panel-price">${product.price}</span>
+                                <span class="product-panel-qty">（${product.qty}）</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <a href="${nextHref}" class="scroll-down-indicator on-light" aria-label="往下滾動">
+                    <span>SCROLL DOWN</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </a>
             `;
 
+            const panel = section.querySelector('.product-panel');
             panel.addEventListener('click', () => openProductModal(id));
             panel.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -268,13 +286,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            panelsEl.appendChild(panel);
+            return section;
         });
 
-        // 品名現在統一是 2-4 個字的短名稱（鳳梨酥／蛋黃酥／磅蛋糕／巧克力派），
-        // 不再需要依名稱長短動態縮放字級的邏輯——四張卡片的品名固定用同一個
-        // font-size（見 .product-panel-name），視覺大小才會完全一致，不會因為
-        // 字數或右側價格寬度不同而每張卡各自縮出不同大小
+        placeholder.replaceWith(...sections);
 
         // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量。
         // CSS background-image 讀取失敗不會像 <img> 一樣觸發 error 事件，
@@ -300,7 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, { rootMargin: '300px' });
 
-        panelsEl.querySelectorAll('.product-panel-image').forEach(el => lazyBgObserver.observe(el));
+        sections.forEach(section => {
+            section.querySelectorAll('.product-panel-image').forEach(el => lazyBgObserver.observe(el));
+        });
     })();
 
     /* =========================================

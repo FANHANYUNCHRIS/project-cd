@@ -317,16 +317,9 @@
         </a>
     </section>
 
-    <!-- 產品區塊 (滿版直向分割選單) -->
-    <section id="products" class="fullscreen-section">
-        <h2 class="section-title reveal-zoom">產品介紹</h2>
-        <div class="product-panels" id="product-panels"></div>
-
-        <a href="#shop" class="scroll-down-indicator on-light" aria-label="往下滾動">
-            <span>SCROLL DOWN</span>
-            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-        </a>
-    </section>
+    <!-- 產品區塊：一個產品一個滿版畫面，由 js/script.js 的 initProductPanels()
+         依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
+    <div id="products-placeholder"></div>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
