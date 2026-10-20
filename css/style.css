@@ -569,36 +569,6 @@ body {
     filter: invert(1);
 }
 
-/* 首頁背景影片輪播 (雙層淡入淡出) */
-.hero-video-bg {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0;
-}
-
-.hero-video-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 1;
-}
-
-.hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 1.2s ease;
-}
-
-.hero-video.active {
-    opacity: 1;
-}
-
 .scroll-down-indicator {
     position: absolute;
     z-index: 2;
