@@ -631,209 +631,92 @@ body {
 /* =========================================
    7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
    ========================================= */
-/* padding-bottom 同 #brand 的理由蓋掉基礎值：這裡也新增了 SCROLL DOWN
-   指示器，保留固定 96px 底部留白跟商品卡片保持距離，不用看螢幕高度夠不夠。
-   改成 class 選擇器而不是 #products id：現在一個產品一個滿版畫面
-   （js/script.js 的 initProductPanels() 依 productsData 動態產生多個
-   <section>），只有第一個維持 id="products"（給導覽列/章節小圓點定位用，
-   見該函式的註解），其餘的 id 各自不同，版面樣式要套用在全部產品畫面上 */
+/* 一個產品一個滿版畫面，整張商品照片鋪滿螢幕當背景，跟首頁 Hero 同一套
+   全螢幕沉浸式語言（不是裝在卡片裡）。改成 class 選擇器而不是 #products
+   id：js/script.js 的 initProductPanels() 依 productsData 動態產生多個
+   <section>，只有第一個維持 id="products"（給導覽列/章節小圓點定位用，
+   見該函式的註解），其餘的 id 各自不同，版面樣式要套用在全部產品畫面上。
+   cursor:pointer 對應整個 section 可點開商品詳情彈窗（見 initProductPanels
+   的 click 綁定） */
 .product-fullscreen-section {
-    background-color: #EBEBEC;
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding-bottom: calc(var(--sp-16) + var(--sp-8));
-}
-
-/* 原本 2 張卡並排用 grid 置中，現在一個畫面只放大顯示一張卡，改用簡單的
-   max-width + margin:0 auto 置中，420px 是在桌機版視窗高度內（含標題／
-   上下留白）還能完整容納 4:5 圖片+資訊列、不會逼出額外捲動的尺寸 */
-.product-panel-solo {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-}
-
-/* 商品卡跟人物卡（.team-mobile-card）套用同一套液態玻璃材質：淺灰托盤
-   （var(--surface-sunken)）疊四個灰階光暈當底（不是色相，跟設計系統文件 P03「黑白灰
-   是唯一色彩語言」對齊），照片／資訊各自是內縮的半透明玻璃面板——
-   backdrop-filter 模糊 + 邊角高光 + 四邊不等寬邊框模擬光線折射，圓角
-   維持 20px 外層／8px 內層的同一組巢狀比例。hover/press 的位移跟陰影
-   用設計系統文件「04 四感設計・互動」定義的 iOS 彈簧回彈曲線
-   cubic-bezier(.34,1.56,.64,1)，跟彈窗/開關元件同一套語言 */
-.product-panel {
-    position: relative;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-4);
+    color: var(--paper);
     cursor: pointer;
-    overflow: hidden;
-    background-color: var(--surface-sunken);
-    /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
-       看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
-    background-image:
-        radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
-        radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
-    border: 1.5px solid rgba(22, 22, 26, 0.3);
-    border-radius: 20px;
-    padding: var(--sp-4);
-    box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                opacity 0.6s ease;
 }
 
-/* 原本是卡片本身位移 + 內部圖片各自 scale(1.05)（見下面 .product-panel-image
-   的說明），兩個動作疊在一起等於「卡片浮起來、圖片同時又放大」，視覺上像
-   兩層各自的動畫互相搶戲。改成整張卡片(含圖片、資訊列)一起等比放大，
-   .product-panel-image 不再單獨處理 hover */
-.product-panel:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 20px 40px rgba(22, 22, 26, 0.24);
+/* 深底只在這裡覆寫全站標題預設的 --ink，才看得見疊在商品照上的「產品介紹」 */
+.product-fullscreen-section .section-title {
+    color: var(--paper);
 }
 
-/* 玻璃面板共用的邊角高光，跟人物卡的 ::before 同一套技巧——疊在面板
-   最上層左上角的柔光，才是玻璃本身反光的關鍵，不是靠 backdrop-filter
-   模糊托盤就足夠。原本是貫穿整張卡片的對角線性漸層，會掃過卡片中段的
-   內文文字，跟底下較淺的 --ink-soft 文字疊在一起時，肉眼會出現「同一
-   排文字左右深淺不一」的錯覺（simultaneous contrast，背景亮暗不均讓
-   同一個灰階文字顏色看起來不同）——改成集中在角落、快速衰減到透明的
-   放射狀光暈。半徑用固定的 140px（不是百分比）：radial-gradient 預設
-   用「到最遠角落」決定範圍，又寬又扁的卡片（例如服務條款那種滿版寬
-   卡）最遠角落距離很長，百分比範圍會等比例放大、又掃回文字區，固定
-   像素半徑才不會隨卡片寬高比跑掉 */
-.product-panel-image::before {
+/* 照片本身鋪滿整個 section 當背景層——--ink 是照片載入前／讀取失敗的
+   備用底色，疊一層固定的半透明黑（::before）確保文字在任何照片明暗下
+   都維持可讀對比，同樣做法先前用在已淘汰的首頁背景影片 .hero-video-bg */
+.product-fullscreen-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center;
+}
+
+.product-fullscreen-bg::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
+    background: rgba(0, 0, 0, 0.45);
 }
 
-/* 原本靠 .product-panels 的固定 height:500px 讓 flex:1 的圖片區塊「大概」
-   撐出接近 4:3 的比例，但欄寬會隨螢幕寬度變動、高度卻是定值，實際比例
-   在不同桌機寬度下並不一致。改用真正的 aspect-ratio 直接鎖定比例，不論
-   螢幕多寬都準確；4:5 直式比例比原本偏橫的比例更適合四欄窄版排版，跟
-   手機版單欄卡片的 4:3（見下面 max-width:1024px 那組）是刻意不同的選擇——
-   手機版單欄不受欄寬擠壓，橫式比例還撐得住 */
-.product-panel-image {
-    position: relative;
-    flex: none;
-    aspect-ratio: 4 / 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    background-size: cover;
-    background-position: center;
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-/* 產品照片尚未上傳時的佔位樣式，跟商品彈窗大圖 .gallery-main.img-fallback
-   同一套圖示語言（深底＋白色 fa-image 圖示，取代瀏覽器預設裂圖示）——
-   玻璃材質本身是靠底下照片的明暗反差撐出來的，沒有照片時毛玻璃托盤只是
-   一塊空白半透明方塊，改成不透明深底才看得出「這裡預留給圖片」，不是
-   排版漏空 */
-.product-panel-image.img-fallback {
-    background-color: var(--ink);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-
-.product-panel-image.img-fallback::after {
+/* 照片尚未上傳時的佔位圖示，跟商品彈窗大圖 .gallery-main.img-fallback
+   同一套語言（深底＋白色 fa-image 圖示，取代瀏覽器預設裂圖示）——底色
+   已經是 --ink，只需要再疊上置中的圖示 */
+.product-fullscreen-bg.img-fallback::after {
     content: "\f03e";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
-    font-size: 40px;
+    font-size: 64px;
     color: var(--white);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.product-fullscreen-content {
     position: relative;
     z-index: 1;
-}
-
-/* 品名／價格／份量原本拆成三個各自獨立的玻璃面板（三宮格），改成單一
-   長方形玻璃面板：左邊品名、右邊價格＋份量，跟商品詳情彈窗的
-   .product-modal-meta（標題列同樣是左品名、右價格＋份量）版面邏輯一致，
-   不再是另一套獨立設計 */
-.product-panel-infobar {
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: var(--sp-3);
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 8px;
-    padding: var(--sp-3) var(--sp-4);
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
 }
 
-/* 不換行、不溢出欄寬——字太長時靠 JS（fitPanelText()）把 font-size
-   往下調到塞得進去為止，起始字級就是這裡的 --fs-body。min-width:0 讓
-   flex 子項可以縮到比內容窄，不然 white-space:nowrap 的文字會撐開
-   flex-basis，把右邊的價格/份量擠出去 */
-.product-panel-name {
-    flex: 1;
-    min-width: 0;
-    font-size: var(--fs-body);
-    font-weight: bold;
-    color: var(--ink);
-    line-height: 1.3;
-    white-space: nowrap;
-    overflow: hidden;
+.product-fullscreen-name {
+    font-size: var(--fs-h1);
+    font-weight: 900;
     margin: 0;
 }
 
-/* 價格＋份量右側一組，跟品名之間留白，不搶主要資訊（品名）的視覺份量。
-   試過的方案：灰底膠囊（太像獨立按鈕）、點號分隔（使用者不要點）、
-   純文字並排無分隔（太黏、不好讀）、上下疊放（可讀但卡片變高）——
-   最後定案：份量用括號包起來當價格的附註，回到單行，括號本身就是
-   夠清楚的視覺區隔，不用額外的點號或底色 */
-.product-panel-meta {
-    flex-shrink: 0;
+.product-fullscreen-meta {
     display: flex;
     align-items: baseline;
-    gap: 4px;
-}
-
-/* 跟 .account-hud-num／.mock-stat-num 同一套「數字等寬」處理：四張卡片
-   並排時，價格數字才會在同一個視覺基準上對齊，不會因為每個數字本身
-   寬度不同（1 比 8 窄）而讓整排價格看起來歪斜 */
-.product-panel-price {
-    font-size: var(--fs-body);
-    font-weight: bold;
-    color: var(--ink);
-    line-height: 1.3;
-    white-space: nowrap;
+    gap: var(--sp-2);
+    font-size: var(--fs-lead);
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
 
-.product-panel-qty {
-    font-size: var(--fs-caption);
-    font-weight: 600;
-    color: var(--ink-soft);
-    white-space: nowrap;
+.product-fullscreen-qty {
+    color: var(--paper-soft);
+    font-size: var(--fs-body);
+    font-weight: 400;
 }
 
 /* =========================================
@@ -4677,18 +4560,6 @@ a.faq-card {
         display: none;
     }
 
-    /* 手機版單欄卡片改用跟商品彈窗大圖（.gallery-main）同一組 4:3 比例，
-       蓋過桌機版的 4:5——單欄不受欄寬擠壓，橫式比例還撐得住，跟桌機版
-       四欄窄版故意選用直式比例是不同情境（見桌機版規則的說明） */
-    .product-panel-image {
-        flex: none;
-        aspect-ratio: 4 / 3;
-    }
-
-    .product-panel:hover {
-        transform: none;
-    }
-
     .team-switcher {
         flex-direction: column;
         align-items: stretch;
@@ -5180,10 +5051,17 @@ a.faq-card {
 .section-dot:active,
 .scroll-down-indicator:active,
 .faq-card:active,
-.shop-glass-card:active,
-.product-panel:active {
+.shop-glass-card:active {
     transform: scale(0.96);
     transition-duration: 0.08s !important;
+}
+
+/* 可點的是整個 100vh 滿版畫面，直接整塊 scale(0.96) 會讓畫面邊緣露出
+   後面區塊的顏色，觀感突兀；改成只縮放疊在上面的文字內容，一樣有「按下去了」
+   的觸覺回饋，不影響底下滿版商品照片本身 */
+.product-fullscreen-section:active .product-fullscreen-content {
+    transform: scale(0.96);
+    transition: transform 0.08s;
 }
 
 /* 這幾個本來就有自己的 transform（位移/縮放），按下去要疊加而不是蓋掉，

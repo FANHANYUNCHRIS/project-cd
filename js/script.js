@@ -251,35 +251,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const product = productsData[id];
             const nextHref = index < productIds.length - 1 ? `#${sectionIds[index + 1]}` : '#shop';
 
+            // 滿版商品圖：整張照片鋪滿螢幕當背景（跟首頁 Hero 同樣的全螢幕
+            // 沉浸式語言），不是裝在一張小卡片裡——所以這裡是 dark-section
+            // （navObserver 共用同一個 observer 判斷深底，LOGO 自動轉白，
+            // 不用額外寫 scroll 監聽，見 CLAUDE.md 導覽列架構說明），
+            // SCROLL DOWN 指示器也拿掉 on-light（背景換成深色照片了）
             const section = document.createElement('section');
-            section.className = 'fullscreen-section product-fullscreen-section';
+            section.className = 'fullscreen-section product-fullscreen-section dark-section';
             section.id = sectionIds[index];
             if (index > 0) section.dataset.navGroup = 'products';
+            section.setAttribute('role', 'button');
+            section.setAttribute('tabindex', '0');
+            section.setAttribute('aria-label', `查看${product.name}詳細介紹`);
 
             section.innerHTML = `
-                <h2 class="section-title reveal-zoom">產品介紹</h2>
-                <div class="product-panel-solo reveal-zoom">
-                    <div class="product-panel" role="button" tabindex="0" aria-label="查看${product.name}詳細介紹">
-                        <div class="product-panel-image" data-bg="${product.images[0]}"></div>
-                        <div class="product-panel-infobar">
-                            <h3 class="product-panel-name">${product.name}</h3>
-                            <div class="product-panel-meta">
-                                <span class="product-panel-price">${product.price}</span>
-                                <span class="product-panel-qty">（${product.qty}）</span>
-                            </div>
-                        </div>
+                <div class="product-fullscreen-bg" data-bg="${product.images[0]}"></div>
+                <div class="product-fullscreen-content">
+                    <h2 class="section-title reveal-zoom">產品介紹</h2>
+                    <h3 class="product-fullscreen-name reveal-zoom">${product.name}</h3>
+                    <div class="product-fullscreen-meta reveal-zoom">
+                        <span class="product-fullscreen-price">${product.price}</span>
+                        <span class="product-fullscreen-qty">（${product.qty}）</span>
                     </div>
                 </div>
 
-                <a href="${nextHref}" class="scroll-down-indicator on-light" aria-label="往下滾動">
+                <a href="${nextHref}" class="scroll-down-indicator" aria-label="往下滾動">
                     <span>SCROLL DOWN</span>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </a>
             `;
 
-            const panel = section.querySelector('.product-panel');
-            panel.addEventListener('click', () => openProductModal(id));
-            panel.addEventListener('keydown', (e) => {
+            section.addEventListener('click', (e) => {
+                if (e.target.closest('.scroll-down-indicator')) return;
+                openProductModal(id);
+            });
+            section.addEventListener('keydown', (e) => {
+                if (e.target !== section) return;
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     openProductModal(id);
@@ -296,8 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 直接設 bgEl.style.backgroundImage 就算圖片 404 也偵測不到、永遠不會
         // 套用 .img-fallback——改成先用一個不塞進畫面的 Image() 物件試讀，
         // 讀成功才設背景圖，讀失敗就加 .img-fallback class（對應樣式見下方
-        // .product-panel-image.img-fallback，跟商品彈窗大圖 .gallery-main 同一套
-        // 圖示佔位語言），圖片準備好上傳後會自動換回真的照片
+        // .product-fullscreen-bg.img-fallback，跟商品彈窗大圖 .gallery-main
+        // 同一套圖示佔位語言），圖片準備好上傳後會自動換回真的照片
         const lazyBgObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) return;
@@ -316,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { rootMargin: '300px' });
 
         sections.forEach(section => {
-            section.querySelectorAll('.product-panel-image').forEach(el => lazyBgObserver.observe(el));
+            section.querySelectorAll('.product-fullscreen-bg').forEach(el => lazyBgObserver.observe(el));
         });
     })();
 
