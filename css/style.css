@@ -237,7 +237,14 @@ body {
     outline-offset: 2px;
 }
 
-/* 螢幕四周 4 邊 2px 黑色滾動進度條 */
+/* 螢幕四周 4 邊 2px 黑色滾動進度條。原本用 width/height 的百分比做動畫，
+   這兩個屬性會觸發 layout reflow，搭配 CSS transition 疊上 JS 每個
+   rAF 都在改，等於捲動時每一幀都強制重新排版 4 次，是明顯的卡頓來源。
+   改成固定 100% 尺寸、用 transform: scale() 控制進度——transform 只在
+   合成層（compositor）運作，不觸發排版，搭配 transform-origin 固定在
+   對應的角落，視覺上維持原本「四邊順時針長出來」的效果不變，不需要
+   transition（js/script.js 已經用 requestAnimationFrame 每幀更新，
+   另外疊 CSS transition 只會讓進度條落後實際捲動位置） */
 .scroll-progress-h,
 .scroll-progress-v {
     position: fixed;
@@ -246,21 +253,23 @@ body {
 }
 
 .scroll-progress-h {
+    width: 100%;
     height: 2px;
     background-color: var(--ink);
-    transition: width 0.1s ease-out;
+    transform: scaleX(0);
 }
 
 .scroll-progress-v {
     width: 2px;
+    height: 100%;
     background-color: var(--ink);
-    transition: height 0.1s ease-out;
+    transform: scaleY(0);
 }
 
-.scroll-progress-h.top { top: 0; left: 0; width: 0%; }
-.scroll-progress-v.right { top: 0; right: 0; height: 0%; }
-.scroll-progress-h.bottom { bottom: 0; right: 0; width: 0%; }
-.scroll-progress-v.left { bottom: 0; left: 0; height: 0%; }
+.scroll-progress-h.top { top: 0; left: 0; transform-origin: left center; }
+.scroll-progress-v.right { top: 0; right: 0; transform-origin: top center; }
+.scroll-progress-h.bottom { bottom: 0; right: 0; transform-origin: right center; }
+.scroll-progress-v.left { bottom: 0; left: 0; transform-origin: bottom center; }
 
 /* =========================================
    2. 果凍彈跳式頁面浮現/離場隱藏

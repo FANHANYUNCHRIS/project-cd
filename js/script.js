@@ -353,12 +353,14 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => {
             const winScroll = document.body.scrollTop;
             const height = document.body.scrollHeight - document.body.clientHeight;
-            const scrolled = (winScroll / height) * 100;
+            // CSS 現在用 transform: scale() 畫進度條（不再是 width/height），
+            // scale 吃 0-1 的倍率，不是百分比，所以這裡除以 100 換算
+            const scrolled = winScroll / height;
 
-            if (pTop) pTop.style.width = `${scrolled}%`;
-            if (pRight) pRight.style.height = `${scrolled}%`;
-            if (pBottom) pBottom.style.width = `${scrolled}%`;
-            if (pLeft) pLeft.style.height = `${scrolled}%`;
+            if (pTop) pTop.style.transform = `scaleX(${scrolled})`;
+            if (pRight) pRight.style.transform = `scaleY(${scrolled})`;
+            if (pBottom) pBottom.style.transform = `scaleX(${scrolled})`;
+            if (pLeft) pLeft.style.transform = `scaleY(${scrolled})`;
 
             scrollProgressTicking = false;
         });
