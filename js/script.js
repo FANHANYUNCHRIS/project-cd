@@ -71,36 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-2-detail2.jpg",
                 "images/product-2-detail3.jpg"
             ]
-        },
-        '3': {
-            name: "磅蛋糕",
-            price: "NT$ 400",
-            qty: "1條/盒",
-            desc: "濕潤扎實的法式傳統蛋糕體，融合英式伯爵茶葉與香草籽，甜而不膩，是下午茶的最佳伴侶。",
-            allergens: "蛋、奶、麩質",
-            ingredients: ["奶油", "雞蛋", "中筋麵粉", "細砂糖", "伯爵茶葉", "香草籽"],
-            notice: genericProductNotices,
-            images: [
-                "images/product-3.jpg",
-                "images/product-3-detail1.jpg",
-                "images/product-3-detail2.jpg",
-                "images/product-3-detail3.jpg"
-            ]
-        },
-        '4': {
-            name: "巧克力派",
-            price: "NT$ 650",
-            qty: "8吋/顆",
-            desc: "以香醇苦甜巧克力製成綿密內餡，搭配酥脆奶油派皮，口感濃郁扎實，是巧克力愛好者不能錯過的經典選擇。",
-            allergens: "蛋、奶、麩質",
-            ingredients: ["苦甜巧克力", "奶油", "雞蛋", "中筋麵粉", "鮮奶油", "細砂糖"],
-            notice: genericProductNotices,
-            images: [
-                "images/product-4.jpg",
-                "images/product-4-detail1.jpg",
-                "images/product-4-detail2.jpg",
-                "images/product-4-detail3.jpg"
-            ]
         }
     };
 

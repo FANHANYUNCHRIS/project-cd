@@ -643,11 +643,17 @@ body {
     padding-bottom: calc(var(--sp-16) + var(--sp-8));
 }
 
+/* 產品只剩鳳梨酥／蛋黃酥兩樣，欄數跟著從 4 欄改 2 欄；原本 4 欄時
+   width:100% 鋪滿區塊兩側標準留白就夠，2 欄若同樣鋪滿，寬螢幕上每張卡
+   會被拉得比原本大一倍，改用 max-width + margin:0 auto 讓卡片維持
+   接近原本的視覺大小、置中顯示，跟 .shop-links 限制寬度置中同一個做法 */
 .product-panels {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--sp-6);
     width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
 }
 
 /* 商品卡跟人物卡（.team-mobile-card）套用同一套液態玻璃材質：淺灰托盤
