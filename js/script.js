@@ -337,17 +337,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 真正在捲動的元素從 html 換成 body 了（見 style.css 開頭的說明，修
     // Safari 往上拖到底露白的問題），監聽對象跟著從 window 改成 body——
-    // 'scroll' 事件不會從內層元素冒泡到 window，監聽 window 會完全收不到
+    // 'scroll' 事件不會從內層元素冒泡到 window，監聽 window 會完全收不到。
+    //
+    // 原本每次 scroll 事件都直接同步寫 4 個元素的 style.width/height，
+    // scroll 事件一次手勢可以觸發幾十次、又跟 body 自己的
+    // scroll-snap/-webkit-overflow-scrolling 平滑捲動搶主執行緒，造成
+    // 捲動時明顯卡頓——改成用 requestAnimationFrame 節流，一個畫面週期
+    // 最多算一次、所有變動一次寫完，不管 scroll 事件實際觸發幾次；
+    // { passive: true } 讓瀏覽器不用等這段 JS 執行完就能先開始捲動
+    let scrollProgressTicking = false;
     document.body.addEventListener('scroll', () => {
-        const winScroll = document.body.scrollTop;
-        const height = document.body.scrollHeight - document.body.clientHeight;
-        const scrolled = (winScroll / height) * 100;
+        if (scrollProgressTicking) return;
+        scrollProgressTicking = true;
 
-        if (pTop) pTop.style.width = `${scrolled}%`;
-        if (pRight) pRight.style.height = `${scrolled}%`;
-        if (pBottom) pBottom.style.width = `${scrolled}%`;
-        if (pLeft) pLeft.style.height = `${scrolled}%`;
-    });
+        requestAnimationFrame(() => {
+            const winScroll = document.body.scrollTop;
+            const height = document.body.scrollHeight - document.body.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+
+            if (pTop) pTop.style.width = `${scrolled}%`;
+            if (pRight) pRight.style.height = `${scrolled}%`;
+            if (pBottom) pBottom.style.width = `${scrolled}%`;
+            if (pLeft) pLeft.style.height = `${scrolled}%`;
+
+            scrollProgressTicking = false;
+        });
+    }, { passive: true });
 
     /* =========================================
        10. 果凍彈跳式頁面浮現 (徹底解決閃爍問題)
