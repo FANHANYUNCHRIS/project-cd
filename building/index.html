@@ -245,8 +245,6 @@ for(let i=0;i<NF;i++){
     EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});}); // elevator doors
     box(.06,H-.3,D,C.glass,W/2,(H-.3)/2,0,g,GLASS);
     [-W/2+.12,W/2-.12].forEach(x=>{box(.22,H,.22,C.black,x,H/2,D/2-.11,g).userData.xray=true;});
-    box(W-3,3.6,.05,C.glass,0,3.8,-D/2+.02,g,GLASS);
-    for(let k=0;k<=6;k++)box(.06,3.6,.06,C.black,-(W-3)/2+k*(W-3)/6,3.8,-D/2+.04,g);
   } else {
     [[-W/2,-.9],[.9,W/2]].forEach(([a,b])=>safeGlass(g,a,-D/2+.06,b,-D/2+.06));   // gap: fire stair
     safeGlass(g,-W/2+.06,-D/2,-W/2+.06,RR.z1);   // the left platform joins the garden in front of this
