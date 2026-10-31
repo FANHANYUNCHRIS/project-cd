@@ -392,8 +392,9 @@ function entrance(g,roof){
   } else {
     [[-W/2,dx0],[dx1,W/2]].forEach(([a,b])=>{box(b-a,1.1,.06,C.glass,(a+b)/2,.55,z,g,GLASS);box(b-a,.06,.12,C.black,(a+b)/2,1.13,z,g).userData.xray=true;});
   }
-  box(.12,dh+.1,.14,C.black,dx0,(dh+.1)/2,z,g); box(.12,dh+.1,.14,C.black,dx1,(dh+.1)/2,z,g);
-  box(dx1-dx0+.12,.14,.16,C.black,(dx0+dx1)/2,dh+.1,z,g);
+  box(.12,dh+.1,.14,C.black,dx0,(dh+.1)/2,z,g).userData.xray=true;
+  box(.12,dh+.1,.14,C.black,dx1,(dh+.1)/2,z,g).userData.xray=true;
+  box(dx1-dx0+.12,.14,.16,C.black,(dx0+dx1)/2,dh+.1,z,g).userData.xray=true;
   const leafW=(dx1-dx0)/2-.06;
   [[dx0+.06,1],[dx1-.06,-1]].forEach(([hx,s])=>{const pv=new THREE.Group();pv.position.set(hx,0,z-.12);g.add(pv);
     box(leafW,dh,.04,C.glass,s*leafW/2,dh/2,0,pv,{transparent:true,opacity:.3,depthWrite:false});
@@ -1589,7 +1590,7 @@ function parkTick(dt){carPool.forEach(c=>{if(!c.on||!c.stall)return;
 const GATES={};
 [2,3,4].forEach(f=>{const g=floorGroups[f],front=LAND[f]>0,z0=front?ES0:-D/2,z1=front?D/2:ES1,zc=(z0+z1)/2,w=z1-z0,x=BAL_X1,dh=2.4;
   // portal: deep black pillars with a brass inlay, a thick header with brass lines, a lit canopy over the landing, brass threshold
-  const ph=dh+.42;
+  const ph=dh+.42,portalStart=g.children.length;
   [z0-.12,z1+.12].forEach(z=>{box(.36,ph,.24,C.black,x,ph/2,z,g);box(.02,ph-.5,.06,GOLDL,x+.19,(ph-.5)/2+.25,z,g);box(.02,ph-.5,.06,GOLDL,x-.19,(ph-.5)/2+.25,z,g);});
   box(.4,.42,w+.48,C.black,x,dh+.21,zc,g);[-.21,.21].forEach(o=>box(.02,.04,w+.3,GOLDL,x+o,dh+.12,zc,g));
   box(1.3,.08,w+.9,C.black,x+.85,dh+.46,zc,g);box(1.1,.012,w+.5,0xF4F4F2,x+.9,dh+.414,zc,g);   // canopy + light panel
@@ -1602,6 +1603,8 @@ const GATES={};
   // card reader on a slim post, landing side
   const rz=front?z0-.42:z1+.42;box(.18,1.02,.18,C.black,x+.42,.51,rz,g);box(.22,.05,.22,GOLDL,x+.42,1.045,rz,g);box(.12,.02,.12,C.dark,x+.42,1.08,rz,g);
   const led=new THREE.Mesh(new THREE.BoxGeometry(.05,.012,.05),new THREE.MeshBasicMaterial({color:0xC0392B}));led.position.set(x+.42,1.096,rz);lv.add(led);
+  // Hide the fixed portal with the door leaves in floor close-ups; retain gate behaviour.
+  g.children.slice(portalStart).forEach(o=>{if(o.isMesh)o.userData.xray=true;});
   standAt(f,'sales',x+.6,front?z1+.62:z0-.62,Math.PI/2);   // door attendant greeting people off the escalator
   GATES[f]={f,zc,w,leaves,led,open:0,swipe:0,out:[x+.85,front?Math.min(zc,LAND[f]-1.3):zc]};});
 function gateIn(f){const G=GATES[f];return [{k:'walk',f,pts:[G.out]},{k:'fn',fn:a=>{a.m.rotation.y=-Math.PI/2;}},{k:'pause',t:.8},
