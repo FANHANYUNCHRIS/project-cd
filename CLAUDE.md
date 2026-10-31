@@ -2,6 +2,8 @@
 
 無門市、在家現做的咖啡甜點電商官網。純 HTML/CSS/JS,零建置工具(no npm/bundler),所有第三方套件(Firebase、GSAP、Font Awesome 等)一律用 CDN `<script>` 標籤引入,不要改成 ESM `type="module"`——這是刻意的架構選擇,不是技術債。
 
+這份專案和 GPT(Codex)共同協作,協作規則與 3D 咖啡大樓(`building/`)的說明在 `AGENTS.md`,開始工作前要一起讀。
+
 ## 設計系統(必看)
 
 正式的設計系統文件是一份已發布的 Claude Artifact:**咖啡甜點設計系統**
