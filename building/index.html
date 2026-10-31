@@ -566,10 +566,26 @@ function diningPosition(x,z,ry){
   box(.75,.55,.75,C.steel,bx,T+.28,5.6,g); const dr=cyl(.25,.25,.5,C.black,bx,T+.75,5.6,g,24);dr.rotation.x=Math.PI/2;
   const hp=new THREE.Mesh(new THREE.ConeGeometry(.17,.26,14),mat(C.steel));hp.rotation.x=Math.PI;hp.position.set(bx,T+1.12,5.45);g.add(hp);
   cyl(.27,.27,.07,C.dark,bx+.25,T+.48,6.15,g,22); cyl(.06,.06,H-T-1,C.steel,bx-.25,(T+1+H)/2,5.75,g,10).userData.ceil=true;
-  // wall shelves above: bean jars and cups
-  [3.4,4].forEach((y,r)=>{box(.3,.04,12,C.black,-8.48,y,0,g);
-    for(let k=0;k<24;k++){const z=-5.75+k*.5;if(r===0){cyl(.07,.07,.24,C.glass,-8.48,y+.14,z,g,10);cyl(.06,.06,.12,[C.pastry,C.yolk,C.dark][k%3],-8.48,y+.08,z,g,10);}
-      else cyl(.045,.04,.08,k%2?C.white:C.dark,-8.48,y+.06,z,g,10);}});
+  // Monochrome menu replaces the former cup shelves; backing attaches to the wall.
+  box(.12,1.8,10.8,C.black,-8.61,3.5,0,g);
+  const menuCanvas=document.createElement('canvas');menuCanvas.width=3072;menuCanvas.height=512;
+  const menuCtx=menuCanvas.getContext('2d'),menuTex=new THREE.CanvasTexture(menuCanvas);
+  const drawMenu=()=>{
+    const x=menuCtx;x.fillStyle='#151515';x.fillRect(0,0,3072,512);
+    x.fillStyle='#F4F4F2';x.textAlign='left';x.textBaseline='alphabetic';
+    x.font='700 62px sans-serif';x.fillText('PROJECT.CD  /  MENU',80,90);
+    x.globalAlpha=.35;x.fillRect(80,128,2912,2);x.globalAlpha=1;
+    const columns=[
+      {x:80,title:'咖啡 COFFEE',items:['美式咖啡','拿鐵','手沖咖啡']},
+      {x:1120,title:'甜點 DESSERT',items:['鳳梨酥','蛋黃酥','今日甜點']},
+      {x:2220,title:'每日現做',items:['咖啡・甜點','品項依現場供應']}
+    ];
+    columns.forEach(c=>{x.font='700 46px sans-serif';x.fillText(c.title,c.x,215);x.font='400 42px sans-serif';c.items.forEach((text,i)=>x.fillText(text,c.x,290+i*72));});
+    menuTex.needsUpdate=true;
+  };
+  drawMenu();document.fonts&&document.fonts.ready.then(drawMenu);
+  const menuBoard=new THREE.Mesh(new THREE.PlaneGeometry(10.8,1.8),new THREE.MeshBasicMaterial({map:menuTex}));
+  menuBoard.rotation.y=Math.PI/2;menuBoard.position.set(-8.545,3.5,0);g.add(menuBoard);
 })(floorGroups[0]);
 // Rotate the complete bar 90 degrees from the left wall to the back wall.
 const barTurn=new THREE.Matrix4().makeRotationY(-Math.PI/2);
