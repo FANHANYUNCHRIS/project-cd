@@ -273,8 +273,8 @@ floorGroups.forEach((g,i)=>{
   [dx-dw/2,dx+dw/2].forEach(x=>box(.06,dh,.08,C.black,x,dh/2,dz,g).userData.xray=true);
   box(dw+.06,.06,.08,C.black,dx,dh,dz,g).userData.xray=true;
   const panel=box(dw-.08,dh-.04,.06,C.dark,dx,(dh-.04)/2,dz,g);
-  panel.userData.pass=true;panel.userData.xray=true;
-  const pull=box(.04,.42,.06,C.steel,dx+dw/2-.18,1.15,dz+.07,g);pull.userData.xray=true;pull.userData.pass=true;
+  panel.userData.pass=true; // staff-room doors remain visible in floor close-ups
+  const pull=box(.04,.42,.06,C.steel,dx+dw/2-.18,1.15,dz+.07,g);pull.userData.pass=true;
   staffRoomDoors.push({f:i,panel,pull,x:dx,z:dz});
   const cv=document.createElement('canvas');cv.width=512;cv.height=128;
   const ctx=cv.getContext('2d'),tx=new THREE.CanvasTexture(cv);
