@@ -2337,6 +2337,8 @@ a.faq-card {
    文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金 */
 .footer-social a.social-game:hover i { color: #9b6bf2; }
 .footer-social a.social-edu:hover i { color: #d4af37; }
+/* 3D 咖啡大樓：同樣沒有官方品牌色，配一個跟紫、金可明顯區分的青色 */
+.footer-social a.social-building:hover i { color: #4fb3bf; }
 
 .footer-bottom {
     text-align: center;
