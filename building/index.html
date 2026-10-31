@@ -135,7 +135,7 @@ const ZONES={   // real metres
     items:[{t:'鳳梨酥禮盒',demo:1},{t:'蛋黃酥禮盒',demo:1},{t:'綜合禮盒',demo:1}]},
   classroom:{floor:2,name:'甜點咖啡教室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'上課時間每天 09:00–17:00（12:00–13:00 午休）、19:00–22:00，每堂 50 分開始下課 10 分鐘。一班 20 位學員，一人一張桌子。前面是講師示範台，助教在旁協助。左邊是烤箱、咖啡機、烘豆機，右邊是甜點備料區。',
-    items:[{t:'甜點入門班',demo:1},{t:'咖啡手沖課',demo:1},{t:'烘豆體驗',demo:1}]},
+    items:[{t:'甜點入門班',demo:1},{t:'咖啡手沖課',demo:1},{t:'烘豆體驗',demo:1},{t:'落地攪拌／揉麵機、壓麵整形機',demo:1}]},
   office:{floor:4,name:'辦公室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'大門櫃檯接待區、辦公區、茶水間與開放休息區、會議室。會議室裡 GPT、Gemini、Claude、Grok 四位正在開會，討論「預計半年後開賣，這半年要怎麼更新官網與經營社群」，頭上的對話框會輪流顯示每個人的發言。品牌故事和聯絡方式放在這裡。',
     items:[{t:'品牌故事',demo:1},
@@ -267,7 +267,8 @@ floorGroups.slice(0,RF).forEach((g,i)=>{
   const draw=()=>{ctx.fillStyle='#151515';ctx.fillRect(0,0,512,128);ctx.fillStyle='#F4F4F2';ctx.font='500 56px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('員工休息室',256,64);tx.needsUpdate=true;};
   draw();document.fonts&&document.fonts.ready.then(draw);
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),new THREE.MeshBasicMaterial({map:tx}));
-  sign.position.set(0,h+.34,.05);door.add(sign);
+  box(1.56,.44,.12,C.black,0,h+.34,-.01,door); // backing plate reaches the rear wall
+  sign.position.set(0,h+.34,.055);door.add(sign);
 });
 
 // ---- balconies on every floor (right side) + outdoor escalator landings ----
@@ -659,6 +660,32 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
   box(.8,.95,6,C.black,7.85,.475,-3,g);box(.84,.05,6.04,C.white,7.85,.975,-3,g);
   [-5.4,-4,-2.6,-1.2].forEach(z=>mixer(g,7.85,1,z));box(.5,.04,.6,C.dark,7.85,.99,.3,g);
   box(.8,2,.8,C.white,7.85,1,1.8,g);box(.8,1.6,.8,C.steel,7.85,.8,3,g);
+  // Teaching-size planetary mixer / kneader, grounded beside the pastry prep area.
+  {
+    const machine=new THREE.Group();machine.position.set(7.45,0,4.65);machine.userData.solid=true;g.add(machine);
+    box(1,.16,.9,C.dark,0,.08,0,machine);
+    box(.3,1.3,.55,C.white,.32,.81,0,machine);
+    box(1.05,.26,.6,C.white,0,1.43,0,machine);
+    box(.72,.1,.7,C.steel,-.08,.65,0,machine);
+    cyl(.18,.18,.1,C.steel,-.14,.73,0,machine,20);
+    const bowl=new THREE.Mesh(new THREE.SphereGeometry(.32,24,12,0,Math.PI*2,Math.PI/2,Math.PI/2),mat(C.steel,{side:THREE.DoubleSide}));
+    bowl.position.set(-.14,1.04,0);machine.add(bowl);
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(.32,.02,8,28),mat(C.steel));rim.rotation.x=Math.PI/2;rim.position.set(-.14,1.04,0);machine.add(rim);
+    cyl(.025,.025,.4,C.steel,-.14,1.13,0,machine,10);
+    box(.06,.2,.36,C.black,-.54,1.43,0,machine);
+    cyl(.035,.035,.03,C.white,-.58,1.43,.08,machine,12).rotation.z=Math.PI/2;
+  }
+  // Dough sheeter: supported worktop, belt and two visible rollers.
+  {
+    const machine=new THREE.Group();machine.position.set(7.45,0,6.65);machine.userData.solid=true;g.add(machine);
+    [-.48,.48].forEach(x=>[-.5,.5].forEach(z=>box(.08,.88,.08,C.steel,x,.44,z,machine)));
+    box(1.2,.05,1.3,C.steel,0,.9,0,machine);
+    box(1.6,.08,.9,C.black,0,.98,0,machine);
+    [-.5,.5].forEach(z=>box(.3,.62,.18,C.white,0,1.22,z,machine));
+    [1.14,1.38].forEach(y=>{const roller=cyl(.1,.1,.9,C.steel,0,y,0,machine,24);roller.rotation.x=Math.PI/2;});
+    box(.3,.028,.42,C.off,-.4,1.034,0,machine);
+    box(.3,.26,.18,C.dark,.28,1.22,.5,machine);
+  }
   box(3,2.2,.45,C.black,5.6,1.1,-8.4,g);for(let r=0;r<4;r++)for(let k=0;k<7;k++)cyl(.08,.08,.22,C.glass,4.4+k*.4,.45+r*.5,-8.3,g,10);
   // students: one desk each — 4 columns × 5 rows = 20
   [-5,-2.6,1.4,3.8].forEach(x=>[-4,-1.8,.4,2.6,4.8].forEach(z=>{
@@ -673,10 +700,11 @@ const DESKS=[];
 (function(g){
   const SILVER=0xC9CCCE, MESH=0x2B2B2B;
   function ergoChair(x,z,ry){const c=new THREE.Group();c.position.set(x,0,z);c.rotation.y=ry;c.userData.solid=true;g.add(c);
-    for(let k=0;k<5;k++){const a=k/5*Math.PI*2,l=box(.3,.03,.05,C.black,Math.cos(a)*.15,.06,Math.sin(a)*.15,c);l.rotation.y=-a;}
-    cyl(.03,.03,.36,C.steel,0,.25,0,c,8);box(.5,.08,.48,MESH,0,.46,0,c);
+    for(let k=0;k<5;k++){const a=k/5*Math.PI*2,l=box(.3,.03,.05,C.black,Math.cos(a)*.15,.015,Math.sin(a)*.15,c);l.rotation.y=-a;}
+    cyl(.03,.03,.42,C.steel,0,.24,0,c,8);box(.5,.08,.48,MESH,0,.46,0,c);
     box(.46,.62,.04,MESH,0,.84,-.24,c);box(.3,.16,.05,MESH,0,1.24,-.25,c);box(.04,.3,.04,C.black,0,1.08,-.26,c);
-    [-.25,.25].forEach(o=>box(.05,.04,.3,C.black,o,.66,-.02,c));return c;}
+    box(.08,.4,.08,C.black,0,.6,-.23,c);
+    [-.25,.25].forEach(o=>{box(.05,.2,.05,C.black,o,.56,-.02,c);box(.05,.04,.3,C.black,o,.66,-.02,c);});return c;}
   function imac(x,y,z){box(.16,.02,.14,SILVER,x,y+.01,z-.05,g);box(.04,.22,.03,SILVER,x,y+.13,z-.1,g);
     box(.62,.44,.025,SILVER,x,y+.47,z-.08,g);box(.58,.33,.005,0x1E2A33,x,y+.51,z-.062,g);
     box(.32,.012,.11,0xEDEDED,x,y+.006,z+.14,g);box(.06,.012,.1,0xEDEDED,x+.28,y+.006,z+.14,g);}
@@ -870,6 +898,7 @@ const HAIR=[0x2B2320,0x5A3B26,0x1E1E1E,0xB9B4AA];
 function person(color,seated){
   const g=new THREE.Group();
   box(.3,seated?.3:.5,.2,C.dark,0,seated?.35:.25,0,g);
+  if(seated)[-.09,.09].forEach(x=>{box(.09,.24,.09,C.dark,x,.14,.12,g);box(.11,.07,.2,C.black,x,.035,.17,g);});
   cyl(.19,.22,.55,color,0,.78,0,g);
   const h=new THREE.Mesh(new THREE.SphereGeometry(.17,24,18),mat(C.skin));h.position.y=1.22;g.add(h);
   const hair=new THREE.Mesh(new THREE.SphereGeometry(.175,24,12,0,Math.PI*2,0,Math.PI/2),mat(HAIR[Math.floor(Math.random()*HAIR.length)]));
@@ -1243,7 +1272,8 @@ function autoDoor(f,cx,cz,hx,hz,leaves){AUTOD.push({f,cx,cz,hx,hz,leaves,open:0}
 function plaqueW(g,text,x,y,z,w){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const t=new THREE.CanvasTexture(cv);
   const d=()=>{const c=cv.getContext('2d');c.fillStyle='#151515';c.fillRect(0,0,512,128);c.fillStyle='#E9C46A';c.fillRect(0,118,512,10);c.fillStyle='#F4F4F2';
     c.font='700 64px "Noto Serif TC", serif';c.textAlign='center';c.textBaseline='middle';c.fillText(text,256,62);t.needsUpdate=true;};d();document.fonts&&document.fonts.ready.then(d);
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:t}));m.position.set(x,y,z);g.add(m);}
+  box(w+.06,w/4+.06,.12,C.black,x,y,z-.06,g);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:t}));m.position.set(x,y,z+.005);g.add(m);}
 const PRODF=3;
 let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
 (function(g){const RK=0x3A3C3E,PAL=0xA8875A,KRAFT=0xC9A36B,SACK=0xE8E2D2,ST=C.steel,BEAN=0xB8A27A;
@@ -1251,6 +1281,7 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
   function rack(x,z0,z1,dep){const L=z1-z0,zc=(z0+z1)/2,bays=3;
     for(let k=0;k<=bays;k++)[-1,1].forEach(s=>box(.08,4.2,.08,RK,x+s*dep/2,2.1,z0+k*L/bays,g));
     [.15,1.25,2.35,3.45].forEach(y=>{[-1,1].forEach(s=>box(.06,.1,L,0xD9A441,x+s*dep/2,y,zc,g));
+      box(dep,.05,L,RK,x,y+.025,zc,g); // continuous shelf below every pallet
       for(let k=0;k<bays;k++){const bz=z0+(k+.5)*L/bays;if(ar()<.12)continue;box(dep-.15,.13,L/bays-.25,PAL,x,y+.12,bz,g);
         const n=1+Math.floor(ar()*3);for(let j=0;j<n;j++){const c=[KRAFT,KRAFT,SACK,C.white][Math.floor(ar()*4)],hgt=.35+ar()*.4;
           box(dep-.25,hgt,(L/bays-.4)/n-.05,c,x,y+.19+hgt/2,bz-(L/bays-.4)/2+(j+.5)*(L/bays-.4)/n,g);}}});}
@@ -1259,6 +1290,7 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
     box(.9,2.1,.06,0xC9CED1,x,1.05,-6.17,g);box(.05,.5,.06,C.black,x+.32,1.1,-6.12,g);});
   [[-7.6,5.0],[-7.6,6.6]].forEach(([x,z],k)=>{box(1.1,.14,1.1,PAL,x,.07,z,g);for(let j=0;j<2+k;j++)box(1,.42,1,j%2?KRAFT:SACK,x,.14+.21+j*.44,z,g);});
   box(.5,.12,1.2,0xD9A441,-5.6,.1,5.6,g);box(.08,1,.08,C.black,-5.6,.6,5.05,g);                                   // pallet jack
+  [-.18,.18].forEach(dx=>[-.45,.45].forEach(dz=>{const wheel=cyl(.08,.08,.06,C.black,-5.6+dx,.08,5.6+dz,g,12);wheel.rotation.x=Math.PI/2;}));
   box(1.2,.75,.6,C.white,-4.6,.375,7.7,g);box(.45,.32,.04,C.dark,-4.6,.92,7.55,g);                                  // stock desk
   // --- pastry kitchen ---
   [-1.9,1.3].forEach((x,i)=>{box(1.2,.88,3.2,ST,x,.44,-2.6,g);box(1.24,.04,3.24,C.white,x,.9,-2.6,g);
@@ -1277,7 +1309,9 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
     const d=cyl(.48,.48,1,C.black,x,1.45,-7.9,g,24);d.rotation.x=Math.PI/2;cyl(.5,.5,.06,0xD9A441,x,1.45,-7.38,g,24).rotation.x=Math.PI/2;
     const hp=new THREE.Mesh(new THREE.ConeGeometry(.38,.6,16),mat(C.steel));hp.rotation.x=Math.PI;hp.position.set(x,2.25,-7.9);g.add(hp);
     cyl(.62,.62,.14,C.steel,x,.92,-6.6,g,28);cyl(.58,.58,.02,0x4A2E1E,x,1.0,-6.6,g,28);cyl(.05,.05,.8,C.black,x,.45,-6.6,g,8);   // cooling tray
+    cyl(.25,.25,.05,C.black,x,.025,-6.6,g,16);
     box(.3,.5,.12,C.dark,x+.75,1.4,-7.4,g);
+    box(.35,.08,.1,C.steel,x+.55,1.25,-7.4,g); // control-panel mounting arm
     const p=cyl(.13,.13,H-.3-2.2,C.steel,x+.35,2.2+(H-.3-2.2)/2,-8.45,g,12);p.userData.ceil=true;});                    // stack up to the roof
   [-3.6,-2.0,-.4].forEach(z=>{box(1.1,.14,1.1,0xA8875A,7.9,.07,z,g);for(let l=0;l<3;l++)for(let s=0;s<2;s++)box(.5,.26,.95,BEAN,7.64+s*.52,.27+l*.27,z,g);});
   box(1.8,.76,.9,C.white,5.2,.38,-1.0,g);for(let k=0;k<8;k++)cyl(.05,.04,.07,C.white,4.5+(k%4)*.45,.8,-1.2+Math.floor(k/4)*.4,g,10);   // cupping table
@@ -1285,7 +1319,8 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
   box(1.6,.85,.8,C.white,5.6,.425,4.6,g);box(.3,.08,.3,C.dark,5.2,.89,4.6,g);box(.4,.25,.3,C.black,6.0,.98,4.6,g);                 // bagging scale + sealer
   [[-1.4,-7.85,2.8,1.4],[.9,-7.95,2.4,1.2]].forEach(([x,z,w,d])=>{const hd=box(w,.45,d,C.steel,x,2.65,z,g);hd.userData.ceil=true;   // extraction hoods
     const du=cyl(.18,.18,H-.3-2.9,C.steel,x,2.9+(H-.3-2.9)/2,z-.3,g,12);du.userData.ceil=true;});
-  [[-8.45,4.5],[-3.1,-8.45],[8.45,-4.5]].forEach(([x,z])=>{box(.32,.55,.22,0xB3261E,x,1.1,z,g);});   // fire extinguisher cabinets
+  [[-8.45,4.5],[-3.1,-8.45],[8.45,-4.5]].forEach(([x,z])=>{box(.32,.55,.22,0xB3261E,x,1.1,z,g);
+    box(.24,.3,.2,C.black,Math.abs(x)>8?Math.sign(x)*8.58:x,1.1,z<-8?-8.6:z,g);});   // wall-mounted fire extinguisher cabinets
   plaqueW(g,'食品倉庫',-6.0,3.6,-8.55,1.8);plaqueW(g,'甜點製作區',.6,3.6,-8.55,1.8);plaqueW(g,'咖啡烘焙區',6.5,3.6,-8.55,1.6);
 })(floorGroups[PRODF]);
 // production staff: stock checkers between the racks, bakers, an oven tender, roasters, a sack hauler, packers
@@ -2076,9 +2111,9 @@ function atmosphereTick(dt,t){
 const sway=[];
 // birds on the roof: peck along the balustrade, now and then fly a loop and land somewhere else
 const birds=[];
-(function(){const g=floorGroups[RF],rail=1.6,perches=[];
-  for(let z=-D/2+1.5;z<D/2-1;z+=1.4)if(z<-4.8||z>-2)perches.push([-W/2+.06,rail,z]);
-  for(let x=-W/2+1.2;x<W/2-1;x+=1.4)perches.push([x,rail,-D/2+.06]);
+(function(){const g=floorGroups[RF],rail=1.56,perches=[];
+  for(let z=-D/2+.3;z<RR.z1-.15;z+=.3)perches.push([-W/2+.06,rail,z]); // only where a real cap rail exists
+  for(let x=-W/2+1.2;x<W/2-1;x+=1.4)if(Math.abs(x)>1.1)perches.push([x,rail,-D/2+.06]); // keep clear of the stair opening
   const bodyM=mat(0x2E2B28),wingM=mat(0x3F3A35),beakM=mat(ACCENT);
   for(let i=0;i<5;i++){const b=new THREE.Group();
     const body=new THREE.Mesh(new THREE.SphereGeometry(.07,10,8),bodyM);body.scale.set(1.5,1,1);b.add(body);
