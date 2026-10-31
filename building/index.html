@@ -446,12 +446,6 @@ function brandTex(w,h,size,dark){const cv=document.createElement('canvas');cv.wi
 // architectural glass + corner columns: hidden while a single floor is shown
 const xray=[];floorGroups.forEach(g=>g.traverse(o=>{if(o.isMesh&&(o.userData.xray||(o.material&&o.material.transparent&&o.material.color&&o.material.color.getHex()===C.glass)))xray.push(o);}));
 const _fc=floorGroups.map(g=>g.children.length);
-// ---- 1F checkout (left wall) ----
-(function(g){
-  box(.06,1.3,3,C.black,-5+.04,2.5,.4,g);                                             // menu board
-  for(let r=0;r<4;r++)box(.02,.04,2.2,C.white,-5+.08,2.95-r*.28,.4,g);
-})(floorGroups[0]);
-
 // ---- extra furnishing (10 m plan, spread by K below) ----
 const bulbMat=new THREE.MeshBasicMaterial({color:0xFFF3DA});
 function pendant(g,x,z,y){y=y||2.8;const n0=g.children.length;cyl(.012,.012,H-y,C.black,x,y+(H-y)/2,z,g,6);
