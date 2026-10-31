@@ -816,7 +816,24 @@ const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2,
   [EY+EH].concat(Array.from({length:RF},(_,i)=>(i+1)*H)).forEach(y=>{box(.08,.08,LZ,C.black,EX1,y,cz,g);box(LX,.08,.08,C.black,cx,y,EZ0,g);box(LX,.08,.08,C.black,cx,y,EZ1,g);});
   box(.08,.08,LZ,C.black,EX0,EY+EH,cz,g);
   [1,2].forEach(k=>box(.06,EH,.06,C.black,EX1,EY+EH/2,EZ0+k*LZ/3,g));
-  [gx0,gx1].forEach(x=>box(.1,dh,.1,C.black,x,EY+dh/2,EZ1,g)); box(gx1-gx0,.1,.1,C.black,(gx0+gx1)/2,EY+dh,EZ1,g);
+  // Street entrance: a slender recessed portal beneath a floating canopy.
+  // Keep the full 3.4 m opening clear so both escalator lanes remain accessible.
+  const entryX=(gx0+gx1)/2,entryW=gx1-gx0,entryZ=EZ1+.02;
+  [gx0-.04,gx1+.04].forEach(x=>{
+    box(.08,dh,.12,C.black,x,EY+dh/2,entryZ,g);
+    box(.04,.04,.7,C.steel,x,EY+dh,entryZ+.3,g);
+  });
+  box(entryW+.16,.08,.12,C.black,entryX,EY+dh,entryZ,g);
+  box(entryW+.64,.12,1.2,C.black,entryX,EY+dh+.12,entryZ+.4,g);
+  box(entryW+.32,.02,.72,C.white,entryX,EY+dh+.05,entryZ+.4,g);
+  // Flush threshold; no steps or decorative objects across the walking route.
+  box(entryW,.012,.48,C.dark,entryX,.006,entryZ,g);
+  const entryCanvas=document.createElement('canvas');entryCanvas.width=1024;entryCanvas.height=128;
+  const entryCtx=entryCanvas.getContext('2d');entryCtx.fillStyle='#151515';entryCtx.fillRect(0,0,1024,128);
+  entryCtx.fillStyle='#F4F4F2';entryCtx.font='500 48px sans-serif';entryCtx.textAlign='center';entryCtx.textBaseline='middle';
+  entryCtx.fillText('PROJECT.CD   /   ENTRANCE',512,64);
+  const entrySign=new THREE.Mesh(new THREE.PlaneGeometry(entryW,.42),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(entryCanvas)}));
+  entrySign.position.set(entryX,EY+dh+.48,entryZ+.09);g.add(entrySign);
   g.children.slice(h0).forEach(o=>o.userData.xray=true);
 })();
 
