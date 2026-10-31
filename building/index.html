@@ -931,7 +931,7 @@ for(let i=0;i<6;i++){const s=WALK.gifts[i*2%WALK.gifts.length];const a=shopAgent
 for(let i=0;i<2;i++){const s=WALK.gifts[3+i*5];const a=shopAgent(dressed('sales'),.7);a.m.position.set(s[0],0,s[1]);a.state='idle';shopSales.push(a);}
 function shopGo(a,to){a.path=navRoute(1,a.m.position,[to]);}
 function shopFace(a,x,z){a.m.rotation.y=Math.atan2(x-a.m.position.x,z-a.m.position.z);}
-function shopWalk(a,dt,t){const p=a.path;if(!p||!p.length){a.m.position.y=0;return true;}
+function shopWalk(a,dt,t){const p=a.path;if(p&&p.blocked)return false;if(!p||!p.length){a.m.position.y=0;return true;}
   const tg=p[0],dx=tg.x-a.m.position.x,dz=tg.z-a.m.position.z,L=Math.hypot(dx,dz);
   if(L<.05){p.shift();return !p.length;}const st=Math.min(L,a.speed*dt);a.m.position.x+=dx/L*st;a.m.position.z+=dz/L*st;
   const ang=Math.atan2(dx,dz);a.m.rotation.y+=((ang-a.m.rotation.y+Math.PI*3)%(Math.PI*2)-Math.PI)*.25;
@@ -1002,7 +1002,7 @@ function classTick(dt,t){const ph=classPhase(),d=new Date(),breakId=d.getHours()
     if(s.state==='seat'||s.state==='gone')return;
     // walking
     if(s.pause>0){s.pause-=dt;return;}
-    const p=s.path;if(!p||!p.length){
+    const p=s.path;if(p&&p.blocked)return;if(!p||!p.length){
       if(s.state==='walkOut'){s.state='gone';s.sm.visible=s.wm.visible=false;}
       else if(s.state==='walkIn'||s.state==='back'){s.state='seat';stuShow(s,true);}
       else if(s.state==='roam'){s.pause=3+Math.random()*6;s.path=navRoute(2,s.wm.position,[CLASS_ROAM[Math.floor(Math.random()*CLASS_ROAM.length)]]);}
@@ -1133,7 +1133,7 @@ function roofTick(dt,t){const rain=roofRain(),fest=festNow();
       const was=s.state;s.state='walkIn';s.path=null;s.wm.visible=was==='walkOut';return;}
     if(s.state==='walkIn'&&!s.path){s.path=navRoute(RF,s.wm.position,[s.spot]);s.wm.visible=true;}
     if(s.state!=='walkIn'&&s.state!=='walkOut')return;
-    const p=s.path;if(!p||!p.length){if(s.state==='walkOut'){s.state='gone';s.wm.visible=false;}else{s.state='here';s.wm.visible=false;s.sm.visible=true;}return;}
+    const p=s.path;if(p&&p.blocked)return;if(!p||!p.length){if(s.state==='walkOut'){s.state='gone';s.wm.visible=false;}else{s.state='here';s.wm.visible=false;s.sm.visible=true;}return;}
     const tg=p[0],dx=tg.x-s.wm.position.x,dz=tg.z-s.wm.position.z,L=Math.hypot(dx,dz);
     if(L<.05){p.shift();return;}const st=Math.min(L,1.05*dt);s.wm.position.x+=dx/L*st;s.wm.position.z+=dz/L*st;
     s.wm.rotation.y+=((Math.atan2(dx,dz)-s.wm.rotation.y+Math.PI*3)%(Math.PI*2)-Math.PI)*.25;s.wm.position.y=Math.abs(Math.sin(t*9+s.spot[0]))*.05;});
@@ -1388,7 +1388,7 @@ function hoursTick(dt,t){if(!hoursInit)buildLeave();const open=[0,1,2,3].map(f=>
     if(e.state!=='out'&&e.state!=='in')return;
     if(!m.visible&&e.state==='in')m.visible=true;
     if(!e.path)e.path=e.state==='out'?navRoute(e.f,m.position,leaveExit(e)):navRoute(e.f,m.position,[[e.hx,e.hz]]);
-    const p=e.path;if(!p.length){if(e.state==='out'){e.state='gone';m.visible=false;}
+    const p=e.path;if(p.blocked)return;if(!p.length){if(e.state==='out'){e.state='gone';m.visible=false;}
       else{e.state='here';m.position.set(e.hx,0,e.hz);m.rotation.y=e.hr;m.userData.away=false;if(e.p.pts){e.p.pause=1;e.p.route=null;e.p.tgt=null;}}e.path=null;return;}
     const tg=p[0],dx=tg.x-m.position.x,dz=tg.z-m.position.z,L=Math.hypot(dx,dz);if(L<.05){p.shift();return;}
     const s=Math.min(L,e.speed*dt);m.position.x+=dx/L*s;m.position.z+=dz/L*s;m.rotation.y+=((Math.atan2(dx,dz)-m.rotation.y+Math.PI*3)%(Math.PI*2)-Math.PI)*.25;
@@ -1675,7 +1675,7 @@ function boardCab(p){const E=EVS[p.ev||0];p.busy=true;p.slot=freeSlot(p.ev||0);c
 function exitCab(p,f){const E=EVS[p.ev||0],s=SLOTS[p.slot],q=E.CW(s),o=E.CW([1.8,0]);toFloor(p,f,q[0],q[1]);p.slot=-1;p.busy=true;p.state='exiting';
   p.path=[new THREE.Vector3(o[0],0,o[1])];}
 function paxTick(){}   // shoppers are driven by visitorTick
-function stepAlong(a,dt,t){if(!a.path||!a.path.length)return true;const tg=a.path[0],d=tmp2.subVectors(tg,a.m.position);d.y=0;const L=d.length();
+function stepAlong(a,dt,t){if(a.path&&a.path.blocked)return false;if(!a.path||!a.path.length)return true;const tg=a.path[0],d=tmp2.subVectors(tg,a.m.position);d.y=0;const L=d.length();
   if(L<.05){a.path.shift();return a.path.length===0;}
   a.m.position.addScaledVector(d.normalize(),Math.min(L,a.speed*dt));
   const ang=Math.atan2(d.x,d.z);a.m.rotation.y+=((ang-a.m.rotation.y+Math.PI*3)%(Math.PI*2)-Math.PI)*.25;
@@ -1926,7 +1926,9 @@ function step(){
       if(p.pause>0){p.pause-=dt;p.m.position.y=0;return;}
       if(!p.tgt){if(!p.route||!p.route.length){const q=p.seq?p.pts[p.idx=(p.idx+1)%p.pts.length]:p.pts[Math.floor(Math.random()*p.pts.length)];
           const fi=floorGroups.indexOf(p.m.parent);p.route=fi<0?[new THREE.Vector3(q[0],0,q[1])]:navRoute(fi,p.m.position,[q]);}
+        if(p.route.blocked){p.route=null;p.pause=2;return;}
         p.tgt=p.route.shift();}
+      if(!p.tgt){p.pause=2;return;}
       const d=tmp.subVectors(p.tgt,p.m.position);d.y=0;const L=d.length();
       if(L<.05){p.tgt=null;if(!p.route||!p.route.length)p.pause=(p.dwell||1)+Math.random()*(p.dwell?p.dwell*1.5:3);return;}
       p.m.position.addScaledVector(d.normalize(),Math.min(L,p.speed*dt));
@@ -1967,17 +1969,18 @@ function step(){
   aiMeetTick(dt);
 }
 // ---------- walking grid: people route around walls, counters, tables, chairs and railings ----------
-const NAV={x0:-34,z0:-28,cs:.25,nx:288,nz:224,r:.22,g:[]};
+const NAV={x0:-80,z0:-32,cs:.25,nx:640,nz:256,r:.32,g:[]};
 (function(){const bb=new THREE.Box3(),skip=new Set([ground].concat(hitMeshes,elevDoors));
   scene.updateMatrixWorld(true);
-  for(let f=0;f<NF;f++){const G=new Uint8Array(NAV.nx*NAV.nz),fy=f*H;
+  for(let f=-1;f<NF;f++){const G=new Uint8Array(NAV.nx*NAV.nz),fy=f<0?-B1D:f*H;
     const block=b=>{if(b.max.y-fy<.15||b.min.y-fy>1.6)return;
       const ix0=Math.max(0,Math.ceil((b.min.x-NAV.r-NAV.x0)/NAV.cs-.5)),ix1=Math.min(NAV.nx-1,Math.floor((b.max.x+NAV.r-NAV.x0)/NAV.cs-.5));
       const iz0=Math.max(0,Math.ceil((b.min.z-NAV.r-NAV.z0)/NAV.cs-.5)),iz1=Math.min(NAV.nz-1,Math.floor((b.max.z+NAV.r-NAV.z0)/NAV.cs-.5));
       for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++)G[iz*NAV.nx+ix]=1;};
-    floorGroups[f].children.forEach(o=>{if((o.isMesh||(o.isGroup&&o.userData.solid))&&!skip.has(o)&&!o.userData.pass)block(bb.setFromObject(o));});
+    const room=f<0?B1G:floorGroups[f];
+    room.children.forEach(o=>{if((o.isMesh||(o.isGroup&&o.userData.solid))&&!skip.has(o)&&!o.userData.pass)block(bb.setFromObject(o));});
     scene.children.forEach(o=>{if(o.isMesh&&!skip.has(o))block(bb.setFromObject(o));});
-    NAV.g.push(G);}
+    NAV.g[f]=G;}
 })();
 const NV={stamp:new Uint32Array(NAV.nx*NAV.nz),gs:new Float32Array(NAV.nx*NAV.nz),from:new Int32Array(NAV.nx*NAV.nz),gen:0};
 function navCell(x,z){return [Math.floor((x-NAV.x0)/NAV.cs),Math.floor((z-NAV.z0)/NAV.cs)];}
@@ -1986,13 +1989,14 @@ function navFree(G,ix,iz){return navIn(ix,iz)&&!G[iz*NAV.nx+ix];}
 function navPt(ix,iz){return [NAV.x0+(ix+.5)*NAV.cs,NAV.z0+(iz+.5)*NAV.cs];}
 function navNear(G,ix,iz){if(navFree(G,ix,iz))return [ix,iz];for(let r=1;r<=14;r++)for(let dz=-r;dz<=r;dz++)for(let dx=-r;dx<=r;dx++){
   if(Math.max(Math.abs(dx),Math.abs(dz))!==r)continue;if(navFree(G,ix+dx,iz+dz))return [ix+dx,iz+dz];}return null;}
-function navLos(G,ax,az,bx,bz){const n=Math.ceil(Math.hypot(bx-ax,bz-az)/(NAV.cs*.4));
-  for(let i=1;i<n;i++){const c=navCell(ax+(bx-ax)*i/n,az+(bz-az)*i/n);if(navIn(c[0],c[1])&&G[c[1]*NAV.nx+c[0]])return false;}return true;}
-function navPath(f,from,to){const G=NAV.g[f];if(!G)return [to];
+function navLos(G,ax,az,bx,bz){const n=Math.max(1,Math.ceil(Math.hypot(bx-ax,bz-az)/(NAV.cs*.25)));
+  for(let i=0;i<=n;i++){const c=navCell(ax+(bx-ax)*i/n,az+(bz-az)*i/n);if(!navFree(G,c[0],c[1]))return false;}return true;}
+function navPath(f,from,to){const G=NAV.g[f];if(!G)return null;
   if(navLos(G,from[0],from[1],to[0],to[1]))return [to];
-  let s=navCell(from[0],from[1]),t=navCell(to[0],to[1]);if(!navIn(s[0],s[1])||!navIn(t[0],t[1]))return [to];
-  const lead=[];if(!navFree(G,s[0],s[1])){const n=navNear(G,s[0],s[1]);if(!n)return [to];s=n;lead.push(navPt(s[0],s[1]));}
-  const goalFree=navFree(G,t[0],t[1]);if(!goalFree){const n=navNear(G,t[0],t[1]);if(!n)return [to];t=n;}
+  let s=navCell(from[0],from[1]),t=navCell(to[0],to[1]);if(!navIn(s[0],s[1])||!navIn(t[0],t[1]))return null;
+  // A blocked starting position must never be "rescued" by walking through furniture.
+  const lead=[];if(!navFree(G,s[0],s[1]))return null;
+  const goalFree=navFree(G,t[0],t[1]);if(!goalFree){const n=navNear(G,t[0],t[1]);if(!n)return null;t=n;}
   const gen=++NV.gen,nx=NAV.nx,S=s[1]*nx+s[0],T=t[1]*nx+t[0],heap=[],hf=[];
   const push=(i,f)=>{heap.push(i);hf.push(f);let k=heap.length-1;while(k>0){const p=(k-1)>>1;if(hf[p]<=hf[k])break;[heap[p],heap[k]]=[heap[k],heap[p]];[hf[p],hf[k]]=[hf[k],hf[p]];k=p;}};
   const pop=()=>{const top=heap[0],lh=heap.pop(),lf=hf.pop();if(heap.length){heap[0]=lh;hf[0]=lf;let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;
@@ -2003,17 +2007,19 @@ function navPath(f,from,to){const G=NAV.g[f];if(!G)return [to];
     for(let dz=-1;dz<=1;dz++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dz)continue;const x=cx+dx,z=cz+dz;if(!navFree(G,x,z))continue;
       if(dx&&dz&&(!navFree(G,cx+dx,cz)||!navFree(G,cx,cz+dz)))continue;const n=z*nx+x,g2=gc+(dx&&dz?1.414:1);
       if(NV.stamp[n]===gen&&NV.gs[n]<=g2)continue;NV.stamp[n]=gen;NV.gs[n]=g2;NV.from[n]=c;push(n,g2+h(n));}}
-  if(!found)return [to];
+  if(!found)return null;
   const cells=[];for(let c=T;c!==-1;c=NV.from[c])cells.push(navPt(c%nx,(c/nx)|0));cells.reverse();
   if(goalFree)cells[cells.length-1]=to;
   const out=[];let a=lead.length?lead[0]:from,i=0;
   while(i<cells.length-1){let j=cells.length-1;while(j>i+1&&!navLos(G,a[0],a[1],cells[j][0],cells[j][1]))j--;out.push(cells[j]);a=cells[j];i=j;}
   if(!out.length)out.push(cells[cells.length-1]);
-  return lead.concat(out);}
+  const result=lead.concat(out);let previous=from;
+  for(const point of result){if(!navLos(G,previous[0],previous[1],point[0],point[1]))return null;previous=point;}
+  return result;}
 function navRoute(f,pos,pts){const out=[];let cur=[pos.x,pos.z];
-  pts.forEach(q=>{navPath(f,cur,q).forEach(p=>out.push(p));cur=out[out.length-1];});
+  for(const q of pts){const route=navPath(f,cur,q);if(!route){const wait=[];wait.blocked=true;return wait;}route.forEach(p=>out.push(p));cur=out[out.length-1]||cur;}
   return out.map(q=>new THREE.Vector3(q[0],0,q[1]));}
-if(window.__debug)window.__nav={NAV,navPath,people,agents,floorGroups,scene,H,W,D,NF};
+if(window.__debug)window.__nav={NAV,navPath,navRoute,people,agents,floorGroups,scene,H,W,D,NF};
 // ---------- accent, night look, opening flight, atmosphere ----------
 const ACCENT=0xD9A441;                                   // pineapple-cake gold: the one colour that stands out
 const accentMat=new THREE.MeshBasicMaterial({color:ACCENT});
