@@ -206,7 +206,6 @@ const WKW=2.4, FRONT_WKW=3.6;   // side/back corridors and widened front promena
 const RR={x0:-16.45,x1:-11.05,z0:-11.05,z1:-7.65};
 const EVS=[[-20.25,-16.65],[-24.05,-20.45]].map(([x0,x1])=>({ELEV:[x0,x1,RR.z0,RR.z1],EDX:(x0+x1)/2}));
 const PX0=-24.1;   // outer edge of the left platform
-const STAIR2={x0:PX0-2.1,x1:PX0-.1,za:1.9,zb:7.9};
 // openings through the ground: escalator well to B1 in the hall, car-park ramp mouth behind the building, MRT stairs on the left
 const HOLE_ESC=[15.8,19.05,-6.85,7.05], HOLE_RE=[6.8,13.5,-15.2,-11.4], HOLE_RW=[-13.5,-6.8,-15.2,-11.4], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0,-28.8,3,9.5];
 function boxHoles(w,h,d,col,cx,y,cz,holes,p){const X0=cx-w/2,X1=cx+w/2,Z0=cz-d/2,Z1=cz+d/2,hs=holes.filter(q=>q[0]<X1&&q[1]>X0&&q[2]<Z1&&q[3]>Z0);
@@ -321,7 +320,7 @@ floorGroups.forEach((g,i)=>{const t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk
   box(xr-PX0,t,zf-RR.z1,fc,(PX0+xr)/2,y,(RR.z1+zf)/2,g);
   if(i===0)return;
   box(.1,.3,zf-RR.z1,C.black,PX0-.05,-.15,(RR.z1+zf)/2,g);box(xr-PX0,.3,.1,C.black,(PX0+xr)/2,-.15,zf+.05,g);   // black slab edges
-  RAILH=i===RF?1.5:1.1;railRun(g,PX0+.03,RR.z1,STAIR2.zb);railRun(g,PX0+.03,STAIR2.zb+1,zf);   // gap: the escape stair landing
+  RAILH=i===RF?1.5:1.1;railRun(g,PX0+.03,RR.z1,zf);   // continuous guard after removing the external stair
   railX(g,zf-.03,PX0,xr);
   RAILH=1.1;});
 
@@ -370,16 +369,6 @@ EVS.forEach(E=>{const [x0,x1,z0,z1]=E.ELEV;
     strut(scene,[x0,y0,z0-.06],[x1,y1,z0-.06],.09);strut(scene,[x1,y0,z0-.06],[x0,y1,z0-.06],.09);}
   box(x1-x0+.4,.6,z1-z0+.4,CONC,(x0+x1)/2,-H-.6,(z0+z1)/2,scene);                 // footing (below B1)
 });
-// second escape stair: an open black steel stair hung outside the left platform's outer edge (no walls, so the platform stays visible)
-(function(){const {x0,x1,za,zb}=STAIR2,fw=(x1-x0)/2-.05,run=zb-za,gs=new THREE.Group();scene.add(gs);
-  for(let k=0;k<RF;k++){const yA=k*H,yM=yA+H/2,yB=(k+1)*H;
-    [[x0+fw/2,yA,yM,-1],[x1-fw/2,yM,yB,1]].forEach(([fx,ya,yb,dir])=>{const len=Math.hypot(run,yb-ya),ang=Math.atan2(yb-ya,run),g=new THREE.Group();
-      g.position.set(fx,(ya+yb)/2,(za+zb)/2);g.rotation.x=dir<0?ang:-ang;gs.add(g);
-      [-fw/2,fw/2].forEach(o=>{box(.06,.22,len,C.black,o,0,0,g);box(.04,.04,len,C.black,o,.95,0,g);});                    // stringers + handrails
-      for(let i=0;i<18;i++)box(fw-.06,.04,.24,0x6E7072,0,.05,-len/2+(i+.5)*len/18,g);});                              // open treads
-    box(x1-x0,.12,1.0,C.black,(x0+x1)/2,yM-.06,za-.5,gs);box(x1-x0,.12,1.0,C.black,(x0+x1)/2,yB-.06,zb+.5,gs);}         // landings
-  [[x0,za-1],[x0,zb+1],[x1,za-1]].forEach(([x,z])=>box(.1,RF*H,.1,C.black,x,RF*H/2-.3,z,gs));                        // slim posts
-})();
 // columns and edge beams carrying the wide left platform (no long cantilever)
 [[-23.6,-4.5],[-23.6,1.5],[-17.6,-4.5],[-17.6,1.5],[-17.6,7.5]].forEach(([x,z])=>box(.4,RF*H-.02,.4,C.black,x,(RF*H-.02)/2-.3,z,scene));
 floorGroups.forEach((g,i)=>{if(i===0)return;const zf=i===RF?D/2:FRONT_Z;[-23.6,-17.6].forEach(x=>box(.3,.45,zf-RR.z1,C.black,x,-.52,(RR.z1+zf)/2,g));});
