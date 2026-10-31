@@ -253,6 +253,23 @@ for(let i=0;i<NF;i++){
   }
 }
 
+// Staff-room door facades only; no rear annex or opening through the wall.
+floorGroups.slice(0,RF).forEach((g,i)=>{
+  const door=new THREE.Group(),w=1.2,h=2.6;
+  door.position.set(i===3?.65:-7.55,0,-D/2+.06);
+  door.userData.staffRoomDoor=true;g.add(door);
+  box(w,h,.06,C.dark,0,h/2,0,door);
+  [-1,1].forEach(s=>box(.06,h+.06,.08,C.black,s*(w/2+.03),(h+.06)/2,.01,door));
+  box(w+.12,.06,.08,C.black,0,h+.03,.01,door);
+  box(.04,.42,.07,C.steel,w/2-.18,1.15,.07,door);
+  const cv=document.createElement('canvas');cv.width=512;cv.height=128;
+  const ctx=cv.getContext('2d'),tx=new THREE.CanvasTexture(cv);
+  const draw=()=>{ctx.fillStyle='#151515';ctx.fillRect(0,0,512,128);ctx.fillStyle='#F4F4F2';ctx.font='500 56px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('員工休息室',256,64);tx.needsUpdate=true;};
+  draw();document.fonts&&document.fonts.ready.then(draw);
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.38),new THREE.MeshBasicMaterial({map:tx}));
+  sign.position.set(0,h+.34,.05);door.add(sign);
+});
+
 // ---- balconies on every floor (right side) + outdoor escalator landings ----
 const BAL_X0=W/2, BAL_X1=W/2+3.4, ES0=D/2-1.6, ES1=-(D/2-1.8);   // escalator front / back ends
 let RAILH=1.1;function railRun(g,x,z0,z1){if(RAILH>1.2){safeGlass(g,x,z0,x,z1);return;}const len=z1-z0,zc=(z0+z1)/2;box(.05,1.1,len,C.glass,x,.55,zc,g,GLASS);box(.12,.06,len,C.black,x,1.13,zc,g).userData.xray=true;}
