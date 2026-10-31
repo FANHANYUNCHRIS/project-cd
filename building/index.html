@@ -526,12 +526,12 @@ const barStart=floorGroups[0].children.length;
 const barPoint=([x,z])=>[-z,x];
 function diningPosition(x,z,ry){
   if(Math.abs(z+7.6)<.01)return [-7.6,x,Math.PI/2-ry];
-  if((Math.abs(x-1.2)<1||Math.abs(x-4.4)<1)&&z>-4.6&&z<1.6)return [x,z+1.8,ry];
+  if((Math.abs(x-1.2)<1||Math.abs(x-4.4)<1)&&z>-4.6&&z<1.6)return [x,z+2.4,ry];
   return [x,z,ry];
 }
 // ---- 1F counter (real metres): back half = POS cashier, front half = dessert glass case ----
 (function(g){
-  const cx=-5.6, z0=-3.8, zm=.7, z1=5.2, SCREEN=0x3A4A55;
+  const cx=-5.0, z0=-3.8, zm=.7, z1=5.2, SCREEN=0x3A4A55;
   // cashier half
   box(1,1.05,zm-z0,C.black,cx,.525,(z0+zm)/2,g); box(1.15,.06,zm-z0+.1,C.white,cx,1.08,(z0+zm)/2,g);
   [-2.5,-.5].forEach(z=>{
@@ -602,9 +602,9 @@ function diningPosition(x,z,ry){
 // Rotate the complete bar 90 degrees from the left wall to the back wall.
 const barTurn=new THREE.Matrix4().makeRotationY(-Math.PI/2);
 barFittings.concat(floorGroups[0].children.slice(barStart)).forEach(o=>o.applyMatrix4(barTurn));
-ZONES.checkout.center=barPoint([-5.6,.7]);
-ZONES.checkout.bounds=[-6.8,7.6,-8.5,-4.1];
-ZONES.dining.bounds=[-8.5,8.5,-4.1,8.5];
+ZONES.checkout.center=barPoint([-5.0,.7]);
+ZONES.checkout.bounds=[-6.8,7.6,-8.5,-3.5];
+ZONES.dining.bounds=[-8.5,8.5,-3.5,8.5];
 ZONES.checkout.desc='後牆整組咖啡吧台，前方是甜點展示櫃與點餐結帳區；設備、菜單與咖啡師工作區沿後牆排列。';
 ZONES.dining.desc='左牆與窗邊是兩人座，中間是兩張長桌，吧台前方保留點餐通道，右後角是垃圾回收區。';
 // ---- 1F dining (real metres): two-seat tables around the edge, two long tables in the middle ----
@@ -618,7 +618,7 @@ ZONES.dining.desc='左牆與窗邊是兩人座，中間是兩張長桌，吧台�
   [1.2,4.4].forEach(x=>{const first=g.children.length;       // two long tables, shifted toward the entrance
     box(1,.05,6,C.white,x,.76,-1.5,g);[-4.1,1.1].forEach(z=>box(.8,.73,.08,C.black,x,.365,z,g));
     for(let k=0;k<6;k++){seat(x-.85,-4+k);seat(x+.85,-4+k);}
-    [-4,-1.5,1].forEach(z=>pendant(g,x,z,3));g.children.slice(first).forEach(o=>o.position.z+=1.8);});
+    [-4,-1.5,1].forEach(z=>pendant(g,x,z,3));g.children.slice(first).forEach(o=>o.position.z+=2.4);});
 })(floorGroups[0]);
 // ======== upper floors, real metres (17.3 m square; door at front centre x≈-0.6) ========
 const CREAM=0xE9E3D8, GOLDL=0xB8975A, WOOD=0x6E5A40, LAWN=0x7FA86B;
@@ -922,9 +922,9 @@ const WALK={
   terrace:[[1.6,2.6],[1.6,-2.6],[2.6,-2.7],[-1.9,-.3],[-4.3,-.3],[-1.9,2.8],[.4,3],[1.6,-2.6],[-1.9,-3.6],[.4,1.2]]
 };
 Object.keys(WALK).forEach(k=>{WALK[k]=WALK[k].map(([x,z])=>[x*K,z*K]);});
-WALK.dining=[[-1,3.6],[-1,-3.9],[2.8,-3.9],[2.8,3.6],[6.2,3.6],[6.2,-3.9],[2.8,-3.9],[2.8,3.6]];   // aisles of the 1F dining room, walked in order
-WALK.staff=[[-6.97,-5.6],[-6.97,-3],[-6.97,-.9],[-6.97,1.2],[-6.97,3.2],[-6.97,5.4]].map(barPoint);
-WALK.queue=[[-3.4,-4],[-1.5,-4],[.5,-4],[2.5,-4]];   // behind the counter, along the back bar
+WALK.dining=[[-1,3.6],[-1,-3.3],[2.8,-3.3],[2.8,3.6],[6.2,3.6],[6.2,-3.3],[2.8,-3.3],[2.8,3.6]];   // aisles of the 1F dining room, walked in order
+WALK.staff=[[-6.67,-5.6],[-6.67,-3],[-6.67,-.9],[-6.67,1.2],[-6.67,3.2],[-6.67,5.4]].map(barPoint);
+WALK.queue=[[-3.4,-3.4],[-1.5,-3.4],[.5,-3.4],[2.5,-3.4]];   // behind the counter, along the back bar
 WALK.gifts=[[-5,-6.6],[-1.5,-6.6],[1.5,-6.6],[5,-6.6],[-5.4,-1.6],[-1.5,-1.8],[1.5,-1.8],[5.6,-1.8],[-4.4,1.4],[1.6,2.6],[-2.5,6.2],[0,4.2],[5.6,-4.2]];
 WALK.classroom=[[-.6,6.5],[-.6,-4.8],[-6.4,-3],[-6.4,4],[5.6,-3],[5.6,4],[-.6,1]];
 WALK.assist=[[-.6,5.8],[-.6,-5],[-3.8,-5],[-3.8,5.8],[-.6,5.8],[2.6,5.8],[2.6,-5],[-.6,-5]];
@@ -1748,7 +1748,7 @@ for(let i=0;i<22;i++){const a={m:person(col(),false),delay:i*2.4+Math.random()*2
 function foodSet(g,x,y,z,ry){const f=new THREE.Group();f.position.set(x,y,z);f.rotation.y=ry;g.add(f);
   cyl(.11,.11,.014,C.white,0,.008,0,f,16);box(.09,.06,.09,C.pastry,0,.045,0,f);box(.092,.012,.092,C.yolk,0,.081,0,f);
   cyl(.045,.04,.09,C.white,.17,.046,.04,f,12);return f;}
-const isLong=(x,z)=>(Math.abs(x-1.2)<.9||Math.abs(x-4.4)<.9)&&z>-2.7&&z<3.3;
+const isLong=(x,z)=>(Math.abs(x-1.2)<.9||Math.abs(x-4.4)<.9)&&z>-2.1&&z<3.9;
 function foodFor(x,z,ry){const dx=Math.sin(ry),dz=Math.cos(ry);return [x+dx*.5,isLong(x,z)?.785:.77,z+dz*.5];}
 // Keep table meals separate so closing-time cleanup can hide them.
 const tableMeals=[];
@@ -1758,9 +1758,9 @@ const tableMeals=[];
 // free seats for customers who eat in: [seat x, z, facing, aisle point]
 const DINE=[[.35,-4,1,[-.3,-4]],[.35,-1,1,[-.3,-1]],[.35,1,1,[-.3,1]],[2.05,-3,-1,[2.8,-3]],[2.05,0,-1,[2.8,0]],[3.55,-2,1,[2.8,-2]],[3.55,1,1,[2.8,1]],
   [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]]]
-  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=[ap[0],ap[1]+1.8];const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
+  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=[ap[0],ap[1]+2.4];const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
     return {seat:[x,z],ry,ap,food,who:null};});
-const RECYCLE=[7.65,-7.15], TILLS=[[-4.5,-2.5],[-4.5,-.5]].map(barPoint);
+const RECYCLE=[7.65,-7.15], TILLS=[[-3.9,-2.5],[-3.9,-.5]].map(barPoint);
 function cleanTablesAtClosing(){const open=floorOpen(0);
   tableMeals.forEach(m=>m.visible=open);
   if(!open)DINE.forEach(s=>{s.food.visible=false;});
@@ -1771,13 +1771,13 @@ agents.forEach(a=>{
   t.add(tf);t.visible=false;a.m.add(t);a.tray=t;a.trayFood=tf;
   const b=new THREE.Group();box(.2,.26,.11,0xC9A36B,.29,.5,.04,b);box(.12,.02,.012,C.black,.29,.66,.04,b);b.visible=false;a.m.add(b);a.bag=b;});
 function counterVisit(){const till=TILLS[Math.floor(Math.random()*2)];
-  return [{k:'walk',f:0,pts:[[-1,3.6],[-3.4,-4]]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2+Math.random()*3},   // look at the dessert case
+  return [{k:'walk',f:0,pts:[[-1,3.6],[-3.4,-3.4]]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2+Math.random()*3},   // look at the dessert case
           {k:'walk',f:0,pts:[till]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:4+Math.random()*4},{k:'fn',fn:dineOrTake}];}
 function dineOrTake(a){const free=DINE.filter(s=>!s.who);
-  if(Math.random()<.5||!free.length){a.bag.visible=true;a.steps.unshift({k:'walk',f:0,pts:[[-3.4,-3.9],[-1,3.6]]});return;}   // take away
+  if(Math.random()<.5||!free.length){a.bag.visible=true;a.steps.unshift({k:'walk',f:0,pts:[[-3.4,-3.3],[-1,3.6]]});return;}   // take away
   const s=free[Math.floor(Math.random()*free.length)];s.who=a;a.tray.visible=true;a.trayFood.visible=true;
   a.steps.unshift(
-    {k:'walk',f:0,pts:[[-3.4,-3.9],s.ap]},{k:'slide',to:s.seat},
+    {k:'walk',f:0,pts:[[-3.4,-3.3],s.ap]},{k:'slide',to:s.seat},
     {k:'fn',fn:a=>{a.m.rotation.y=s.ry;a.tray.visible=false;s.food.visible=true;}},{k:'pause',t:25+Math.random()*35},   // eating
     {k:'fn',fn:a=>{s.food.visible=false;a.tray.visible=true;}},{k:'slide',to:s.ap},{k:'fn',fn:()=>{s.who=null;}},
     {k:'walk',f:0,pts:[RECYCLE]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2.5},
