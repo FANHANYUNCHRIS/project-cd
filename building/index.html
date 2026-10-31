@@ -590,11 +590,11 @@ function espresso(g,x,y,z,w,face){box(.55,.45,w,C.steel,x,y+.225,z,g);box(.57,.0
 function grinder(g,x,y,z){box(.2,.36,.22,C.black,x,y+.18,z,g);const h=new THREE.Mesh(new THREE.ConeGeometry(.11,.22,12),mat(C.glass,{transparent:true,opacity:.6}));h.rotation.x=Math.PI;h.position.set(x,y+.47,z);g.add(h);}
 function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.white,x,y+.25,z-.1,g);box(.14,.12,.34,C.white,x,y+.52,z+.01,g);cyl(.1,.07,.16,C.steel,x,y+.12,z+.06,g,14);}
 
-// ---- 1F recycling station in the back-right corner ----
-(function(g){const x0=6.5,z=-8.25;
+// ---- 1F recycling station: right wall, openings face into the room ----
+(function(parent){const g=new THREE.Group(),x0=-1.05,z=0;
+  g.position.set(8.25,0,-7.25);g.rotation.y=-Math.PI/2;g.userData.solid=true;parent.add(g);
   box(2.1,.95,.6,C.black,x0+1.05,.475,z,g);box(2.14,.04,.64,C.white,x0+1.05,.97,z,g);
   [[0,0x3F7A4A],[1,0x2F5E8C],[2,0x8C6A2F],[3,0x6B6B6B]].forEach(([k,c])=>{const x=x0+.27+k*.52;box(.3,.03,.12,c,x,.991,z+.08,g);box(.4,.12,.02,c,x,.82,z+.31,g);});
-  box(.6,1.4,.4,C.white,x0+1.05,1.69,z-.1,g);for(let r=0;r<3;r++)box(.56,.02,.36,C.mid,x0+1.05,1.2+r*.45,z-.1,g);   // tray return rack
 })(floorGroups[0]);
 
 // ---- 2F gift boutique: laid out like a jeweller / watch salon ----
@@ -1701,7 +1701,7 @@ const DINE=[[.35,-4,1,[-.3,-4]],[.35,-1,1,[-.3,-1]],[.35,1,1,[-.3,1]],[2.05,-3,-
   [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]]]
   .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=[ap[0],ap[1]+1.8];const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
     return {seat:[x,z],ry,ap,food,who:null};});
-const RECYCLE=[7.5,-7.2], TILLS=[[-4.5,-2.5],[-4.5,-.5]].map(barPoint);
+const RECYCLE=[7.2,-7.25], TILLS=[[-4.5,-2.5],[-4.5,-.5]].map(barPoint);
 agents.forEach(a=>{
   const t=new THREE.Group();box(.42,.02,.3,C.dark,0,.83,.32,t);const tf=new THREE.Group();
   cyl(.09,.09,.012,C.white,-.07,.846,.32,tf,14);box(.07,.05,.07,C.pastry,-.07,.877,.32,tf);cyl(.04,.035,.08,C.white,.12,.88,.35,tf,10);
@@ -1717,7 +1717,7 @@ function dineOrTake(a){const free=DINE.filter(s=>!s.who);
     {k:'walk',f:0,pts:[[-3.4,-3.9],s.ap]},{k:'slide',to:s.seat},
     {k:'fn',fn:a=>{a.m.rotation.y=s.ry;a.tray.visible=false;s.food.visible=true;}},{k:'pause',t:25+Math.random()*35},   // eating
     {k:'fn',fn:a=>{s.food.visible=false;a.tray.visible=true;}},{k:'slide',to:s.ap},{k:'fn',fn:()=>{s.who=null;}},
-    {k:'walk',f:0,pts:[RECYCLE]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2.5},
+    {k:'walk',f:0,pts:[RECYCLE]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI/2;}},{k:'pause',t:2.5},
     {k:'fn',fn:a=>{a.tray.visible=false;}},{k:'walk',f:0,pts:[[-1,3.6]]});}
 
 function visitorTick(dt,t){agents.forEach(a=>{
