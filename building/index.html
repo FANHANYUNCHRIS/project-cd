@@ -208,7 +208,7 @@ const EVS=[[-20.25,-16.65],[-24.05,-20.45]].map(([x0,x1])=>({ELEV:[x0,x1,RR.z0,R
 const PX0=-24.1;   // outer edge of the left platform
 const STAIR2={x0:PX0-2.1,x1:PX0-.1,za:1.9,zb:7.9};
 // openings through the ground: escalator well to B1 in the hall, car-park ramp mouth behind the building, MRT stairs on the left
-const HOLE_ESC=[12.5,15.75,-6.85,7.05], HOLE_RE=[6.8,13.5,-15.2,-11.4], HOLE_RW=[-13.5,-6.8,-15.2,-11.4], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0,-28.8,3,9.5];
+const HOLE_ESC=[15.8,19.05,-6.85,7.05], HOLE_RE=[6.8,13.5,-15.2,-11.4], HOLE_RW=[-13.5,-6.8,-15.2,-11.4], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0,-28.8,3,9.5];
 function boxHoles(w,h,d,col,cx,y,cz,holes,p){const X0=cx-w/2,X1=cx+w/2,Z0=cz-d/2,Z1=cz+d/2,hs=holes.filter(q=>q[0]<X1&&q[1]>X0&&q[2]<Z1&&q[3]>Z0);
   if(!hs.length)return box(w,h,d,col,cx,y,cz,p);
   const xs=[...new Set([X0,X1].concat(...hs.map(q=>[Math.max(X0,q[0]),Math.min(X1,q[1])])))].sort((a,b)=>a-b);
@@ -260,7 +260,7 @@ for(let i=0;i<NF;i++){
 const BAL_X0=W/2, BAL_X1=W/2+3.4, ES0=D/2-1.6, ES1=-(D/2-1.8);   // escalator front / back ends
 let RAILH=1.1;function railRun(g,x,z0,z1){if(RAILH>1.2){safeGlass(g,x,z0,x,z1);return;}const len=z1-z0,zc=(z0+z1)/2;box(.05,1.1,len,C.glass,x,.55,zc,g,GLASS);box(.12,.06,len,C.black,x,1.13,zc,g).userData.xray=true;}
 function railX(g,z,x0,x1){if(RAILH>1.2){safeGlass(g,x0,z,x1,z);return;}const len=x1-x0,xc=(x0+x1)/2;box(len,1.1,.05,C.glass,xc,.55,z,g,GLASS);box(len,.06,.12,C.black,xc,1.13,z,g).userData.xray=true;}
-const LAND={1:-(D/2-.2),2:-(D/2-.2),3:-(D/2-.2),4:-(D/2-.2),5:-(D/2-.2)};   // floor → z centre of its escalator landing (back / front); landings 3.2 m deep   // floor → z centre of its escalator landing (back / front)
+const LAND={1:-(D/2-.2),2:D/2,3:-(D/2-.2),4:D/2,5:-(D/2-.2)};   // floor → z centre of its escalator landing (back / front); landings 3.2 m deep   // floor → z centre of its escalator landing (back / front)
 floorGroups.forEach((g,i)=>{
   const bc=(BAL_X0+BAL_X1)/2;RAILH=i===RF?1.5:1.1;
   box(BAL_X1-BAL_X0,.3,D,C.off,bc,-.15,0,g);
@@ -268,20 +268,12 @@ floorGroups.forEach((g,i)=>{
   if(i===RF){railX(g,D/2-.04,BAL_X0,BAL_X1);railX(g,-D/2+.04,BAL_X0,BAL_X1);}   // other floors: balcony runs straight into the front and back corridors
   const lz=LAND[i];
   if(i===0) railRun(g,BAL_X1,-D/2,ES0-.4);
-  else if(i<RF) railRun(g,BAL_X1,ES1,ES0);
   else if(lz<0) railRun(g,BAL_X1,ES1,D/2);
   else railRun(g,BAL_X1,-D/2,ES0);
   if(lz!==undefined){
     box(7.2,.3,3.2,C.off,BAL_X1+3.6,-.15,lz,g); box(7.2,.3,.08,C.black,BAL_X1+3.6,-.17,lz+(lz<0?-1.65:1.65),g);
     railRun(g,BAL_X1+7.2,lz-1.6,lz+1.6); railX(g,lz+(lz<0?-1.6:1.6),BAL_X1,BAL_X1+7.2);
     if(lz<0)railRun(g,BAL_X1,lz-1.6,-D/2);else railRun(g,BAL_X1,D/2,lz+1.6);   // landing reaches past the balcony end
-  }
-  // Aligned flights need a front departure platform as well as a back arrival platform.
-  if(i>0&&i<RF){const zf=D/2;
-    box(7.2,.3,3.2,C.off,BAL_X1+3.6,-.15,zf,g);
-    box(7.2,.3,.08,C.black,BAL_X1+3.6,-.17,zf+1.65,g);
-    railRun(g,BAL_X1+7.2,zf-1.6,zf+1.6);railX(g,zf+1.6,BAL_X1,BAL_X1+7.2);
-    railRun(g,BAL_X1,D/2,zf+1.6);
   }
   RAILH=1.1;});
 
@@ -796,9 +788,9 @@ function escalator(g,z0,z1,x,rise,down){
 }
 const LANE=[BAL_X1+1.25,BAL_X1+2.9,BAL_X1+4.55,BAL_X1+6.2];   // 5 cm gaps, clear of the portal columns   // two lanes per run: up + down
 const esc1=escalator(floorGroups[0],ES0,ES1,LANE[0],H,false), esc1d=escalator(floorGroups[0],ES0,ES1,LANE[1],H,true);
-const esc2=escalator(floorGroups[1],ES0,ES1,LANE[0],H,false), esc2d=escalator(floorGroups[1],ES0,ES1,LANE[1],H,true);
+const esc2=escalator(floorGroups[1],ES1,ES0,LANE[2],H,false), esc2d=escalator(floorGroups[1],ES1,ES0,LANE[3],H,true);
 const esc3=escalator(floorGroups[2],ES0,ES1,LANE[0],H,false), esc3d=escalator(floorGroups[2],ES0,ES1,LANE[1],H,true);
-const esc4=escalator(floorGroups[3],ES0,ES1,LANE[0],H,false), esc4d=escalator(floorGroups[3],ES0,ES1,LANE[1],H,true);
+const esc4=escalator(floorGroups[3],ES1,ES0,LANE[2],H,false), esc4d=escalator(floorGroups[3],ES1,ES0,LANE[3],H,true);
 const esc5=escalator(floorGroups[4],ES0,ES1,LANE[0],H,false), esc5d=escalator(floorGroups[4],ES0,ES1,LANE[1],H,true);
 // escalator hall: one big glass box around all the escalators (open toward the balconies)
 const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2, EY=-.3;
@@ -1338,8 +1330,8 @@ people.forEach(p=>{if(p.m.userData.kind!=='guard')return;const g=new THREE.Group
 const GTRANS=[];
 function startGuardMove(p){const f=floorGroups.indexOf(p.m.parent);let F;do{F=Math.floor(Math.random()*RF);}while(F===f);
   const steps=[],useEsc=Math.abs(F-f)<=2&&Math.random()<.6;
-  if(useEsc){if(F>f){steps.push({k:'walk',f,pts:[escEnd(ESC.up[f],false)]});for(let i=f;i<F;i++){steps.push({k:'esc',e:ESC.up[i],up:true});if(i<F-1)steps.push({k:'walk',f:i+1,pts:escalatorTransfer(ESC.up[i],ESC.up[i+1],true)});}}
-    else{steps.push({k:'walk',f,pts:[escEnd(ESC.down[f-1],true)]});for(let i=f-1;i>=F;i--){steps.push({k:'esc',e:ESC.down[i],up:false});if(i>F)steps.push({k:'walk',f:i,pts:escalatorTransfer(ESC.down[i],ESC.down[i-1],false)});}}
+  if(useEsc){if(F>f){steps.push({k:'walk',f,pts:[escEnd(ESC.up[f],false)]});for(let i=f;i<F;i++){steps.push({k:'esc',e:ESC.up[i],up:true});if(i<F-1)steps.push({k:'walk',f:i+1,pts:[escEnd(ESC.up[i+1],false)]});}}
+    else{steps.push({k:'walk',f,pts:[escEnd(ESC.down[f-1],true)]});for(let i=f-1;i>=F;i--){steps.push({k:'esc',e:ESC.down[i],up:false});if(i>F)steps.push({k:'walk',f:i,pts:[escEnd(ESC.down[i-1],true)]});}}
     if(GATES[F])steps.push(...gateIn(F));}
   else{const ev=Math.random()<.5?0:1;steps.push({k:'walk',f,pts:[EVS[ev].EWAIT]},{k:'elev',from:f,to:F,ev});}
   const q=patrolPts(F)[0];steps.push({k:'walk',f:F,pts:[q]},{k:'fn',fn:a=>{a.done=true;}});
@@ -1451,7 +1443,7 @@ STALLS.forEach(s=>{s.free=true;s.entry=s.row==='C'?[s.x,12.6]:[s.x,s.row==='A'?-
   for(let k=0;k<12;k++)box(.3,.012,.6,k%2?0x151515:0xE2B33C,x0+.15+k*.28,.008,z1+.9,g);
   const cv=document.createElement('canvas');cv.width=256;cv.height=64;const c=cv.getContext('2d');c.fillStyle='#B3261E';c.fillRect(0,0,256,64);c.fillStyle='#fff';c.font='700 34px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('防火捲門',128,33);
   const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.3),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));sg.position.set((x0+x1)/2,y-.3,z1+.39);g.add(sg);})(B1G);
-const escB1=escalator(B1G,ES0,ES1,LANE[0],B1D,false), escB1d=escalator(B1G,ES0,ES1,LANE[1],B1D,true);
+const escB1=escalator(B1G,ES0,ES1,LANE[2],B1D,false), escB1d=escalator(B1G,ES0,ES1,LANE[3],B1D,true);
 (function(g){const [x0,x1,z0,z1]=HOLE_ESC;railRun(g,x0-.03,z0+.6,z1);railRun(g,x1+.03,z0+.6,z1);railX(g,z1+.03,x0,x1);})(floorGroups[0]);
 // cut the ground plane open over the escalator well, the ramp mouth and the MRT stairs
 (function(){const sh=new THREE.Shape();sh.moveTo(-100,-100);sh.lineTo(100,-100);sh.lineTo(100,100);sh.lineTo(-100,100);sh.lineTo(-100,-100);
@@ -1651,21 +1643,15 @@ function routeDoor(xe){const IN=[[-.6,SW.z1],[-.6,D/2+1.2],[-.6,D/2-1.4]];
 function routePass(xs,xe){if(Math.random()<.5)return [{k:'walk',f:0,pts:[[xe,SW.z1]]}];
   const ring=xs<0?[[SW.x0,SW.z1],[SW.x0,SW.z0],[SW.x1,SW.z0],[SW.x1,SW.z1]]:[[SW.x1,SW.z1],[SW.x1,SW.z0],[SW.x0,SW.z0],[SW.x0,SW.z1]];
   return [{k:'walk',f:0,pts:ring.concat([[xe,SW.z1]])}];}
-// Connect aligned flights through the side balcony; never cross the open stairwell.
-function escalatorTransfer(from,to,up){
-  const start=escEnd(from,up),end=escEnd(to,!up),bx=(BAL_X0+BAL_X1)/2;
-  const back=-(D/2+.4),front=D/2+.4;
-  return [[start[0],up?back:front],[bx,up?back:front],[bx,up?front:back],[end[0],up?front:back],end];
-}
 function routeEsc(xe,F){const U=ESC.up,Dn=ESC.down,s=[];
   const visits=(F===2&&Math.random()<.3)?[2,4]:[F];   // one card opens 3F–5F: some go on from the classroom up to the office
   const top=visits[visits.length-1];
   s.push({k:'walk',f:0,pts:[[LANE[0],SW.z1],escEnd(U[0],false)]});
   for(let i=0;i<top;i++){s.push({k:'esc',e:U[i],up:true});const f=i+1;
     if(visits.includes(f)){if(GATES[f])s.push(...gateIn(f));const td=landingToDoor(f);s.push({k:'walk',f,pts:td},...insideVisit(f),{k:'walk',f,pts:rev(td)});}
-    if(i<top-1)s.push({k:'walk',f,pts:escalatorTransfer(U[i],U[i+1],true)});}
+    if(i<top-1)s.push({k:'walk',f,pts:[escEnd(U[i+1],false)]});}
   const F2=top;s.push({k:'walk',f:F2,pts:[escEnd(Dn[F2-1],true)]});F=F2;
-  for(let i=F-1;i>=0;i--){s.push({k:'esc',e:Dn[i],up:false});if(i>0)s.push({k:'walk',f:i,pts:escalatorTransfer(Dn[i],Dn[i-1],false)});}
+  for(let i=F-1;i>=0;i--){s.push({k:'esc',e:Dn[i],up:false});if(i>0)s.push({k:'walk',f:i,pts:[escEnd(Dn[i-1],true)]});}
   s.push({k:'walk',f:0,pts:[[LANE[1],SW.z1],[xe,SW.z1]]});return s;}
 function routeElev(xe,F){const ev=Math.random()<.5?0:1,EW=EVS[ev].EWAIT;return [{k:'walk',f:0,pts:ELEV_IN0.concat([EW])},{k:'elev',from:0,to:F,ev},
   {k:'walk',f:F,pts:outRoute(F)}].concat(insideVisit(F),[{k:'walk',f:F,pts:rev(outRoute(F)).concat([EW])},
