@@ -456,10 +456,8 @@ function table2(g,x,z,top){cyl(.5,.5,.05,top||C.white,x,.76,z,g,20);cyl(.05,.05,
 function stool(g,x,z){cyl(.2,.2,.06,C.dark,x,.78,z,g,12);cyl(.03,.03,.76,C.black,x,.39,z,g,6);cyl(.18,.18,.03,C.black,x,.02,z,g,12);}
 function sofa(g,x,z,w,rot){const s=new THREE.Group();s.userData.solid=true;s.position.set(x,0,z);s.rotation.y=rot||0;g.add(s);
   box(w,.42,.85,C.dark,0,.21,0,s);box(w,.5,.2,C.dark,0,.62,-.33,s);box(.2,.35,.85,C.dark,-w/2+.1,.55,0,s);box(.2,.35,.85,C.dark,w/2-.1,.55,0,s);}
-// 1F: window bar with stools, extra tables, pastry fridge, pendants, entrance plants
+// 1F queue fittings; the former tall pastry fridge has been removed.
 (function(g){
-  box(.8,2.1,.75,C.white,-4.4,1.05,-4.35,g); box(.72,1.8,.04,C.glass,-4.4,1.15,-3.96,g,{transparent:true,opacity:.5,depthWrite:false});
-  for(let r=0;r<4;r++)for(let c=0;c<3;c++)box(.18,.1,.18,r%2?C.pastry:C.yolk,-4.6+c*.2,.45+r*.42,-4.2,g);
   [[-2.3,2.8],[-2.3,3.6]].forEach(([x,z])=>{cyl(.04,.04,.95,C.steel,x,.48,z,g,8);cyl(.12,.12,.03,C.black,x,.02,z,g,12);});
   box(.03,.06,.8,C.dark,-2.3,.9,3.2,g);
 })(floorGroups[0]);
@@ -476,7 +474,7 @@ floorGroups.forEach((g,i)=>{const kids=g.children.slice(_fc[i]),n=kids.length;if
     PLAN.push({f:i,x0:bb.min.x,x1:bb.max.x,z0:bb.min.z,z1:bb.max.z,dx,dz});
     list.forEach(k=>{kids[k].position.x+=dx;kids[k].position.z+=dz;});});});
 function planToReal(f,x,z){const c=PLAN.find(c=>c.f===f&&x>=c.x0-.3&&x<=c.x1+.3&&z>=c.z0-.3&&z<=c.z1+.3);return c?[x+c.dx,z+c.dz]:[x*K,z*K];}
-// Keep the menu, fridge and queue fittings with the relocated bar.
+// Keep the queue fittings with the relocated bar.
 const barFittings=floorGroups[0].children.slice(_fc[0]);
 const barStart=floorGroups[0].children.length;
 const barPoint=([x,z])=>[-z,x];
