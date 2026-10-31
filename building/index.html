@@ -1851,7 +1851,6 @@ floorGroups.forEach((g,i)=>{
   // light strips: under the ceiling edge indoors; on the roof only along the left balustrade (front has the door, right side is open)
   (i<RF?[box(W,.06,.06,0,0,yy,D/2-.04,g),box(.06,.06,D,0,-W/2+.04,yy,0,g),box(.06,.06,D,0,W/2-.04,yy,0,g)]:[box(.06,.06,D/2-4.6,0,-W/2+.2,1.45,-(D/2+4.6)/2,g),box(.06,.06,D/2-2.2,0,-W/2+.2,1.45,(D/2-2.2)/2,g)])
     .forEach(o=>{o.material=ledMat;if(i<RF)o.userData.ceil=true;});
-  if(i<RF){const wp=new THREE.Mesh(new THREE.PlaneGeometry(W-3.2,3.4),winMat);wp.position.set(0,3.8,-D/2+.03);g.add(wp);}
 });
 const floorLights=floorGroups.map(g=>{const l=new THREE.PointLight(0xffdca8,0,W*1.6,1.4);l.position.set(0,i3(g),0);g.add(l);return l;});
 function i3(g){return g===floorGroups[RF]?3:H-1.4;}
