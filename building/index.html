@@ -131,7 +131,7 @@ const ZONES={   // real metres
     desc:'牆邊是兩人座，中間是兩張長桌。右後角是垃圾回收區。',
     items:[{t:'甜點配咖啡怎麼選',demo:1},{t:'一杯拿鐵的牛奶比例',demo:1}]},
   gifts:{floor:1,name:'伴手禮銷售區',center:[0,-1],bounds:[-8.5,8.5,-8.5,8.5],
-    desc:'禮盒像珠寶、名錶一樣陳列：發光展示牆、玻璃展示櫃、展示島。右前方有沙發休息區。',
+    desc:'入口左右有朝外展示的商品櫃，店內有發光展示牆、玻璃展示櫃與展示島。左側櫃台後方以櫃體陳列藝術品，櫃台前移保留員工通道；右前方是沙發休息區。',
     items:[{t:'鳳梨酥禮盒',demo:1},{t:'蛋黃酥禮盒',demo:1},{t:'綜合禮盒',demo:1}]},
   classroom:{floor:2,name:'甜點咖啡教室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'上課時間每天 09:00–17:00（12:00–13:00 午休）、19:00–22:00，每堂 50 分開始下課 10 分鐘。一班 20 位學員，一人一張桌子。前面是講師示範台，助教在旁協助。左邊是烤箱、咖啡機、烘豆機，右邊是甜點備料區。',
@@ -617,14 +617,27 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
 
 // ---- 2F gift boutique: laid out like a jeweller / watch salon ----
 (function(g){const BOX=[C.black,C.white,C.pastry,WOOD,CREAM];
+  // Wall cabinetry behind both counters, with supported monochrome art pieces.
+  box(.12,3,13,C.black,-8.6,1.5,.5,g);
+  box(.6,.75,13,C.dark,-8.3,.375,.5,g);
+  [-6,7].forEach(z=>box(.6,3,.08,C.black,-8.3,1.5,z,g));
+  [.775,1.6,2.4].forEach((y,r)=>{
+    box(.6,.05,13,C.black,-8.3,y,.5,g);
+    [-4.8,-1.4,2.0,5.4].forEach((z,k)=>{
+      const top=y+.025; cyl(.15,.15,.05,C.off,-8.2,top+.025,z,g,20);
+      if((k+r)%2===0){const art=new THREE.Mesh(new THREE.TorusGeometry(.17,.035,10,28),mat(k%2?C.steel:C.white));art.rotation.y=Math.PI/2;art.position.set(-8.2,top+.255,z);g.add(art);}
+      else cyl(.08,.12,.32,k%2?C.white:C.mid,-8.2,top+.21,z,g,24);
+    });
+  });
+  box(.6,.05,13,C.black,-8.3,2.975,.5,g);
   // backlit niche wall
   box(12.4,3.4,.3,C.black,0,1.9,-8.47,g);
   for(let r=0;r<2;r++)for(let k=0;k<6;k++){const x=-5+k*2,y=1.05+r*1.35;
     box(1.5,.95,.02,0xFFE6B8,x,y,-8.31,g);box(1.55,.04,.3,GOLDL,x,y-.46,-8.18,g);giftBox(g,x,y-.44,-8.18,BOX[(k+r)%5]);}
   // jewellery counter along the left wall, staff behind it
-  box(.7,.85,8,C.black,-7.2,.425,-2,g);box(.72,.04,8.02,GOLDL,-7.2,.87,-2,g);box(.7,.32,8,C.glass,-7.2,1.05,-2,g,{transparent:true,opacity:.25,depthWrite:false});
-  box(.72,.03,8.02,GOLDL,-7.2,1.225,-2,g);
-  for(let k=0;k<9;k++)giftBox(g,-7.2,.89,-5.6+k*.9,BOX[k%5],.28,.12,.22);
+  box(.7,.85,8,C.black,-5.9,.425,-2,g);box(.72,.04,8.02,GOLDL,-5.9,.87,-2,g);box(.7,.32,8,C.glass,-5.9,1.05,-2,g,{transparent:true,opacity:.25,depthWrite:false});
+  box(.72,.03,8.02,GOLDL,-5.9,1.225,-2,g);
+  for(let k=0;k<9;k++)giftBox(g,-5.9,.89,-5.6+k*.9,BOX[k%5],.28,.12,.22);
   // three glass islands in the middle, one piece each under a beam of light
   [-3,0,3].forEach((x,k)=>{box(1.2,.95,.8,C.white,x,.475,-3.2,g);box(1.22,.03,.82,GOLDL,x,.965,-3.2,g);
     box(1.1,.45,.7,C.glass,x,1.205,-3.2,g,{transparent:true,opacity:.22,depthWrite:false});giftBox(g,x,.98,-3.2,BOX[k+1],.42,.26,.34);beam(g,x,-3.2,1.43);});
@@ -633,11 +646,28 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
   giftBox(g,0,.53,1.2,C.black,.7,.3,.6);giftBox(g,0,.84,1.2,C.white,.55,.26,.46);giftBox(g,0,1.11,1.2,C.pastry,.4,.22,.34);beam(g,0,1.2,1.33);
   // slim glass watch towers by the window
   [-5.5,-3,-.5].forEach((z,k)=>{box(.65,.4,.65,C.black,7.4,.2,z,g);box(.6,1.6,.6,C.glass,7.4,1.2,z,g,{transparent:true,opacity:.2,depthWrite:false});
+    [-.28,.28].forEach(dx=>[-.28,.28].forEach(dz=>box(.035,1.63,.035,C.black,7.4+dx,1.215,z+dz,g)));
     box(.62,.03,.62,GOLDL,7.4,2.015,z,g);for(let r=0;r<3;r++){box(.56,.02,.56,GOLDL,7.4,.6+r*.5,z,g);giftBox(g,7.4,.61+r*.5,z,BOX[(r+k)%5],.22,.12,.18);}});
   // checkout & wrapping counter, waiting bench, lounge with sofas
+  const tillStart=g.children.length;
   box(2.4,1,.8,C.black,-5.6,.5,5.4,g);box(2.44,.04,.84,GOLDL,-5.6,1.02,5.4,g);box(.3,.24,.26,C.dark,-6.2,1.16,5.4,g);
   for(let k=0;k<3;k++){const r=cyl(.05,.05,.36,[C.black,C.pastry,C.white][k],-5.2+k*.2,1.09,5.4,g,10);r.rotation.z=Math.PI/2;}
-  box(2.4,.45,.5,C.dark,-4,.225,7.9,g);
+  const tillTurn=new THREE.Matrix4().makeTranslation(-5.9,0,4.6).multiply(new THREE.Matrix4().makeRotationY(Math.PI/2)).multiply(new THREE.Matrix4().makeTranslation(5.6,0,-5.4));
+  g.children.slice(tillStart).forEach(o=>o.applyMatrix4(tillTurn));
+  box(2.4,.45,.5,C.dark,-3.8,.225,6.6,g);
+  // Outward-facing merchandise cabinets, on either side of the 2.4 m entrance.
+  [[-5.3,4.2],[2.8,2.6]].forEach(([x,w],side)=>{
+    const z=8.05;
+    box(w,.45,.7,C.black,x,.225,z,g);
+    box(w,1.85,.06,C.dark,x,1.375,z-.32,g);
+    [-1,1].forEach(s=>box(.06,1.85,.7,C.black,x+s*(w/2-.03),1.375,z,g));
+    [.5,1.3,2.1].forEach((y,r)=>{
+      box(w,.05,.7,C.black,x,y,z,g);
+      const n=side===0?5:3;for(let k=0;k<n;k++)giftBox(g,x-w/2+.45+k*(w-.9)/(n-1),y+.025,z+.14,BOX[(k+r)%BOX.length],.32,.2,.26);
+    });
+    box(w,.06,.7,C.black,x,2.3,z,g);
+    box(w-.12,1.75,.025,C.glass,x,1.375,z+.355,g,{transparent:true,opacity:.18,depthWrite:false});
+  });
   box(3.6,.015,3.2,0x3A3735,5.2,.008,5.6,g);sofa(g,5.2,4.3,2.4,0);sofa(g,5.2,6.9,2.4,Math.PI);
   box(1.2,.4,.6,C.white,5.2,.2,5.6,g);giftBox(g,5.2,.4,5.6,C.pastry,.3,.16,.24);
 })(floorGroups[1]);
@@ -924,7 +954,7 @@ Object.keys(WALK).forEach(k=>{WALK[k]=WALK[k].map(([x,z])=>[x*K,z*K]);});
 WALK.dining=[[-1,3.6],[-1,-3.3],[2.8,-3.3],[2.8,3.6],[6.2,3.6],[6.2,-3.3],[2.8,-3.3],[2.8,3.6]];   // aisles of the 1F dining room, walked in order
 WALK.staff=[[-6.67,-5.6],[-6.67,-3],[-6.67,-.9],[-6.67,1.2],[-6.67,3.2],[-6.67,5.4]].map(barPoint);
 WALK.queue=[[-3.4,-3.4],[-1.5,-3.4],[.5,-3.4],[2.5,-3.4]];   // behind the counter, along the back bar
-WALK.gifts=[[-5,-6.6],[-1.5,-6.6],[1.5,-6.6],[5,-6.6],[-5.4,-1.6],[-1.5,-1.8],[1.5,-1.8],[5.6,-1.8],[-4.4,1.4],[1.6,2.6],[-2.5,6.2],[0,4.2],[5.6,-4.2]];
+WALK.gifts=[[-5,-6.6],[-1.5,-6.6],[1.5,-6.6],[5,-6.6],[-4.8,-1.6],[-1.5,-1.8],[1.5,-1.8],[5.6,-1.8],[-4.4,1.4],[1.6,2.6],[-1.6,6.2],[0,4.2],[5.6,-4.2]];
 WALK.classroom=[[-.6,6.5],[-.6,-4.8],[-6.4,-3],[-6.4,4],[5.6,-3],[5.6,4],[-.6,1]];
 WALK.assist=[[-.6,5.8],[-.6,-5],[-3.8,-5],[-3.8,5.8],[-.6,5.8],[2.6,5.8],[2.6,-5],[-.6,-5]];
 WALK.office=[[-.6,7.2],[-3,7],[-4.2,2.2],[-4.2,-6],[-6.2,1.6],[2,7],[2.6,.4],[6.9,2.6],[2.4,-2],[5.4,-.4]];
@@ -967,10 +997,10 @@ staffWalker(1,WALK.gifts,'clean',.4);staffWalker(2,WALK.classroom,'clean',.4);  
 staffWalker(0,WALK.dining,'clean',.45,true); staffWalker(4,WALK.office,'clean',.45);staffWalker(3,WALK.prod||[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2]],'clean',.45); staffWalker(RF,WALK.terrace,'clean',.45);
 function standAt(fi,kind,x,z,ry){const m=kind?dressed(kind):person(col(),false);m.position.set(x,0,z);m.rotation.y=ry;floorGroups[fi].add(m);people.push({m,seated:true,ph:Math.random()*6});}
 // 2F: salespeople behind the jewellery counter and at the till, shoppers, people resting on the sofas
-standAt(1,'sales',-8.05,-4.4,Math.PI/2);standAt(1,'sales',-8.05,-.2,Math.PI/2);standAt(1,'sales',-5.6,4.5,0);
+standAt(1,'sales',-7.1,-4.4,Math.PI/2);standAt(1,'sales',-7.1,-.2,Math.PI/2);standAt(1,'sales',-7.1,4.6,Math.PI/2);
 // ---- 2F gift shop: shoppers browse; a free salesperson randomly walks over to introduce products; shoppers randomly go to the counter to pay ----
 window.__shop=()=>({shoppers,shopSales,shopTick,camera,controls,agents,DINE,GATES,festNow,FEST,env,roofGuests,roofWalkers,elev,EVS,GTRANS,carPool,BUS,DRIVERS,STALLS,AUTOD,pax,floorGroups,people,students,classStaff});
-const SHOP_PAY=[-5.6,6.3], SHOP_QUEUE=[[-5.6,7.2],[-4.5,7.3]];
+const SHOP_PAY=[-4.7,4.6], SHOP_QUEUE=[[-3.5,4.6],[-2.3,4.6]];
 const shoppers=[], shopSales=[];
 function shopAgent(m,speed){floorGroups[1].add(m);people.push({m,seated:true,ph:Math.random()*6});return {m,speed,path:null,pause:Math.random()*3,state:'browse',buddy:null,browsed:0};}
 for(let i=0;i<6;i++){const s=WALK.gifts[i*2%WALK.gifts.length];const a=shopAgent(person(col(),false),.8+Math.random()*.3);a.m.position.set(s[0],0,s[1]);shoppers.push(a);}
@@ -990,7 +1020,7 @@ function shopTick(dt,t){
     if(a.state==='pay'){a.pause-=dt;if(a.pause<=0){a.state='browse';a.browsed=0;a.pause=1;}return;}
     if(a.pause>0){a.pause-=dt;return;}
     if(!shopWalk(a,dt,t))return;
-    if(a.state==='toPay'&&a.path&&!a.path.length){a.state='pay';a.pause=8+Math.random()*7;shopFace(a,SHOP_PAY[0],SHOP_PAY[1]-1);a.path=null;return;}
+    if(a.state==='toPay'&&a.path&&!a.path.length){a.state='pay';a.pause=8+Math.random()*7;shopFace(a,SHOP_PAY[0]-1,SHOP_PAY[1]);a.path=null;return;}
     if(a.state==='toQueue'&&a.path&&!a.path.length){a.state='queue';shopFace(a,SHOP_PAY[0],SHOP_PAY[1]);a.path=null;return;}
     if(a.state==='browse'&&a.path&&!a.path.length){a.path=null;a.browsed++;a.pause=4+Math.random()*7;return;}   // looking at a display
     // choose the next thing to do
@@ -1011,7 +1041,7 @@ function shopTick(dt,t){
       s.path=null;s.pause=3+Math.random()*5;shopGo(s,WALK.gifts[Math.floor(Math.random()*WALK.gifts.length)]);}});
 }
 
-seated(1,4.6,4.3,0,col(),true);seated(1,5.8,4.3,0,col(),true);seated(1,5.2,6.9,Math.PI,col(),true);seated(1,-4.6,7.9,Math.PI,col(),true);
+seated(1,4.6,4.3,0,col(),true);seated(1,5.8,4.3,0,col(),true);seated(1,5.2,6.9,Math.PI,col(),true);seated(1,-4.4,6.6,Math.PI,col(),true);
 // 3F: instructor at the demo counter, assistant walking the rows, 20 students
 // ---- 3F class timetable (real local time): 09–12, 13–17, 19–22; lunch 12–13; a 10-minute break from :50 each hour ----
 function classPhase(d){d=d||new Date();const h=d.getHours(),mi=d.getMinutes(),m=h*60+mi;
