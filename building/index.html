@@ -1347,16 +1347,17 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
   box(.5,.12,1.2,0xD9A441,-5.6,.1,5.6,g);box(.08,1,.08,C.black,-5.6,.6,5.05,g);                                   // pallet jack
   [-.18,.18].forEach(dx=>[-.45,.45].forEach(dz=>{const wheel=cyl(.08,.08,.06,C.black,-5.6+dx,.08,5.6+dz,g,12);wheel.rotation.x=Math.PI/2;}));
   box(1.2,.75,.6,C.white,-4.6,.375,7.7,g);box(.45,.32,.04,C.dark,-4.6,.92,7.55,g);                                  // stock desk
+  // Rear staff-door landing and cross aisle stay clear; ovens form an island farther inside.
   // --- pastry kitchen ---
   [-1.9,1.3].forEach((x,i)=>{box(1.2,.88,3.2,ST,x,.44,-2.6,g);box(1.24,.04,3.24,C.white,x,.9,-2.6,g);
     for(let r=0;r<5;r++)for(let c=0;c<2;c++){box(.36,.02,.5,C.black,x-.28+c*.56,.93,-3.8+r*.6,g);
       for(let k=0;k<6;k++)(i===0?box(.06,.03,.06,0xD9A441,x-.38+c*.56+(k%2)*.14,.955,-3.98+r*.6+Math.floor(k/2)*.14,g)                 // 鳳梨酥
                                :cyl(.035,.035,.04,0xC98A3A,x-.38+c*.56+(k%2)*.14,.96,-3.98+r*.6+Math.floor(k/2)*.14,g,10));}       // 蛋黃酥
     box(.32,.32,.32,C.white,x,1.06,-.95+0,g);});
-  box(2.4,1.7,1.1,C.black,-1.4,.85,-8.0,g);for(let k=0;k<3;k++)box(2.0,.32,.03,0x3A2A1A,-1.4,.45+k*.5,-7.44,g);   // three-deck oven
-  [.4,1.4].forEach(x=>{box(.95,1.9,.9,ST,x,.95,-8.1,g);box(.66,.9,.03,C.dark,x,1.15,-7.64,g);});                  // convection ovens
+  box(2.4,1.7,1.1,C.black,-1.4,.85,-5.8,g);for(let k=0;k<3;k++)box(2.0,.32,.03,0x3A2A1A,-1.4,.45+k*.5,-5.24,g);   // three-deck oven
+  [.4,1.4].forEach(x=>{box(.95,1.9,.9,ST,x,.95,-5.9,g);box(.66,.9,.03,C.dark,x,1.15,-5.44,g);});                  // convection ovens
   box(1,2.0,.9,ST,2.5,1.0,-8.1,g);box(.8,.9,1.6,ST,2.9,.45,-6.2,g);                                                // proofer, blast chiller
-  box(.9,1.4,.8,C.white,-2.6,.7,-6.2,g);cyl(.3,.25,.4,ST,-2.6,1.6,-6.2,g);                                          // floor mixer
+  box(.9,1.4,.8,C.white,-2.7,.7,.2,g);cyl(.3,.25,.4,ST,-2.7,1.6,.2,g);                                          // floor mixer
   [-4.6,-3.6].forEach(z=>{box(.6,1.8,.5,ST,3.0,.9,z+.8,g);for(let k=0;k<8;k++)box(.56,.02,.46,k%2?C.black:0xD9A441,3.0,.2+k*.2,z+.8,g);});   // sheet racks
   box(3,.85,.9,C.white,1.6,.425,4.2,g);for(let k=0;k<5;k++)box(.36,.12,.28,k%2?C.black:0xD9A441,.5+k*.55,.91,4.2,g);   // packing table
   // --- coffee roastery ---
@@ -1372,7 +1373,7 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
   box(1.8,.76,.9,C.white,5.2,.38,-1.0,g);for(let k=0;k<8;k++)cyl(.05,.04,.07,C.white,4.5+(k%4)*.45,.8,-1.2+Math.floor(k/4)*.4,g,10);   // cupping table
   box(.6,1.8,2.4,C.dark,8.25,.9,3.4,g);for(let r=0;r<4;r++)for(let k=0;k<5;k++)box(.1,.22,.14,C.black,7.92,.35+r*.42,2.6+k*.4,g);      // packed beans
   box(1.6,.85,.8,C.white,5.6,.425,4.6,g);box(.3,.08,.3,C.dark,5.2,.89,4.6,g);box(.4,.25,.3,C.black,6.0,.98,4.6,g);                 // bagging scale + sealer
-  [[-1.4,-7.85,2.8,1.4],[.9,-7.95,2.4,1.2]].forEach(([x,z,w,d])=>{const hd=box(w,.45,d,C.steel,x,2.65,z,g);hd.userData.ceil=true;   // extraction hoods
+  [[-1.4,-5.65,2.8,1.4],[.9,-5.75,2.4,1.2]].forEach(([x,z,w,d])=>{const hd=box(w,.45,d,C.steel,x,2.65,z,g);hd.userData.ceil=true;   // extraction hoods
     const du=cyl(.18,.18,H-.3-2.9,C.steel,x,2.9+(H-.3-2.9)/2,z-.3,g,12);du.userData.ceil=true;});
   [[-8.45,4.5],[-3.1,-8.45],[8.45,-4.5]].forEach(([x,z])=>{box(.32,.55,.22,0xB3261E,x,1.1,z,g);
     box(.24,.3,.2,C.black,Math.abs(x)>8?Math.sign(x)*8.58:x,1.1,z<-8?-8.6:z,g);});   // wall-mounted fire extinguisher cabinets
@@ -1382,10 +1383,10 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
 [[[-6.75,-4.6],[-6.75,-1],[-6.75,2.4],[-4,2.4],[-4,-1.2],[-4,-5.6],[-6.6,-5.7]],[[-4,-5.6],[-6.75,-5.7],[-6.75,1],[-4,.4],[-6.2,4.2],[-4.2,5.6]]]
   .forEach(pts=>{staffWalker(PRODF,pts,'ware',.55,false);people[people.length-1].dwell=5;});
 [[-2.8,-2.6,Math.PI/2],[-.95,-3.4,-Math.PI/2],[.42,-2.0,Math.PI/2],[2.2,-2.6,-Math.PI/2],[1.6,3.35,0]].forEach(([x,z,r])=>standAt(PRODF,'chef',x,z,r));
-staffWalker(PRODF,[[-1.4,-7.0],[.9,-7.2],[2.0,-7.2],[-.3,-5.4],[-2.0,-5.2]],'chef',.6,true);people[people.length-1].dwell=4;
+staffWalker(PRODF,[[-1.4,-4.65],[.9,-4.65],[3.9,-4.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]],'chef',.6,true);people[people.length-1].dwell=4;
 [[5.0,-5.6,Math.PI],[7.3,-5.6,Math.PI],[5.6,3.85,0]].forEach(([x,z,r])=>standAt(PRODF,'roast',x,z,r));
 staffWalker(PRODF,[[7.0,-2.8],[6.15,-6.0],[7.0,-.8],[6.15,-4.8],[5.2,-2.4]],'roast',.5,true);people[people.length-1].dwell=4;
-WALK.prod=[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2],[3.8,1.8],[-.3,-5.4]];
+WALK.prod=[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2],[3.9,1.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]];
 const AXP=[];   // extra moving people for the door sensors
 function annexTick(dt,t){
   // automatic doors
