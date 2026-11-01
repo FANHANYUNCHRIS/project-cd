@@ -602,6 +602,8 @@ ZONES.dining.desc='左牆與窗邊是兩人座，中間是兩張長桌，吧台�
     if(axis==='x'){seat(x-.65,z);seat(x+.65,z);}else{seat(x,z-.65);seat(x,z+.65);}}
   [-2.2,.2,2.6,5].forEach(z=>two(-7.6,z,'z'));            // relocated from the back wall to the left wall
   [-5,-2.6,-.2,2.2,4.6].forEach(z=>two(7.6,z,'z'));       // along the side window
+  // Three extra pairs: 1.06 m between chair edges; keep the entrance and both side aisles clear.
+  [-.8,2,4.8].forEach(z=>two(-3.7,z,'z'));
   [3.4,6].forEach(x=>two(x,7.4,'x'));                     // along the front window (entrance kept clear)
   [1.2,4.4].forEach(x=>{const first=g.children.length;       // two long tables, shifted toward the entrance
     box(1,.05,6,C.white,x,.76,-1.5,g);[-4.1,1.1].forEach(z=>box(.8,.73,.08,C.black,x,.365,z,g));
@@ -1796,7 +1798,8 @@ const tableMeals=[];
  .forEach(([x,z,r])=>{[x,z,r]=diningPosition(x,z,r);const p=foodFor(x,z,r);tableMeals.push(foodSet(floorGroups[0],p[0],p[1],p[2],r));});
 // free seats for customers who eat in: [seat x, z, facing, aisle point]
 const DINE=[[.35,-4,1,[-.3,-4]],[.35,-1,1,[-.3,-1]],[.35,1,1,[-.3,1]],[2.05,-3,-1,[2.8,-3]],[2.05,0,-1,[2.8,0]],[3.55,-2,1,[2.8,-2]],[3.55,1,1,[2.8,1]],
-  [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]]]
+  [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]],
+  ...[-.8,2,4.8].flatMap(z=>[[-3.7,z-.65,0,[-2.6,z-.65]],[-3.7,z+.65,2,[-2.6,z+.65]]])]
   .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=[ap[0],ap[1]+2.4];const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
     return {seat:[x,z],ry,ap,food,who:null};});
 const RECYCLE=[7.65,-7.15], TILLS=[[-3.9,-2.5],[-3.9,-.5]].map(barPoint);
@@ -2142,11 +2145,10 @@ const stars=(()=>{const n=420,pos=new Float32Array(n*3);for(let i=0;i<n;i++){con
   pos.set([Math.cos(a)*Math.cos(e)*r,Math.sin(e)*r,Math.sin(a)*Math.cos(e)*r],i*3);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
   const p=new THREE.Points(g,new THREE.PointsMaterial({color:0xFFFFFF,size:2,sizeAttenuation:false,transparent:true,opacity:0,depthWrite:false,fog:false}));scene.add(p);return p;})();
-// steam from the espresso machines (1F bar and 3F classroom)
+// Steam from the 3F classroom espresso machine only.
 const steam=[];
 function steamSource(g,x,y,z,n){for(let i=0;i<n;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:steamTex,transparent:true,opacity:0,depthWrite:false}));
   g.add(s);steam.push({s,x,y,z,ph:i/n});}}
-steamSource(floorGroups[0],-8.05,1.66,-.9,8);
 steamSource(floorGroups[2],-1.55,1.52,-6.6,6);
 function atmosphereTick(dt,t){
   steam.forEach(p=>{if(!p.s.parent.visible)return;const u=(t*.32+p.ph)%1;p.s.position.set(p.x+Math.sin(u*6+p.ph*9)*.07,p.y+u*.75,p.z+Math.cos(u*5)*.05);
