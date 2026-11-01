@@ -496,9 +496,10 @@ function planToReal(f,x,z){const c=PLAN.find(c=>c.f===f&&x>=c.x0-.3&&x<=c.x1+.3&
 const barFittings=floorGroups[0].children.slice(_fc[0]);
 const barStart=floorGroups[0].children.length;
 const barPoint=([x,z])=>[-z,x];
+function longDiningPoint(x,z,tableX){return [3.4+(z+1.5)*.8,(tableX===1.2?-.2:3.4)-(x-tableX)];}
 function diningPosition(x,z,ry){
   if(Math.abs(z+7.6)<.01)return [-7.6,x,Math.PI/2-ry];
-  if((Math.abs(x-1.2)<1||Math.abs(x-4.4)<1)&&z>-4.6&&z<1.6)return [x,z+2.4,ry];
+  if((Math.abs(x-1.2)<1||Math.abs(x-4.4)<1)&&z>-4.6&&z<1.6){const q=longDiningPoint(x,z,Math.abs(x-1.2)<1?1.2:4.4);return [q[0],q[1],ry+Math.PI/2];}
   return [x,z,ry];
 }
 // ---- 1F counter (real metres): back half = POS cashier, front half = dessert glass case ----
@@ -594,7 +595,7 @@ ZONES.checkout.center=barPoint([-5.0,.7]);
 ZONES.checkout.bounds=[-6.8,7.6,-8.5,-3.5];
 ZONES.dining.bounds=[-8.5,8.5,-3.5,8.5];
 ZONES.checkout.desc='後牆整組咖啡吧台，前方是甜點展示櫃與點餐結帳區；設備、菜單與咖啡師工作區沿後牆排列。';
-ZONES.dining.desc='左牆與窗邊是兩人座，中間是兩張長桌，吧台前方保留點餐通道，右後角是垃圾回收區。';
+ZONES.dining.desc='兩張共享長桌與後方吧台平行，左側及窗邊配置雙人座；入口主走道、桌間橫向走道與吧台點餐區保持暢通，右後角是垃圾回收區。';
 // ---- 1F dining (real metres): two-seat tables around the edge, two long tables in the middle ----
 (function(g){
   const seat=(x,z)=>box(.44,.45,.44,C.black,x,.225,z,g);
@@ -605,10 +606,12 @@ ZONES.dining.desc='左牆與窗邊是兩人座，中間是兩張長桌，吧台�
   // Three extra pairs: 1.06 m between chair edges; keep the entrance and both side aisles clear.
   [-.8,2,4.8].forEach(z=>two(-3.7,z,'z'));
   [3.4,6].forEach(x=>two(x,7.4,'x'));                     // along the front window (entrance kept clear)
-  [1.2,4.4].forEach(x=>{const first=g.children.length;       // two long tables, shifted toward the entrance
-    box(1,.05,6,C.white,x,.76,-1.5,g);[-4.1,1.1].forEach(z=>box(.8,.73,.08,C.black,x,.365,z,g));
-    for(let k=0;k<6;k++){seat(x-.85,-4+k);seat(x+.85,-4+k);}
-    [-4,-1.5,1].forEach(z=>pendant(g,x,z,3));g.children.slice(first).forEach(o=>o.position.z+=2.4);});
+  // Two transverse communal tables: 1.46 m clear between occupied chair footprints.
+  [-.2,3.4].forEach(z=>{
+    box(4.8,.05,1,C.white,3.4,.76,z,g);
+    [1.32,5.48].forEach(x=>box(.08,.73,.8,C.black,x,.365,z,g));
+    for(let k=0;k<6;k++){const x=1.4+k*.8;seat(x,z-.85);seat(x,z+.85);}
+    [1.4,3.4,5.4].forEach(x=>pendant(g,x,z,3));});
 })(floorGroups[0]);
 // ======== upper floors, real metres (17.3 m square; door at front centre x≈-0.6) ========
 const CREAM=0xE9E3D8, GOLDL=0xB8975A, WOOD=0x6E5A40, LAWN=0x7FA86B;
@@ -969,7 +972,7 @@ const WALK={
   terrace:[[1.6,2.6],[1.6,-2.6],[2.6,-2.7],[-1.9,-.3],[-4.3,-.3],[-1.9,2.8],[.4,3],[1.6,-2.6],[-1.9,-3.6],[.4,1.2]]
 };
 Object.keys(WALK).forEach(k=>{WALK[k]=WALK[k].map(([x,z])=>[x*K,z*K]);});
-WALK.dining=[[-1,3.6],[-1,-3.3],[2.8,-3.3],[2.8,3.6],[6.2,3.6],[6.2,-3.3],[2.8,-3.3],[2.8,3.6]];   // aisles of the 1F dining room, walked in order
+WALK.dining=[[-.6,5.6],[-.6,-3.3],[6.6,-3.3],[6.6,1.6],[-.6,1.6],[-.6,5.6],[6.6,5.6],[6.6,1.6]];   // entrance spine and cross aisles between the transverse tables
 WALK.staff=[[-6.67,-5.6],[-6.67,-3],[-6.67,-.9],[-6.67,1.2],[-6.67,3.2],[-6.67,5.4]].map(barPoint);
 WALK.queue=[[-3.4,-3.4],[-1.5,-3.4],[.5,-3.4],[2.5,-3.4]];   // behind the counter, along the back bar
 WALK.gifts=[[-5,-6.6],[-1.5,-6.6],[1.5,-6.6],[5,-6.6],[-4.8,-1.6],[-1.5,-1.8],[1.5,-1.8],[5.6,-1.8],[-4.4,1.4],[1.6,2.6],[-1.6,6.2],[0,4.2],[5.6,-4.2]];
@@ -1789,7 +1792,7 @@ for(let i=0;i<22;i++){const a={m:person(col(),false),delay:i*2.4+Math.random()*2
 function foodSet(g,x,y,z,ry){const f=new THREE.Group();f.position.set(x,y,z);f.rotation.y=ry;g.add(f);
   cyl(.11,.11,.014,C.white,0,.008,0,f,16);box(.09,.06,.09,C.pastry,0,.045,0,f);box(.092,.012,.092,C.yolk,0,.081,0,f);
   cyl(.045,.04,.09,C.white,.17,.046,.04,f,12);return f;}
-const isLong=(x,z)=>(Math.abs(x-1.2)<.9||Math.abs(x-4.4)<.9)&&z>-2.1&&z<3.9;
+const isLong=(x,z)=>x>1&&x<5.8&&(Math.abs(z+.2)<1||Math.abs(z-3.4)<1);
 function foodFor(x,z,ry){const dx=Math.sin(ry),dz=Math.cos(ry);return [x+dx*.5,isLong(x,z)?.785:.77,z+dz*.5];}
 // Keep table meals separate so closing-time cleanup can hide them.
 const tableMeals=[];
@@ -1800,7 +1803,7 @@ const tableMeals=[];
 const DINE=[[.35,-4,1,[-.3,-4]],[.35,-1,1,[-.3,-1]],[.35,1,1,[-.3,1]],[2.05,-3,-1,[2.8,-3]],[2.05,0,-1,[2.8,0]],[3.55,-2,1,[2.8,-2]],[3.55,1,1,[2.8,1]],
   [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]],
   ...[-.8,2,4.8].flatMap(z=>[[-3.7,z-.65,0,[-2.6,z-.65]],[-3.7,z+.65,2,[-2.6,z+.65]]])]
-  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=[ap[0],ap[1]+2.4];const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
+  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z,originalX=x;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01)ap=[-6.6,ap[0]];else if(isLong(x,z))ap=longDiningPoint(ap[0],ap[1],Math.abs(originalX-1.2)<1?1.2:4.4);const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
     return {seat:[x,z],ry,ap,food,who:null};});
 const RECYCLE=[7.65,-7.15], TILLS=[[-3.9,-2.5],[-3.9,-.5]].map(barPoint);
 function cleanTablesAtClosing(){const open=floorOpen(0);
