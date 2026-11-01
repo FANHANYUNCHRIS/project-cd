@@ -699,12 +699,11 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
 
 // ---- 3F dessert & coffee classroom: 20 students, instructor at the front, assistant ----
 (function(g){
-  // front: instructor's demo counter, big screen and whiteboard on the wall behind
+  // Front: instructor's demo counter and wall-mounted teaching screen.
   box(6,.95,.9,C.black,0,.475,-6.6,g);box(6.1,.05,1,C.white,0,.975,-6.6,g);
   espresso(g,-1.8,1,-6.6,1.0,1);grinder(g,-.9,1,-6.6);mixer(g,.1,1,-6.6);box(.18,.02,.18,C.black,.9,1.01,-6.5,g);
   [1.5,1.9,2.3].forEach(z0=>{cyl(.06,.07,.12,C.glass,z0,1.06,-6.5,g,12);cyl(.07,.04,.1,C.white,z0,1.17,-6.5,g,12);});
   box(4.2,2.3,.08,C.black,0,3.4,-8.6,g);box(4,2.1,.02,0x3A4A55,0,3.4,-8.55,g);
-  box(2.2,1.2,.05,C.white,4.6,2.8,-8.62,g);for(let r=0;r<4;r++)box(1.6,.03,.02,C.mid,4.6,3.15-r*.22,-8.59,g);
   // left wall: deck ovens, three espresso machines, two sample roasters
   [-5.6,-4].forEach(z=>{box(.9,1.9,1.4,C.steel,-7.95,.95,z,g);for(let r=0;r<3;r++){box(.02,.06,1.2,C.black,-7.49,.55+r*.55,z,g);box(.02,.3,1.1,C.dark,-7.49,.38+r*.55,z,g);}});
   box(.8,.95,5,C.black,-8,.475,.6,g);box(.84,.05,5.04,C.white,-8,.975,.6,g);
@@ -741,7 +740,6 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
     box(.3,.028,.42,C.off,-.4,1.034,0,machine);
     box(.3,.26,.18,C.dark,.28,1.22,.5,machine);
   }
-  box(3,2.2,.45,C.black,5.6,1.1,-8.4,g);for(let r=0;r<4;r++)for(let k=0;k<7;k++)cyl(.08,.08,.22,C.glass,4.4+k*.4,.45+r*.5,-8.3,g,10);
   // students: one desk each — 4 columns × 5 rows = 20
   [-5,-2.6,1.4,3.8].forEach(x=>[-4,-1.8,.4,2.6,4.8].forEach(z=>{
     box(.95,.86,.62,C.black,x,.43,z,g);box(1.02,.05,.7,C.white,x,.885,z,g);
