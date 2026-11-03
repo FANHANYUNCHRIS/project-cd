@@ -574,22 +574,239 @@ body {
     text-align: center;
 }
 
-/* 背景影片輪播拿掉後 hero 原本只剩空黑畫面，標題原本是 .sr-only（只給
-   螢幕報讀器念，畫面上看不到）——改成實際顯示，用設計系統文件 02 節
-   「Display 48px/900，首頁主視覺標題」那一階，深底用 --paper（見文件
-   01 節，深底上的主要文字色），不是純白，字級跟其他區塊標題一樣不分
-   斷點縮放（參考 .section-title 的做法），靠 max-width 換行撐住排版 */
-.hero-title {
+/* 單色冬日森林：兩側構景，中央留空，雪花覆在森林上方。 */
+.hero-forest {
+    position: absolute;
+    inset: auto 0 0;
+    width: 100%;
+    height: 66%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hero-forest-far { color: #355947; }
+.hero-forest-near { color: #234333; }
+
+@media (max-width: 600px) {
+    .hero-forest {
+        width: 160%;
+        max-width: none;
+        left: -30%;
+        height: 52%;
+        opacity: 0.8;
+    }
+}
+
+/* 首頁聖誕飄雪：獨立裝飾層，不攔截滑鼠或觸控。 */
+.hero-banner {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-snow {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hero-snowflake {
+    position: absolute;
+    top: -12px;
+    left: var(--snow-left);
+    width: var(--snow-size);
+    height: var(--snow-size);
+    border-radius: 50%;
+    background: var(--white);
+    opacity: var(--snow-opacity);
+    animation: hero-snowfall var(--snow-duration) linear var(--snow-delay) infinite;
+}
+
+.hero-snow.is-paused .hero-snowflake {
+    animation-play-state: paused;
+}
+
+@keyframes hero-snowfall {
+    from { transform: translate3d(0, -12px, 0); }
+    to { transform: translate3d(var(--snow-drift), calc(100vh + 24px), 0); }
+}
+
+@media (max-width: 600px) {
+    .hero-snowflake:nth-child(n + 25) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-snow { display: none; }
+    .hero-snowflake { animation: none; }
+}
+
+/* 聖誕限定：一點莓紅、月光與低矮雪岸，維持品牌的黑白主調。 */
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.045), transparent 60%);
+}
+
+.hero-banner::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: var(--sp-12);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 0% 100%, rgba(235, 235, 236, 0.6) 0 32%, transparent 34%),
+        radial-gradient(ellipse at 100% 100%, rgba(235, 235, 236, 0.5) 0 26%, transparent 28%);
+    background-size: 55% 100%;
+    background-position: left bottom, right bottom;
+    background-repeat: no-repeat;
+}
+
+.hero-santa-hat {
+    position: absolute;
+    width: 28%;
+    height: auto;
+    left: 20%;
+    top: 2%;
+    transform: rotate(8deg);
+    transform-origin: center bottom;
+    pointer-events: none;
+    animation: hero-hat-enter 0.8s ease-out 0.8s both;
+}
+
+.hero-scroll-greeting {
+    color: #ed8490;
+    font-weight: 600;
+}
+
+@keyframes hero-hat-enter {
+    from { opacity: 0; transform: translateY(-16px) rotate(0deg); }
+    to { opacity: 1; transform: translateY(0) rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-santa-hat { animation: none; }
+}
+
+/* 首頁品牌進場：LOGO 先出現，品牌名稱接續，最後停留在置中構圖。 */
+.hero-copy {
     position: relative;
     z-index: 2;
-    max-width: 780px;
+    padding: var(--sp-16) var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-6);
+}
+
+.hero-logo-stage {
+    position: relative;
+    isolation: isolate;
+    width: min(48vw, 256px, 38svh);
+    aspect-ratio: 1;
+}
+
+.hero-logo-stage::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -35%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 65%);
+    opacity: 0;
+    animation: hero-backlight 2.5s ease-out both;
+}
+
+.hero-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation: hero-logo-enter 1.6s ease-out 0.2s both;
+}
+
+/* 以同一張透明 LOGO 遮罩裁出掃光，只照亮獨角獸輪廓。 */
+.hero-logo-sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask: url('../images/unicorn-logo-white.png') center / contain no-repeat;
+    mask: url('../images/unicorn-logo-white.png') center / contain no-repeat;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.9) 50%, transparent 60%);
+    background-size: 300% 100%;
+    opacity: 0;
+    animation: hero-sheen 1.3s ease-in-out 0.4s both;
+}
+
+.hero-title {
     margin: 0;
-    padding: 0 5%;
+    font-family: 'League Spartan', 'Inter', sans-serif;
     font-size: var(--fs-display);
-    font-weight: 900;
+    font-weight: 700;
     line-height: 1.3;
-    letter-spacing: -0.01em;
     color: var(--paper);
+    animation: hero-name-enter 1.1s ease-out 1s both;
+}
+
+.hero-tagline {
+    margin: calc(-1 * var(--sp-3)) 0 0;
+    font-size: var(--fs-body);
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--paper-soft);
+    text-wrap: balance;
+    animation: hero-tagline-enter 0.8s ease-out 1.5s both;
+}
+
+@keyframes hero-tagline-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-banner > .scroll-down-indicator {
+    animation: hero-hint-enter 0.6s ease-out 1.9s both,
+               floatDown 2s ease-in-out 2.5s infinite;
+}
+
+@keyframes hero-logo-enter {
+    from { opacity: 0; transform: translateY(24px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hero-name-enter {
+    from { opacity: 0; transform: translateY(16px); letter-spacing: 0.12em; }
+    to { opacity: 1; transform: translateY(0); letter-spacing: 0; }
+}
+
+@keyframes hero-backlight {
+    0%, 100% { opacity: 0; transform: scale(0.85); }
+    35% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hero-sheen {
+    0% { opacity: 0; background-position: 100% 0; }
+    25%, 65% { opacity: 1; }
+    100% { opacity: 0; background-position: 0% 0; }
+}
+
+@keyframes hero-hint-enter {
+    from { opacity: 0; }
+    to { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-logo-stage::before,
+    .hero-logo-sheen,
+    .hero-logo,
+    .hero-title,
+    .hero-tagline,
+    .hero-banner > .scroll-down-indicator {
+        animation: none;
+    }
 }
 
 /* 導覽列疊在深色區塊 (首頁影片/頁尾) 上方時，文字與 LOGO 自動轉白（社群 icon 不受影響，維持官方色）*/
@@ -5196,4 +5413,643 @@ a.faq-card {
     .shop-link-arrow {
         display: none;
     }
+}
+
+/* 第一款商品展示預覽 */
+.product-showcase {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr) 1fr;
+    align-items: center;
+    gap: var(--sp-10);
+    padding: 104px 8% 80px;
+    background: var(--surface-sunken);
+    color: var(--ink);
+}
+.product-showcase-eyebrow {
+    margin: 0 0 var(--sp-6);
+    font: 500 var(--fs-caption) 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+}
+.product-info-rail { align-self: center; }
+.product-info-tabs { display: flex; border-bottom: 1px solid var(--ink-line); }
+.product-info-tabs button {
+    flex: 1;
+    min-height: 44px;
+    padding: var(--sp-2);
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: var(--fs-small);
+    cursor: pointer;
+}
+.product-info-tabs button[aria-selected="true"] { border-bottom-color: var(--ink); color: var(--ink); font-weight: 700; }
+.product-info-panel { min-height: 240px; padding-top: var(--sp-6); font-size: var(--fs-body); line-height: 1.8; }
+.product-info-panel p { margin: 0 0 var(--sp-4); }
+.product-info-panel ul { margin: 0; padding-left: var(--sp-5); }
+.product-info-panel li + li { margin-top: var(--sp-3); }
+.product-info-note { font-size: var(--fs-caption); color: var(--ink-soft); }
+.product-label-table { margin: 0 0 var(--sp-4); }
+.product-label-table div { display: flex; gap: var(--sp-4); padding: var(--sp-2) 0; border-bottom: 1px solid var(--ink-line); }
+.product-label-table dt { flex: 0 0 4em; color: var(--ink-soft); }
+.product-label-table dd { margin: 0; }
+.product-showcase-main { text-align: center; min-width: 0; }
+.product-showcase-photo { width: 100%; height: min(34vh, 320px); display: grid; place-items: center; margin-bottom: var(--sp-6); }
+.product-showcase-photo img { width: 100%; height: 100%; object-fit: contain; }
+.product-showcase-photo img[hidden] { display: none; }
+.product-photo-placeholder { color: var(--ink-soft); font-size: var(--fs-small); }
+.product-showcase-main h2 { margin: 0 0 var(--sp-3); font-size: var(--fs-h1); }
+.product-showcase-summary { max-width: 400px; margin: 0 auto var(--sp-5); font-size: var(--fs-small); line-height: 1.8; color: var(--ink-soft); }
+.product-showcase-price { display: flex; justify-content: center; gap: var(--sp-3); margin: 0 0 var(--sp-6); font-size: var(--fs-body); }
+.product-showcase-price strong { font-size: var(--fs-lead); }
+.product-showcase-cta { min-height: 44px; padding: var(--sp-3) var(--sp-6); border: 0; border-radius: 100px; background: var(--ink); color: var(--paper); font: inherit; cursor: pointer; }
+.product-showcase-cta span { margin-left: var(--sp-4); }
+@media (max-width: 1024px) {
+    .product-showcase { grid-template-columns: 1fr; gap: var(--sp-8); padding: 104px var(--sp-6) 96px; height: auto; min-height: 100svh; }
+    .product-showcase-main { grid-row: 1; }
+    .product-info-rail { width: 100%; max-width: 480px; margin: auto; }
+    .product-info-panel { min-height: 0; }
+    .product-showcase-photo { height: 28svh; }
+}
+
+/* 手機底部分頁：浮起圓鈕與可移動的透明圓弧凹槽。 */
+@media (max-width: 1024px) {
+    .nav-links {
+        --nav-notch-x: 10%;
+        height: 76px;
+        padding: 8px 0;
+        background: transparent;
+        border: 0;
+        border-radius: 24px;
+        box-shadow: none;
+        filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.18));
+    }
+    .nav-links::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background: var(--white);
+        -webkit-mask-image: radial-gradient(circle 34px at var(--nav-notch-x) 0, transparent 33px, black 34px);
+        mask-image: radial-gradient(circle 34px at var(--nav-notch-x) 0, transparent 33px, black 34px);
+        pointer-events: none;
+    }
+    .nav-links li:not(.nav-brand-tab) { flex: 1; display: flex; justify-content: center; position: relative; }
+    .nav-links a,
+    .nav-links .nav-more-btn,
+    .nav-links a.active {
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        overflow: visible;
+        transform: none;
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.25s ease;
+    }
+    .nav-links a.active::before { display: none; }
+    .nav-links .mobile-tab-selected {
+        background: var(--white) !important;
+        transform: translateY(-28px) !important;
+    }
+    .nav-links .nav-text { display: none !important; }
+    .mobile-tab-label {
+        position: absolute;
+        top: 48px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        color: var(--ink);
+        font-size: var(--fs-caption);
+        font-weight: 500;
+        line-height: 1;
+        pointer-events: none;
+    }
+    .mobile-tab-selected .mobile-tab-label { top: 72px; }
+    .nav-links .cart-badge { background: var(--ink); color: var(--white); }
+    .nav-links :is(a, button):focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+    .footer { padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 1025px) {
+    .mobile-tab-label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-links a,
+    .nav-links .nav-more-btn { transition: none; }
+}
+
+/* 參考影片的連續曲線凹槽：直接繪製底板，避免圓形遮罩的生硬交界。 */
+@media (max-width: 1024px) {
+    .nav-links { max-width: 520px; margin-inline: auto; align-items: center; }
+    .nav-links::before {
+        border-radius: 0;
+        background: var(--nav-shape) center / 100% 76px no-repeat;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+    .nav-links a,
+    .nav-links .nav-more-btn,
+    .nav-links a.active {
+        width: 52px;
+        height: 52px;
+        color: var(--ink);
+    }
+    .nav-links .mobile-tab-selected {
+        transform: translateY(-38px) !important;
+        border-radius: 50%;
+    }
+    .nav-links .nav-icon-mobile { font-size: 28px; font-weight: 300; }
+    .mobile-tab-label { top: 45px; font-size: 12px; font-weight: 400; }
+    .mobile-tab-selected .mobile-tab-label { top: 83px; }
+    .nav-links .nav-icon-mobile[hidden] { display: none !important; }
+}
+
+.mobile-tab-svg { display: none; }
+@media (max-width: 1024px) {
+    .nav-links .nav-icon-mobile { display: none !important; }
+    .nav-links .mobile-tab-svg { display: block; width: 26px; height: 26px; }
+}
+
+/* 與確認過的圖示預覽一致，補償各造型的視覺大小。 */
+@media (max-width: 1024px) {
+    .nav-links .mobile-tab-svg { width: 26px; height: 26px; overflow: visible; }
+    .nav-links li:nth-child(2) .mobile-tab-svg,
+    .nav-links .nav-cart-tab-wrap .mobile-tab-svg { transform: scale(1.05); }
+    .nav-links .nav-account-tab-wrap .mobile-tab-svg { transform: scale(1.1); }
+}
+
+/* 遊戲道具展示：淡網格、瞄準框與三張商品圖切換。 */
+.product-showcase {
+    background-color: var(--surface-sunken);
+    background-image: linear-gradient(var(--ink-line) 1px, transparent 1px), linear-gradient(90deg, var(--ink-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-blend-mode: soft-light;
+}
+.product-info-rail { border: 1px solid var(--ink-line); padding: var(--sp-6); background: var(--surface-sunken); }
+.product-showcase-main > .product-showcase-eyebrow { font-size: var(--fs-caption); }
+.product-showcase-photo {
+    position: relative;
+    margin-bottom: 0;
+    background: radial-gradient(ellipse at center, var(--white), transparent 70%);
+    border: 1px solid var(--ink-line);
+    border-radius: 4px;
+}
+.product-showcase-photo::before,
+.product-showcase-photo::after { content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; }
+.product-showcase-photo::before { top: -1px; left: -1px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
+.product-showcase-photo::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+.product-view-index { position: absolute; left: 16px; top: 12px; font: 500 12px 'Inter',sans-serif; color: var(--ink-soft); }
+.product-photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.product-photo-placeholder[hidden] { display: none; }
+.product-photo-placeholder svg { width: 90%; height: 80%; }
+.product-photo-placeholder small { font-size: 12px; }
+.product-image-dots { display: flex; justify-content: center; margin: var(--sp-2) 0 var(--sp-4); }
+.product-image-dots button { display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; }
+.product-image-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); opacity: .35; }
+.product-image-dots button[aria-pressed="true"] span { opacity: 1; outline: 1px solid var(--ink); outline-offset: 4px; }
+.product-image-dots button:focus-visible { outline: 2px solid var(--ink); border-radius: 4px; }
+.product-showcase-cta { border-radius: 4px; }
+
+/* 商品道具庫：沿用黑白 token 的遊戲裝備選單。 */
+.product-showcase {
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr) minmax(240px, 1fr);
+    gap: var(--sp-8);
+    background-size: 32px 32px;
+}
+.product-showcase .product-showcase-eyebrow {
+    font-family: 'League Spartan', 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    letter-spacing: .12em;
+    line-height: 1.8;
+}
+.product-info-rail {
+    padding: var(--sp-6);
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink-line);
+}
+.product-info-rail > .product-showcase-eyebrow {
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--ink);
+}
+.product-info-tabs { gap: var(--sp-1); border: 0; }
+.product-info-tabs button { border: 1px solid var(--ink-line); font-size: var(--fs-caption); }
+.product-info-tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.product-showcase-main > .product-showcase-eyebrow { display: flex; justify-content: space-between; gap: var(--sp-4); text-align: left; }
+.product-showcase-photo {
+    height: min(48vh, 440px);
+    border-radius: 0;
+    background: radial-gradient(ellipse at center, var(--white) 0%, transparent 72%);
+    border: 1px solid var(--ink-line);
+}
+.product-showcase-photo::before,
+.product-showcase-photo::after { width: 40px; height: 40px; }
+.product-showcase-photo img { padding: var(--sp-8); }
+.product-view-index { font-family: monospace; letter-spacing: .12em; }
+.product-image-dots { gap: var(--sp-2); margin: var(--sp-4) 0 0; counter-reset: item-view; }
+.product-image-dots button {
+    counter-increment: item-view;
+    width: 48px;
+    border: 1px solid var(--ink-line);
+    color: var(--ink-soft);
+    font: 700 var(--fs-small) 'League Spartan', sans-serif;
+}
+.product-image-dots button::before { content: '0' counter(item-view); }
+.product-image-dots span { display: none; }
+.product-image-dots button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.product-loadout { padding-block: var(--sp-6); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink-line); }
+.product-loadout h2 { font-size: var(--fs-h2); margin-bottom: var(--sp-5); line-height: 1.4; }
+.product-loadout .product-showcase-summary { margin: 0 0 var(--sp-6); }
+.product-loadout .product-showcase-price { justify-content: flex-start; align-items: baseline; padding-top: var(--sp-5); border-top: 1px solid var(--ink-line); }
+.product-showcase-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-radius: 0;
+    min-height: 48px;
+    font-weight: 700;
+    border: 1px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink-line);
+}
+.product-showcase-cta:hover { background: var(--ink-hover); }
+.product-showcase-cta:active { transform: translate(2px, 2px); box-shadow: none; }
+.product-loadout-hint { margin-top: var(--sp-5); color: var(--ink-soft); font-size: var(--fs-caption); line-height: 1.8; }
+@media (max-width: 1200px) and (min-width: 1025px) {
+    .product-showcase { padding-inline: var(--sp-8); gap: var(--sp-5); }
+}
+@media (max-width: 1024px) {
+    .product-showcase { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
+    .product-showcase-main { grid-row: 1; width: 100%; max-width: 480px; margin-inline: auto; }
+    .product-showcase-photo { height: 32svh; min-height: 220px; }
+    .product-loadout { grid-row: 2; width: 100%; max-width: 480px; margin-inline: auto; }
+    .product-info-rail { grid-row: 3; }
+    .product-info-rail > .product-showcase-eyebrow { margin-bottom: var(--sp-4); }
+}
+
+/* 桌機商品三欄共用底部基準，整組仍置於畫面中央。 */
+@media (min-width: 1025px) {
+    .product-showcase {
+        align-content: center;
+        align-items: end;
+    }
+    .product-showcase > .product-info-rail {
+        align-self: end;
+    }
+}
+
+/* 圖片切換改為小黑點，省下的高度交給商品展示框。 */
+.product-image-dots {
+    gap: 0;
+    margin-top: 0;
+}
+.product-image-dots button,
+.product-image-dots button[aria-pressed="true"] {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+.product-image-dots button::before { content: none; }
+.product-image-dots span {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink);
+    opacity: 1;
+}
+.product-image-dots button[aria-pressed="true"] span {
+    opacity: 1;
+    outline: 1px solid var(--ink);
+    outline-offset: 3px;
+}
+.product-showcase-photo { height: min(calc(48vh + 16px), 456px); }
+@media (max-width: 1024px) {
+    .product-showcase-photo { height: calc(32svh + 16px); }
+}
+
+/* 角色選擇介面，與商品道具庫共用網格、方框與黑白選取狀態。 */
+#brand {
+    background-color: var(--surface-sunken);
+    background-image: linear-gradient(var(--ink-line) 1px, transparent 1px), linear-gradient(90deg, var(--ink-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-blend-mode: soft-light;
+}
+#brand .team-avatar-rail {
+    padding: var(--sp-4);
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 4px 4px 0 var(--ink-line);
+}
+#brand .team-avatar-item,
+#brand .team-nav-btn {
+    border-radius: 0;
+    border: 1px solid var(--ink-line);
+    box-shadow: none;
+}
+#brand .team-avatar-item::before { border-radius: 0; }
+#brand .team-avatar-item.active {
+    border-color: var(--ink);
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+    transform: none;
+    animation: none;
+}
+#brand .team-info-merged,
+#brand .team-mobile-card {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 var(--ink-line);
+}
+#brand :is(.team-info-header, .team-stat-row, .team-file-block, .team-mobile-namequote, .team-mobile-stat-box, .team-mobile-bio) {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+#brand .team-info-header { padding: 0 0 var(--sp-5); margin-bottom: var(--sp-5); border-bottom: 2px solid var(--ink); }
+#brand .team-info-header::before { display: none; }
+#brand .team-stat-row,
+#brand .team-mobile-stat-box { border-bottom: 1px solid var(--ink-line); padding: var(--sp-3) 0; }
+#brand .team-file-block { padding: var(--sp-5) 0 0; border-top: 1px solid var(--ink); }
+#brand .team-file-tab { font-family: 'League Spartan', 'Noto Sans TC', sans-serif; letter-spacing: .12em; }
+#brand .team-portrait,
+#brand .team-mobile-portrait {
+    border: 1px solid var(--ink-line);
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: var(--paper);
+}
+#brand .team-portrait::before {
+    inset: 0;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border-top: 2px solid var(--ink);
+    border-left: 2px solid var(--ink);
+}
+#brand .team-portrait.img-fallback::after,
+#brand .team-mobile-portrait.img-fallback::after { color: var(--ink); }
+@media (min-width: 1025px) {
+    #brand .team-switcher { gap: var(--sp-8); }
+    #brand .team-avatar-rail { order: 0; }
+    #brand .team-portrait { order: 1; }
+    #brand .team-info-merged { order: 2; }
+}
+@media (max-width: 1024px) {
+    #brand .team-avatar-rail { min-width: 0; }
+    #brand .team-mobile-namequote { border-bottom: 2px solid var(--ink); }
+    #brand .team-mobile-bio { border-top: 1px solid var(--ink); }
+}
+
+/* 主頁共用留白：所有區塊使用同一組邊界，避免個別版型覆寫。 */
+:root {
+    --page-space-block: 96px;
+    --page-space-inline: 96px;
+}
+.fullscreen-section,
+#brand,
+.product-showcase,
+#shop.shopping-section {
+    padding: var(--page-space-block) var(--page-space-inline);
+}
+#brand .team-switcher {
+    height: min(640px, calc(100svh - var(--page-space-block) * 2));
+}
+#shop.shopping-section { justify-content: center; }
+.footer { padding-inline: var(--page-space-inline); }
+@media (max-width: 1024px) {
+    :root {
+        --page-space-block: 96px;
+        --page-space-inline: 24px;
+    }
+    #brand .team-switcher { height: auto; }
+}
+
+/* 固定高度角色面板內，頭像依可用高度縮放，避免推出底部箭頭。 */
+@media (min-width: 1025px) {
+    #brand .team-avatar-rail { min-height: 0; gap: var(--sp-4); }
+    #brand .team-nav-btn { flex: 0 0 44px; }
+    #brand .team-avatar-list {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: var(--sp-4);
+    }
+    #brand .team-avatar-item {
+        flex: 0 1 140px;
+        min-height: 0;
+        height: calc((100% - 32px) / 3);
+        width: auto;
+        max-width: 100%;
+        max-height: 140px;
+        aspect-ratio: 1;
+    }
+}
+
+/* 蛋黃酥獨立電競主題，沿用全站共用頁面留白。 */
+.product-esports {
+    --ink: #ebebec;
+    --ink-soft: #b8bcc7;
+    --ink-line: rgba(235, 235, 236, .18);
+    --arena-accent: #c6f36b;
+    color: var(--ink);
+    background-color: #111318;
+    background-image: linear-gradient(rgba(235,235,236,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(235,235,236,.04) 1px, transparent 1px);
+    background-blend-mode: normal;
+}
+.product-esports .product-info-rail {
+    background: #191c23;
+    border-color: var(--ink-line);
+    border-top: 2px solid var(--arena-accent);
+    box-shadow: none;
+}
+.product-esports .product-showcase-eyebrow { color: var(--ink-soft); }
+.product-esports .product-showcase-main > .product-showcase-eyebrow span { color: var(--arena-accent); white-space: nowrap; }
+.product-esports .product-info-tabs button[aria-selected="true"] {
+    color: #111318;
+    background: var(--arena-accent);
+    border-color: var(--arena-accent);
+}
+.product-esports .product-showcase-photo {
+    isolation: isolate;
+    background: radial-gradient(ellipse at 50% 65%, rgba(198,243,107,.12), transparent 65%);
+    border-color: var(--ink-line);
+}
+.product-esports .product-showcase-photo::before,
+.product-esports .product-showcase-photo::after { border-color: var(--arena-accent); }
+.product-esports .product-photo-placeholder,
+.product-esports .product-showcase-photo img { position: relative; z-index: 1; }
+.product-esports .product-showcase-main { position: relative; }
+.product-esports .product-view-index { color: var(--ink-soft); }
+.product-esports .product-loadout {
+    padding: var(--sp-6);
+    background: #191c23;
+    border: 1px solid var(--ink-line);
+    border-top: 2px solid var(--arena-accent);
+}
+.product-esports .product-loadout h2 { font-size: var(--fs-h1); }
+.product-esports .product-showcase-price strong { color: var(--arena-accent); font-size: var(--fs-h2); }
+.product-esports .product-showcase-cta {
+    background: var(--arena-accent);
+    color: #111318;
+    border-color: var(--arena-accent);
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    box-shadow: none;
+}
+.product-esports .product-showcase-cta:hover { background: #d8ff92; }
+.product-esports .product-image-dots { width: max-content; margin-inline: auto; background: var(--paper); }
+.product-esports .product-image-dots span { background: #16161a; }
+.product-esports .product-image-dots button[aria-pressed="true"] span { outline-color: #16161a; }
+.product-esports :is(button, a):focus-visible { outline-color: var(--arena-accent); }
+@media (min-width: 1025px) {
+    .product-esports { grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr) minmax(240px, 1fr); }
+}
+
+/* 第三款商品：精品型錄預告。 */
+.product-luxury {
+    --luxury-ink: #30291f;
+    --luxury-line: rgba(48,41,31,.2);
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr);
+    grid-template-rows: auto 1fr auto;
+    gap: var(--sp-8) var(--sp-16);
+    background: #f6f2eb;
+    color: var(--luxury-ink);
+    min-height: 100svh;
+}
+.luxury-heading,
+.luxury-bottom {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    font: 500 var(--fs-caption)/1.8 'Inter', 'Noto Sans TC', sans-serif;
+    letter-spacing: .16em;
+}
+.luxury-heading { padding-bottom: var(--sp-5); border-bottom: 1px solid var(--luxury-line); }
+.luxury-bottom { padding-top: var(--sp-5); border-top: 1px solid var(--luxury-line); }
+.luxury-art {
+    position: relative;
+    min-width: 0;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #eae3d7;
+}
+.luxury-art svg { width: 100%; max-height: 52svh; }
+.luxury-art-caption { margin-top: var(--sp-8); font: italic var(--fs-h3) Georgia, serif; letter-spacing: .08em; }
+.luxury-art-note { padding: var(--sp-4); font-size: var(--fs-caption); color: #62594c; }
+.luxury-copy { align-self: center; padding-block: var(--sp-8); }
+.luxury-kicker { margin-bottom: var(--sp-8); font-size: var(--fs-caption); letter-spacing: .16em; line-height: 1.8; }
+.luxury-copy h2 { font-family: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif; font-size: var(--fs-display); font-weight: 400; letter-spacing: .12em; line-height: 1.5; }
+.luxury-copy h2 span { display: block; font-size: var(--fs-h3); margin-top: var(--sp-2); }
+.luxury-description { margin-top: var(--sp-6); font-size: var(--fs-small); line-height: 1.8; }
+.luxury-details { margin-block: var(--sp-8); font-size: var(--fs-small); }
+.luxury-details div { display: flex; justify-content: space-between; gap: var(--sp-6); padding-block: var(--sp-3); border-bottom: 1px solid var(--luxury-line); }
+.luxury-details dt { color: #62594c; }
+.luxury-details dd { margin: 0; }
+.luxury-link { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding-block: var(--sp-3); border-bottom: 1px solid var(--luxury-ink); color: inherit; text-decoration: none; font-size: var(--fs-small); letter-spacing: .12em; }
+.luxury-link:hover { background: #eae3d7; }
+.product-luxury :focus-visible { outline-color: var(--luxury-ink); }
+@media (max-width: 1024px) {
+    .product-luxury { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
+    .luxury-art { min-height: 280px; }
+    .luxury-art svg { max-height: 40svh; }
+    .luxury-copy { padding-block: var(--sp-4); }
+    .luxury-copy h2 { font-size: var(--fs-h1); }
+    .luxury-heading, .luxury-bottom { letter-spacing: .08em; flex-wrap: wrap; gap: var(--sp-2); }
+}
+
+/* 第三款商品改為科技實驗室主題。 */
+.product-tech {
+    --luxury-ink: #e6f4ff;
+    --luxury-line: rgba(100,211,255,.25);
+    --tech-accent: #78deff;
+    color: var(--luxury-ink);
+    background-color: #0b1424;
+    background-image: linear-gradient(rgba(100,211,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(100,211,255,.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+.product-tech .luxury-heading,
+.product-tech .luxury-bottom { font-family: monospace, 'Noto Sans TC'; color: var(--tech-accent); }
+.product-tech .luxury-art {
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #183b56, #101f33 72%);
+    border: 1px solid var(--luxury-line);
+    box-shadow: inset 0 0 48px rgba(120,222,255,.06);
+}
+.product-tech .luxury-art::before,
+.product-tech .luxury-art::after { content: ''; position: absolute; width: 32px; height: 32px; pointer-events: none; }
+.product-tech .luxury-art::before { top: 0; left: 0; border-top: 2px solid var(--tech-accent); border-left: 2px solid var(--tech-accent); }
+.product-tech .luxury-art::after { bottom: 0; right: 0; border-bottom: 2px solid var(--tech-accent); border-right: 2px solid var(--tech-accent); }
+.product-tech .luxury-art-caption { font: 500 var(--fs-small) monospace; color: var(--tech-accent); letter-spacing: .2em; }
+.product-tech .luxury-art svg { filter: drop-shadow(0 16px 24px rgba(0,0,0,.3)); }
+.product-tech .luxury-art-note,
+.product-tech .luxury-details dt { color: #b4c8da; }
+.product-tech .luxury-copy { padding: var(--sp-8); border: 1px solid var(--luxury-line); background: #101f33; }
+.product-tech .luxury-kicker { color: var(--tech-accent); font-family: monospace, 'Noto Sans TC'; }
+.product-tech .luxury-copy h2 { font-family: 'Inter', 'Noto Sans TC', sans-serif; font-weight: 700; letter-spacing: .04em; }
+.product-tech .luxury-copy h2 span { color: #b4c8da; font-weight: 400; }
+.product-tech .luxury-link { padding-inline: var(--sp-4); color: #0b1424; background: var(--tech-accent); border: 1px solid var(--tech-accent); font-weight: 700; }
+.product-tech .luxury-link:hover { background: #b2edff; }
+.product-tech :focus-visible { outline-color: var(--tech-accent); }
+@media (max-width: 1024px) {
+    .product-tech .luxury-copy { padding: var(--sp-6); }
+}
+
+/* 單畫面資訊：依可視高度分頁，保留原始表單與完整文字。 */
+.screen-page-away,
+.screen-page-empty { display: none !important; }
+.screen-pages {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    margin-top: var(--sp-4);
+    flex: 0 0 auto;
+    width: 100%;
+    color: var(--ink);
+    font-size: var(--fs-small);
+}
+.screen-pages[hidden] { display: none; }
+.screen-pages button { min-height: 44px; min-width: 64px; padding: var(--sp-2) var(--sp-3); font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--ink-line); cursor: pointer; }
+.screen-pages button:disabled { opacity: .4; cursor: default; }
+.modal-overlay { height: 100dvh; padding: 24px; }
+.modal-overlay .modal-container { max-height: none; overflow: visible; }
+.modal-container .cart-items-list,
+.modal-container .account-history-list,
+#brand .team-info-merged { max-height: none; overflow: visible; }
+.modal-container .account-history-list { justify-content: flex-start; }
+.modal-container .custom-select-panel { max-height: none; overflow: visible; }
+.modal-container .custom-select-option { min-height: 44px; }
+.modal-container :is(.account-info-value, .cart-line-name, .account-history-item-list li span:first-child) { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.modal-container :is(.auth-modal-logo, .modal-title, .faq-title) { margin-bottom: var(--sp-4); }
+.modal-container .form-grid { gap: var(--sp-3); }
+.modal-container .form-group { margin-bottom: var(--sp-3); }
+.modal-container .faq-grid { gap: var(--sp-3); }
+#brand .team-info-merged { height: auto; align-self: end; }
+#brand .team-switcher > .screen-pages { align-self: end; max-width: 180px; order: 3; }
+@media (max-width: 1024px) {
+    .modal-overlay .modal-container { padding: var(--sp-5); }
+    .modal-container .account-columns { gap: var(--sp-4); }
+    .modal-container .account-column:not(:first-child) { padding-top: var(--sp-4); }
 }

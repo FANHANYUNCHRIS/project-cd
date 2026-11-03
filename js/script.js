@@ -1,3 +1,32 @@
+// 首頁雪花只在可見時播放；負延遲讓首次顯示已有自然分布的飄雪。
+document.addEventListener('DOMContentLoaded', () => {
+    const snow = document.querySelector('.hero-snow');
+    if (!snow || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const flakes = document.createDocumentFragment();
+    for (let i = 0; i < 48; i++) {
+        const flake = document.createElement('span');
+        flake.className = 'hero-snowflake';
+        flake.style.setProperty('--snow-left', `${Math.random() * 100}%`);
+        flake.style.setProperty('--snow-size', `${2 + Math.random() * 4}px`);
+        flake.style.setProperty('--snow-opacity', `${0.2 + Math.random() * 0.55}`);
+        flake.style.setProperty('--snow-duration', `${10 + Math.random() * 12}s`);
+        flake.style.setProperty('--snow-delay', `${-Math.random() * 22}s`);
+        flake.style.setProperty('--snow-drift', `${Math.random() * 120 - 60}px`);
+        flakes.appendChild(flake);
+    }
+    snow.appendChild(flakes);
+
+    let heroVisible = true;
+    const updateSnow = () => snow.classList.toggle('is-paused', !heroVisible || document.hidden);
+    const observer = new IntersectionObserver(([entry]) => {
+        heroVisible = entry.isIntersecting;
+        updateSnow();
+    });
+    observer.observe(snow.closest('header'));
+    document.addEventListener('visibilitychange', updateSnow);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 
     /* =========================================
@@ -71,7 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-2-detail2.jpg",
                 "images/product-2-detail3.jpg"
             ]
+        },
+        '3': {
+            name: '全新作品',
+            preview: true
         }
+
     };
 
     /* =========================================
@@ -249,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sections = productIds.map((id, index) => {
             const product = productsData[id];
-            const nextHref = index < productIds.length - 1 ? `#${sectionIds[index + 1]}` : '#shop';
+            const nextHref = index < productIds.length - 1 ? `#${sectionIds[index + 1]}` : '#brand';
 
             // 滿版商品圖：整張照片鋪滿螢幕當背景（跟首頁 Hero 同樣的全螢幕
             // 沉浸式語言），不是裝在一張小卡片裡——所以這裡是 dark-section
@@ -260,6 +294,128 @@ document.addEventListener('DOMContentLoaded', () => {
             section.className = 'fullscreen-section product-fullscreen-section dark-section';
             section.id = sectionIds[index];
             if (index > 0) section.dataset.navGroup = 'products';
+            if (product.preview) {
+                section.className = 'fullscreen-section product-luxury product-tech dark-section';
+                section.innerHTML = `
+                    <div class="luxury-heading"><span>PROJECT.CD / NEXT LAB</span><span>MODULE 003</span></div>
+                    <div class="luxury-art" role="img" aria-label="第三款商品包裝概念示意">
+                        <span class="luxury-art-caption">NEXT GENERATION</span>
+                        <svg viewBox="0 0 600 480" aria-hidden="true" focusable="false">
+                            <defs><linearGradient id="luxury-box" x2="1" y2="1"><stop stop-color="#f6efe2"/><stop offset="1" stop-color="#c9bca7"/></linearGradient></defs>
+                            <ellipse cx="300" cy="394" rx="192" ry="19" fill="#30291f" opacity=".08"/>
+                            <path d="m112 196 242-64 143 84-243 70Z" fill="#f2eadd"/>
+                            <path d="m112 196 142 90v104l-142-91Z" fill="#c9bca7"/>
+                            <path d="m254 286 243-70v105l-243 69Z" fill="url(#luxury-box)"/>
+                            <path d="m218 168 142 87v105l34-10V245L253 159Z" fill="#30291f"/>
+                            <path d="m112 208 142 89 243-70" fill="none" stroke="#a69982"/>
+                            <text x="300" y="319" fill="#504738" font-size="14" font-family="Georgia, serif" transform="rotate(-16 300 319)">Project.CD</text>
+                        </svg>
+                        <span class="luxury-art-note">包裝概念示意</span>
+                    </div>
+                    <div class="luxury-copy">
+                        <p class="luxury-kicker">PRODUCT LAB / 新品開發</p>
+                        <h2>全新作品<span>即將揭曉</span></h2>
+                        <p class="luxury-description">留一份期待，給下一段甜蜜時光。</p>
+                        <dl class="luxury-details"><div><dt>商品名稱</dt><dd>待確認</dd></div><div><dt>包裝規格</dt><dd>待確認</dd></div><div><dt>售價</dt><dd>待確認</dd></div></dl>
+                        <a class="luxury-link" href="#contact">洽詢新品 <span aria-hidden="true">↗</span></a>
+                    </div>
+                    <div class="luxury-bottom"><span>PROJECT.CD</span><span>探索下一個甜點靈感。</span></div>
+                    <a href="${nextHref}" class="scroll-down-indicator" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
+                return section;
+            }
+            // 所有商品共用道具庫展示版型。
+            {
+                section.className = 'fullscreen-section product-showcase' + (id === '2' ? ' product-esports dark-section' : '');
+                const panels = [
+                    `<p class="product-info-note">原物料資料待確認</p><p>${product.ingredients.join('、')}</p>`,
+                    `<dl class="product-label-table"><div><dt>品名</dt><dd>${product.name}</dd></div><div><dt>包裝數量</dt><dd>${product.qty}</dd></div><div><dt>過敏原</dt><dd>${product.allergens}</dd></div></dl><p class="product-info-note">完整食品標示與營養資料待補齊</p>`,
+                    `<ul>${product.notice.map(text => `<li>${text}</li>`).join('')}</ul>`
+                ];
+                section.innerHTML = `
+                    <aside class="product-info-rail" aria-label="商品資訊">
+                        <p class="product-showcase-eyebrow">ITEM DATA / 道具資料</p>
+                        <div class="product-info-tabs" role="tablist" aria-label="資訊類別">
+                            ${['原物料', '食品標示', '注意事項'].map((label, n) => `<button type="button" role="tab" id="product-${id}-tab-${n}" aria-controls="product-${id}-info-panel" aria-selected="${n === 0}" tabindex="${n === 0 ? 0 : -1}" data-panel="${n}">${label}</button>`).join('')}
+                        </div>
+                        <div class="product-info-panel" id="product-${id}-info-panel" role="tabpanel" aria-labelledby="product-${id}-tab-0">${panels[0]}</div>
+                    </aside>
+                    <div class="product-showcase-main">
+                        <p class="product-showcase-eyebrow">INVENTORY / 甜點道具庫 <span>NO. ${String(index + 1).padStart(3, '0')}</span></p>
+                        <div class="product-showcase-photo" aria-live="polite"><span class="product-view-index">VIEW 01 / 03</span><img src="${product.images[0]}" alt="${product.name}，第 1 張" loading="lazy"><div class="product-photo-placeholder" hidden></div></div>
+                        <div class="product-image-dots" role="group" aria-label="商品圖片切換">${[0,1,2].map(n => `<button type="button" aria-label="查看第 ${n+1} 張商品圖" aria-pressed="${n===0}" data-view="${n}"><span></span></button>`).join('')}</div>
+                    </div>
+                    <aside class="product-loadout" aria-label="商品選購">
+                        <p class="product-showcase-eyebrow">SELECTED ITEM / 已選道具</p>
+                        <h2>${product.name}</h2>
+                        <p class="product-showcase-summary">${product.desc}</p>
+                        <p class="product-showcase-price">${product.qty}<span aria-hidden="true">／</span><strong>${product.price}</strong></p>
+                        <button type="button" class="product-showcase-cta">查看商品與選購 <span aria-hidden="true">＋</span></button>
+                        <p class="product-loadout-hint">切換視角探索商品<br>開啟商品詳情，選擇購買數量</p>
+                    </aside>
+                    <a href="${nextHref}" class="scroll-down-indicator on-light" aria-label="下一款商品"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
+                if (id === '2') {
+                    section.querySelector('.product-showcase-main > .product-showcase-eyebrow').innerHTML = 'DESSERT ARENA / 甜點競技場 <span>NO. 002</span>';
+                    section.querySelector('.product-loadout > .product-showcase-eyebrow').textContent = 'LOADOUT / 本場主角';
+                    section.querySelector('.scroll-down-indicator').classList.remove('on-light');
+                }
+                const image = section.querySelector('img');
+                const fallback = section.querySelector('.product-photo-placeholder');
+                const dots = [...section.querySelectorAll('.product-image-dots button')];
+                let currentView = 0;
+                const pastry = '<path d="M43 64 116 32l78 35-73 35Z" fill="#e3be7b"/><path d="m43 64 78 38v62l-78-38Z" fill="#bd8845"/><path d="m121 102 73-35v63l-73 34Z" fill="#d4a35e"/><path d="m56 69 60-25 62 25-57 26Z" fill="#ebcb8e"/><path d="m63 66 52-14M74 76l53-16M87 83l51-15" stroke="#c99852" stroke-width="2" opacity=".5"/>';
+                let illustrations = [
+                    pastry,
+                    '<g transform="translate(-20 0)">'+pastry+'</g><path d="m128 121 62-29 33 16-62 30Z" fill="#ebcb8e"/><path d="m128 121 33 17v36l-33-17Z" fill="#c99852"/><path d="m161 138 62-30v36l-62 30Z" fill="#f0d59f"/><path d="m167 146 48-23v14l-48 23Z" fill="#997032"/>',
+                    '<g transform="translate(8 5) scale(.8)">'+pastry+'</g><g transform="translate(68 65) scale(.65)">'+pastry+'</g>'
+                ];
+                if (id === '2') {
+                    const whole = '<ellipse cx="130" cy="133" rx="66" ry="37" fill="#bd8845"/><path d="M64 130c0-85 132-85 132 0 0 45-132 45-132 0Z" fill="#e3be7b"/><ellipse cx="130" cy="108" rx="49" ry="25" fill="#ebcb8e"/><g stroke="#997032" stroke-width="3" stroke-linecap="round"><path d="m109 99 4 3m14-9 2 4m17 3-3 3m-23 9 4 2m18 1 3-2"/></g>';
+                    const cut = '<path d="M80 147a58 58 0 0 1 116 0Z" fill="#e3be7b"/><path d="M88 147a50 50 0 0 1 100 0Z" fill="#66482f"/><path d="M115 147a23 23 0 0 1 46 0Z" fill="#d4a35e"/>';
+                    illustrations = [whole, cut, '<g transform="translate(-12 -8) scale(.85)">'+whole+'</g><g transform="translate(76 65) scale(.65)">'+whole+'</g>'];
+                }
+                const showFallback = () => {
+                    image.hidden = true;
+                    fallback.hidden = false;
+                    fallback.innerHTML = `<svg viewBox="0 0 260 210" role="img" aria-label="${product.name}版面示意，第 ${currentView+1} 張"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${illustrations[currentView]}</svg>`;
+                };
+                image.addEventListener('error', showFallback);
+                image.addEventListener('load', () => { image.hidden = false; fallback.hidden = true; });
+                dots.forEach((dot, n) => dot.addEventListener('click', () => {
+                    currentView = n;
+                    dots.forEach((item, j) => item.setAttribute('aria-pressed', String(j === n)));
+                    section.querySelector('.product-view-index').textContent = `VIEW 0${n+1} / 03`;
+                    image.alt = `${product.name}，第 ${n+1} 張`;
+                    image.src = product.images[n];
+                    if (image.complete && !image.naturalWidth) showFallback();
+                }));
+                if (image.complete && !image.naturalWidth) showFallback();
+                const tabs = [...section.querySelectorAll('[role="tab"]')];
+                const activate = tab => {
+                    tabs.forEach(item => {
+                        item.setAttribute('aria-selected', String(item === tab));
+                        item.tabIndex = item === tab ? 0 : -1;
+                    });
+                    const panel = section.querySelector('[role="tabpanel"]');
+                    panel.innerHTML = panels[Number(tab.dataset.panel)];
+                    panel.setAttribute('aria-labelledby', tab.id);
+                };
+                tabs.forEach((tab, n) => {
+                    tab.addEventListener('click', () => activate(tab));
+                    tab.addEventListener('keydown', event => {
+                        let target;
+                        if (event.key === 'ArrowRight') target = tabs[(n + 1) % tabs.length];
+                        if (event.key === 'ArrowLeft') target = tabs[(n + tabs.length - 1) % tabs.length];
+                        if (event.key === 'Home') target = tabs[0];
+                        if (event.key === 'End') target = tabs[tabs.length - 1];
+                        if (!target) return;
+                        event.preventDefault();
+                        activate(target);
+                        target.focus();
+                    });
+                });
+                section.querySelector('.product-showcase-cta').addEventListener('click', () => openProductModal(id));
+                return section;
+            }
             section.setAttribute('role', 'button');
             section.setAttribute('tabindex', '0');
             section.setAttribute('aria-label', `查看${product.name}詳細介紹`);
@@ -1104,4 +1260,85 @@ document.addEventListener('DOMContentLoaded', () => {
         hidden: 'signup-store',
         panel: 'signup-store-panel'
     });
+});
+// 使用既有 scrollspy 的 active 狀態同步浮鈕，彈窗關閉時回到目前章節。
+document.addEventListener('DOMContentLoaded', () => {
+    const bar = document.getElementById('nav-links');
+    if (!bar) return;
+    const tabs = [...bar.querySelectorAll('a, button')].filter(tab => !tab.closest('.nav-brand-tab'));
+    // 同一套 24px 線條圖示，直接使用 SVG，避免字型未載入時顯示英文名稱。
+    const mobileIcons = [
+        "<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\" />\n  <path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\" />",
+        "<path d=\"M4 20V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13M3 20h18\"/><path d=\"M4 11c3-4 5 4 8 0s5 4 8 0\"/>",
+        "<path d=\"M3 9h18l-3-6H6ZM5 9v12h14V9M10 21v-7h4v7\"/>",
+        "<rect x=\"4\" y=\"7\" width=\"16\" height=\"14\" rx=\"2\"/><path d=\"M8 7V6a4 4 0 0 1 8 0v1\"/>",
+        "<circle cx=\"12\" cy=\"8\" r=\"5\" />\n  <path d=\"M20 21a8 8 0 0 0-16 0\" />"
+];
+    let selected = null;
+    let notchAnimation;
+    const drawNotch = percent => {
+        bar.style.setProperty('--nav-notch-x', `${percent}%`);
+        const width = bar.getBoundingClientRect().width;
+        if (!width) return;
+        const center = width * percent / 100;
+        // 圓鈕半徑 26px，凹槽半徑 34px；同心圓弧維持 8px 間距。
+        const path = `M0 22 Q0 0 22 0 H${center - 46} C${center - 38} 0 ${center - 33.41} 7.63 ${center - 31.95} 11.63 A34 34 0 0 0 ${center + 31.95} 11.63 C${center + 33.41} 7.63 ${center + 38} 0 ${center + 46} 0 H${width - 22} Q${width} 0 ${width} 22 V54 Q${width} 76 ${width - 22} 76 H22 Q0 76 0 54 Z`;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="76" viewBox="0 0 ${width} 76"><path d="${path}" fill="white"/></svg>`;
+        bar.style.setProperty('--nav-shape', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+    };
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    tabs.forEach((tab, index) => {
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.classList.add('mobile-tab-svg');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('stroke', 'currentColor');
+        icon.setAttribute('stroke-width', '2.25');
+        icon.setAttribute('stroke-linecap', 'round');
+        icon.setAttribute('stroke-linejoin', 'round');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerHTML = mobileIcons[index];
+        tab.appendChild(icon);
+    });
+    const select = (tab, animate = true) => {
+        if (!tab) return;
+        selected = tab;
+        tabs.forEach(item => item.classList.toggle('mobile-tab-selected', item === tab));
+        const index = tabs.indexOf(tab);
+        const target = (index + 0.5) * 20;
+        const start = parseFloat(bar.style.getPropertyValue('--nav-notch-x')) || 10;
+        cancelAnimationFrame(notchAnimation);
+        if (!animate || reduced.matches) {
+            drawNotch(target);
+            return;
+        }
+        const began = performance.now();
+        const tick = now => {
+            const progress = Math.min((now - began) / 400, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            drawNotch(start + (target - start) * eased);
+            if (progress < 1) notchAnimation = requestAnimationFrame(tick);
+        };
+        notchAnimation = requestAnimationFrame(tick);
+    };
+    const activeSection = () => tabs.find(tab => tab.matches('a.active')) || tabs[1];
+    tabs.forEach(tab => tab.addEventListener('click', () => select(tab)));
+    new MutationObserver(records => {
+        if (records.some(record => record.oldValue?.split(' ').includes('active') !== record.target.classList.contains('active'))) {
+            const tab = activeSection();
+            if (tab !== selected) select(tab);
+        }
+    }).observe(bar, { subtree: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+    ['cart-modal', 'account-modal', 'auth-modal'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        new MutationObserver(() => {
+            if (modal.classList.contains('active')) select(id === 'cart-modal' ? tabs[3] : tabs[4]);
+            else if (!document.querySelector('#cart-modal.active, #account-modal.active, #auth-modal.active')) select(activeSection());
+        }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
+    select(activeSection(), false);
+    new ResizeObserver(() => {
+        if (selected) drawNotch((tabs.indexOf(selected) + 0.5) * 20);
+    }).observe(bar);
 });

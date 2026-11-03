@@ -11,8 +11,8 @@
     <link rel="canonical" href="https://your-domain.com/">
 
     <!-- SEO 與社群分享標籤 (OG Tags) -->
-    <meta name="description" content="Project.CD 嚴選頂級食材，每日新鮮手工烘自焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。">
-    <meta name="keywords" content="Project.CD, 手工甜點, 烘焙, 鳳梨酥, 磅蛋糕, 堅果塔, 馬卡龍">
+    <meta name="description" content="Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。招牌土鳳梨酥與紅心鹹蛋黃酥。">
+    <meta name="keywords" content="Project.CD, 手工甜點, 烘焙, 鳳梨酥, 蛋黃酥">
     <meta property="og:title" content="Project.CD | 品味純粹的甜蜜時光">
     <meta property="og:description" content="嚴選頂級食材，每日新鮮手工烘焙。點擊了解更多品牌故事與熱門甜點。">
     <meta property="og:type" content="website">
@@ -33,7 +33,7 @@
         "name": "Project.CD",
         "url": "https://your-domain.com/",
         "logo": "https://your-domain.com/images/UNICORN%20LOGO.png",
-        "description": "Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。經典鳳梨酥、法式磅蛋糕、焦糖堅果塔與宇治抹茶馬卡龍。",
+        "description": "Project.CD 嚴選頂級食材，每日新鮮手工烘焙甜點。招牌土鳳梨酥與紅心鹹蛋黃酥。",
         "email": "contact@project.cd.com"
     }
     </script>
@@ -117,13 +117,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
     <script src="js/member.js" defer></script>
+    <script src="js/pagination.js" defer></script>
 </head>
 
 <body>
     <!-- 無障礙：鍵盤/螢幕閱讀器使用者可跳過導覽列直接到主內容 -->
     <a href="#home" class="skip-link">跳至主要內容</a>
 
-    <!-- 螢幕四周 4 邊 2px 金黃色滾動進度條 -->
+    <!-- 螢幕四周 4 邊 2px 滾動進度條（var(--ink)） -->
     <div id="scroll-progress-top" class="scroll-progress-h top"></div>
     <div id="scroll-progress-right" class="scroll-progress-v right"></div>
     <div id="scroll-progress-bottom" class="scroll-progress-h bottom"></div>
@@ -147,6 +148,12 @@
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">home</span>
                     </a>
                 </li>
+                <li>
+                    <a href="#products" aria-label="產品">
+                        <span class="nav-text">產品</span>
+                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">bakery_dining</span>
+                    </a>
+                </li>
                 <!-- 手機版分頁列要符合 HIG「分頁列最多5個」的建議，品牌（團隊介紹）
                      用得比商城/產品/購物車/會員少，且本來就是首頁往下捲動就到的
                      區塊（不是獨立功能），手機版不給分頁列入口，直接捲過去即可；
@@ -155,12 +162,6 @@
                     <a href="#brand" aria-label="品牌">
                         <span class="nav-text">品牌</span>
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">groups</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#products" aria-label="產品">
-                        <span class="nav-text">產品</span>
-                        <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">bakery_dining</span>
                     </a>
                 </li>
                 <li>
@@ -220,13 +221,66 @@
 
     <!-- 首頁區塊 -->
     <header id="home" class="hero-banner fullscreen-section dark-section">
-        <h1 class="hero-title">Project.CD｜品味純粹的甜蜜時光，嚴選頂級食材、每日新鮮手工烘焙甜點</h1>
+        <svg class="hero-forest" viewBox="0 0 1440 620" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <defs>
+                <symbol id="winter-pine" viewBox="0 0 100 220">
+                    <path d="M46 180h8v40h-8z" fill="currentColor"/>
+                    <path d="M50 0 24 53h13L15 99h18L7 151h20L0 197h100l-27-46h20L67 99h18L63 53h13Z" fill="currentColor"/>
+                    <path d="m50 0-14 29 14-5 14 5Zm-20 62-9 20 15-4 14 4 14-4 15 4-9-20-20 7Zm-10 51-10 23 20-5 20 5 20-5 20 5-10-23-30 8Zm-2 53L6 188l23-5 21 5 21-5 23 5-12-22-32 8Z" fill="#ebebec" fill-opacity=".85"/>
+                    <g fill="#c64250">
+                        <circle cx="47" cy="48" r="3.5"/>
+                        <circle cx="62" cy="97" r="4"/>
+                        <circle cx="32" cy="111" r="3.5"/>
+                        <circle cx="48" cy="153" r="4"/>
+                        <circle cx="76" cy="167" r="3.5"/>
+                        <circle cx="25" cy="175" r="4"/>
+                    </g>
+                </symbol>
+            </defs>
+            <g class="hero-forest-far">
+                <use href="#winter-pine" x="-35" y="90" width="180" height="530"/>
+                <use href="#winter-pine" x="95" y="200" width="150" height="420"/>
+                <use href="#winter-pine" x="215" y="290" width="135" height="330"/>
+                <use href="#winter-pine" x="335" y="390" width="100" height="230"/>
+                <use href="#winter-pine" x="1000" y="380" width="110" height="240"/>
+                <use href="#winter-pine" x="1090" y="270" width="145" height="350"/>
+                <use href="#winter-pine" x="1210" y="170" width="160" height="450"/>
+                <use href="#winter-pine" x="1330" y="60" width="185" height="560"/>
+            </g>
+            <g class="hero-forest-near">
+                <use href="#winter-pine" x="-80" y="190" width="205" height="450"/>
+                <use href="#winter-pine" x="65" y="310" width="160" height="330"/>
+                <use href="#winter-pine" x="190" y="420" width="115" height="220"/>
+                <use href="#winter-pine" x="1130" y="410" width="120" height="230"/>
+                <use href="#winter-pine" x="1230" y="300" width="170" height="340"/>
+                <use href="#winter-pine" x="1370" y="160" width="200" height="480"/>
+            </g>
+        </svg>
+        <div class="hero-snow" aria-hidden="true"></div>
+        <div class="hero-copy">
+            <div class="hero-logo-stage">
+                <img class="hero-logo" src="images/unicorn-logo-white.png" alt="獨角獸" width="512" height="512" fetchpriority="high">
+                <span class="hero-logo-sheen" aria-hidden="true"></span>
+                <svg class="hero-santa-hat" viewBox="0 0 120 100" fill="none" aria-hidden="true">
+                    <path d="M18 74C24 45 37 15 59 12C79 9 97 29 103 49L86 56C77 40 68 34 62 38C55 44 55 60 57 74Z" fill="#b93643"/>
+                    <path d="M25 68C31 43 42 24 57 19" stroke="white" stroke-opacity=".16" stroke-width="5" stroke-linecap="round"/>
+                    <rect x="10" y="68" width="57" height="18" rx="9" fill="#ebebec" transform="rotate(-8 10 68)"/>
+                    <circle cx="99" cy="53" r="12" fill="#ebebec"/>
+                </svg>
+            </div>
+            <h1 class="hero-title">Project.CD</h1>
+            <p class="hero-tagline">線上甜點店</p>
+        </div>
 
-        <a href="#brand" class="scroll-down-indicator" aria-label="往下滾動">
-            <span>SCROLL DOWN</span>
+        <a href="#products" class="scroll-down-indicator" aria-label="往下滾動">
+            <span class="hero-scroll-greeting">MERRY CHRISTMAS</span>
             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </a>
     </header>
+
+    <!-- 產品區塊：一個產品一個滿版畫面，由 js/script.js 的 initProductPanels()
+         依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
+    <div id="products-placeholder"></div>
 
     <!-- 品牌團隊區塊 (人物切換式版面，第一格為品牌故事) -->
     <section id="brand" class="fullscreen-section">
@@ -311,15 +365,11 @@
             </div>
         </div>
 
-        <a href="#products" class="scroll-down-indicator on-light" aria-label="往下滾動">
+        <a href="#shop" class="scroll-down-indicator on-light" aria-label="往下滾動">
             <span>SCROLL DOWN</span>
             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </a>
     </section>
-
-    <!-- 產品區塊：一個產品一個滿版畫面，由 js/script.js 的 initProductPanels()
-         依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
-    <div id="products-placeholder"></div>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
@@ -554,8 +604,8 @@
     <!-- 右側章節導覽小圓點 -->
     <nav class="section-dots" id="section-dots" aria-label="頁面章節導覽">
         <a href="#home" class="section-dot" data-target="home" aria-label="首頁"></a>
-        <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
         <a href="#products" class="section-dot" data-target="products" aria-label="產品"></a>
+        <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
         <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
     </nav>
 
