@@ -6122,3 +6122,20 @@ a.faq-card {
         box-shadow: var(--nav-selected-shadow);
     }
 }
+
+/* 首頁只佔一個可視畫面：移除品牌容器重複的上下留白，不變更其他滿版區塊。 */
+.hero-banner.fullscreen-section {
+    height: 100vh;
+    min-height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
+    padding-block: var(--sp-16);
+}
+.hero-banner .hero-copy { padding-block: 0; }
+.hero-banner .hero-logo-stage { width: min(48vw, 256px, 38svh, max(0px, calc(100svh - 288px))); }
+@media (max-width: 1024px) {
+    /* 預留底部分頁列與提示位置，矮畫面只調整標誌大小，保留文字字級。 */
+    .hero-banner.fullscreen-section { padding-bottom: 160px; }
+    .hero-banner .hero-logo-stage { width: min(48vw, 256px, 38svh, max(0px, calc(100svh - 352px))); }
+    .hero-banner > .scroll-down-indicator { bottom: 104px; }
+}
