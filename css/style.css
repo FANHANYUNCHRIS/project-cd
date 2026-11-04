@@ -6058,13 +6058,18 @@ a.faq-card {
    沿用既有灰階 token；桌機留白依使用者回饋放寬，手機凹槽與互動維持原樣。
    此為實體表面與陰影的處理，不使用半透明 Materials 或背景偵測。 */
 .navbar {
-    --nav-matte: linear-gradient(var(--surface-sunken), var(--paper));
-    --nav-raised-shadow: inset 0 1px 1px var(--glass-edge-light),
-        inset 0 -1px 1px var(--ink-line),
-        0 4px 8px rgba(22, 22, 26, .16);
-    --nav-selected-shadow: inset 0 1px 1px var(--glass-edge-mid),
-        inset 0 -1px 2px rgba(0, 0, 0, .28),
-        0 4px 8px rgba(22, 22, 26, .24);
+    --nav-matte: linear-gradient(var(--white), var(--surface-sunken) 32%, var(--paper));
+    /* 亮邊在深底分離輪廓，接觸陰影與下緣厚度在淺底保留浮起感。 */
+    --nav-raised-shadow: inset 0 2px 2px var(--glass-edge-light),
+        inset 0 -3px 3px rgba(22, 22, 26, .18),
+        0 0 0 1px var(--glass-edge-mid),
+        0 2px 2px rgba(22, 22, 26, .24),
+        0 6px 12px rgba(22, 22, 26, .24);
+    --nav-selected-shadow: inset 0 2px 2px var(--glass-edge-mid),
+        inset 0 -3px 3px rgba(0, 0, 0, .28),
+        0 0 0 1px var(--glass-edge-mid),
+        0 2px 2px rgba(22, 22, 26, .28),
+        0 6px 12px rgba(22, 22, 26, .28);
 }
 .navbar :is(.nav-icon-btn, .nav-icon-link) {
     background: var(--nav-matte);
@@ -6077,8 +6082,11 @@ a.faq-card {
         padding: var(--sp-2);
         background: var(--nav-matte);
         border-color: var(--glass-edge-mid);
-        box-shadow: inset 0 1px 2px var(--glass-edge-light),
-            0 8px 16px rgba(22, 22, 26, .16);
+        box-shadow: inset 0 2px 2px var(--glass-edge-light),
+            inset 0 -3px 3px var(--ink-line),
+            0 0 0 1px var(--glass-edge-mid),
+            0 2px 3px rgba(22, 22, 26, .24),
+            0 8px 16px rgba(22, 22, 26, .24);
     }
     .navbar .nav-links a {
         display: inline-flex;
