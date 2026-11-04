@@ -6053,3 +6053,57 @@ a.faq-card {
     .modal-container .account-columns { gap: var(--sp-4); }
     .modal-container .account-column:not(:first-child) { padding-top: var(--sp-4); }
 }
+
+/* 使用者參考圖確認的導覽列材質：霧面浮凸、左上亮邊、深色選取。
+   僅改表面，不變更尺寸、位置、凹槽形狀及原有互動；沿用既有灰階 token。
+   此為實體表面與陰影的處理，不使用半透明 Materials 或背景偵測。 */
+.navbar {
+    --nav-matte: linear-gradient(var(--surface-sunken), var(--paper));
+    --nav-raised-shadow: inset 0 1px 1px var(--glass-edge-light),
+        inset 0 -1px 1px var(--ink-line),
+        0 4px 8px rgba(22, 22, 26, .16);
+    --nav-selected-shadow: inset 0 1px 1px var(--glass-edge-mid),
+        inset 0 -1px 2px rgba(0, 0, 0, .28),
+        0 4px 8px rgba(22, 22, 26, .24);
+}
+.navbar :is(.nav-icon-btn, .nav-icon-link) {
+    background: var(--nav-matte);
+    border-color: var(--glass-edge-mid);
+    box-shadow: var(--nav-raised-shadow);
+}
+@media (min-width: 1025px) {
+    .navbar .nav-links {
+        background: var(--nav-matte);
+        border-color: var(--glass-edge-mid);
+        box-shadow: inset 0 1px 2px var(--glass-edge-light),
+            0 8px 16px rgba(22, 22, 26, .16);
+    }
+    .navbar .nav-links a {
+        background: var(--nav-matte);
+        color: var(--ink);
+        box-shadow: var(--nav-raised-shadow);
+    }
+    .navbar .nav-links a.active {
+        background: linear-gradient(var(--ink-hover), var(--ink));
+        color: var(--paper);
+        box-shadow: var(--nav-selected-shadow);
+    }
+}
+@media (max-width: 1024px) {
+    .navbar .nav-links::before {
+        background: var(--nav-matte);
+        -webkit-mask: var(--nav-shape) center / 100% 76px no-repeat;
+        mask: var(--nav-shape) center / 100% 76px no-repeat;
+        box-shadow: inset 0 1px 2px var(--glass-edge-light),
+            inset 0 -1px 2px var(--ink-line);
+    }
+    .navbar .nav-links :is(a, .nav-more-btn) {
+        background: transparent;
+        box-shadow: none;
+    }
+    .navbar .nav-links .mobile-tab-selected {
+        background: linear-gradient(var(--ink-hover), var(--ink)) !important;
+        color: var(--paper);
+        box-shadow: var(--nav-selected-shadow);
+    }
+}
