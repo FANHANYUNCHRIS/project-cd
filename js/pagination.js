@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => {
             scheduled = false;
             observer.disconnect();
-            document.querySelectorAll('.modal-overlay.active > .modal-container, #brand .team-info-merged, #team-mobile-bio').forEach(update);
+            const viewport = window.visualViewport?.height || window.innerHeight;
+            document.documentElement.style.setProperty('--screen-height', `${viewport}px`);
+            document.documentElement.classList.toggle('screen-short', viewport < 600);
+            document.querySelectorAll('.modal-overlay.active > .modal-container, .fullscreen-section:not(.hero-banner), .shop-footer-screen').forEach(update);
             observe();
         });
     }
@@ -25,9 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
             nav.className = 'screen-pages';
             nav.setAttribute('aria-label', '內容分頁');
             nav.innerHTML = '<button type="button" aria-label="上一頁">上一頁</button><span role="status" aria-live="polite"></span><button type="button" aria-label="下一頁">下一頁</button>';
-            root.after(nav);
             // Modal controls belong inside their dialog for focus trapping.
-            if (root.matches('.modal-container, .team-info-merged')) root.append(nav);
+            root.append(nav);
             state = { root, nav, page: 0, pages: [], units: [], branches: [] };
             controllers.set(root, state);
             nav.firstElementChild.addEventListener('click', () => turn(state, -1));
@@ -37,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
         state.units.forEach(el => el.classList.remove('screen-page-away'));
         state.branches.forEach(el => el.classList.remove('screen-page-empty'));
         state.nav.hidden = true;
+        root.classList.remove('screen-divided');
         const isModal = root.matches('.modal-container');
         const viewport = window.visualViewport?.height || window.innerHeight;
-        const limit = isModal ? Math.max(180, viewport - 48) : Math.max(160, Math.min(400, viewport - 320));
+        const limit = isModal ? viewport - 56 : viewport;
+        root.classList.add('screen-paginated');
         // Split long prose into spans without changing or discarding any text.
         [...(root.matches('p:not(:has(*))') ? [root] : []), ...root.querySelectorAll('p:not(:has(*))')].forEach(p => {
             if (p.textContent.length < 110 || p.querySelector('.screen-prose')) return;
@@ -54,10 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         state.units = [];
         state.branches = [];
+        const rootStyle = getComputedStyle(root);
+        const contentBudget = limit - parseFloat(rootStyle.paddingTop) - parseFloat(rootStyle.paddingBottom) - 60;
         function collect(el) {
-            if (el === state.nav || el.matches('.modal-close, .sr-only, script, [hidden]') || !el.getClientRects().length || getComputedStyle(el).display === 'none') return;
+            if (el === state.nav || el.matches('.modal-close, .scroll-down-indicator, .sr-only, script, [hidden]') || !el.getClientRects().length || getComputedStyle(el).display === 'none') return;
             const children = [...el.children].filter(child => !child.matches('svg, input[type="hidden"]'));
-            if (children.length && el.getBoundingClientRect().height > Math.max(100, (limit - 100) * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area')) {
+            if (children.length && el.offsetHeight > Math.max(60, contentBudget * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area')) {
                 state.branches.push(el);
                 children.forEach(collect);
             } else state.units.push(el);
@@ -72,17 +78,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         // Measure real layout, including padding, grid gaps, headings and controls.
-        if (root.getBoundingClientRect().height <= limit) {
+        if (root.offsetHeight <= limit) {
             state.pages = [state.units];
             state.page = 0;
             return;
         }
         state.nav.hidden = false;
+        root.classList.add('screen-divided');
         state.pages = [];
         let page = [];
         for (const unit of state.units) {
             show([...page, unit]);
-            if (page.length && root.getBoundingClientRect().height > limit) {
+            if (page.length && root.offsetHeight > limit) {
                 state.pages.push(page);
                 page = [unit];
             } else page.push(unit);
@@ -122,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', schedule);
     window.visualViewport?.addEventListener('resize', schedule);
     document.fonts.ready.then(schedule);
+    document.addEventListener('load', schedule, true);
     observe();
     schedule();
 });

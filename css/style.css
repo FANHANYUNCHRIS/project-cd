@@ -6053,3 +6053,68 @@ a.faq-card {
     .modal-container .account-columns { gap: var(--sp-4); }
     .modal-container .account-column:not(:first-child) { padding-top: var(--sp-4); }
 }
+
+/* 可視高度由分頁程式同步，瀏覽器工具列展開時也保留底部操作空間。 */
+.hero-banner.fullscreen-section {
+    min-height: var(--screen-height, 100svh);
+    height: var(--screen-height, 100svh);
+    padding-block: var(--sp-6) var(--sp-16);
+}
+.hero-copy { padding-block: 0; gap: var(--sp-4); }
+.hero-logo-stage { width: min(48vw, 256px, calc(var(--screen-height, 100svh) * .3)); }
+.screen-paginated:not(.modal-container) {
+    min-height: var(--screen-height, 100svh);
+    box-sizing: border-box;
+    padding-block: var(--sp-16) 96px;
+}
+.screen-paginated > .screen-pages { grid-column: 1 / -1; align-self: end; }
+#brand.screen-paginated .team-switcher { height: auto; min-height: 0; }
+#brand.screen-paginated .team-info-merged { align-self: center; }
+.screen-paginated .product-showcase-photo { height: min(28svh, 240px); }
+.screen-paginated .luxury-art { min-height: 0; }
+.screen-paginated .luxury-art svg { height: min(28svh, 240px); }
+.screen-paginated.shop-footer-screen { padding-inline: var(--page-space-inline); }
+.screen-paginated.shop-footer-screen > :is(#shop, .footer) { padding: var(--sp-4) 0; flex-grow: 0; }
+@media (max-width: 1024px) {
+    .hero-banner > .scroll-down-indicator { bottom: 104px; }
+    .hero-banner.fullscreen-section { padding-bottom: 160px; }
+    .screen-paginated:not(.modal-container) { padding-bottom: 160px; }
+}
+
+.screen-paginated .product-info-panel { min-height: 0; }
+.screen-short .screen-paginated:not(.modal-container) { padding-top: var(--sp-6); }
+.screen-short .hero-logo-stage { width: min(48vw, calc(var(--screen-height, 100svh) * .2)); }
+#brand.screen-paginated :is(.team-portrait, .team-mobile-portrait) { min-height: 0; height: min(28svh, 240px); }
+@media (max-width: 1024px) {
+    .screen-short .screen-paginated:not(.modal-container) { padding-bottom: 104px; }
+}
+
+#brand.screen-paginated { padding-block: var(--sp-16) 96px; }
+.screen-paginated .product-showcase-photo { min-height: 0; }
+.screen-paginated .screen-prose { display: block; }
+@media (max-width: 1024px) {
+    #brand.screen-paginated { padding-bottom: 160px; }
+    .screen-short #brand.screen-paginated { padding-block: var(--sp-6) 104px; }
+}
+.modal-container.screen-paginated .gallery-main { aspect-ratio: auto; height: min(28svh, 240px); }
+@media (max-width: 1024px) {
+    #brand.screen-paginated .team-mobile-card { width: 100%; min-width: 0; flex-shrink: 0; }
+    #brand.screen-paginated .team-avatar-rail { width: 100%; flex: 0 0 auto; }
+}
+
+#brand.screen-paginated { flex-direction: column; }
+#brand.screen-paginated > .team-switcher { width: 100%; flex-shrink: 0; }
+.screen-divided:is(.product-showcase, .product-luxury) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-4);
+}
+.screen-divided > .screen-pages { margin-top: auto; padding-top: var(--sp-4); }
+.screen-short .screen-divided .luxury-copy { padding: var(--sp-4); }
+.screen-short .screen-divided.shop-footer-screen > :is(#shop, .footer) { padding-block: var(--sp-3); }
+
+.screen-divided .luxury-copy { width: 100%; }
+
+.screen-short .modal-container .contact-glass-card { padding: var(--sp-3); }
+.screen-short .modal-container .line-service-box { padding: var(--sp-3); }
