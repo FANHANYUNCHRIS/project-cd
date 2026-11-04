@@ -6079,7 +6079,7 @@ a.faq-card {
 @media (min-width: 1025px) {
     .navbar .nav-links {
         gap: var(--sp-3);
-        padding: var(--sp-2);
+        padding: var(--sp-1) var(--sp-2);
         background: var(--nav-matte);
         border-color: var(--glass-edge-mid);
         box-shadow: inset 0 2px 2px var(--glass-edge-light),
@@ -6092,7 +6092,7 @@ a.faq-card {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 44px;
+        min-height: 0;
         padding-inline: var(--sp-5);
         background: var(--nav-matte);
         color: var(--ink);
