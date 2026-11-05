@@ -272,8 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const section = document.createElement('section');
         section.id = 'products';
         section.className = 'fullscreen-section pastry-product';
-        const pastry = '<path d="M43 64 116 32l78 35-73 35Z" fill="#e3be7b"/><path d="m43 64 78 38v62l-78-38Z" fill="#bd8845"/><path d="m121 102 73-35v63l-73 34Z" fill="#d4a35e"/><path d="m56 69 60-25 62 25-57 26Z" fill="#ebcb8e"/><path d="m63 66 52-14M74 76l53-16M87 83l51-15" stroke="#c99852" stroke-width="2" opacity=".5"/>';
-        const illustration = `<svg viewBox="0 0 260 210" aria-hidden="true"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${pastry}</svg>`;
         section.innerHTML = `
             <div class="pastry-intro">
                 <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
@@ -281,11 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="pastry-description">${product.desc}</p>
             </div>
             <figure class="pastry-gallery">
-                <div class="pastry-stage" role="img" aria-label="鳳梨酥外觀示意圖">
-                    <img src="${product.images[0]}" alt="鳳梨酥完整外觀與剖面參考照片" decoding="async" hidden>
-                    <div class="pastry-illustration">${illustration}</div>
+                <div class="pastry-stage" role="img" aria-label="鳳梨酥完整外觀與剖面參考照片">
+                    <img src="${product.images[0]}" alt="鳳梨酥完整外觀與剖面參考照片" decoding="async">
                 </div>
-                <figcaption class="pastry-image-note">商品示意圖，實際外觀以到貨為準</figcaption>
+                <figcaption class="pastry-image-note">鳳梨酥參考照片・非本店商品實拍</figcaption>
             </figure>
             <div class="pastry-purchase">
                 <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
@@ -300,25 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
         [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
         section.prepend(content);
         const image = section.querySelector('.pastry-stage img');
-        const art = section.querySelector('.pastry-illustration');
-        const stage = section.querySelector('.pastry-stage');
         const note = section.querySelector('.pastry-image-note');
-        const fallback = () => {
+        image.addEventListener('error', () => {
             image.hidden = true;
-            art.hidden = false;
-            stage.setAttribute('aria-label', '鳳梨酥示意圖');
-            note.textContent = '商品示意圖，實際外觀以到貨為準';
-        };
-        image.addEventListener('error', fallback);
-        image.addEventListener('load', () => {
-            image.hidden = false;
-            art.hidden = true;
-            stage.setAttribute('aria-label', '鳳梨酥完整外觀與剖面參考照片');
-            note.textContent = '鳳梨酥參考照片・非本店商品實拍';
+            note.textContent = '照片暫時無法載入，請重新整理';
         });
         section.querySelectorAll('.pastry-buy, .pastry-details').forEach(button => button.addEventListener('click', () => openProductModal('1')));
         placeholder.replaceWith(section);
-        if (image.complete && image.naturalWidth) image.dispatchEvent(new Event('load'));
     })();
 
     /* =========================================
