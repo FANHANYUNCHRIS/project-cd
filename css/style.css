@@ -6344,3 +6344,8 @@ a.faq-card {
     .brand-building-icon { grid-column: 3; padding: var(--sp-2); gap: var(--sp-2); }
     .brand-building-icon > svg { width: var(--sp-12); height: var(--sp-12); }
 }
+
+/* 去背鳳梨酥照片完整呈現，單張照片不顯示切圖控制。 */
+#product-modal .gallery-main img { object-fit: contain; padding: var(--sp-6); }
+#product-modal :is(.gallery-nav-btn, .gallery-thumbs, .gallery-dots)[hidden] { display: none; }
+#product-modal .gallery-main { height: min(40dvh, 320px); aspect-ratio: auto; }

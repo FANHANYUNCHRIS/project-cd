@@ -74,12 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             allergens: "蛋、奶、麩質",
             ingredients: ["土鳳梨餡", "法國奶油", "中筋麵粉", "雞蛋", "細砂糖", "鹽"],
             notice: genericProductNotices,
-            images: [
-                "images/product-1.jpg",
-                "images/product-1-detail1.jpg",
-                "images/product-1-detail2.jpg",
-                "images/product-1-detail3.jpg"
-            ]
+            images: ["images/pineapple-photo-cutout.webp"]
         }
     };
 
@@ -278,9 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         section.id = 'products';
         section.className = 'fullscreen-section pastry-product';
         const pastry = '<path d="M43 64 116 32l78 35-73 35Z" fill="#e3be7b"/><path d="m43 64 78 38v62l-78-38Z" fill="#bd8845"/><path d="m121 102 73-35v63l-73 34Z" fill="#d4a35e"/><path d="m56 69 60-25 62 25-57 26Z" fill="#ebcb8e"/><path d="m63 66 52-14M74 76l53-16M87 83l51-15" stroke="#c99852" stroke-width="2" opacity=".5"/>';
-        const views = [pastry, '<g transform="translate(-20 0)">'+pastry+'</g><path d="m128 121 62-29 33 16-62 30Z" fill="#ebcb8e"/><path d="m128 121 33 17v36l-33-17Z" fill="#c99852"/><path d="m161 138 62-30v36l-62 30Z" fill="#f0d59f"/><path d="m167 146 48-23v14l-48 23Z" fill="#997032"/>', '<g transform="translate(8 5) scale(.8)">'+pastry+'</g><g transform="translate(68 65) scale(.65)">'+pastry+'</g>'];
-        const labels = ['外觀', '剖面', '組合'];
-        const illustration = n => `<svg viewBox="0 0 260 210" aria-hidden="true"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${views[n]}</svg>`;
+        const illustration = `<svg viewBox="0 0 260 210" aria-hidden="true"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${pastry}</svg>`;
         section.innerHTML = `
             <div class="pastry-intro">
                 <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
@@ -289,13 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <figure class="pastry-gallery">
                 <div class="pastry-stage" role="img" aria-label="鳳梨酥外觀示意圖">
-                    <img src="${product.images[0]}" alt="鳳梨酥外觀" hidden>
-                    <div class="pastry-illustration">${illustration(0)}</div>
+                    <img src="${product.images[0]}" alt="鳳梨酥完整外觀與剖面參考照片" decoding="async" hidden>
+                    <div class="pastry-illustration">${illustration}</div>
                 </div>
                 <figcaption class="pastry-image-note">商品示意圖，實際外觀以到貨為準</figcaption>
-                <div class="pastry-thumbnails" role="group" aria-label="商品圖片切換">
-                    ${labels.map((label, n) => `<button type="button" data-view="${n}" aria-label="查看${label}" aria-pressed="${n === 0}">${illustration(n)}<span>${label}</span></button>`).join('')}
-                </div>
             </figure>
             <div class="pastry-purchase">
                 <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
@@ -313,29 +303,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const art = section.querySelector('.pastry-illustration');
         const stage = section.querySelector('.pastry-stage');
         const note = section.querySelector('.pastry-image-note');
-        let current = 0;
         const fallback = () => {
             image.hidden = true;
             art.hidden = false;
-            stage.setAttribute('aria-label', `鳳梨酥${labels[current]}示意圖`);
+            stage.setAttribute('aria-label', '鳳梨酥示意圖');
             note.textContent = '商品示意圖，實際外觀以到貨為準';
         };
         image.addEventListener('error', fallback);
         image.addEventListener('load', () => {
             image.hidden = false;
             art.hidden = true;
-            stage.setAttribute('aria-label', `鳳梨酥${labels[current]}`);
-            note.textContent = labels[current];
+            stage.setAttribute('aria-label', '鳳梨酥完整外觀與剖面參考照片');
+            note.textContent = '鳳梨酥參考照片・非本店商品實拍';
         });
-        section.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
-            current = Number(button.dataset.view);
-            section.querySelectorAll('[data-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-            art.innerHTML = illustration(current);
-            fallback();
-            image.alt = `鳳梨酥${labels[current]}`;
-            image.src = product.images[current];
-            if (image.complete && image.naturalWidth) image.dispatchEvent(new Event('load'));
-        }));
         section.querySelectorAll('.pastry-buy, .pastry-details').forEach(button => button.addEventListener('click', () => openProductModal('1')));
         placeholder.replaceWith(section);
         if (image.complete && image.naturalWidth) image.dispatchEvent(new Event('load'));
@@ -842,6 +822,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dotsBox.appendChild(dot);
         });
 
+        const hasMultipleImages = data.images.length > 1;
+        [navPrevBtn, navNextBtn, thumbsBox, dotsBox].forEach(control => { control.hidden = !hasMultipleImages; });
         showGalleryImage(0);
         setProductModalTab('desc');
         openModal(productModal);
