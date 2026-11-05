@@ -6327,3 +6327,20 @@ a.faq-card {
 @media (max-width: 1024px) {
     :root { --page-content-max: 480px; }
 }
+
+/* 品牌標誌置中，右側以大樓圖示連結虛擬空間。 */
+#brand .brand-story-panel { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.brand-visual { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: var(--sp-8); }
+#brand .brand-emblem { text-align: center; }
+.brand-building-icon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-4); min-width: 44px; min-height: 44px; padding: var(--sp-4); color: var(--ink); text-decoration: none; font-size: var(--fs-small); }
+.brand-building-icon > svg { width: var(--sp-16); height: var(--sp-16); }
+.brand-building-icon:hover > span { text-decoration: underline; text-underline-offset: var(--sp-1); }
+@media (max-width: 1024px) {
+    #brand .brand-story-panel { grid-template-columns: minmax(0, 1fr); }
+    .brand-visual { grid-column: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); }
+    #brand .brand-emblem { grid-column: 2; flex-direction: column; flex-wrap: nowrap; gap: var(--sp-2); }
+    #brand .brand-emblem > span { font-size: var(--fs-lead); }
+    #brand .brand-emblem p { font-size: var(--fs-small); }
+    .brand-building-icon { grid-column: 3; padding: var(--sp-2); gap: var(--sp-2); }
+    .brand-building-icon > svg { width: var(--sp-12); height: var(--sp-12); }
+}

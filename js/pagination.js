@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function collect(el) {
             if (el === state.nav || el.matches('.modal-close, .sr-only, script, [hidden]') || !el.getClientRects().length || getComputedStyle(el).display === 'none') return;
             const children = [...el.children].filter(child => !child.matches('svg, input[type="hidden"]'));
-            if (children.length && el.getBoundingClientRect().height > Math.max(100, (limit - 100) * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area, .pastry-stage, .pastry-thumbnails, .team-avatar-rail, .team-portrait, .team-mobile-portrait, .brand-emblem, .brand-principles > div, .team-stat-list, .team-mobile-stats')) {
+            if (children.length && el.getBoundingClientRect().height > Math.max(100, (limit - 100) * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area, .pastry-stage, .pastry-thumbnails, .team-avatar-rail, .team-portrait, .team-mobile-portrait, .brand-emblem, .brand-visual, .brand-principles > div, .team-stat-list, .team-mobile-stats')) {
                 state.branches.push(el);
                 children.forEach(collect);
             } else state.units.push(el);
