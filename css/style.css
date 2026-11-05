@@ -6260,3 +6260,53 @@ a.faq-card {
 @media (max-width: 1024px) {
     #brand .team-mobile-portrait { height: 160px; min-height: 0; flex: 0 0 160px; }
 }
+
+/* 主題高度固定為實際可視畫面，超量內容由分頁完整呈現。 */
+#brand, #products.pastry-product {
+    height: 100dvh;
+    min-height: 100dvh;
+    padding-block: var(--sp-16);
+}
+#brand { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-content: stretch; gap: var(--sp-4); }
+#brand > [role="tabpanel"] { align-self: center; min-width: 0; }
+#brand .brand-section-header { padding-bottom: var(--sp-2); }
+#brand .brand-story-panel { gap: var(--sp-5) var(--sp-8); }
+#brand .brand-emblem { padding: 0; }
+#brand .brand-emblem img { height: min(20dvh, 160px); }
+#brand .brand-story-copy h3 { font-size: var(--fs-h2); }
+#brand .brand-eyebrow { margin-bottom: var(--sp-3); }
+#brand .brand-story-description { margin-top: var(--sp-4); }
+#brand .brand-principles { padding-top: var(--sp-4); }
+#brand .brand-building-entry { padding-top: var(--sp-2); }
+#brand .team-switcher { height: auto; min-height: 0; }
+#brand .team-portrait { min-height: 160px; }
+#brand .team-avatar-item { height: 64px; flex: 0 0 64px; }
+#brand .team-avatar-rail { gap: var(--sp-2); }
+#brand .team-avatar-list { gap: var(--sp-3); }
+#brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
+#products.pastry-product { display: flex; align-items: center; }
+.pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
+#brand .screen-pages, #products .screen-pages { margin-top: var(--sp-3); }
+@media (max-width: 1024px) {
+    #brand, #products.pastry-product { padding-top: var(--sp-6); padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+    #brand .brand-section-header { flex-direction: row; align-items: center; gap: var(--sp-2); }
+    #brand .brand-section-header h2 { max-width: 100px; }
+    #brand .brand-tabs { gap: 0; }
+    #brand .brand-tabs button { padding-inline: var(--sp-3); }
+    #brand .brand-story-panel { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+    #brand .brand-emblem { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: var(--sp-2) var(--sp-4); }
+    #brand .brand-emblem img { width: 64px; height: 64px; }
+    #brand .brand-emblem > span, #brand .brand-emblem p { margin: 0; }
+    #brand .brand-emblem p { width: 100%; }
+    #brand .brand-building-entry { gap: var(--sp-2); }
+    #brand .team-mobile-card { gap: var(--sp-3); }
+    #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
+    .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+    .pastry-stage { height: min(24dvh, 200px); }
+}
+#brand { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
+@media (max-width: 1024px) {
+    /* 手機頂部空白導覽容器不攔截品牌頁籤，按鈕仍可操作。 */
+    #main-navbar { pointer-events: none; }
+    #main-navbar a, #main-navbar button { pointer-events: auto; }
+}

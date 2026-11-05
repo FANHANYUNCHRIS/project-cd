@@ -305,6 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" class="pastry-details">成分與商品注意事項</button>
             </div>
             <a href="#brand" class="scroll-down-indicator on-light" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
+        const content = document.createElement('div');
+        content.className = 'pastry-content';
+        [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
+        section.prepend(content);
         const image = section.querySelector('.pastry-stage img');
         const art = section.querySelector('.pastry-illustration');
         const stage = section.querySelector('.pastry-stage');
@@ -1130,9 +1134,11 @@ document.addEventListener('DOMContentLoaded', () => {
 ];
     let selected = null;
     let notchAnimation;
+    let notchWidth = bar.getBoundingClientRect().width;
     const drawNotch = percent => {
+        if (window.innerWidth > 1024) return;
         bar.style.setProperty('--nav-notch-x', `${percent}%`);
-        const width = bar.getBoundingClientRect().width;
+        const width = notchWidth;
         if (!width) return;
         const center = width * percent / 100;
         // 圓鈕半徑 26px，凹槽半徑 34px；同心圓弧維持 8px 間距。
@@ -1155,13 +1161,14 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.appendChild(icon);
     });
     const select = (tab, animate = true) => {
-        if (!tab) return;
+        if (!tab || tab === selected) return;
         selected = tab;
         tabs.forEach(item => item.classList.toggle('mobile-tab-selected', item === tab));
         const index = tabs.indexOf(tab);
         const target = (index + 0.5) * 20;
         const start = parseFloat(bar.style.getPropertyValue('--nav-notch-x')) || 10;
         cancelAnimationFrame(notchAnimation);
+        if (window.innerWidth > 1024) return;
         if (!animate || reduced.matches) {
             drawNotch(target);
             return;
@@ -1193,6 +1200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     select(activeSection(), false);
     new ResizeObserver(() => {
+        notchWidth = bar.getBoundingClientRect().width;
         if (selected) drawNotch((tabs.indexOf(selected) + 0.5) * 20);
     }).observe(bar);
 });
