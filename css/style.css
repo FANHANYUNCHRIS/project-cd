@@ -6213,3 +6213,50 @@ a.faq-card {
     .pastry-thumbnails { margin-top: var(--sp-3); }
     .pastry-purchase { gap: var(--sp-4); }
 }
+
+/* 品牌：黑白編輯式故事頁，與團隊資料以頁籤切換。 */
+#brand { background: var(--surface-sunken); gap: var(--sp-8); }
+#brand [role="tabpanel"][hidden] { display: none !important; }
+.brand-section-header { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-6); width: 100%; border-bottom: 1px solid var(--ink-line); padding-bottom: var(--sp-4); }
+.brand-section-header h2 { font-size: var(--fs-small); font-weight: 500; }
+.brand-tabs { display: flex; gap: var(--sp-2); }
+.brand-tabs button { min-height: 44px; padding: var(--sp-3) var(--sp-4); border: 1px solid transparent; background: transparent; color: var(--ink-soft); font: inherit; font-size: var(--fs-small); cursor: pointer; }
+.brand-tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.brand-story-panel { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: center; gap: var(--sp-8) var(--sp-16); width: 100%; }
+.brand-eyebrow { font-size: var(--fs-small); color: var(--ink-soft); margin-bottom: var(--sp-6); }
+.brand-story-copy h3 { font-size: var(--fs-display); line-height: 1.4; letter-spacing: .04em; }
+.brand-story-description { font-size: var(--fs-body); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-6); }
+.brand-emblem { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--sp-6); }
+.brand-emblem img { width: min(100%, 240px); height: 200px; object-fit: contain; }
+.brand-emblem > span { font-size: var(--fs-h2); font-weight: 700; margin-top: var(--sp-3); }
+.brand-emblem p { font-size: var(--fs-small); color: var(--ink-soft); margin-top: var(--sp-2); }
+.brand-principles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-8); border-top: 1px solid var(--ink-line); padding-top: var(--sp-6); }
+.brand-principle-number { font-size: var(--fs-caption); color: var(--ink-soft); }
+.brand-principles h4 { font-size: var(--fs-lead); margin-top: var(--sp-3); }
+.brand-principles p { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-2); }
+#brand-team-panel { width: 100%; }
+#brand .team-switcher { height: min(560px, calc(100svh - var(--page-space-block) * 2 - 180px)); }
+#brand .team-avatar-rail { border: 0; background: transparent; box-shadow: none; padding: var(--sp-2); }
+#brand .team-info-merged, #brand .team-mobile-card { background: var(--white); border: 1px solid var(--ink-line); box-shadow: none; }
+#brand .team-portrait, #brand .team-mobile-portrait { border: 0; background-color: transparent; }
+#brand .team-portrait::before { display: none; }
+#brand .brand-building-entry { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); padding-top: var(--sp-4); border-top: 1px solid var(--ink-line); text-align: left; }
+#brand .brand-building-entry a { flex-shrink: 0; border: 1px solid var(--ink); text-decoration: none; }
+@media (max-width: 1024px) {
+    .brand-section-header { align-items: flex-start; flex-direction: column; gap: var(--sp-3); }
+    .brand-story-panel { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
+    .brand-story-copy h3 { font-size: var(--fs-h2); }
+    .brand-story-description br { display: none; }
+    .brand-emblem { padding: var(--sp-4); }
+    .brand-emblem img { width: 120px; height: 120px; }
+    .brand-emblem > span { font-size: var(--fs-h3); }
+    .brand-principles { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
+    .brand-principles > div { display: grid; grid-template-columns: var(--sp-8) minmax(0, 1fr); gap: var(--sp-2) var(--sp-3); }
+    .brand-principle-number { padding-top: var(--sp-1); grid-row: 1 / 3; }
+    .brand-principles h4, .brand-principles p { margin-top: 0; }
+    #brand .team-switcher { height: auto; }
+    #brand .brand-building-entry { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 1024px) {
+    #brand .team-mobile-portrait { height: 160px; min-height: 0; flex: 0 0 160px; }
+}

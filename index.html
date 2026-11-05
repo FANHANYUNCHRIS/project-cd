@@ -282,9 +282,34 @@
          依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
     <div id="products-placeholder"></div>
 
-    <!-- 品牌團隊區塊 (人物切換式版面，第一格為品牌故事) -->
-    <section id="brand" class="fullscreen-section">
-        <div class="team-switcher reveal-element">
+    <!-- 品牌故事與團隊分頁，共用虛擬大樓入口。 -->
+    <section id="brand" class="fullscreen-section" aria-labelledby="brand-title">
+        <header class="brand-section-header">
+            <h2 id="brand-title">關於 Project.CD</h2>
+            <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
+                <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
+                <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">品牌團隊</button>
+            </div>
+        </header>
+        <div class="brand-story-panel" id="brand-story-panel" role="tabpanel" aria-labelledby="brand-story-tab" tabindex="0">
+            <div class="brand-story-copy">
+                <p class="brand-eyebrow">咖啡・甜點・Project.CD</p>
+                <h3>從家裡出發，<br>把甜點送進日常。</h3>
+                <p class="brand-story-description">Project.CD 是一間沒有門市的線上咖啡甜點店。<br>在家現做，讓一盒手工甜點，成為你與我們相遇的方式。</p>
+            </div>
+            <div class="brand-emblem" aria-hidden="true">
+                <img src="images/UNICORN LOGO.png" alt="" width="320" height="320" loading="lazy">
+                <span>Project.CD</span>
+                <p>咖啡與甜點的日常提案</p>
+            </div>
+            <div class="brand-principles">
+                <div><span class="brand-principle-number">01</span><h4>在家現做</h4><p>從自家的製作空間，送出手工甜點。</p></div>
+                <div><span class="brand-principle-number">02</span><h4>在線上相遇</h4><p>沒有實體門市，透過網路與你連結。</p></div>
+                <div><span class="brand-principle-number">03</span><h4>把想像蓋成大樓</h4><p>走進虛擬空間，探索另一面的 Project.CD。</p></div>
+            </div>
+        </div>
+        <div id="brand-team-panel" role="tabpanel" aria-labelledby="brand-team-tab" hidden>
+        <div class="team-switcher">
             <div class="team-avatar-rail">
                 <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
                     <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
@@ -363,6 +388,8 @@
 
                 <p class="team-mobile-bio" id="team-mobile-bio"></p>
             </div>
+        </div>
+
         </div>
 
         <div class="brand-building-entry">

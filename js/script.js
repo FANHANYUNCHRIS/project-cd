@@ -94,6 +94,32 @@ document.addEventListener('DOMContentLoaded', () => {
        操作區（不是純裝飾的頂欄），跟著捲動消失反而讓人點不到，改成不管往上
        往下捲，導覽列都固定顯示，跟桌機版行為一致 */
 
+    // 品牌故事與角色資料分開呈現，沿用既有角色內容分頁。
+    (function initBrandTabs() {
+        const tabs = [...document.querySelectorAll('.brand-tabs [role="tab"]')];
+        const activate = tab => {
+            tabs.forEach(item => {
+                const selected = item === tab;
+                item.setAttribute('aria-selected', String(selected));
+                item.tabIndex = selected ? 0 : -1;
+                document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+            });
+        };
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => activate(tab));
+            tab.addEventListener('keydown', event => {
+                let target;
+                if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') target = tabs[1 - index];
+                if (event.key === 'Home') target = tabs[0];
+                if (event.key === 'End') target = tabs[tabs.length - 1];
+                if (!target) return;
+                event.preventDefault();
+                activate(target);
+                target.focus();
+            });
+        });
+    })();
+
     /* =========================================
        4. 品牌團隊人物切換器
        ========================================= */
