@@ -6310,3 +6310,20 @@ a.faq-card {
     #main-navbar { pointer-events: none; }
     #main-navbar a, #main-navbar button { pointer-events: auto; }
 }
+
+/* 主頁內容統一使用產品頁的左右邊界與手機內容寬度。 */
+:root { --page-content-max: none; }
+.pastry-content,
+#brand > .brand-section-header,
+#brand > [role="tabpanel"],
+#brand > .brand-building-entry,
+#shop > .shop-links,
+.footer > .footer-container,
+.footer > .footer-bottom {
+    width: 100%;
+    max-width: var(--page-content-max);
+    margin-inline: auto;
+}
+@media (max-width: 1024px) {
+    :root { --page-content-max: 480px; }
+}
