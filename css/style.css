@@ -6349,3 +6349,6 @@ a.faq-card {
 #product-modal .gallery-main img { object-fit: contain; padding: var(--sp-6); }
 #product-modal :is(.gallery-nav-btn, .gallery-thumbs, .gallery-dots)[hidden] { display: none; }
 #product-modal .gallery-main { height: min(40dvh, 320px); aspect-ratio: auto; }
+
+/* 關閉的彈窗退出排版與背景模糊合成，避免八層全螢幕材質持續參與捲動。 */
+.modal-overlay:not(.active) { display: none; }

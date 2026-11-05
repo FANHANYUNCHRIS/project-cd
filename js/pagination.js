@@ -2,26 +2,44 @@
 document.addEventListener('DOMContentLoaded', () => {
     const controllers = new Map();
     let scheduled = false;
+    const rootSelector = '.modal-overlay > .modal-container, #brand-story-panel, #brand-team-panel, #products .pastry-content';
+    const pendingRoots = new Set();
     const observer = new MutationObserver(records => {
-        if (records.some(record => {
+        for (const record of records) {
             const target = record.target.nodeType === 1 ? record.target : record.target.parentElement;
-            if (!target?.closest('.modal-overlay, #brand, #products')) return false;
-            if (record.type === 'attributes' && record.oldValue === target.getAttribute(record.attributeName)) return false;
-            return true;
-        })) schedule();
+            if (!target) continue;
+            if (record.type === 'attributes' && record.oldValue === target.getAttribute(record.attributeName)) continue;
+            const root = target.closest(rootSelector);
+            if (root) pendingRoots.add(root);
+            // Opening a dialog changes the overlay itself, outside its content root.
+            else if (target.matches('.modal-overlay')) {
+                const content = target.querySelector(':scope > .modal-container');
+                if (content) pendingRoots.add(content);
+            }
+        }
+        if (pendingRoots.size) flushSoon();
     });
     const observe = () => document.querySelectorAll('.modal-overlay, #brand, #products').forEach(surface => observer.observe(surface, {
         subtree: true, childList: true, characterData: true,
         attributes: true, attributeOldValue: true, attributeFilter: ['hidden', 'class', 'aria-hidden']
     }));
     function schedule() {
+        document.querySelectorAll(rootSelector).forEach(root => pendingRoots.add(root));
+        flushSoon();
+    }
+    function flushSoon() {
         if (scheduled) return;
         scheduled = true;
         requestAnimationFrame(() => {
             scheduled = false;
+            const roots = [...pendingRoots];
+            pendingRoots.clear();
             observer.disconnect();
-            document.querySelectorAll('.modal-overlay.active > .modal-container, #brand-story-panel, #brand-team-panel, #products .pastry-content').forEach(update);
-            observe();
+            try {
+                roots.forEach(update);
+            } finally {
+                observe();
+            }
         });
     }
     function update(root) {
