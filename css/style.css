@@ -6139,3 +6139,36 @@ a.faq-card {
     .hero-banner .hero-logo-stage { width: min(48vw, 256px, 38svh, max(0px, calc(100svh - 352px))); }
     .hero-banner > .scroll-down-indicator { bottom: 104px; }
 }
+
+/* 品牌介紹後的虛擬大樓入口，獨立於角色內容分頁。 */
+#brand { flex-direction: column; gap: var(--sp-4); }
+#brand .team-switcher {
+    height: min(640px, calc(100svh - var(--page-space-block) * 2 - 88px));
+}
+.brand-building-entry { flex: 0 0 auto; text-align: center; }
+.brand-building-entry p { color: var(--ink-soft); font-size: var(--fs-small); }
+.brand-building-entry a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-3);
+    min-height: 44px;
+    padding: var(--sp-2) var(--sp-4);
+    color: var(--ink);
+    font-size: var(--fs-body);
+    text-underline-offset: var(--sp-1);
+}
+.footer-social a.social-building {
+    grid-column: 1 / -1;
+    width: auto;
+    min-height: 44px;
+    height: auto;
+    justify-content: flex-start;
+    gap: var(--sp-2);
+    font-size: var(--fs-small);
+}
+.footer-social a.social-building i { font-size: var(--fs-h4); }
+.footer-social a.social-building:hover i { color: inherit; }
+@media (max-width: 1024px) {
+    #brand .team-switcher { height: auto; }
+}
