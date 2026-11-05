@@ -6172,3 +6172,44 @@ a.faq-card {
 @media (max-width: 1024px) {
     #brand .team-switcher { height: auto; }
 }
+
+/* 單款鳳梨酥：介紹、無框商品展示、選購資訊。 */
+.pastry-product {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--sp-8);
+    background: var(--white);
+    color: var(--ink);
+}
+.pastry-kicker { font-size: var(--fs-small); color: var(--ink-soft); margin-bottom: var(--sp-5); }
+.pastry-intro h2 { font-size: var(--fs-h1); line-height: 1.4; }
+.pastry-intro h2 span { display: block; font-size: var(--fs-body); font-weight: 400; margin-top: var(--sp-2); }
+.pastry-description { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-8); }
+.pastry-gallery { min-width: 0; margin: 0; }
+.pastry-stage { height: min(48svh, 456px); display: grid; place-items: center; }
+.pastry-stage img, .pastry-illustration, .pastry-illustration svg { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.pastry-stage [hidden] { display: none; }
+.pastry-image-note { text-align: center; font-size: var(--fs-caption); color: var(--ink-soft); line-height: 1.6; }
+.pastry-thumbnails { display: flex; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
+.pastry-thumbnails button { width: var(--sp-16); min-height: 44px; background: transparent; border: 1px solid transparent; color: var(--ink); cursor: pointer; padding: var(--sp-1); font: inherit; }
+.pastry-thumbnails button[aria-pressed="true"] { border-color: var(--ink); }
+.pastry-thumbnails svg { display: block; width: 100%; height: var(--sp-10); }
+.pastry-thumbnails span { font-size: var(--fs-caption); }
+.pastry-purchase { display: flex; flex-direction: column; gap: var(--sp-6); min-width: 0; }
+.pastry-spec { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); font-size: var(--fs-small); }
+.pastry-spec > :first-child { color: var(--ink-soft); }
+.pastry-spec strong { font-size: var(--fs-lead); }
+.pastry-buy { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-4); min-height: var(--sp-12); padding: var(--sp-3) var(--sp-5); border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font: inherit; cursor: pointer; }
+.pastry-details { min-height: 44px; padding: var(--sp-2); border: 0; background: transparent; color: var(--ink); font: inherit; font-size: var(--fs-small); text-decoration: underline; text-underline-offset: var(--sp-1); cursor: pointer; }
+.pastry-buy:hover { background: var(--ink-hover); }
+@media (max-width: 1024px) {
+    .pastry-product { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
+    .pastry-intro, .pastry-gallery, .pastry-purchase { width: 100%; max-width: 480px; margin-inline: auto; }
+    .pastry-intro h2 { font-size: var(--fs-h2); }
+    .pastry-kicker { margin-bottom: var(--sp-2); }
+    .pastry-description { margin-top: var(--sp-4); }
+    .pastry-stage { height: min(32svh, 280px); }
+    .pastry-thumbnails { margin-top: var(--sp-3); }
+    .pastry-purchase { gap: var(--sp-4); }
+}

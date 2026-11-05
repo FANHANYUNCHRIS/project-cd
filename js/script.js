@@ -80,32 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "images/product-1-detail2.jpg",
                 "images/product-1-detail3.jpg"
             ]
-        },
-        '2': {
-            // 蛋黃酥的真實商品照還沒找到合適的（見對話紀錄：Pexels/Pixabay 上
-            // 幾乎沒有真正符合「金黃酥皮＋鹹蛋黃內餡」外觀的免費素材，寧可維持
-            // 圖片缺件、套用既有的 .img-fallback 佔位樣式，也不要放一張根本不是
-            // 蛋黃酥的照片上去混淆消費者——跟 team-2.jpg／team-3.jpg 同一個處理
-            // 原則：等真正拍好照片放進 images/ 資料夾就會自動生效
-            name: "蛋黃酥",
-            price: "NT$ 450",
-            qty: "6入/盒",
-            desc: "選用紅心鹹蛋黃搭配細緻烏豆沙餡，外層酥皮層層酥脆，鹹甜交織是經典中式節慶點心的代表。",
-            allergens: "蛋、奶、麩質",
-            ingredients: ["紅心鹹蛋黃", "烏豆沙餡", "奶油酥皮", "雞蛋", "細砂糖"],
-            notice: genericProductNotices,
-            images: [
-                "images/product-2.jpg",
-                "images/product-2-detail1.jpg",
-                "images/product-2-detail2.jpg",
-                "images/product-2-detail3.jpg"
-            ]
-        },
-        '3': {
-            name: '全新作品',
-            preview: true
         }
-
     };
 
     /* =========================================
@@ -272,215 +247,68 @@ document.addEventListener('DOMContentLoaded', () => {
     (function initProductPanels() {
         const placeholder = document.getElementById('products-placeholder');
         if (!placeholder) return;
-
-        // 第一個產品沿用原本的 id="products"，讓導覽列「產品」連結／右側章節
-        // 小圓點不用跟著改；後面的產品各自是獨立滿版畫面，但沒有自己的導覽
-        // 項目，用 data-nav-group 歸類回 "products"（見 11. Scrollspy 的
-        // navObserver，currentId 優先讀 data-nav-group，捲到這些畫面時
-        // 「產品」連結／小圓點照樣維持高亮）
-        const productIds = Object.keys(productsData);
-        const sectionIds = productIds.map((_, i) => i === 0 ? 'products' : `product-${i + 1}`);
-
-        const sections = productIds.map((id, index) => {
-            const product = productsData[id];
-            const nextHref = index < productIds.length - 1 ? `#${sectionIds[index + 1]}` : '#brand';
-
-            // 滿版商品圖：整張照片鋪滿螢幕當背景（跟首頁 Hero 同樣的全螢幕
-            // 沉浸式語言），不是裝在一張小卡片裡——所以這裡是 dark-section
-            // （navObserver 共用同一個 observer 判斷深底，LOGO 自動轉白，
-            // 不用額外寫 scroll 監聽，見 CLAUDE.md 導覽列架構說明），
-            // SCROLL DOWN 指示器也拿掉 on-light（背景換成深色照片了）
-            const section = document.createElement('section');
-            section.className = 'fullscreen-section product-fullscreen-section dark-section';
-            section.id = sectionIds[index];
-            if (index > 0) section.dataset.navGroup = 'products';
-            if (product.preview) {
-                section.className = 'fullscreen-section product-luxury product-tech dark-section';
-                section.innerHTML = `
-                    <div class="luxury-heading"><span>PROJECT.CD / NEXT LAB</span><span>MODULE 003</span></div>
-                    <div class="luxury-art" role="img" aria-label="第三款商品包裝概念示意">
-                        <span class="luxury-art-caption">NEXT GENERATION</span>
-                        <svg viewBox="0 0 600 480" aria-hidden="true" focusable="false">
-                            <defs><linearGradient id="luxury-box" x2="1" y2="1"><stop stop-color="#f6efe2"/><stop offset="1" stop-color="#c9bca7"/></linearGradient></defs>
-                            <ellipse cx="300" cy="394" rx="192" ry="19" fill="#30291f" opacity=".08"/>
-                            <path d="m112 196 242-64 143 84-243 70Z" fill="#f2eadd"/>
-                            <path d="m112 196 142 90v104l-142-91Z" fill="#c9bca7"/>
-                            <path d="m254 286 243-70v105l-243 69Z" fill="url(#luxury-box)"/>
-                            <path d="m218 168 142 87v105l34-10V245L253 159Z" fill="#30291f"/>
-                            <path d="m112 208 142 89 243-70" fill="none" stroke="#a69982"/>
-                            <text x="300" y="319" fill="#504738" font-size="14" font-family="Georgia, serif" transform="rotate(-16 300 319)">Project.CD</text>
-                        </svg>
-                        <span class="luxury-art-note">包裝概念示意</span>
-                    </div>
-                    <div class="luxury-copy">
-                        <p class="luxury-kicker">PRODUCT LAB / 新品開發</p>
-                        <h2>全新作品<span>即將揭曉</span></h2>
-                        <p class="luxury-description">留一份期待，給下一段甜蜜時光。</p>
-                        <dl class="luxury-details"><div><dt>商品名稱</dt><dd>待確認</dd></div><div><dt>包裝規格</dt><dd>待確認</dd></div><div><dt>售價</dt><dd>待確認</dd></div></dl>
-                        <a class="luxury-link" href="#contact">洽詢新品 <span aria-hidden="true">↗</span></a>
-                    </div>
-                    <div class="luxury-bottom"><span>PROJECT.CD</span><span>探索下一個甜點靈感。</span></div>
-                    <a href="${nextHref}" class="scroll-down-indicator" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
-                return section;
-            }
-            // 所有商品共用道具庫展示版型。
-            {
-                section.className = 'fullscreen-section product-showcase' + (id === '2' ? ' product-esports dark-section' : '');
-                const panels = [
-                    `<p class="product-info-note">原物料資料待確認</p><p>${product.ingredients.join('、')}</p>`,
-                    `<dl class="product-label-table"><div><dt>品名</dt><dd>${product.name}</dd></div><div><dt>包裝數量</dt><dd>${product.qty}</dd></div><div><dt>過敏原</dt><dd>${product.allergens}</dd></div></dl><p class="product-info-note">完整食品標示與營養資料待補齊</p>`,
-                    `<ul>${product.notice.map(text => `<li>${text}</li>`).join('')}</ul>`
-                ];
-                section.innerHTML = `
-                    <aside class="product-info-rail" aria-label="商品資訊">
-                        <p class="product-showcase-eyebrow">ITEM DATA / 道具資料</p>
-                        <div class="product-info-tabs" role="tablist" aria-label="資訊類別">
-                            ${['原物料', '食品標示', '注意事項'].map((label, n) => `<button type="button" role="tab" id="product-${id}-tab-${n}" aria-controls="product-${id}-info-panel" aria-selected="${n === 0}" tabindex="${n === 0 ? 0 : -1}" data-panel="${n}">${label}</button>`).join('')}
-                        </div>
-                        <div class="product-info-panel" id="product-${id}-info-panel" role="tabpanel" aria-labelledby="product-${id}-tab-0">${panels[0]}</div>
-                    </aside>
-                    <div class="product-showcase-main">
-                        <p class="product-showcase-eyebrow">INVENTORY / 甜點道具庫 <span>NO. ${String(index + 1).padStart(3, '0')}</span></p>
-                        <div class="product-showcase-photo" aria-live="polite"><span class="product-view-index">VIEW 01 / 03</span><img src="${product.images[0]}" alt="${product.name}，第 1 張" loading="lazy"><div class="product-photo-placeholder" hidden></div></div>
-                        <div class="product-image-dots" role="group" aria-label="商品圖片切換">${[0,1,2].map(n => `<button type="button" aria-label="查看第 ${n+1} 張商品圖" aria-pressed="${n===0}" data-view="${n}"><span></span></button>`).join('')}</div>
-                    </div>
-                    <aside class="product-loadout" aria-label="商品選購">
-                        <p class="product-showcase-eyebrow">SELECTED ITEM / 已選道具</p>
-                        <h2>${product.name}</h2>
-                        <p class="product-showcase-summary">${product.desc}</p>
-                        <p class="product-showcase-price">${product.qty}<span aria-hidden="true">／</span><strong>${product.price}</strong></p>
-                        <button type="button" class="product-showcase-cta">查看商品與選購 <span aria-hidden="true">＋</span></button>
-                        <p class="product-loadout-hint">切換視角探索商品<br>開啟商品詳情，選擇購買數量</p>
-                    </aside>
-                    <a href="${nextHref}" class="scroll-down-indicator on-light" aria-label="下一款商品"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
-                if (id === '2') {
-                    section.querySelector('.product-showcase-main > .product-showcase-eyebrow').innerHTML = 'DESSERT ARENA / 甜點競技場 <span>NO. 002</span>';
-                    section.querySelector('.product-loadout > .product-showcase-eyebrow').textContent = 'LOADOUT / 本場主角';
-                    section.querySelector('.scroll-down-indicator').classList.remove('on-light');
-                }
-                const image = section.querySelector('img');
-                const fallback = section.querySelector('.product-photo-placeholder');
-                const dots = [...section.querySelectorAll('.product-image-dots button')];
-                let currentView = 0;
-                const pastry = '<path d="M43 64 116 32l78 35-73 35Z" fill="#e3be7b"/><path d="m43 64 78 38v62l-78-38Z" fill="#bd8845"/><path d="m121 102 73-35v63l-73 34Z" fill="#d4a35e"/><path d="m56 69 60-25 62 25-57 26Z" fill="#ebcb8e"/><path d="m63 66 52-14M74 76l53-16M87 83l51-15" stroke="#c99852" stroke-width="2" opacity=".5"/>';
-                let illustrations = [
-                    pastry,
-                    '<g transform="translate(-20 0)">'+pastry+'</g><path d="m128 121 62-29 33 16-62 30Z" fill="#ebcb8e"/><path d="m128 121 33 17v36l-33-17Z" fill="#c99852"/><path d="m161 138 62-30v36l-62 30Z" fill="#f0d59f"/><path d="m167 146 48-23v14l-48 23Z" fill="#997032"/>',
-                    '<g transform="translate(8 5) scale(.8)">'+pastry+'</g><g transform="translate(68 65) scale(.65)">'+pastry+'</g>'
-                ];
-                if (id === '2') {
-                    const whole = '<ellipse cx="130" cy="133" rx="66" ry="37" fill="#bd8845"/><path d="M64 130c0-85 132-85 132 0 0 45-132 45-132 0Z" fill="#e3be7b"/><ellipse cx="130" cy="108" rx="49" ry="25" fill="#ebcb8e"/><g stroke="#997032" stroke-width="3" stroke-linecap="round"><path d="m109 99 4 3m14-9 2 4m17 3-3 3m-23 9 4 2m18 1 3-2"/></g>';
-                    const cut = '<path d="M80 147a58 58 0 0 1 116 0Z" fill="#e3be7b"/><path d="M88 147a50 50 0 0 1 100 0Z" fill="#66482f"/><path d="M115 147a23 23 0 0 1 46 0Z" fill="#d4a35e"/>';
-                    illustrations = [whole, cut, '<g transform="translate(-12 -8) scale(.85)">'+whole+'</g><g transform="translate(76 65) scale(.65)">'+whole+'</g>'];
-                }
-                const showFallback = () => {
-                    image.hidden = true;
-                    fallback.hidden = false;
-                    fallback.innerHTML = `<svg viewBox="0 0 260 210" role="img" aria-label="${product.name}版面示意，第 ${currentView+1} 張"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${illustrations[currentView]}</svg>`;
-                };
-                image.addEventListener('error', showFallback);
-                image.addEventListener('load', () => { image.hidden = false; fallback.hidden = true; });
-                dots.forEach((dot, n) => dot.addEventListener('click', () => {
-                    currentView = n;
-                    dots.forEach((item, j) => item.setAttribute('aria-pressed', String(j === n)));
-                    section.querySelector('.product-view-index').textContent = `VIEW 0${n+1} / 03`;
-                    image.alt = `${product.name}，第 ${n+1} 張`;
-                    image.src = product.images[n];
-                    if (image.complete && !image.naturalWidth) showFallback();
-                }));
-                if (image.complete && !image.naturalWidth) showFallback();
-                const tabs = [...section.querySelectorAll('[role="tab"]')];
-                const activate = tab => {
-                    tabs.forEach(item => {
-                        item.setAttribute('aria-selected', String(item === tab));
-                        item.tabIndex = item === tab ? 0 : -1;
-                    });
-                    const panel = section.querySelector('[role="tabpanel"]');
-                    panel.innerHTML = panels[Number(tab.dataset.panel)];
-                    panel.setAttribute('aria-labelledby', tab.id);
-                };
-                tabs.forEach((tab, n) => {
-                    tab.addEventListener('click', () => activate(tab));
-                    tab.addEventListener('keydown', event => {
-                        let target;
-                        if (event.key === 'ArrowRight') target = tabs[(n + 1) % tabs.length];
-                        if (event.key === 'ArrowLeft') target = tabs[(n + tabs.length - 1) % tabs.length];
-                        if (event.key === 'Home') target = tabs[0];
-                        if (event.key === 'End') target = tabs[tabs.length - 1];
-                        if (!target) return;
-                        event.preventDefault();
-                        activate(target);
-                        target.focus();
-                    });
-                });
-                section.querySelector('.product-showcase-cta').addEventListener('click', () => openProductModal(id));
-                return section;
-            }
-            section.setAttribute('role', 'button');
-            section.setAttribute('tabindex', '0');
-            section.setAttribute('aria-label', `查看${product.name}詳細介紹`);
-
-            section.innerHTML = `
-                <div class="product-fullscreen-bg" data-bg="${product.images[0]}"></div>
-                <div class="product-fullscreen-content">
-                    <h2 class="section-title reveal-zoom">產品介紹</h2>
-                    <h3 class="product-fullscreen-name reveal-zoom">${product.name}</h3>
-                    <div class="product-fullscreen-meta reveal-zoom">
-                        <span class="product-fullscreen-price">${product.price}</span>
-                        <span class="product-fullscreen-qty">（${product.qty}）</span>
-                    </div>
+        const product = productsData['1'];
+        const section = document.createElement('section');
+        section.id = 'products';
+        section.className = 'fullscreen-section pastry-product';
+        const pastry = '<path d="M43 64 116 32l78 35-73 35Z" fill="#e3be7b"/><path d="m43 64 78 38v62l-78-38Z" fill="#bd8845"/><path d="m121 102 73-35v63l-73 34Z" fill="#d4a35e"/><path d="m56 69 60-25 62 25-57 26Z" fill="#ebcb8e"/><path d="m63 66 52-14M74 76l53-16M87 83l51-15" stroke="#c99852" stroke-width="2" opacity=".5"/>';
+        const views = [pastry, '<g transform="translate(-20 0)">'+pastry+'</g><path d="m128 121 62-29 33 16-62 30Z" fill="#ebcb8e"/><path d="m128 121 33 17v36l-33-17Z" fill="#c99852"/><path d="m161 138 62-30v36l-62 30Z" fill="#f0d59f"/><path d="m167 146 48-23v14l-48 23Z" fill="#997032"/>', '<g transform="translate(8 5) scale(.8)">'+pastry+'</g><g transform="translate(68 65) scale(.65)">'+pastry+'</g>'];
+        const labels = ['外觀', '剖面', '組合'];
+        const illustration = n => `<svg viewBox="0 0 260 210" aria-hidden="true"><ellipse cx="135" cy="181" rx="85" ry="10" fill="black" opacity=".08"/>${views[n]}</svg>`;
+        section.innerHTML = `
+            <div class="pastry-intro">
+                <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
+                <h2>${product.name}<span>土鳳梨 × 法國奶油</span></h2>
+                <p class="pastry-description">${product.desc}</p>
+            </div>
+            <figure class="pastry-gallery">
+                <div class="pastry-stage" role="img" aria-label="鳳梨酥外觀示意圖">
+                    <img src="${product.images[0]}" alt="鳳梨酥外觀" hidden>
+                    <div class="pastry-illustration">${illustration(0)}</div>
                 </div>
-
-                <a href="${nextHref}" class="scroll-down-indicator" aria-label="往下滾動">
-                    <span>SCROLL DOWN</span>
-                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                </a>
-            `;
-
-            section.addEventListener('click', (e) => {
-                if (e.target.closest('.scroll-down-indicator')) return;
-                openProductModal(id);
-            });
-            section.addEventListener('keydown', (e) => {
-                if (e.target !== section) return;
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openProductModal(id);
-                }
-            });
-
-            return section;
+                <figcaption class="pastry-image-note">商品示意圖，實際外觀以到貨為準</figcaption>
+                <div class="pastry-thumbnails" role="group" aria-label="商品圖片切換">
+                    ${labels.map((label, n) => `<button type="button" data-view="${n}" aria-label="查看${label}" aria-pressed="${n === 0}">${illustration(n)}<span>${label}</span></button>`).join('')}
+                </div>
+            </figure>
+            <div class="pastry-purchase">
+                <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
+                <div class="pastry-spec"><span>售價</span><strong>${product.price}</strong></div>
+                <div class="pastry-spec"><span>過敏原</span><span>${product.allergens}</span></div>
+                <button type="button" class="pastry-buy">選購鳳梨酥 <span aria-hidden="true">↗</span></button>
+                <button type="button" class="pastry-details">成分與商品注意事項</button>
+            </div>
+            <a href="#brand" class="scroll-down-indicator on-light" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
+        const image = section.querySelector('.pastry-stage img');
+        const art = section.querySelector('.pastry-illustration');
+        const stage = section.querySelector('.pastry-stage');
+        const note = section.querySelector('.pastry-image-note');
+        let current = 0;
+        const fallback = () => {
+            image.hidden = true;
+            art.hidden = false;
+            stage.setAttribute('aria-label', `鳳梨酥${labels[current]}示意圖`);
+            note.textContent = '商品示意圖，實際外觀以到貨為準';
+        };
+        image.addEventListener('error', fallback);
+        image.addEventListener('load', () => {
+            image.hidden = false;
+            art.hidden = true;
+            stage.setAttribute('aria-label', `鳳梨酥${labels[current]}`);
+            note.textContent = labels[current];
         });
-
-        placeholder.replaceWith(...sections);
-
-        // 產品圖片延遲載入：面板接近可視範圍才設定背景圖，節省行動裝置流量。
-        // CSS background-image 讀取失敗不會像 <img> 一樣觸發 error 事件，
-        // 直接設 bgEl.style.backgroundImage 就算圖片 404 也偵測不到、永遠不會
-        // 套用 .img-fallback——改成先用一個不塞進畫面的 Image() 物件試讀，
-        // 讀成功才設背景圖，讀失敗就加 .img-fallback class（對應樣式見下方
-        // .product-fullscreen-bg.img-fallback，跟商品彈窗大圖 .gallery-main
-        // 同一套圖示佔位語言），圖片準備好上傳後會自動換回真的照片
-        const lazyBgObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                const bgEl = entry.target;
-                const src = bgEl.dataset.bg;
-                const probe = new Image();
-                probe.addEventListener('load', () => {
-                    bgEl.style.backgroundImage = `url('${src}')`;
-                });
-                probe.addEventListener('error', () => {
-                    bgEl.classList.add('img-fallback');
-                });
-                probe.src = src;
-                observer.unobserve(bgEl);
-            });
-        }, { rootMargin: '300px' });
-
-        sections.forEach(section => {
-            section.querySelectorAll('.product-fullscreen-bg').forEach(el => lazyBgObserver.observe(el));
-        });
+        section.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+            current = Number(button.dataset.view);
+            section.querySelectorAll('[data-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+            art.innerHTML = illustration(current);
+            fallback();
+            image.alt = `鳳梨酥${labels[current]}`;
+            image.src = product.images[current];
+            if (image.complete && image.naturalWidth) image.dispatchEvent(new Event('load'));
+        }));
+        section.querySelectorAll('.pastry-buy, .pastry-details').forEach(button => button.addEventListener('click', () => openProductModal('1')));
+        placeholder.replaceWith(section);
+        if (image.complete && image.naturalWidth) image.dispatchEvent(new Event('load'));
     })();
 
     /* =========================================
