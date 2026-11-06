@@ -6158,16 +6158,6 @@ a.faq-card {
     font-size: var(--fs-body);
     text-underline-offset: var(--sp-1);
 }
-.footer-social a.social-building {
-    grid-column: 1 / -1;
-    width: auto;
-    min-height: 44px;
-    height: auto;
-    justify-content: flex-start;
-    gap: var(--sp-2);
-    font-size: var(--fs-small);
-}
-.footer-social a.social-building i { font-size: var(--fs-h4); }
 .footer-social a.social-building:hover i { color: inherit; }
 @media (max-width: 1024px) {
     #brand .team-switcher { height: auto; }
