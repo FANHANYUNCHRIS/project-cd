@@ -360,16 +360,13 @@ floorGroups.forEach((g,i)=>{   // restrooms on every floor, the roof garden incl
     const s=new THREE.Mesh(new THREE.PlaneGeometry(.64,.32),m);s.position.set(x,dh+.35,z1+.01);g.add(s);});                // doors + signs face the street
   [[x0,xm],[xm,x1]].forEach(([a,b])=>{[a+.6,a+1.6].forEach(x=>{box(.4,.42,.6,C.white,x,.21,z0+.6,g);box(.4,.4,.14,C.white,x,.62,z0+.27,g);});
     box(.45,.85,1.1,C.white,a+.35,.425,z1-.9,g);});
-  if(i===RF)box(x1-x0+.2,.29,z1-z0-.02,C.black,(x0+x1)/2,hh+.14,zc-.01,g);   // roof on the top (roof-garden) block
 });
 // Compact landing across the elevator and restroom doors.
 floorGroups.forEach((g,i)=>{const t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off,xr=WK[0],zf=LEFT_LANDING_END;
   box(xr-PX0,t,zf-RR.z1,fc,(PX0+xr)/2,y,(RR.z1+zf)/2,g);
   if(i===0)return;
   box(.1,.3,zf-RR.z1,C.black,PX0-.05,-.15,(RR.z1+zf)/2,g);box(xr-PX0,.3,.1,C.black,(PX0+xr)/2,-.15,zf+.05,g);   // black slab edges
-  RAILH=i===RF?1.5:1.1;railRun(g,PX0+.03,RR.z1,zf);   // continuous guard after removing the external stair
-  railX(g,zf-.03,PX0,xr);
-  RAILH=1.1;});
+});
 
 // large standalone brand logos (one on the escalator hall here, one on the annex's street wall further down)
 const bigLogoTex=new THREE.CanvasTexture(document.createElement('canvas'));
@@ -409,12 +406,9 @@ floorGroups.forEach((g,i)=>{
   box(xb-xa,.35,.35,STEEL,(xa+xb)/2,top,zc,scene);
   for(let k=0;k<RF;k++)strut(scene,[xb,k*H,zc],[xb,(k+1)*H,zc+(k%2?2.6:-2.6)],.12);
 })();
-// elevator tower: X-bracing on the two outer faces, tied back by the sky bridges
-EVS.forEach(E=>{const [x0,x1,z0,z1]=E.ELEV;
-  for(let k=0;k<NF;k++){const y0=k*H-.3,y1=Math.min((k+1)*H,RF*H+2.1);
-    strut(scene,[x0-.06,y0,z0],[x0-.06,y1,z1],.09);strut(scene,[x0-.06,y0,z1],[x0-.06,y1,z0],.09);
-    strut(scene,[x0,y0,z0-.06],[x1,y1,z0-.06],.09);strut(scene,[x1,y0,z0-.06],[x0,y1,z0-.06],.09);}
-  box(x1-x0+.4,.6,z1-z0+.4,CONC,(x0+x1)/2,-H-.6,(z0+z1)/2,scene);                 // footing (below B1)
+// Elevator tower footings beneath B1.
+EVS.forEach(({ELEV:[x0,x1,z0,z1]})=>{
+  box(x1-x0+.4,.6,z1-z0+.4,CONC,(x0+x1)/2,-H-.6,(z0+z1)/2,scene);
 });
 // Left platform edge beams; exterior vertical columns removed for the concept view.
 floorGroups.forEach((g,i)=>{if(i===0)return;const zf=LEFT_LANDING_END;[-23.6,-17.6].forEach(x=>box(.3,.45,zf-RR.z1,C.black,x-EXP,-.52,(RR.z1+zf)/2,g));});
@@ -947,6 +941,30 @@ const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2,
   g.children.slice(h0).forEach(o=>o.userData.xray=true);
 })();
 
+// A single glazed tower wraps the elevator shafts, restrooms and landings.
+(function(){
+  const x0=PX0-.08,x1=WK[0],z0=RR.z0-.15,z1=LEFT_LANDING_END+.06;
+  const width=x1-x0,depth=z1-z0,cx=(x0+x1)/2,cz=(z0+z1)/2;
+  const glass={transparent:true,opacity:.2,depthWrite:false};
+  const midY=EY+EH/2,top=EY+EH;
+  box(.05,EH,depth,C.glass,x0,midY,cz,scene,glass);
+  box(width,EH,.05,C.glass,cx,midY,z0,scene,glass);
+  box(width,EH,.05,C.glass,cx,midY,z1,scene,glass);
+  box(.05,EH,RR.z1-z0,C.glass,x1,midY,(RR.z1+z0)/2,scene,glass);
+  // Leave the inboard landing side open to the garden walk on each floor.
+  box(width+.1,.05,depth+.1,C.glass,cx,top,cz,scene,{...glass,opacity:.3});
+  for(const x of [x0,x1])for(const z of [z0,z1])box(.12,EH,.12,C.black,x,midY,z,scene);
+  for(const y of [top,...Array.from({length:RF},(_,i)=>(i+1)*H)]){
+    box(.08,.08,depth,C.black,x0,y,cz,scene);
+    for(const z of [z0,z1])box(width,.08,.08,C.black,cx,y,z,scene);
+  }
+  box(.08,.08,depth,C.black,x1,top,cz,scene);
+  for(const fraction of [1/3,2/3]){
+    box(.06,EH,.06,C.black,x0,midY,z0+depth*fraction,scene);
+    for(const z of [z0,z1])box(.06,EH,.06,C.black,x0+width*fraction,midY,z,scene);
+  }
+})();
+
 // ---------- elevator ----------
 const shaftH=RF*H+2.4;
 EVS.forEach(E=>{const [x0,x1,z0,z1]=E.ELEV;
@@ -954,7 +972,6 @@ const shaft=new THREE.Group(); shaft.position.set((x0+x1)/2,0,(z0+z1)/2); shaft.
 const sw=z1-z0, sd=x1-x0;
 box(sw,shaftH+H,sd,C.glass,0,(shaftH-H)/2-.3,0,shaft,{transparent:true,opacity:.22,depthWrite:false});
 [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(.09,shaftH+H,.09,C.black,a*sw/2,(shaftH-H)/2-.3,b*sd/2,shaft));
-box(sw+.1,.3,sd+.1,C.black,0,shaftH-.15,0,shaft);
 const cab=new THREE.Group();shaft.add(cab);
 box(sw-.2,2.3,sd-.2,C.glass,0,1.15,0,cab,{transparent:true,opacity:.25,depthWrite:false});
 box(sw-.15,.12,sd-.15,C.black,0,2.3,0,cab);box(sw-.15,.1,sd-.15,C.black,0,.05,0,cab);
