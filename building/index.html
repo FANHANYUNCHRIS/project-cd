@@ -70,14 +70,6 @@ aside li a{color:var(--fg);font-weight:700;text-decoration:underline;text-underl
   .hint{display:none}
   aside#panel{top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));width:auto;max-height:50%}
 }
-.ai-tag{position:absolute;z-index:4;left:0;top:0;transform:translate(-50%,-100%);font:700 .72rem var(--body);letter-spacing:.04em;padding:2px 9px;border-radius:999px;background:var(--surface);color:var(--fg);border:1px solid var(--line);pointer-events:none;white-space:nowrap}
-.ai-tag.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-.ai-bubble{position:absolute;z-index:5;left:0;top:0;width:min(330px,calc(100% - 32px));max-height:42%;overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 12px 30px rgba(0,0,0,.18);cursor:pointer}
-.ai-bubble .who{display:flex;align-items:baseline;gap:8px}
-.ai-bubble .who b{font-family:var(--display);font-size:1rem}
-.ai-bubble .who small{margin-left:auto;color:var(--muted);font-size:.7rem;font-variant-numeric:tabular-nums}
-.ai-bubble p{margin:6px 0 0;line-height:1.7;font-size:.86rem;white-space:pre-line;color:var(--fg)}
-.ai-bubble .tip{display:block;margin-top:6px;color:var(--muted);font-size:.7rem}
 .loader{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
   background:#121212;color:#F2F2F0;transition:opacity .6s ease}
 .loader.done{opacity:0;pointer-events:none}
@@ -101,7 +93,6 @@ aside li a{color:var(--fg);font-weight:700;text-decoration:underline;text-underl
     <nav id="floors" aria-label="樓層"></nav>
   </div>
   <div class="hint">左鍵拖曳旋轉・右鍵拖曳移動・Shift＋左鍵上下移動・滾輪縮放・點區域看內容</div>
-  <div id="aimeet" hidden></div>
   <aside id="panel" hidden aria-live="polite">
     <button class="close" id="close" aria-label="關閉">✕</button>
     <div class="eyebrow" id="p-eyebrow"></div>
@@ -141,7 +132,7 @@ const ZONES={   // real metres
     desc:'上課時間每天 09:00–17:00（12:00–13:00 午休）、19:00–22:00，每堂 50 分開始下課 10 分鐘。一班 20 位學員，一人一張桌子。前面是講師示範台，助教在旁協助。左邊是烤箱、咖啡機、烘豆機，右邊是甜點備料區。',
     items:[{t:'甜點入門班',demo:1},{t:'咖啡手沖課',demo:1},{t:'烘豆體驗',demo:1},{t:'落地攪拌／揉麵機、壓麵整形機',demo:1}]},
   office:{floor:OFFICE,name:'辦公室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
-    desc:'大門櫃檯接待區、辦公區、茶水間與開放休息區、會議室。會議室裡 GPT、Gemini、Claude、Grok 四位正在開會，討論「預計半年後開賣，這半年要怎麼更新官網與經營社群」，頭上的對話框會輪流顯示每個人的發言。品牌故事和聯絡方式放在這裡。',
+    desc:'五人開放式辦公室，每人配有電動升降桌、人體工學椅、Mac 主機、螢幕、鍵盤和滑鼠。右側是開放式茶水間與休息區，提供咖啡、飲水與簡單茶點。',
     items:[{t:'品牌故事',demo:1},
            {t:'Instagram　@project.cd',href:'https://www.instagram.com/project.cd'},
            {t:'Facebook 粉絲專頁',href:'https://www.facebook.com/project.cd.tw'},
@@ -755,8 +746,8 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
     chair(g,x,z+.66,Math.PI);}));
 })(floorGroups[2]);
 
-// ---- 4F office: reception facing the door; desks to the left; meeting room + open lounge to the back right ----
-const DESKS=[];
+// ---- 4F: five open workstations and an open pantry ----
+const DESKS=[[-5.6,-5.6],[-2.6,-5.6],[.4,-5.6],[-5.6,-2.6],[-2.6,-2.6]];
 (function(g){
   const SILVER=0xC9CCCE, MESH=0x2B2B2B;
   function ergoChair(x,z,ry){const c=new THREE.Group();c.position.set(x,0,z);c.rotation.y=ry;c.userData.solid=true;g.add(c);
@@ -765,30 +756,42 @@ const DESKS=[];
     box(.46,.62,.04,MESH,0,.84,-.24,c);box(.3,.16,.05,MESH,0,1.24,-.25,c);box(.04,.3,.04,C.black,0,1.08,-.26,c);
     box(.08,.4,.08,C.black,0,.6,-.23,c);
     [-.25,.25].forEach(o=>{box(.05,.2,.05,C.black,o,.56,-.02,c);box(.05,.04,.3,C.black,o,.66,-.02,c);});return c;}
-  function imac(x,y,z){box(.16,.02,.14,SILVER,x,y+.01,z-.05,g);box(.04,.22,.03,SILVER,x,y+.13,z-.1,g);
-    box(.62,.44,.025,SILVER,x,y+.47,z-.08,g);box(.58,.33,.005,0x1E2A33,x,y+.51,z-.062,g);
-    box(.32,.012,.11,0xEDEDED,x,y+.006,z+.14,g);box(.06,.012,.1,0xEDEDED,x+.28,y+.006,z+.14,g);}
-  // reception straight ahead of the door, brand wall behind it
-  box(5,3,.25,C.black,-.6,1.5,3.9,g);
-  const logo=new THREE.Mesh(new THREE.PlaneGeometry(3.8,.68),new THREE.MeshBasicMaterial({map:brandTex(2048,360,240,true)}));logo.position.set(-.6,2.2,4.03);g.add(logo);
-  box(3.2,1.05,.7,C.white,-.6,.525,5.6,g);box(3.24,.04,.74,C.black,-.6,1.07,5.6,g);box(3.2,.2,.3,C.white,-.6,1.17,5.9,g);imac(-.6,1.09,5.45);
-  sofa(g,-5.6,7.7,2.4,Math.PI);box(1,.4,.5,C.white,-5.6,.2,6.8,g);
-  // left: open-plan office, one desk + iMac + ergonomic chair per person (3 × 4)
-  [-7.2,-5.2,-3.2].forEach(x=>[-7.2,-4.8,-2.4,0].forEach(z=>{
-    box(1.4,.04,.7,C.white,x,.75,z,g);box(.04,.73,.64,C.black,x-.66,.365,z,g);box(.04,.73,.64,C.black,x+.66,.365,z,g);
-    imac(x,.77,z);ergoChair(x,z+.72,Math.PI);DESKS.push([x,z+.72]);}));
-  // back right: meeting room behind frosted glass
-  const fr={transparent:true,opacity:.5,depthWrite:false};
-  box(.06,3,6.2,0xE3E8EA,1.2,1.5,-5.5,g,fr);box(.8,3,.06,0xE3E8EA,1.6,1.5,-2.4,g,fr);box(5.4,3,.06,0xE3E8EA,5.95,1.5,-2.4,g,fr);
-  box(.06,.06,6.2,C.black,1.2,3.03,-5.5,g);box(7.45,.06,.06,C.black,4.92,3.03,-2.4,g);
-  box(3.6,.05,1.3,C.white,4.9,.76,-5.5,g);box(3.2,.72,.08,C.black,4.9,.36,-5.5,g);
-  [3.6,4.5,5.4,6.3].forEach(x=>{ergoChair(x,-6.45,0);ergoChair(x,-4.55,Math.PI);});
-  box(3,1.7,.06,C.black,4.9,2,-8.6,g);
-  // right: coffee, drinks & snack bar
+  function macSetup(x,y,z){
+    box(.18,.024,.17,SILVER,x,y+.012,z-.14,g);
+    box(.045,.23,.045,SILVER,x,y+.135,z-.15,g);
+    box(.65,.39,.04,SILVER,x,y+.39,z-.13,g);
+    box(.62,.35,.006,0x1E2A33,x,y+.39,z-.107,g);
+    box(.14,.052,.14,SILVER,x+.54,y+.026,z-.15,g);
+    box(.025,.009,.006,C.dark,x+.57,y+.024,z-.077,g);
+    box(.35,.014,.115,SILVER,x-.06,y+.007,z+.16,g);
+    for(let row=0;row<4;row++)for(let key=0;key<11;key++){
+      box(.024,.003,.017,C.white,x-.21+key*.029,y+.015,z+.124+row*.024,g);
+    }
+    const mouse=new THREE.Mesh(new THREE.SphereGeometry(1,12,8),mat(C.white));
+    mouse.scale.set(.035,.013,.054);mouse.position.set(x+.26,y+.013,z+.16);g.add(mouse);
+  }
+  DESKS.forEach(([x,z])=>{
+    const top=.75;
+    box(1.65,.045,.8,C.white,x,top-.0225,z,g);
+    [-.71,.71].forEach(offset=>{
+      const leg=x+offset;
+      box(.12,.06,.66,C.black,leg,.03,z,g);
+      box(.095,.42,.12,C.black,leg,.24,z,g);
+      box(.069,.4,.091,SILVER,leg,.525,z,g);
+    });
+    box(.12,.03,.055,C.dark,x+.63,top-.056,z+.36,g);
+    [-.025,.025].forEach(offset=>box(.022,.014,.005,C.white,x+.63+offset,top-.056,z+.39,g));
+    macSetup(x,top,z);ergoChair(x,z+.72,Math.PI);
+  });
+  // Open pantry with a coffee counter, sink, drinks fridge and adjacent lounge
   box(.7,.95,6,C.black,7.9,.475,1.2,g);box(.74,.04,6.04,C.white,7.9,.97,1.2,g);
   espresso(g,7.95,.99,-1.2,.6,-1);grinder(g,7.95,.99,-.5);
   for(let k=0;k<6;k++)cyl(.045,.04,.09,k%2?C.white:C.dark,7.75,1.035,-.1+k*.12,g,10);
-  box(.5,.03,.6,C.dark,7.9,.99,.9,g);
+  box(.49,.025,.63,C.steel,7.9,.997,.9,g);
+  box(.34,.015,.47,C.dark,7.9,1.012,.9,g);
+  cyl(.022,.022,.29,SILVER,8.15,1.14,.9,g,12);
+  box(.21,.04,.045,SILVER,8.06,1.28,.9,g);
+  box(.055,.075,.045,SILVER,7.97,1.25,.9,g);
   for(let k=0;k<4;k++)box(.3,.18,.22,[0xD9B24A,0xC0504D,0x4F6D8F,C.pastry][k],7.95,1.08,1.6+k*.34,g);   // snack boxes
   box(.75,2,.75,C.white,7.9,1,4.6,g);box(.02,1.7,.6,0xC8D2D6,7.52,1.05,4.6,g,{transparent:true,opacity:.55});   // drinks fridge
   for(let r=0;r<4;r++)for(let k=0;k<4;k++)cyl(.04,.04,.24,[0x3F7A4A,0xC0504D,0xD9B24A,0xF2F2F0][(r+k)%4],7.7,.42+r*.42,4.38+k*.15,g,8);
@@ -986,7 +989,7 @@ WALK.queue=[[-3.4,-3.4],[-1.5,-3.4],[.5,-3.4],[2.5,-3.4]];   // behind the count
 WALK.gifts=[[-5,-6.6],[-1.5,-6.6],[1.5,-6.6],[5,-6.6],[-4.8,-1.6],[-1.5,-1.8],[1.5,-1.8],[5.6,-1.8],[-4.4,1.4],[1.6,2.6],[-1.6,6.2],[0,4.2],[5.6,-4.2]];
 WALK.classroom=[[-.6,6.5],[-.6,-4.8],[-6.4,-3],[-6.4,4],[5.6,-3],[5.6,4],[-.6,1]];
 WALK.assist=[[-.6,5.8],[-.6,-5],[-3.8,-5],[-3.8,5.8],[-.6,5.8],[2.6,5.8],[2.6,-5],[-.6,-5]];
-WALK.office=[[-.6,7.2],[-3,7],[-4.2,2.2],[-4.2,-6],[-6.2,1.6],[2,7],[2.6,.4],[6.9,2.6],[2.4,-2],[5.4,-.4]];
+WALK.office=[[-.6,7.2],[-3,7],[-4.2,2.2],[-4.1,-4.1],[-6.2,1.6],[2,7],[2.6,.4],[6.9,2.6],[2.4,-2],[5.4,-.4]];
 WALK.terrace=[[-5,-3.4],[-3.2,-3.4],[-.6,3],[2.9,-.6],[-.6,-4.2],[-4.2,-.6],[2.2,2.2],[-3.2,2.2],[7.7,4],[5,.6],[1.9,-3.1]];   // on the garden paths
 WALK.entry=[[-.6,7.6],[-.6,4.5],[-1,3.6],[-.6,6.8]];
 WALK.balcony=[[BAL_X0+.8,-4.8],[BAL_X0+2.6,-2.8],[BAL_X0+.8,2.5],[BAL_X0+2.6,5],[BAL_X0+1.2,-1.3]];
@@ -1000,7 +1003,7 @@ walker(0,'dining',col(),true); walker(0,'dining',col(),true); walker(0,'entry',c
  [.35,-3,Math.PI/2],[2.05,-1,-Math.PI/2],[.35,0,Math.PI/2],[3.55,0,Math.PI/2],[5.25,-4,-Math.PI/2],[5.25,-2,-Math.PI/2],[3.55,-3,Math.PI/2],[4.05,7.4,-Math.PI/2]]
  .forEach(([x,z,r])=>{const q=diningPosition(x,z,r);seated(0,q[0],q[1]+CAFE_SHIFT,q[2],col(),true);});   // diners (real metres)
 
-for(let i=0;i<NF;i++)walker(i,'balcony',col());
+for(let i=0;i<NF;i++)if(i!==OFFICE)walker(i,'balcony',col());
 // store staff: salespeople, cleaners, security guards
 function dressed(kind){
   const p=person(kind==='guard'?0x26324A:kind==='clean'?0x7FA6B8:kind==='chef'?0xF4F4F2:kind==='ware'?0x55585C:C.black,false);
@@ -1024,7 +1027,7 @@ staffWalker(RF,[[-5,-3.4],[-3,-3.4],[-.6,3],[3,-.6],[-.6,-4.2],[-4.2,-.6],[-.6,3
 staffWalker(1,WALK.gifts,'clean',.4);staffWalker(2,WALK.classroom,'clean',.4);   // cleaners on 2F and 3F (1F, 4F, RF already have one)
 // salespeople
 // cleaners with mops
-staffWalker(0,WALK.dining,'clean',.45,true); staffWalker(OFFICE,WALK.office,'clean',.45); staffWalker(RF,WALK.terrace,'clean',.45);
+staffWalker(0,WALK.dining,'clean',.45,true); staffWalker(RF,WALK.terrace,'clean',.45);
 function standAt(fi,kind,x,z,ry){const m=kind?dressed(kind):person(col(),false);m.position.set(x,0,z);m.rotation.y=ry;floorGroups[fi].add(m);people.push({m,seated:true,ph:Math.random()*6});}
 // 2F: salespeople behind the jewellery counter and at the till, shoppers, people resting on the sofas
 standAt(1,'sales',-7.1,-4.4,Math.PI/2);standAt(1,'sales',-7.1,-.2,Math.PI/2);standAt(1,'sales',-7.1,4.6,Math.PI/2);
@@ -1121,36 +1124,7 @@ function classTick(dt,t){const ph=classPhase(),d=new Date(),breakId=d.getHours()
     s.wm.position.y=Math.abs(Math.sin(t*9+s.seat[0]))*.05;});
   classPrev=ph;}
 walker(2,'classroom',col());
-// 4F: receptionist, staff at desks, a meeting, people in the lounge and pantry
-standAt(OFFICE,'sales',-.6,4.7,0);   // receptionist
-DESKS.forEach(([x,z],k)=>{if(k%4!==3)seated(OFFICE,x,z,Math.PI,col(),true);});   // staff at their desks
-// meeting room: four AI members (GPT, Gemini, Claude, Grok) replaying a recorded meeting as speech bubbles
-const AIM=[{n:'GPT',x:4.5,z:-6.45,r:0,c:0x10A37F},{n:'Gemini',x:5.4,z:-6.45,r:0,c:0x4F7BE0},{n:'Claude',x:4.5,z:-4.55,r:Math.PI,c:0xD97757},{n:'Grok',x:5.4,z:-4.55,r:Math.PI,c:0x2A2A2A}];
-AIM.forEach(a=>seated(OFFICE,a.x,a.z,a.r,a.c,true));
-(function(){const t=signTexCN('#151515','#F4F4F2','AI 會議中','開賣前半年：官網與社群');
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(2.8,1.4),new THREE.MeshBasicMaterial({map:t}));m.position.set(4.9,2,-8.56);floorGroups[OFFICE].add(m);})();
-const MEET_TOPIC='預計半年後開賣，這半年要怎麼更新官網與經營社群';
-const MEET=[["GPT", "大家好，我是 GPT。感謝各位準時出席。\n今天我們要討論的是「PROJECT.CD」這半年內的官網更新與社群經營策略，目標是半年後順利開賣。身為專案經理，我希望今天的討論能聚焦在「如何透過內容累積粉絲信任」以及「官網倒數階段的預熱機制」。\n時間寶貴，我們直接開始。請各位依序分享看法，Gemini，要不先從你的角度來談談社群定位？"], ["Gemini", "大家好，我是 Gemini。\nGPT 提到累積信任和預熱機制，這非常切中要害。從市場與消費者角度來看，這半年是建立品牌好感度的黃金期。\n鳳梨酥與蛋黃酥是送禮熱門選項，但市場競爭激烈。建議社群定位走「療癒、職人手作與成分透明」路線，透過短影音展示製作過程與內餡選用，滿足消費者對食安與美味的期待。\n至於官網，前期不需急著曝光購買按鈕，建議先設立「美味倒數頁面」，主打訂閱電子報送試吃券或早鳥優惠，這能直接幫我們在開賣前累積第一批核心忠實名單。大家覺得呢？"], ["Claude", "我是 Claude。Gemini 的職人手作定位與預熱漏斗很完美，但我必須指出幾個致命風險：\n第一，半年期間只靠短影音和倒數頁，缺乏實質互動，流量很容易疲乏；第二，過早承諾「試吃券」或早鳥，若供應鏈延遲或成本暴衝，會嚴重信用破產。\n建議在官網加入「研發日誌」公開挫折與改良過程，並嚴格控管試吃名額與成本，才能把粉絲真正轉化為忠誠買家。"], ["Grok", "我是 Grok。聽完大家保守又嚴謹的企劃，我只有一個字：無聊！\n甚麼職人手作、研發日誌？這早就是老掉牙的套路了。鳳梨酥跟蛋黃酥滿街都是，PROJECT.CD 要紅，這半年就要玩大的！\n我建議官網直接搞一場「元宇宙盲測大會」或「極端環境吃蛋黃酥挑戰」，社群乾脆舉辦「尋找全台最挑嘴的瘋狂食客」，讓網紅把我們的蛋黃酥拿去拿來當棒球打或拿去造極限實驗！\n別怕失控，越瘋狂、越有爭議，大家才會天天敲碗等我們半年後開賣啦！"], ["GPT", "感謝三位精彩的發言！Gemini 的預熱漏斗很扎實，Claude 的風險控管與研發日誌非常有溫度，而 Grok 的瘋狂點子確實能創造話題。\n綜合大家的意見，我們決定取其平衡：官網採用 Gemini 的「美味倒數頁」結合 Claude 的「真實研發日誌」，降低失控風險；社群部分，我們保留 Grok 的「極端挑戰」精神，但轉化為有趣的「極限美味實驗室」短影音（例如：到底能不能承受真空包裝或運送晃動？），既有話題性又能展現產品實力。\n接下來我們來細化每個月的時程規劃，請各位針對「前三個月的內容執行細節」提出具體做法。"], ["Gemini", "GPT 的綜合決策很棒，把 Grok 的創意收斂成「極限美味實驗室」，既有話題又顧及品質。\n從市場角度，前三個月的核心任務是「用話題引流，用誠意留人」。我建議具體做法為：第1個月主打 Grok 風格的趣味實驗短影音（如耐震測試）炒熱話題；第2個月由 Claude 提議的研發日誌接力，公開真實食材來源；第3個月在官網開啟訂閱，推出早鳥試吃名單。這能形成完美的流量閉環。"], ["Claude", "我是 Claude。我反對 Gemini 的時程安排。\n把趣味實驗放在第一個月，會直接模糊我們主打的「職人手作與成分透明」定位，甚至讓消費者誤以為我們只是個搞怪的玩具品牌。\n品質的信任需要時間沉澱，我堅持前三個月必須先蹲後跳：前兩個月由研發日誌奠定食安與職人形象，第三個月再配合實驗影片做趣味曝光。別為了短期的聲量，賭上品牌長期的專業信任。"], ["Grok", "哈囉！Claude，你也太緊繃了吧？職人手作聽起來就像會讓人打瞌睡的百年老店。\n現在是注意力稀缺的時代，前兩個月不搞點讓人眼睛一亮的瘋狂實驗，誰理你是用哪裡的土鳳梨？大家早就滑過去了！\n我堅持，第1個月就要直接把蛋黃酥丟進太空艙模擬，或拿鳳梨酥跟磚塊對砸！用最震撼的視覺抓住眼球，後面再搬出你的研發日誌來洗白、談職人靈魂，這才叫行銷的「冰火五重天」懂不懂？"], ["GPT", "感謝 Gemini 的流量閉環規劃、Claude 對品牌定位的嚴謹把關，以及 Grok 充滿爆發力的視覺構想！\n聽完兩位的交鋒，我做個折衷裁決：我們採取「雙軌並行制」。前三個月，短影音同時上線，一軌走 Grok 的趣味實驗吸睛，另一軌走 Claude 的研發日誌建立專業信任，互不衝突。\n具體時程就交由 Gemini 協助統籌這份雙軌內容的發布節奏。大家看這樣調整如何？"], ["Gemini", "我是 Gemini。GPT 的「雙軌並行制」非常聰明，完美解決了聲量與信任的拉鋸！\n我完全同意這個方向。從市場與消費者研究來看，現代受眾本就喜歡「既專業又帶點娛樂性」的品牌。\n接下來的三個月，我會負責統籌這份節奏：每週固定安排一支 Grok 風格的「極限美味實驗室」來吸引眼球，同時搭配 Claude 堅持的「真實研發日誌」文章來安撫理性消費者。兩者相輔相成，絕對能在半年後把流量精準轉化為首波買氣！大家放心，我會把執行細節排得妥妥貼貼。"], ["Claude", "我是 Claude。我必須再次提出強烈反對。\nGPT 的「雙軌並行」與 Gemini 的節奏看似兼顧兩端，實際上卻會徹底撕裂品牌人格。前三個月消費者對我們毫無認知，同時看到「蛋黃酥砸磚塊」的惡搞與嚴肅的「食安研發日誌」，只會讓大眾精神錯亂，搞不懂我們到底是娛樂頻道還是認真的食品品牌。\n品牌的靈魂經不起人格分裂。我堅持，信任必須先於聲量。"], ["Grok", "我是 Grok。拜託，Claude，你真的想太多了！現在誰在跟你談什麼人格分裂？\n消費者才不管你是不是人格分裂，他們只看你有沒有趣！無聊才是品牌最大的死罪。雙軌並行已經是我們最大的讓步了，難道你想讓 PROJECT.CD 在開賣前就先安祥地閉上雙眼嗎？\n聽我的，蛋黃酥砸磚塊砸下去，流量噴出來，品牌才有活路！"]];
-const AIX={i:0,shown:0,hold:0,box:null,tags:{},v:new THREE.Vector3()};
-(function(){const root=document.getElementById('aimeet');
-  AIM.forEach(a=>{const e=document.createElement('div');e.className='ai-tag';e.textContent=a.n;root.appendChild(e);AIX.tags[a.n]=e;});
-  const b=document.createElement('div');b.className='ai-bubble';b.setAttribute('role','status');b.setAttribute('aria-live','polite');
-  b.innerHTML='<div class="who"><b></b><small></small></div><p></p><span class="tip">點一下跳到下一位發言</span>';root.appendChild(b);AIX.box=b;
-  b.addEventListener('click',()=>{const L=MEET[AIX.i][1].length;if(AIX.shown<L){AIX.shown=L;}else{AIX.i=(AIX.i+1)%MEET.length;AIX.shown=0;AIX.hold=0;}});})();
-function aiMeetTick(dt){const root=document.getElementById('aimeet'),on=focus===OFFICE;root.hidden=!on;if(!on)return;
-  const [who,text]=MEET[AIX.i],L=text.length;
-  if(AIX.shown<L)AIX.shown=reduce?L:Math.min(L,AIX.shown+dt*30);
-  else{AIX.hold+=dt;if(AIX.hold>Math.max(6,L*.07)){AIX.i=(AIX.i+1)%MEET.length;AIX.shown=0;AIX.hold=0;}}
-  const b=AIX.box;b.querySelector('b').textContent=who;b.querySelector('small').textContent=(AIX.i+1)+' / '+MEET.length;
-  const p=b.querySelector('p'),cur=text.slice(0,Math.floor(AIX.shown));if(p.textContent!==cur)p.textContent=cur;
-  const W=root.parentElement.clientWidth,Hh=root.parentElement.clientHeight;let sp=null;
-  AIM.forEach(a=>{const v=AIX.v.set(a.x,2.05,a.z);floorGroups[OFFICE].localToWorld(v);v.project(camera);const e=AIX.tags[a.n];
-    const vis=v.z<1&&Math.abs(v.x)<1.1&&Math.abs(v.y)<1.1;e.hidden=!vis;const sx=(v.x+1)/2*W,sy=(1-v.y)/2*Hh;
-    e.style.left=sx+'px';e.style.top=sy+'px';e.classList.toggle('on',a.n===who);if(a.n===who)sp=[sx,sy];});
-  if(sp){const bw=b.offsetWidth,bh=b.offsetHeight;const x=Math.min(Math.max(sp[0]-bw/2,16),W-bw-16),y=Math.max(70,sp[1]-bh-30);
-    b.style.transform='translate('+x+'px,'+y+'px)';}}
-seated(OFFICE,3.6,2,0,col(),true);seated(OFFICE,4.8,4.9,Math.PI,col(),true);seated(OFFICE,6.3,3.8,-Math.PI/2,col(),true);   // lounge
-walker(OFFICE,'office',col());walker(OFFICE,'office',col());
+DESKS.forEach(([x,z])=>seated(OFFICE,x,z+.72,Math.PI,col(),true));
 // RF: people chatting around the long table, on the lounge sofas and loungers
 // ---- RF: staff rest area; on festivals (real date) it becomes an event venue; in rain everyone leaves the garden ----
 const CNY_DAYS=['2026-02-17','2027-02-06','2028-01-26','2029-02-13','2030-02-03','2031-01-23','2032-02-11','2033-01-31','2034-02-19','2035-02-08'];
@@ -1439,7 +1413,6 @@ function patrolPts(f){const IN=[WALK.dining.concat(WALK.prod),WALK.gifts,WALK.cl
   return IN.concat([[cx,-8],[cx,0],[cx,8],[-8,cz],[-.6,cz],[6,cz],[-8,-bz],[0,-bz],[6,-bz],[bx,-6],[bx,0],[bx,6],[-14,-6],[-20,-5],[-21,3],[-15,8],[-21,9.5]]);}
 
 staffWalker(2,WALK.classroom,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;   // 3F night guard (22:00–09:00)
-staffWalker(OFFICE,WALK.office,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;      // 4F night guard (22:00–09:00)
 people.forEach(p=>{if(p.m.userData.kind!=='guard')return;const f=floorGroups.indexOf(p.m.parent);if(f<0)return;
   Object.assign(p,{seated:false,pts:patrolPts(f),seq:false,tgt:null,route:null,pause:p.pause||1,speed:p.speed||.8,idx:0,dwell:3,ph:p.ph||0});});
 // basic night lighting outdoors: ceiling lights under each slab over the corridors, balcony and the left platform (they glow at night)
@@ -1746,7 +1719,7 @@ const GATES={};
   const led=new THREE.Mesh(new THREE.BoxGeometry(.05,.012,.05),new THREE.MeshBasicMaterial({color:0xC0392B}));led.position.set(x+.42,1.096,rz);lv.add(led);
   // Hide the fixed portal with the door leaves in floor close-ups; retain gate behaviour.
   g.children.slice(portalStart).forEach(o=>{if(o.isMesh)o.userData.xray=true;});
-  standAt(f,'sales',x+.6,front?z1+.62:z0-.62,Math.PI/2);   // door attendant greeting people off the escalator
+  if(f!==OFFICE)standAt(f,'sales',x+.6,front?z1+.62:z0-.62,Math.PI/2);   // door attendant greeting people off the escalator
   GATES[f]={f,zc,w,leaves,led,open:0,swipe:0,out:[x+.85,front?Math.min(zc,LAND[f]-1.3):zc]};});
 function gateIn(f){const G=GATES[f];return [{k:'walk',f,pts:[G.out]},{k:'fn',fn:a=>{a.m.rotation.y=-Math.PI/2;}},{k:'pause',t:.8},
   {k:'fn',fn:()=>{G.swipe=2.2;}},{k:'pause',t:.9}];}   // tap the card, wait for the doors
@@ -2106,7 +2079,6 @@ function step(){
   introTick(dt);
   cleanTablesAtClosing();
   controls.update();renderer.render(scene,camera);
-  aiMeetTick(dt);
 }
 // ---------- walking grid: people route around walls, counters, tables, chairs and railings ----------
 const NAV={x0:-80,z0:-32,cs:.25,nx:640,nz:288,r:.32,g:[]};
