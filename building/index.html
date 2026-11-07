@@ -108,7 +108,7 @@ aside li a{color:var(--fg);font-weight:700;text-decoration:underline;text-underl
 <script>
 (function(){
 const NF=5, RF=NF-1, OFFICE=3;
-const H=6.6, W=Math.sqrt(200*400/121), D=W, K=1.73;   // 200 坪 gross per indoor floor
+const H=6, W=Math.sqrt(200*400/121), D=W, K=1.73;   // 200 坪 gross per indoor floor
 const EXP=(W-17.3)/2, CAFE_SHIFT=4.5;
 const cafePoint=([x,z])=>[x,z+CAFE_SHIFT];
 const productionZ=z=>z*.46-8.55;
@@ -228,6 +228,21 @@ function railZ(g,h,closeFront){ // glass guard along an opening that runs front-
   [x0,x1].forEach(x=>{box(.04,.9,len,C.glass,x,.55,zc,g,GLASS);box(.06,.05,len,C.black,x,1.02,zc,g).userData.xray=true;});
   const ze=closeFront?z1:z0;box(x1-x0,.9,.04,C.glass,(x0+x1)/2,.55,ze,g,GLASS);box(x1-x0,.05,.06,C.black,(x0+x1)/2,1.02,ze,g).userData.xray=true;
 }
+// Full-height glazing with slim mullions between the corner columns.
+function curtainWall(g,alongX,edge,start,end){
+  const height=H-.3, bays=Math.ceil((end-start)/3.2), length=(end-start)/bays;
+  const glass={transparent:true,opacity:.22,depthWrite:false};
+  for(let bay=0;bay<bays;bay++){
+    const middle=start+(bay+.5)*length;
+    if(alongX)box(length,height,.065,C.glass,middle,height/2,edge,g,glass);
+    else box(.065,height,length,C.glass,edge,height/2,middle,g,glass);
+    if(bay===0)continue;
+    const joint=start+bay*length;
+    const mullion=alongX?box(.075,height,.1,C.black,joint,height/2,edge,g)
+      :box(.1,height,.075,C.black,edge,height/2,joint,g);
+    mullion.userData.xray=true;
+  }
+}
 const floorGroups=[];
 for(let i=0;i<NF;i++){
   const g=new THREE.Group(); g.position.y=i*H; scene.add(g); floorGroups.push(g);
@@ -235,14 +250,10 @@ for(let i=0;i<NF;i++){
   slab(g,holes,i===RF?C.off:C.floor);
   box(W+.1,.3,.1,C.black,0,-.17,D/2+.06,g); // black slab edge (in front of the slab, no overlap)
   if(i<RF){
-    box(W,H-.3,.2,0xCDCDC9,0,(H-.3)/2,-D/2-.1,g);   // back wall: light grey, stops under the slab above
-    box(.2,H-.3,D,0xBEBEBA,-W/2-.1,(H-.3)/2,0,g);          // side wall: one step darker for depth
+    curtainWall(g,true,-D/2+.06,-W/2,W/2);
+    for(const side of [-1,1])curtainWall(g,false,side*(W/2-.06),-D/2,D/2);
     EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});}); // elevator doors
-    box(.06,H-.3,D,C.glass,W/2,(H-.3)/2,0,g,GLASS);
-    [-W/2+.12,W/2-.12].forEach(x=>{box(.22,H,.22,C.black,x,H/2,D/2-.11,g).userData.xray=true;});
   } else {
-    [[-W/2,-.9],[.9,W/2]].forEach(([a,b])=>safeGlass(g,a,-D/2+.06,b,-D/2+.06));   // gap: fire stair
-    safeGlass(g,-W/2+.06,-D/2,-W/2+.06,RR.z1);   // the left platform joins the garden in front of this
     EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});});
     for(let k=0;k<Math.floor(W);k++)box(1,.03,D-.4,k%2?C.off:C.floor,-W/2+.55+k,.015,0,g); // deck boards
   }
@@ -275,7 +286,6 @@ floorGroups.forEach((g,i)=>{
   const bc=(BAL_X0+BAL_X1)/2;RAILH=i===RF?1.5:1.1;
   box(BAL_X1-BAL_X0,.3,D,C.off,bc,-.15,0,g);
   box(BAL_X1-BAL_X0,.3,.1,C.black,bc,-.17,D/2+.06,g);
-  if(i===RF){railX(g,D/2-.04,BAL_X0,BAL_X1);railX(g,-D/2+.04,BAL_X0,BAL_X1);}   // other floors: balcony runs straight into the front and back corridors
   const lz=LAND[i];
   if(i===0) railRun(g,BAL_X1,-D/2,ES0-.4);
   else if(lz<0) railRun(g,BAL_X1,ES1,D/2);
@@ -294,16 +304,40 @@ const WK=[-(W/2+WKW),D/2+WKW];  // left edge and relocated rear corridor edge
 const FRONT_Z=D/2+FRONT_WKW, FRONT_MID=D/2+FRONT_WKW/2;
 const CORE={x0:-2.4,x1:2.4,z0:-(D/2+WKW+3.2),z1:-(D/2+WKW)};
 floorGroups.forEach((g,i)=>{
-  if(i===RF)return;   // roof garden: no outdoor corridor
   const c=i===0?C.walk:C.off, xl=(WK[0]+(-W/2))/2, wl=-W/2-WK[0], zl=WKW, xr=BAL_X1;
   box(wl,.25,FRONT_Z+WK[1],c,xl,-.13,(FRONT_Z-WK[1])/2,g);                                   // left band
   box(xr+W/2,.25,FRONT_WKW,c,(xr-W/2)/2,-.13,FRONT_MID,g);                  // front band
   box(xr+W/2,.25,zl,c,(xr-W/2)/2,-.13,-(D/2+WK[1])/2,g);                 // back band
   if(i===0)return;
+  RAILH=i===RF?1.5:1.1;
+  railRun(g,WK[0],-WK[1],RR.z1);
   railX(g,FRONT_Z,WK[0],xr); railX(g,-WK[1],WK[0],CORE.x0); railX(g,-WK[1],CORE.x1,xr);   // gaps: restrooms, elevator
   railRun(g,xr,D/2,FRONT_Z); railRun(g,xr,-WK[1],-D/2);
   box(.08,.25,FRONT_Z+WK[1]+.16,C.black,WK[0]-.05,-.15,(FRONT_Z-WK[1])/2,g);
   box(xr-WK[0],.25,.08,C.black,(xr+WK[0])/2,-.15,FRONT_Z+.05,g); box(xr-WK[0],.25,.08,C.black,(xr+WK[0])/2,-.15,-WK[1]-.05,g);
+  RAILH=1.1;
+});
+
+// Set the planters against the outside edges, clear of the walking lanes.
+floorGroups.forEach(g=>{
+  function trough(x,z,alongX){
+    const length=2.6, width=.52;
+    box(alongX?length:width,.36,alongX?width:length,C.dark,x,.18,z,g);
+    box(alongX?length-.12:width-.12,.04,alongX?width-.12:length-.12,0x4A3A2C,x,.36,z,g);
+    for(let k=0;k<6;k++){
+      const offset=(k-2.5)*.39;
+      const shrub=new THREE.Mesh(new THREE.SphereGeometry(.23,8,6),mat(k%2?0x58764B:C.leaf));
+      shrub.scale.set(1,.65+(k%3)*.2,1);
+      shrub.position.set(x+(alongX?offset:0),.5,z+(alongX?0:offset));
+      g.add(shrub);
+    }
+  }
+  for(const x of [-10,-5,5,10]){
+    trough(x,FRONT_Z-.42,true);
+    trough(x,-WK[1]+.42,true);
+  }
+  for(const z of [-9,-4,1,6,10])trough(WK[0]+.42,z,false);
+  for(const z of [-4,1,6])trough(BAL_X1-.42,z,false);
 });
 
 // ---- restrooms (men / women): beside the elevator, off the left skywalk, on every indoor floor ----
@@ -327,7 +361,7 @@ floorGroups.forEach((g,i)=>{   // restrooms on every floor, the roof garden incl
   if(i===RF)box(x1-x0+.2,.29,z1-z0-.02,C.black,(x0+x1)/2,hh+.14,zc-.01,g);   // roof on the top (roof-garden) block
 });
 // the wide platform in front of the elevators and restrooms (every floor; on the roof it leads into the garden)
-floorGroups.forEach((g,i)=>{const t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off,xr=i===RF?-W/2:WK[0],zf=i===RF?D/2:FRONT_Z;
+floorGroups.forEach((g,i)=>{const t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off,xr=WK[0],zf=FRONT_Z;
   box(xr-PX0,t,zf-RR.z1,fc,(PX0+xr)/2,y,(RR.z1+zf)/2,g);
   if(i===0)return;
   box(.1,.3,zf-RR.z1,C.black,PX0-.05,-.15,(RR.z1+zf)/2,g);box(xr-PX0,.3,.1,C.black,(PX0+xr)/2,-.15,zf+.05,g);   // black slab edges
@@ -351,19 +385,19 @@ floorGroups.forEach((g,i)=>{
   if(i>0){
     // Conceptual long-span girders under the enlarged slab
     GX.forEach(x=>box(.35,1.5,D-.4,STEEL,x,-1.05,0,g));
-    box(W,.7,.3,STEEL,0,-.65,D/2-.2,g); box(W,.7,.3,STEEL,0,-.65,-D/2+.2,g);       // edge beams
-    box(.3,.7,D-.8,STEEL,-W/2+.2,-.65,0,g); box(.3,.7,D-.8,STEEL,W/2-.2,-.65,0,g);   // end short of the corner columns
+    box(W,.7,.38,STEEL,0,-.65,D/2-.28,g); box(W,.7,.38,STEEL,0,-.65,-D/2+.28,g);       // edge beams
+    box(.38,.7,D-.56,STEEL,-W/2+.28,-.65,0,g); box(.38,.7,D-.56,STEEL,W/2-.28,-.65,0,g);   // end short of the corner columns
     // cantilever brackets: balcony (3.4 m) and skywalk (1.8 m)
     [-D/2+.6,-W/3,0,W/3,D/2-.6].forEach(z=>{box(BAL_X1-BAL_X0,.3,.18,STEEL,(BAL_X0+BAL_X1)/2,-.45,z,g);strut(g,[W/2,-2.4,z],[BAL_X1-.25,-.45,z],.16);});
-    if(i<RF){GX.concat([-W/2+.6,W/2-.6]).forEach(x=>{[1,-1].forEach(s=>{if(s<0&&x>CORE.x0-.3&&x<CORE.x1+.3)return;
+    {GX.concat([-W/2+.6,W/2-.6]).forEach(x=>{[1,-1].forEach(s=>{if(s<0&&x>CORE.x0-.3&&x<CORE.x1+.3)return;
       strut(g,[x,-1.5,s*D/2],[x,-.32,(s>0?FRONT_Z-.25:-(WK[1]-.25))],.14);});});
     PZ.concat([0]).forEach(z=>strut(g,[-W/2,-1.5,z],[WK[0]+.25,-.32,z],.14));}
     g.children.slice(n0).forEach(o=>o.userData.xray=true);   // under-slab steel hides in single-floor view
   }
   if(i<RF){
-    // perimeter columns: front (inside the glass), back pilasters, left pilasters, right side behind the glass
-    GX.filter(x=>x!==0).forEach(x=>{const c=box(.4,H,.4,STEEL,x,H/2,D/2-.3,g);c.userData.xray=true;box(.45,H-.3,.3,STEEL,x,(H-.3)/2,-D/2-.32,g);});
-    PZ.forEach(z=>{box(.3,H-.3,.45,STEEL,-W/2-.32,(H-.3)/2,z,g);const c=box(.4,H,.4,STEEL,W/2-.25,H/2,z,g);c.userData.xray=true;});
+    for(const sx of [-1,1])for(const sz of [-1,1]){
+      box(.66,H,.66,STEEL,sx*(W/2-.28),H/2,sz*(D/2-.28),g).userData.xray=true;
+    }
   }
 });
 // escalator hall: portal frame at mid-span carrying each escalator truss, doubles as the glass box's frame
@@ -394,15 +428,11 @@ floorGroups.forEach((g,i)=>{if(i===0)return;const zf=i===RF?D/2:FRONT_Z;[-23.6,-
 })();
 
 // ---- entrances: glass front + double door on every floor (skywalk leads to it) ----
-function entrance(g,roof){
-  const z=D/2-.06, dx0=-1.8, dx1=.6, dh=roof?2.4:3, gl={transparent:true,opacity:.18,depthWrite:false};
-  if(!roof){
-    box(dx0+W/2,H-.3,.05,C.glass,(-W/2+dx0)/2,(H-.3)/2,z,g,gl);
-    box(W/2-dx1,H-.3,.05,C.glass,(dx1+W/2)/2,(H-.3)/2,z,g,gl);
-    box(dx1-dx0,H-.4-dh,.05,C.glass,(dx0+dx1)/2,dh+.1+(H-.4-dh)/2,z,g,gl);
-  } else {
-    [[-W/2,dx0],[dx1,W/2]].forEach(([a,b])=>{box(b-a,1.1,.06,C.glass,(a+b)/2,.55,z,g,GLASS);box(b-a,.06,.12,C.black,(a+b)/2,1.13,z,g).userData.xray=true;});
-  }
+function entrance(g){
+  const z=D/2-.06, dx0=-1.8, dx1=.6, dh=3, gl={transparent:true,opacity:.22,depthWrite:false};
+  curtainWall(g,true,z,-W/2,dx0);
+  curtainWall(g,true,z,dx1,W/2);
+  box(dx1-dx0,H-.4-dh,.05,C.glass,(dx0+dx1)/2,dh+.1+(H-.4-dh)/2,z,g,gl);
   box(.12,dh+.1,.14,C.black,dx0,(dh+.1)/2,z,g).userData.xray=true;
   box(.12,dh+.1,.14,C.black,dx1,(dh+.1)/2,z,g).userData.xray=true;
   box(dx1-dx0+.12,.14,.16,C.black,(dx0+dx1)/2,dh+.1,z,g).userData.xray=true;
@@ -412,13 +442,10 @@ function entrance(g,roof){
     box(leafW,.08,.06,C.black,s*leafW/2,dh-.04,0,pv); box(leafW,.08,.06,C.black,s*leafW/2,.04,0,pv);
     box(.06,dh,.06,C.black,s*(leafW-.03),dh/2,0,pv);
     doors.push({pv,s,hx,g,leafW});});
-  if(!roof)box(dx1-dx0+1.4,.12,1.4,C.black,(dx0+dx1)/2,dh+.4,D/2+.62,g).userData.xray=true;   // canopy hides in single-floor view  // canopy
+  box(dx1-dx0+1.4,.12,1.4,C.black,(dx0+dx1)/2,dh+.4,D/2+.62,g).userData.xray=true;   // canopy hides in single-floor view  // canopy
   box(2.2,.02,1,C.dark,(dx0+dx1)/2,.01,D/2+.6,g);                           // doormat
 }
-floorGroups.forEach((g,i)=>{if(i<RF){entrance(g,false);return;}
-  safeGlass(g,-W/2,D/2-.06,W/2,D/2-.06);   // roof: safety glass, no door
-  // short landing from the fire-stair door to the garden
-  box(1.8,.25,WKW,C.off,0,-.13,-(D/2+(WKW)/2),g);[-.92,.92].forEach(x=>{box(.05,1.1,WKW,C.glass,x,.55,-(D/2+(WKW)/2),g,GLASS);box(.1,.06,WKW,C.black,x,1.13,-(D/2+(WKW)/2),g).userData.xray=true;});});
+floorGroups.slice(0,RF).forEach(entrance);
 
 // sign
 const signCv=document.createElement('canvas');signCv.width=1024;signCv.height=160;
