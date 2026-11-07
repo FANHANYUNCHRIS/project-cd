@@ -198,9 +198,12 @@ LOGO.onload=()=>logoRedraw.forEach(f=>f());LOGO.src='data:image/png;base64,iVBOR
 // ---------- building (1 unit = 1 m; 10 m × 10 m = 100 m² per floor) ----------
 const WKW=2.4, FRONT_WKW=3.6;   // side/back corridors and widened front promenade (metres)
 // left side: a wide platform on every floor; at its back, next to the building, the restrooms; further out two big elevators (10 people each), doors facing the front
-const RR={x0:-16.45-EXP,x1:-11.05-EXP,z0:-11.05-EXP,z1:-7.65-EXP};
-const EVS=[[-20.25,-16.65],[-24.05,-20.45]].map(([x0,x1])=>({ELEV:[x0-EXP,x1-EXP,RR.z0,RR.z1],EDX:(x0+x1)/2-EXP}));
-const PX0=-24.1-EXP;   // outer edge of the left platform
+const TOWER_IN=W/2+3.45,TOWER_OUT=TOWER_IN+7.4;
+const TOWER_BACK=-D/2-1.6,TOWER_FRONT=D/2+1.9;
+const LIFT_BACK=TOWER_BACK+.3,LIFT_FRONT=LIFT_BACK+3.4;
+const PX0=-TOWER_OUT;
+const RR={x0:PX0+.3,x1:PX0+5.7,z0:-5.4,z1:-2};
+const EVS=[PX0+.13,PX0+3.8].map(x0=>({ELEV:[x0,x0+3.45,LIFT_BACK,LIFT_FRONT],EDX:x0+1.725}));
 // openings through the ground: escalator well to B1 in the hall, car-park ramp mouth behind the building, MRT stairs on the left
 const HOLE_ESC=[15.8+EXP,19.05+EXP,-6.85-EXP,7.05+EXP], HOLE_RE=[6.8,13.5,-15.2-EXP,-11.4-EXP], HOLE_RW=[-13.5,-6.8,-15.2-EXP,-11.4-EXP], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0-EXP,-28.8-EXP,3,9.5];
 function boxHoles(w,h,d,col,cx,y,cz,holes,p){const X0=cx-w/2,X1=cx+w/2,Z0=cz-d/2,Z1=cz+d/2,hs=holes.filter(q=>q[0]<X1&&q[1]>X0&&q[2]<Z1&&q[3]>Z0);
@@ -252,9 +255,9 @@ for(let i=0;i<NF;i++){
   if(i<RF){
     curtainWall(g,true,-D/2+.06,-W/2,W/2);
     for(const side of [-1,1])curtainWall(g,false,side*(W/2-.06),-D/2,D/2);
-    EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});}); // elevator doors
+    EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,LIFT_FRONT+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,LIFT_FRONT+.12,g);elevDoors.push(l);return l;});}); // elevator doors
   } else {
-    EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});});
+    EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,LIFT_FRONT+.07,g);fr.userData.pass=true;fr.userData.xray=true;E.doors=E.doors||[];E.doors[i]=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,LIFT_FRONT+.12,g);elevDoors.push(l);return l;});});
     for(let k=0;k<Math.floor(W);k++)box(1,.03,D-.4,k%2?C.off:C.floor,-W/2+.55+k,.015,0,g); // deck boards
   }
 }
@@ -302,7 +305,7 @@ floorGroups.forEach((g,i)=>{
 // ---- perimeter skywalk: wraps the left, front and back of every upper floor ----
 const WK=[-(W/2+WKW),D/2+WKW];  // left edge and relocated rear corridor edge
 const FRONT_Z=D/2+FRONT_WKW, FRONT_MID=D/2+FRONT_WKW/2;
-const LEFT_LANDING_END=RR.z1+2.6, LEFT_WALK_X=-(W/2+WKW/2);
+const LEFT_LANDING_END=LIFT_FRONT+2.6, WC_LANDING_END=RR.z1+2.6, LEFT_WALK_X=-(W/2+WKW/2);
 const CORE={x0:-2.4,x1:2.4,z0:-(D/2+WKW+3.2),z1:-(D/2+WKW)};
 floorGroups.forEach((g,i)=>{
   const c=i===0?C.walk:C.off, xl=(WK[0]+(-W/2))/2, wl=-W/2-WK[0], zl=WKW, xr=BAL_X1;
@@ -311,8 +314,9 @@ floorGroups.forEach((g,i)=>{
   box(xr+W/2,.25,zl,c,(xr-W/2)/2,-.13,-(D/2+WK[1])/2,g);                 // back band
   if(i===0)return;
   RAILH=i===RF?1.5:1.1;
-  railRun(g,WK[0],-WK[1],RR.z1);
-  railRun(g,WK[0],LEFT_LANDING_END,FRONT_Z);
+  railRun(g,WK[0],-WK[1],LIFT_FRONT);
+  railRun(g,WK[0],LEFT_LANDING_END,RR.z1);
+  railRun(g,WK[0],WC_LANDING_END,FRONT_Z);
   railX(g,FRONT_Z,WK[0],xr); railX(g,-WK[1],WK[0],CORE.x0); railX(g,-WK[1],CORE.x1,xr);   // gaps: restrooms, elevator
   railRun(g,xr,D/2,FRONT_Z); railRun(g,xr,-WK[1],-D/2);
   box(.08,.25,FRONT_Z+WK[1]+.16,C.black,WK[0]-.05,-.15,(FRONT_Z-WK[1])/2,g);
@@ -350,7 +354,7 @@ function wcSign(label){const cv=document.createElement('canvas');cv.width=256;cv
   draw();document.fonts&&document.fonts.ready.then(draw);return new THREE.MeshBasicMaterial({map:t});}
 const wcM=wcSign('男'), wcF=wcSign('女');
 floorGroups.forEach((g,i)=>{   // restrooms on every floor, the roof garden included
-  const hh=i===RF?3.2:H-.3,CW=0xBEBEBA,x0=RR.x0,x1=RR.x1,xm=(x0+x1)/2,z0=RR.z0,z1=RR.z1,zc=(z0+z1)/2,dw=.95,dh=2.2,t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off;
+  const hh=i===RF?2.85:H-.3,CW=0xBEBEBA,x0=RR.x0,x1=RR.x1,xm=(x0+x1)/2,z0=RR.z0,z1=RR.z1,zc=(z0+z1)/2,dw=.95,dh=2.2,t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off;
   box(x1-x0,t,z1-z0,fc,(x0+x1)/2,y,zc,g);
   box(x1-x0,hh,.2,CW,(x0+x1)/2,hh/2,z0+.1,g);box(.2,hh,z1-z0-.2,CW,x0+.1,hh/2,zc,g);box(.2,hh,z1-z0-.2,CW,x1-.1,hh/2,zc,g);box(.15,hh,z1-z0-.2,CW,xm,hh/2,zc,g);
   const DX=[[xm-.9,wcM],[x1-.9,wcF]];
@@ -361,11 +365,20 @@ floorGroups.forEach((g,i)=>{   // restrooms on every floor, the roof garden incl
   [[x0,xm],[xm,x1]].forEach(([a,b])=>{[a+.6,a+1.6].forEach(x=>{box(.4,.42,.6,C.white,x,.21,z0+.6,g);box(.4,.4,.14,C.white,x,.62,z0+.27,g);});
     box(.45,.85,1.1,C.white,a+.35,.425,z1-.9,g);});
 });
-// Compact landing across the elevator and restroom doors.
-floorGroups.forEach((g,i)=>{const t=i===0?.4:.3,y=i===0?-.2:-.15,fc=i===0?C.walk:C.off,xr=WK[0],zf=LEFT_LANDING_END;
-  box(xr-PX0,t,zf-RR.z1,fc,(PX0+xr)/2,y,(RR.z1+zf)/2,g);
-  if(i===0)return;
-  box(.1,.3,zf-RR.z1,C.black,PX0-.05,-.15,(RR.z1+zf)/2,g);box(xr-PX0,.3,.1,C.black,(PX0+xr)/2,-.15,zf+.05,g);   // black slab edges
+// Two compact landings connect the service tower to the garden walk.
+floorGroups.forEach((g,i)=>{
+  const color=i===0?C.walk:C.off;
+  for(const [start,end,roomEnd] of [[LIFT_FRONT,LEFT_LANDING_END,-TOWER_IN],[RR.z1,WC_LANDING_END,RR.x1]]){
+    const width=WK[0]-PX0, depth=end-start;
+    box(width,.3,depth,color,(PX0+WK[0])/2,-.15,(start+end)/2,g);
+    box(width,.3,.08,C.black,(PX0+WK[0])/2,-.15,end,g);
+    if(i>0){
+      RAILH=i===RF?1.5:1.1;
+      railX(g,end-.03,PX0,WK[0]);
+      railX(g,start+.03,roomEnd,WK[0]);
+      RAILH=1.1;
+    }
+  }
 });
 
 // large standalone brand logos (one on the escalator hall here, one on the annex's street wall further down)
@@ -410,8 +423,6 @@ floorGroups.forEach((g,i)=>{
 EVS.forEach(({ELEV:[x0,x1,z0,z1]})=>{
   box(x1-x0+.4,.6,z1-z0+.4,CONC,(x0+x1)/2,-H-.6,(z0+z1)/2,scene);
 });
-// Left platform edge beams; exterior vertical columns removed for the concept view.
-floorGroups.forEach((g,i)=>{if(i===0)return;const zf=LEFT_LANDING_END;[-23.6,-17.6].forEach(x=>box(.3,.45,zf-RR.z1,C.black,x-EXP,-.52,(RR.z1+zf)/2,g));});
 // fire-stair core behind the building: second escape route + concrete shear wall for earthquakes
 (function(){const cx=(CORE.x0+CORE.x1)/2,cz=(CORE.z0+CORE.z1)/2,w=CORE.x1-CORE.x0,d=CORE.z1-CORE.z0,h=RF*H+3.3;
   box(w,h,d,CONC,cx,h/2-.5,cz,scene);
@@ -905,7 +916,7 @@ const esc2=escalator(floorGroups[1],ES1,ES0,LANE[2],H,false), esc2d=escalator(fl
 const esc3=escalator(floorGroups[2],ES0,ES1,LANE[0],H,false), esc3d=escalator(floorGroups[2],ES0,ES1,LANE[1],H,true);
 const esc4=escalator(floorGroups[3],ES1,ES0,LANE[2],H,false), esc4d=escalator(floorGroups[3],ES1,ES0,LANE[3],H,true);
 // escalator hall: one big glass box around all the escalators (open toward the balconies)
-const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2, EY=-.3;
+const EX0=TOWER_IN, EX1=TOWER_OUT, EZ0=TOWER_BACK, EZ1=TOWER_FRONT, EH=RF*H+3.2, EY=-.3;
 (function(){const g=scene,gl={transparent:true,opacity:.2,depthWrite:false},cx=(EX0+EX1)/2,cz=(EZ0+EZ1)/2,LX=EX1-EX0,LZ=EZ1-EZ0;
   boxHoles(LX,.3,LZ,C.walk,cx,-.15,cz,[HOLE_ESC],g);   // hall floor at the same level as 1F (opening for the escalators down to B1)
   const h0=g.children.length;
@@ -943,14 +954,16 @@ const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2,
 
 // A single glazed tower wraps the elevator shafts, restrooms and landings.
 (function(){
-  const x0=PX0-.08,x1=WK[0],z0=RR.z0-.15,z1=LEFT_LANDING_END+.06;
+  const x0=-EX1,x1=-EX0,z0=EZ0,z1=EZ1;
   const width=x1-x0,depth=z1-z0,cx=(x0+x1)/2,cz=(z0+z1)/2;
   const glass={transparent:true,opacity:.2,depthWrite:false};
   const midY=EY+EH/2,top=EY+EH;
   box(.05,EH,depth,C.glass,x0,midY,cz,scene,glass);
   box(width,EH,.05,C.glass,cx,midY,z0,scene,glass);
   box(width,EH,.05,C.glass,cx,midY,z1,scene,glass);
-  box(.05,EH,RR.z1-z0,C.glass,x1,midY,(RR.z1+z0)/2,scene,glass);
+  for(const [start,end] of [[z0,LIFT_FRONT],[LEFT_LANDING_END,RR.z1],[WC_LANDING_END,z1]]){
+    box(.05,EH,end-start,C.glass,x1,midY,(start+end)/2,scene,glass);
+  }
   // Leave the inboard landing side open to the garden walk on each floor.
   box(width+.1,.05,depth+.1,C.glass,cx,top,cz,scene,{...glass,opacity:.3});
   for(const x of [x0,x1])for(const z of [z0,z1])box(.12,EH,.12,C.black,x,midY,z,scene);
@@ -1441,8 +1454,8 @@ function hoursText(f){const o=floorOpen(f);
 const LEAVE=[];
 // guards patrol at random over everything walkable on their floor: inside, the corridors round the building, the balcony and the elevator lobby
 function patrolPts(f){const IN=[WALK.dining.concat(WALK.prod),WALK.gifts,WALK.classroom,WALK.office,WALK.terrace][f]||[];const cx=-(W/2+WKW/2),cz=FRONT_MID,bz=D/2+WKW/2,bx=(BAL_X0+BAL_X1)/2;
-  if(f===RF)return IN.concat([[bx,-6],[bx,0],[bx,6],[cx,-5],[EVS[0].EDX,RR.z1+1.3],[cx,6]]);
-  return IN.concat([[cx,-8],[cx,0],[cx,8],[-8,cz],[-.6,cz],[6,cz],[-8,-bz],[0,-bz],[6,-bz],[bx,-6],[bx,0],[bx,6],[EVS[0].EDX,RR.z1+1.3],[EVS[1].EDX,RR.z1+1.3]]);}
+  if(f===RF)return IN.concat([[bx,-6],[bx,0],[bx,6],[cx,-5],[EVS[0].EDX,LIFT_FRONT+1.3],[cx,6]]);
+  return IN.concat([[cx,-8],[cx,0],[cx,8],[-8,cz],[-.6,cz],[6,cz],[-8,-bz],[0,-bz],[6,-bz],[bx,-6],[bx,0],[bx,6],[EVS[0].EDX,LIFT_FRONT+1.3],[EVS[1].EDX,LIFT_FRONT+1.3]]);}
 
 staffWalker(2,WALK.classroom,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;   // 3F night guard (22:00–09:00)
 people.forEach(p=>{if(p.m.userData.kind!=='guard')return;const f=floorGroups.indexOf(p.m.parent);if(f<0)return;
@@ -1450,7 +1463,7 @@ people.forEach(p=>{if(p.m.userData.kind!=='guard')return;const f=floorGroups.ind
 // basic night lighting outdoors: ceiling lights under each slab over the corridors, balcony and the left platform (they glow at night)
 for(let i=1;i<=RF;i++){const g=floorGroups[i],cx=-(W/2+WKW/2),cz=FRONT_MID,bz=D/2+WKW/2,bx=(BAL_X0+BAL_X1)/2,L=[];
   for(let z=-8;z<=8.1;z+=4)L.push([cx,z],[bx,z]);for(let x=-6;x<=6.1;x+=4)L.push([x,cz],[x,-bz]);
-  EVS.forEach(E=>L.push([E.EDX,RR.z1+1.3]));
+  EVS.forEach(E=>L.push([E.EDX,LIFT_FRONT+1.3]));
   L.forEach(([x,z])=>{const m=box(.6,.02,.6,0,x,-.32,z,g);ANNEX_LED.push(m);m.userData.ceil=true;});}
 // guards carry flashlights: a soft beam and a pool of light on the floor, visible after dark
 const FL_BEAM=new THREE.MeshBasicMaterial({color:0xFFF0C8,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
@@ -1535,9 +1548,9 @@ function hoursTick(dt,t){if(!hoursInit)buildLeave();
 // ---------- shoppers: come from the far end of the sidewalk, use the door / elevator / escalators, shop, leave ----------
 const FAR=[-72,77];
 const EWAIT=EVS[0].EWAIT;
-const ELEV_IN0=[[LEFT_WALK_X,SW.z1],[LEFT_WALK_X,RR.z1+1.4]];   // 1F: from the street across the platform to the elevators
-const OUT_ROUTE=[[(RR.x0+RR.x1)/2,RR.z1+1.4],[LEFT_WALK_X,RR.z1+1.4],[LEFT_WALK_X,FRONT_MID],[-.6,FRONT_MID],[-.6,D/2-1.5]];
-const ROOF_IN=[[(RR.x0+RR.x1)/2,RR.z1+1.4],[LEFT_WALK_X,RR.z1+1.4],[LEFT_WALK_X,.6],[-4.6,.6]];
+const ELEV_IN0=[[LEFT_WALK_X,SW.z1],[LEFT_WALK_X,LIFT_FRONT+1.4]];   // 1F: from the street across the platform to the elevators
+const OUT_ROUTE=[[-TOWER_IN-.5,LIFT_FRONT+1.4],[LEFT_WALK_X,LIFT_FRONT+1.4],[LEFT_WALK_X,FRONT_MID],[-.6,FRONT_MID],[-.6,D/2-1.5]];
+const ROOF_IN=[[-TOWER_IN-.5,LIFT_FRONT+1.4],[LEFT_WALK_X,LIFT_FRONT+1.4],[LEFT_WALK_X,.6],[-4.6,.6]];
 const outRoute=f=>f===RF?ROOF_IN:OUT_ROUTE;
 const FPTS=[WALK.dining,WALK.gifts,WALK.classroom,WALK.office,WALK.terrace];
 const SLOTS=[[-1.05,-.85],[-.15,-.9],[.75,-.85],[-1.05,0],[-.15,0],[.75,0],[-1.05,.85],[-.15,.9],[.75,.85],[1.25,0]];   // 10 people, roomier cab
@@ -1545,24 +1558,48 @@ const ESC={up:[esc1,esc2,esc3,esc4],down:[esc1d,esc2d,esc3d,esc4d]};
 // ======== B1 underground car park (floor index -1): reached by a garden-lined driveway + ramp behind the building, by both elevators and by an escalator pair in the hall ========
 const B1D=4.2;   // B1 floor 4.2 m below 1F (3.3 m clear height)
 const B1G=new THREE.Group();B1G.position.y=-B1D;scene.add(B1G);
-const B1={x0:-34,x1:35,z0:-15.4-EXP,z1:17}, RAMP={zc:-13.3-EXP,top:9,bot:32.8,ytop:-.37}, LANE_IN=9, LANE_OUT=-9;   // ramps: from x=±9 at street level down to x=±32.8 on the B1 floor (~16%)
-const STALLS=[];for(let k=0;k<12;k++){const x=-14.25+2.5*k;STALLS.push({x,z:-8,row:'A',nose:-1},{x,z:3,row:'B',nose:1},{x,z:8,row:'C',nose:-1});}
-STALLS.forEach(s=>{s.free=true;s.entry=s.row==='C'?[s.x,12.6]:[s.x,s.row==='A'?-1.4:-3.6];});
+const B1={x0:-W/2,x1:W/2,z0:-D/2,z1:D/2};
+const RAMP={zc:-13.3-EXP,top:9,bot:32.8,ytop:-.37}, LANE_IN=9, LANE_OUT=-9;
+const B1_ENTRY_X=33, B1_AISLE_HALF=3.3;
+const STALLS=[];
+for(let k=0;k<8;k++){
+  const x=(k-3.5)*2.65;
+  for(const [z,row,nose] of [[-6.7,'A',-1],[6.7,'B',1]]){
+    STALLS.push({x,z,row,nose,entry:[x,0],free:true});
+  }
+}
 (function(g){const CONCB=0x6E7072,FL=0x55585B,LINE=0xE8E6E0;
   box(B1.x1-B1.x0,.3,B1.z1-B1.z0,FL,(B1.x0+B1.x1)/2,-.15,(B1.z0+B1.z1)/2,g);                       // floor
-  const hh=B1D-.9;box(B1.x1-B1.x0,hh,.3,CONCB,(B1.x0+B1.x1)/2,hh/2,B1.z0-.15,g);box(.3,hh,B1.z1-B1.z0,CONCB,B1.x0-.15,hh/2,(B1.z0+B1.z1)/2,g);   // back + street-side walls
-  box(B1.x1-B1.x0,1,.3,CONCB,(B1.x0+B1.x1)/2,.5,B1.z1+.15,g);box(.3,1,B1.z1-B1.z0,CONCB,B1.x1+.15,.5,(B1.z0+B1.z1)/2,g);                      // low walls on the viewing sides
-  STALLS.forEach(s=>{[-1.25,1.25].forEach(o=>box(.1,.012,5,LINE,s.x+o,.006,s.z,g));});
-  [[-1,'A'],[1,'B'],[1,'C']].forEach(()=>{});
-  for(const z of [-5.5,10.5])box(30,.012,.1,LINE,-.25,.006,z,g);                                                                          // stall front lines
-  [[-1.2,-3.8],[14.8,12.4]].forEach(([a,b])=>{for(let x=-28;x<17;x+=3)box(1.5,.012,.12,0xD9A441,x,.006,(a+b)/2,g);});                         // aisle centre dashes
-  [-15.5,-8,-.5,7,14.5].forEach(x=>{box(.5,hh,.5,CONCB,x,hh/2,-10.9,g);box(.5,hh,.5,CONCB,x,hh/2,5.5,g);});                               // columns on the stall lines
+  const hh=B1D-.9;
+  box(W,hh,.3,CONCB,0,hh/2,B1.z0-.15,g);
+  box(W,1,.3,CONCB,0,.5,B1.z1+.15,g);
+  for(const side of [-1,1]){
+    const wallLength=D/2-B1_AISLE_HALF;
+    for(const end of [-1,1]){
+      box(.3,side<0?hh:1,wallLength,CONCB,side*(W/2+.15),side<0?hh/2:.5,end*(B1_AISLE_HALF+wallLength/2),g);
+    }
+    const linkWidth=B1_ENTRY_X+2-W/2;
+    box(linkWidth,.3,B1_AISLE_HALF*2,FL,side*(W/2+linkWidth/2),-.15,0,g);
+    const rampLinkLength=-RAMP.zc+B1_AISLE_HALF;
+    box(4.2,.3,rampLinkLength,FL,side*B1_ENTRY_X,-.15,(RAMP.zc+B1_AISLE_HALF)/2,g);
+  }
+  STALLS.forEach(s=>{
+    [-1.325,1.325].forEach(o=>box(.1,.012,5,LINE,s.x+o,.006,s.z,g));
+  });
+  for(const z of [-4.2,4.2])box(21.2,.012,.1,LINE,0,.006,z,g);
+  for(let x=-9;x<=9;x+=3)box(1.5,.012,.12,0xD9A441,x,.007,0,g);
   // elevator lobby in front of both elevators: floor paint, doors
-  box(8.6,.012,3.2,0xC9C6BE,(EVS[1].ELEV[0]+EVS[0].ELEV[1])/2,.006,RR.z1+1.6,g);
-  EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,RR.z1+.07,g);fr.userData.pass=true;
-    E.b1=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,RR.z1+.12,g);elevDoors.push(l);return l;});});
-  // pedestrian path from the lobby along the north edge to the escalators
-  box(42,.012,1.2,0x5E7A5E,-5,.007,16.2,g);box(1.2,.012,22,0x5E7A5E,-25.8,.007,5.6,g);
+  box(8.6,.012,3.2,0xC9C6BE,(EVS[1].ELEV[0]+EVS[0].ELEV[1])/2,.006,LIFT_FRONT+1.6,g);
+  EVS.forEach(E=>{const fr=box(2.3,2.6,.14,C.black,E.EDX,1.3,LIFT_FRONT+.07,g);fr.userData.pass=true;
+    E.b1=[-1,1].map(sd=>{const l=box(1.0,2.4,.08,C.dark,E.EDX+sd*.5,1.2,LIFT_FRONT+.12,g);elevDoors.push(l);return l;});});
+  // Separate pedestrian connections from the parking aisle to the two towers.
+  for(const x of [EVS[0].EDX,EVS[1].EDX]){
+    box(2.1,.3,-LIFT_FRONT,FL,x,-.15,LIFT_FRONT/2,g);
+    box(1.2,.012,-LIFT_FRONT,0x5E7A5E,x,.007,LIFT_FRONT/2,g);
+  }
+  const eastEnd=LANE[3]+1.1;
+  box(eastEnd-W/2,.3,D/2,FL,(eastEnd+W/2)/2,-.15,D/4,g);
+  box(8.6,.3,2.6,FL,(EVS[0].EDX+EVS[1].EDX)/2,-.15,LIFT_FRONT+1.3,g);
   // two straight ramps along the back wall: east one comes down (entry), west one goes up (exit)
   [1,-1].forEach(sx=>{const L=RAMP.bot-RAMP.top,rise=B1D+RAMP.ytop,len=Math.hypot(L,rise),ang=Math.atan2(rise,L);
     const rp=new THREE.Group();rp.position.set(sx*(RAMP.top+RAMP.bot)/2,rise/2,RAMP.zc);rp.rotation.z=sx*ang;g.add(rp);
@@ -1693,10 +1730,12 @@ const BUS={m:null,on:false,t:20,z:0,stop:0,served:false};
 // ---------- cars that come to park: back street → garden driveway → ramp → B1 bay; the people walk to an elevator or the escalator, and later drive away ----------
 const DRV_Y=-.37, ROADY=-.52;
 function rampPts(sx,down){const a=[sx*RAMP.top,DRV_Y,RAMP.zc],b=[sx*RAMP.bot,-B1D,RAMP.zc];return down?[a,b]:[b,a];}
-function parkRoute(s,laneZ){const P=[[LANE_IN,ROADY,laneZ],[LANE_IN,DRV_Y,RING.z0-.2]].concat(rampPts(1,true),[[33,-B1D,RAMP.zc],[33,-B1D,14.8]]);
-  if(s.row==='C')P.push([s.x,-B1D,14.8],[s.x,-B1D,s.entry[1]]);else P.push([-29,-B1D,14.8],[-29,-B1D,s.entry[1]],[s.x,-B1D,s.entry[1]]);
-  P.push([s.x,-B1D,s.z]);return P.map(p=>({p}));}
-function leaveRoute(s,laneZ){const R=[{p:[s.x,-B1D,s.entry[1]],rev:true},{p:[-33,-B1D,s.entry[1]]},{p:[-33,-B1D,RAMP.zc]}];
+function parkRoute(s,laneZ){
+  const points=[[LANE_IN,ROADY,laneZ],[LANE_IN,DRV_Y,RING.z0-.2]]
+    .concat(rampPts(1,true),[[B1_ENTRY_X,-B1D,0],[s.x,-B1D,0],[s.x,-B1D,s.z]]);
+  return points.map(p=>({p}));
+}
+function leaveRoute(s,laneZ){const R=[{p:[s.x,-B1D,0],rev:true},{p:[-B1_ENTRY_X,-B1D,0]},{p:[-B1_ENTRY_X,-B1D,RAMP.zc]}];
   rampPts(-1,false).forEach(p=>R.push({p}));R.push({p:[LANE_OUT,DRV_Y,RAMP.zc]},{p:[LANE_OUT,DRV_Y,RING.z0-.2]},{p:[LANE_OUT,ROADY,laneZ]});return R;}
 const BACK_LANES=CAR_LANES.filter(L=>L.z<0);
 let carSpeedK=1;
@@ -1722,9 +1761,9 @@ function driverTrip(a,car){const s=car.stall,ent=s.entry,side=[s.x+1.25,s.z+(s.r
   if(Math.random()<.5){const ev=Math.random()<.5?0:1,EW=EVS[ev].EWAIT,lob=[[EW[0],ent[1]],EW];
     a.steps=[{k:'walk',f:-1,pts:toAisle.concat(lob)},{k:'elev',from:-1,to:F,ev},{k:'walk',f:F,pts:outRoute(F)}].concat(insideVisit(F),
       [{k:'walk',f:F,pts:rev(outRoute(F)).concat([EW])},{k:'elev',from:F,to:-1,ev},{k:'walk',f:-1,pts:rev(lob).concat(back)},done]);}
-  else{const bot=escEnd(escB1,false),botD=escEnd(escB1d,false),topD=escEnd(escB1d,true),lead=s.row==='C'?[[15.2,ent[1]]]:[[15.2,ent[1]],[15.2,11]];
+  else{const bot=escEnd(escB1,false),botD=escEnd(escB1d,false),topD=escEnd(escB1d,true),lead=[[bot[0],0]];
     a.steps=[{k:'walk',f:-1,pts:toAisle.concat(lead,[bot])},{k:'esc',e:escB1,up:true},{k:'walk',f:0,pts:ESC1_UP}].concat(insideVisit(0),
-      [{k:'walk',f:0,pts:rev(ESC1_UP).concat([[topD[0],topD[1]-.4],topD])},{k:'esc',e:escB1d,up:false},{k:'walk',f:-1,pts:[[15.2,botD[1]+1.5],[15.2,ent[1]]].concat(back)},done]);}}
+      [{k:'walk',f:0,pts:rev(ESC1_UP).concat([[topD[0],topD[1]-.4],topD])},{k:'esc',e:escB1d,up:false},{k:'walk',f:-1,pts:[[botD[0],0]].concat(back)},done]);}}
 function parkArrive(c){c.parked=true;const n=1+(Math.random()<.4?1:0);c.out=n;for(let i=0;i<n;i++){const a=getDriver();driverTrip(a,c);if(i)a.delay=1.5;}}
 function parkTick(dt){carPool.forEach(c=>{if(!c.on||!c.stall)return;
   if(c.route){carRouteTick(c,dt);return;}
@@ -1890,7 +1929,7 @@ function visitorTick(dt,t){agents.forEach(a=>{
   a.m.getWorldPosition(_w);
   const inFoot=Math.abs(_w.x)<=W/2&&Math.abs(_w.z)<=D/2;
   if(a.f===0&&a.m.parent===floorGroups[0]){const onPl=_w.x>PL.x0&&_w.x<PL.x1&&Math.abs(_w.z)<PL.z;
-    const raised=(_w.x>=WK[0]-.05&&_w.x<=BAL_X1&&(_w.z>=-WK[1]&&_w.z<=FRONT_Z))||(_w.x>=PX0-.05&&_w.x<WK[0]&&_w.z>=RR.z1&&_w.z<=LEFT_LANDING_END)||(_w.x>EX0&&_w.x<EX1&&_w.z>EZ0&&_w.z<EZ1);
+    const raised=(_w.x>=WK[0]-.05&&_w.x<=BAL_X1&&(_w.z>=-WK[1]&&_w.z<=FRONT_Z))||(_w.x>=PX0-.05&&_w.x<WK[0]&&((_w.z>=LIFT_FRONT&&_w.z<=LEFT_LANDING_END)||(_w.z>=RR.z1&&_w.z<=WC_LANDING_END)))||(_w.x>EX0&&_w.x<EX1&&_w.z>EZ0&&_w.z<EZ1);
     const inM=_w.x>HOLE_MRT[0]&&_w.x<HOLE_MRT[1]&&_w.z>HOLE_MRT[2]&&_w.z<HOLE_MRT[3];
     a.m.position.y=(inM?-.37-(HOLE_MRT[3]-_w.z)/(HOLE_MRT[3]-HOLE_MRT[2])*3.6:raised?0:onPl?-.31:-.37)+(bob?Math.abs(Math.sin(t*9+a.ph))*.05:0);}
   else if(a.m.parent&&a.m.parent.parent&&floorGroups.includes(a.m.parent))a.m.position.y=bob?Math.abs(Math.sin(t*9+a.ph))*.05:0;
@@ -2124,7 +2163,9 @@ const NAV={x0:-80,z0:-32,cs:.25,nx:640,nz:288,r:.32,g:[]};
     const room=f<0?B1G:floorGroups[f];
     room.children.forEach(o=>{if((o.isMesh||(o.isGroup&&o.userData.solid))&&!skip.has(o)&&!o.userData.pass)block(bb.setFromObject(o));});
     scene.children.forEach(o=>{if(o.isMesh&&!skip.has(o))block(bb.setFromObject(o));});
-    if(f>0)block(bb.set(new THREE.Vector3(NAV.x0,fy,LEFT_LANDING_END),new THREE.Vector3(WK[0],fy+2,NAV.z0+NAV.nz*NAV.cs)));
+    if(f>0)for(const [start,end] of [[LEFT_LANDING_END,RR.z1],[WC_LANDING_END,NAV.z0+NAV.nz*NAV.cs]]){
+      block(bb.set(new THREE.Vector3(NAV.x0,fy,start),new THREE.Vector3(WK[0],fy+2,end)));
+    }
     NAV.g[f]=G;}
 })();
 const NV={stamp:new Uint32Array(NAV.nx*NAV.nz),gs:new Float32Array(NAV.nx*NAV.nz),from:new Int32Array(NAV.nx*NAV.nz),gen:0};
