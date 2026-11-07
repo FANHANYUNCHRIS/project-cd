@@ -116,13 +116,17 @@ aside li a{color:var(--fg);font-weight:700;text-decoration:underline;text-underl
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
 <script>
 (function(){
-const NF=6, RF=NF-1;   // 1F–5F indoor + rooftop terrace
-const H=6.6, W=17.3, D=17.3, K=W/10;   // 17.3 m square ≈ 300 m² per floor; K maps the 10 m furniture plan onto it
+const NF=5, RF=NF-1, OFFICE=3;
+const H=6.6, W=Math.sqrt(200*400/121), D=W, K=1.73;   // 200 坪 gross per indoor floor
+const EXP=(W-17.3)/2, CAFE_SHIFT=4.5;
+const cafePoint=([x,z])=>[x,z+CAFE_SHIFT];
+const productionZ=z=>z*.46-8.55;
+const productionPoint=([x,z])=>[x*1.24,productionZ(z)];
 const C={white:0xF4F4F2,off:0xE2E2E0,floor:0xD6D6D4,mid:0x9A9A9A,gray:0x6B6B6B,dark:0x2A2A2A,black:0x151515,
   glass:0xC8D2D6,steel:0xA7ABAE,pastry:0xD9A95B,yolk:0xC98A3A,leaf:0x5E8C5A,trunk:0x6B5140,asphalt:0x3A3C3E,walk:0xBFC1C2,curb:0xE6E6E4,skin:0xE9C3A0};
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const FLOORS=[{n:'1F',s:'結帳・用餐'},{n:'2F',s:'伴手禮'},{n:'3F',s:'甜點咖啡教室'},{n:'4F',s:'烘焙・製作・倉庫'},{n:'5F',s:'辦公室'},{n:'RF',s:'空中花園'}];
+const FLOORS=[{n:'1F',s:'咖啡・烘焙'},{n:'2F',s:'伴手禮'},{n:'3F',s:'甜點咖啡教室'},{n:'4F',s:'辦公室'},{n:'RF',s:'空中花園'}];
 const ZONES={   // real metres
   checkout:{floor:0,name:'結帳區',center:[-6.4,.7],bounds:[-8.5,-4,-5.7,8.5],
     desc:'櫃檯後半段是電腦收銀區，前半段是甜點玻璃櫃。點餐、挑甜點、結帳都在這裡。',
@@ -136,18 +140,18 @@ const ZONES={   // real metres
   classroom:{floor:2,name:'甜點咖啡教室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'上課時間每天 09:00–17:00（12:00–13:00 午休）、19:00–22:00，每堂 50 分開始下課 10 分鐘。一班 20 位學員，一人一張桌子。前面是講師示範台，助教在旁協助。左邊是烤箱、咖啡機、烘豆機，右邊是甜點備料區。',
     items:[{t:'甜點入門班',demo:1},{t:'咖啡手沖課',demo:1},{t:'烘豆體驗',demo:1},{t:'落地攪拌／揉麵機、壓麵整形機',demo:1}]},
-  office:{floor:4,name:'辦公室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
+  office:{floor:OFFICE,name:'辦公室',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'大門櫃檯接待區、辦公區、茶水間與開放休息區、會議室。會議室裡 GPT、Gemini、Claude、Grok 四位正在開會，討論「預計半年後開賣，這半年要怎麼更新官網與經營社群」，頭上的對話框會輪流顯示每個人的發言。品牌故事和聯絡方式放在這裡。',
     items:[{t:'品牌故事',demo:1},
            {t:'Instagram　@project.cd',href:'https://www.instagram.com/project.cd'},
            {t:'Facebook 粉絲專頁',href:'https://www.facebook.com/project.cd.tw'},
            {t:'LINE 官方帳號　@572bkqdy',href:'https://line.me/R/ti/p/@572bkqdy'}]},
-  warehouse:{floor:3,name:'食品倉庫',center:[-6,0],bounds:[-8.5,-3.4,-8.5,8.5],
-    desc:'4F 左邊：貨架、冷凍庫、冷藏庫和進貨暫放區。倉管人員會不定期在貨架間檢查、盤點。上班時間每天 06:00–22:00。',items:[]},
-  pastrylab:{floor:3,name:'甜點製作區',center:[.2,0],bounds:[-3.4,3.6,-8.5,8.5],
-    desc:'4F 中間：甜點師在不鏽鋼工作台製作鳳梨酥、蛋黃酥，後面是層爐、旋風烤箱、發酵箱，前面是包裝台。',items:[]},
-  roastery:{floor:3,name:'咖啡烘焙區',center:[6,0],bounds:[3.6,8.5,-8.5,8.5],
-    desc:'4F 右邊：兩台滾筒烘豆機（排煙管一路通到屋頂）、生豆麻袋、杯測桌、包裝秤與封口機。',items:[]},
+  warehouse:{floor:0,name:'食品倉庫',center:[-6,0],bounds:[-8.5,-3.4,-8.5,8.5],
+    desc:'1F 後場：貨架、冷凍庫、冷藏庫和進貨暫放區。倉管人員會不定期在貨架間檢查、盤點。上班時間每天 06:00–22:00。',items:[]},
+  pastrylab:{floor:0,name:'甜點製作區',center:[.2,0],bounds:[-3.4,3.6,-8.5,8.5],
+    desc:'1F 後場：甜點師在不鏽鋼工作台製作鳳梨酥、蛋黃酥，後面是層爐、旋風烤箱、發酵箱，前面是包裝台。',items:[]},
+  roastery:{floor:0,name:'咖啡烘焙區',center:[6,0],bounds:[3.6,8.5,-8.5,8.5],
+    desc:'1F 後場：兩台滾筒烘豆機（配有排煙管）、生豆麻袋、杯測桌、包裝秤與封口機。',items:[]},
   terrace:{floor:RF,name:'空中花園',center:[0,0],bounds:[-8.5,8.5,-8.5,8.5],
     desc:'員工休息區（遇到節日變成活動會場：12 月整個月是聖誕布置，農曆過年前兩週到元宵是過年布置，依現實日期自動切換；下雨時花園裡的人會離開）。黃銅花台、大量花卉、絲絨弧形沙發、大理石茶几和水景，四周是 1.5 米高的安全玻璃。從電梯、手扶梯出來沿著石板步道就能走到中央的環形步道。',
     items:[{t:'季節活動',demo:1},{t:'粉絲留言牆',demo:1}]}
@@ -203,11 +207,11 @@ LOGO.onload=()=>logoRedraw.forEach(f=>f());LOGO.src='data:image/png;base64,iVBOR
 // ---------- building (1 unit = 1 m; 10 m × 10 m = 100 m² per floor) ----------
 const WKW=2.4, FRONT_WKW=3.6;   // side/back corridors and widened front promenade (metres)
 // left side: a wide platform on every floor; at its back, next to the building, the restrooms; further out two big elevators (10 people each), doors facing the front
-const RR={x0:-16.45,x1:-11.05,z0:-11.05,z1:-7.65};
-const EVS=[[-20.25,-16.65],[-24.05,-20.45]].map(([x0,x1])=>({ELEV:[x0,x1,RR.z0,RR.z1],EDX:(x0+x1)/2}));
-const PX0=-24.1;   // outer edge of the left platform
+const RR={x0:-16.45-EXP,x1:-11.05-EXP,z0:-11.05-EXP,z1:-7.65-EXP};
+const EVS=[[-20.25,-16.65],[-24.05,-20.45]].map(([x0,x1])=>({ELEV:[x0-EXP,x1-EXP,RR.z0,RR.z1],EDX:(x0+x1)/2-EXP}));
+const PX0=-24.1-EXP;   // outer edge of the left platform
 // openings through the ground: escalator well to B1 in the hall, car-park ramp mouth behind the building, MRT stairs on the left
-const HOLE_ESC=[15.8,19.05,-6.85,7.05], HOLE_RE=[6.8,13.5,-15.2,-11.4], HOLE_RW=[-13.5,-6.8,-15.2,-11.4], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0,-28.8,3,9.5];
+const HOLE_ESC=[15.8+EXP,19.05+EXP,-6.85-EXP,7.05+EXP], HOLE_RE=[6.8,13.5,-15.2-EXP,-11.4-EXP], HOLE_RW=[-13.5,-6.8,-15.2-EXP,-11.4-EXP], HOLE_RAMP=HOLE_RE, HOLE_MRT=[-32.0-EXP,-28.8-EXP,3,9.5];
 function boxHoles(w,h,d,col,cx,y,cz,holes,p){const X0=cx-w/2,X1=cx+w/2,Z0=cz-d/2,Z1=cz+d/2,hs=holes.filter(q=>q[0]<X1&&q[1]>X0&&q[2]<Z1&&q[3]>Z0);
   if(!hs.length)return box(w,h,d,col,cx,y,cz,p);
   const xs=[...new Set([X0,X1].concat(...hs.map(q=>[Math.max(X0,q[0]),Math.min(X1,q[1])])))].sort((a,b)=>a-b);
@@ -256,7 +260,7 @@ for(let i=0;i<NF;i++){
 // Staff-room door facades only; no rear annex or opening through the wall.
 floorGroups.slice(0,RF).forEach((g,i)=>{
   const door=new THREE.Group(),w=1.2,h=2.6;
-  door.position.set(i===3?.65:-7.55,0,-D/2+.06);
+  door.position.set(i===0?.65:-7.55,0,-D/2+.06);
   door.userData.staffRoomDoor=true;g.add(door);
   box(w,h,.06,C.dark,0,h/2,0,door);
   [-1,1].forEach(s=>box(.06,h+.06,.08,C.black,s*(w/2+.03),(h+.06)/2,.01,door));
@@ -275,7 +279,7 @@ floorGroups.slice(0,RF).forEach((g,i)=>{
 const BAL_X0=W/2, BAL_X1=W/2+3.4, ES0=D/2-1.6, ES1=-(D/2-1.8);   // escalator front / back ends
 let RAILH=1.1;function railRun(g,x,z0,z1){if(RAILH>1.2){safeGlass(g,x,z0,x,z1);return;}const len=z1-z0,zc=(z0+z1)/2;box(.05,1.1,len,C.glass,x,.55,zc,g,GLASS);box(.12,.06,len,C.black,x,1.13,zc,g).userData.xray=true;}
 function railX(g,z,x0,x1){if(RAILH>1.2){safeGlass(g,x0,z,x1,z);return;}const len=x1-x0,xc=(x0+x1)/2;box(len,1.1,.05,C.glass,xc,.55,z,g,GLASS);box(len,.06,.12,C.black,xc,1.13,z,g).userData.xray=true;}
-const LAND={1:-(D/2-.2),2:D/2,3:-(D/2-.2),4:D/2,5:-(D/2-.2)};   // floor → z centre of its escalator landing (back / front); landings 3.2 m deep   // floor → z centre of its escalator landing (back / front)
+const LAND={1:-(D/2-.2),2:D/2,3:-(D/2-.2),4:D/2};   // floor → z centre of its escalator landing (back / front); landings 3.2 m deep   // floor → z centre of its escalator landing (back / front)
 floorGroups.forEach((g,i)=>{
   const bc=(BAL_X0+BAL_X1)/2;RAILH=i===RF?1.5:1.1;
   box(BAL_X1-BAL_X0,.3,D,C.off,bc,-.15,0,g);
@@ -354,8 +358,8 @@ const GX=[-W/4,0,W/4], PZ=[-W/3,W/3];
 floorGroups.forEach((g,i)=>{
   const n0=g.children.length;
   if(i>0){
-    // 17.3 m clear span, no interior columns: steel girders 1.0 m deep (≈ span/17) under this slab
-    GX.forEach(x=>box(.35,1.0,D-.4,STEEL,x,-.8,0,g));
+    // Conceptual long-span girders under the enlarged slab
+    GX.forEach(x=>box(.35,1.5,D-.4,STEEL,x,-1.05,0,g));
     box(W,.7,.3,STEEL,0,-.65,D/2-.2,g); box(W,.7,.3,STEEL,0,-.65,-D/2+.2,g);       // edge beams
     box(.3,.7,D-.8,STEEL,-W/2+.2,-.65,0,g); box(.3,.7,D-.8,STEEL,W/2-.2,-.65,0,g);   // end short of the corner columns
     // cantilever brackets: balcony (3.4 m) and skywalk (1.8 m)
@@ -386,7 +390,7 @@ EVS.forEach(E=>{const [x0,x1,z0,z1]=E.ELEV;
   box(x1-x0+.4,.6,z1-z0+.4,CONC,(x0+x1)/2,-H-.6,(z0+z1)/2,scene);                 // footing (below B1)
 });
 // Left platform edge beams; exterior vertical columns removed for the concept view.
-floorGroups.forEach((g,i)=>{if(i===0)return;const zf=i===RF?D/2:FRONT_Z;[-23.6,-17.6].forEach(x=>box(.3,.45,zf-RR.z1,C.black,x,-.52,(RR.z1+zf)/2,g));});
+floorGroups.forEach((g,i)=>{if(i===0)return;const zf=i===RF?D/2:FRONT_Z;[-23.6,-17.6].forEach(x=>box(.3,.45,zf-RR.z1,C.black,x-EXP,-.52,(RR.z1+zf)/2,g));});
 // fire-stair core behind the building: second escape route + concrete shear wall for earthquakes
 (function(){const cx=(CORE.x0+CORE.x1)/2,cz=(CORE.z0+CORE.z1)/2,w=CORE.x1-CORE.x0,d=CORE.z1-CORE.z0,h=RF*H+3.3;
   box(w,h,d,CONC,cx,h/2-.5,cz,scene);
@@ -495,7 +499,7 @@ function planToReal(f,x,z){const c=PLAN.find(c=>c.f===f&&x>=c.x0-.3&&x<=c.x1+.3&
 // Keep the queue fittings with the relocated bar.
 const barFittings=floorGroups[0].children.slice(_fc[0]);
 const barStart=floorGroups[0].children.length;
-const barPoint=([x,z])=>[-z,x];
+const barPoint=([x,z])=>cafePoint([-z,x]);
 function longDiningPoint(x,z,tableX){return [3.4+(z+1.5)*.8,(tableX===1.2?-.2:3.4)-(x-tableX)];}
 function leftDiningPosition(x,z,ry,cx,centers){
   const cz=centers.reduce((a,b)=>Math.abs(z-a)<Math.abs(z-b)?a:b);
@@ -594,15 +598,17 @@ function diningPosition(x,z,ry){
   menuBoard.rotation.y=Math.PI/2;menuBoard.position.set(-8.545,3.5,0);g.add(menuBoard);
 })(floorGroups[0]);
 // Rotate the complete bar 90 degrees from the left wall to the back wall.
-const barTurn=new THREE.Matrix4().makeRotationY(-Math.PI/2);
+const barTurn=new THREE.Matrix4().makeRotationY(-Math.PI/2).setPosition(0,0,CAFE_SHIFT);
 barFittings.concat(floorGroups[0].children.slice(barStart)).forEach(o=>o.applyMatrix4(barTurn));
 ZONES.checkout.center=barPoint([-5.0,.7]);
-ZONES.checkout.bounds=[-6.8,7.6,-8.5,-3.5];
-ZONES.dining.bounds=[-8.5,8.5,-3.5,8.5];
-ZONES.checkout.desc='後牆整組咖啡吧台，前方是甜點展示櫃與點餐結帳區；設備、菜單與咖啡師工作區沿後牆排列。';
+ZONES.checkout.bounds=[-8.5,8.5,-8.5+CAFE_SHIFT,-3.5+CAFE_SHIFT];
+ZONES.dining.center=cafePoint(ZONES.dining.center);
+ZONES.dining.bounds=[-W/2+.15,W/2-.15,-3.5+CAFE_SHIFT,D/2-.15];
+ZONES.checkout.desc='前場後側的咖啡吧台，前方是甜點展示櫃與點餐結帳區；設備、菜單與咖啡師工作區沿後牆排列。';
 ZONES.dining.desc='兩張共享長桌與後方吧台平行，左側及窗邊配置雙人座；入口主走道、桌間橫向走道與吧台點餐區保持暢通，右後角是垃圾回收區。';
 // ---- 1F dining (real metres): two-seat tables around the edge, two long tables in the middle ----
 (function(g){
+  const start=g.children.length;
   const seat=(x,z)=>box(.44,.45,.44,C.black,x,.225,z,g);
   function two(x,z,axis){box(.7,.04,.7,C.white,x,.75,z,g);cyl(.04,.04,.73,C.black,x,.365,z,g,8);cyl(.2,.2,.02,C.black,x,.01,z,g,16);
     if(axis==='x'){seat(x-.65,z);seat(x+.65,z);}else{seat(x,z-.65);seat(x,z+.65);}}
@@ -617,6 +623,7 @@ ZONES.dining.desc='兩張共享長桌與後方吧台平行，左側及窗邊配�
     [1.32,5.48].forEach(x=>box(.08,.73,.8,C.black,x,.365,z,g));
     for(let k=0;k<6;k++){const x=1.4+k*.8;seat(x,z-.85);seat(x,z+.85);}
     [1.4,3.4,5.4].forEach(x=>pendant(g,x,z,3));});
+  g.children.slice(start).forEach(o=>o.position.z+=CAFE_SHIFT);
 })(floorGroups[0]);
 // ======== upper floors, real metres (17.3 m square; door at front centre x≈-0.6) ========
 const CREAM=0xE9E3D8, GOLDL=0xB8975A, WOOD=0x6E5A40, LAWN=0x7FA86B;
@@ -636,7 +643,7 @@ function mixer(g,x,y,z){box(.22,.04,.32,C.white,x,y+.02,z,g);box(.12,.42,.12,C.w
 
 // ---- 1F recycling station: horizontal continuation of the rear counter ----
 (function(parent){const g=new THREE.Group(),x0=-1.05,z=0;
-  g.position.set(7.65,0,-8.2);g.scale.x=.76;g.userData.solid=true;parent.add(g);
+  g.position.set(7.65,0,-8.2+CAFE_SHIFT);g.scale.x=.76;g.userData.solid=true;parent.add(g);
   box(2.1,.95,.6,C.black,x0+1.05,.475,z,g);box(2.14,.04,.64,C.white,x0+1.05,.97,z,g);
   [[0,0x3F7A4A],[1,0x2F5E8C],[2,0x8C6A2F],[3,0x6B6B6B]].forEach(([k,c])=>{const x=x0+.27+k*.52;box(.3,.03,.12,c,x,.991,z+.08,g);box(.4,.12,.02,c,x,.82,z+.31,g);});
 })(floorGroups[0]);
@@ -792,7 +799,7 @@ const DESKS=[];
   box(2.4,2.2,.4,C.black,3.6,1.1,-1.3,g);
   for(let r=0;r<4;r++)for(let k=0;k<12;k++)box(.07+(k%3)*.03,.32,.26,[0xEDEAE2,C.dark,0x8C6A2F,0x6E5A40,0x4F6D8F][(k+r)%5],2.55+k*.18,.35+r*.5,-1.2,g);
   box(.5,1.1,.3,C.black,6,.55,-1.4,g);for(let k=0;k<3;k++){const m=box(.4,.28,.02,[0xC0504D,0xEDEAE2,0xD9B24A][k],6,.55+k*.3,-1.24,g);m.rotation.x=-.25;}
-})(floorGroups[4]);
+})(floorGroups[OFFICE]);
 
 // ---- RF sky garden: lush brass planters, velvet curved sofas, marble tables, warm light ----
 const GSEATS=[];
@@ -885,7 +892,6 @@ const esc1=escalator(floorGroups[0],ES0,ES1,LANE[0],H,false), esc1d=escalator(fl
 const esc2=escalator(floorGroups[1],ES1,ES0,LANE[2],H,false), esc2d=escalator(floorGroups[1],ES1,ES0,LANE[3],H,true);
 const esc3=escalator(floorGroups[2],ES0,ES1,LANE[0],H,false), esc3d=escalator(floorGroups[2],ES0,ES1,LANE[1],H,true);
 const esc4=escalator(floorGroups[3],ES1,ES0,LANE[2],H,false), esc4d=escalator(floorGroups[3],ES1,ES0,LANE[3],H,true);
-const esc5=escalator(floorGroups[4],ES0,ES1,LANE[0],H,false), esc5d=escalator(floorGroups[4],ES0,ES1,LANE[1],H,true);
 // escalator hall: one big glass box around all the escalators (open toward the balconies)
 const EX0=BAL_X1+.05, EX1=BAL_X1+7.45, EZ0=-(D/2+1.6), EZ1=D/2+1.9, EH=RF*H+3.2, EY=-.3;
 (function(){const g=scene,gl={transparent:true,opacity:.2,depthWrite:false},cx=(EX0+EX1)/2,cz=(EZ0+EZ1)/2,LX=EX1-EX0,LZ=EZ1-EZ0;
@@ -987,11 +993,12 @@ WALK.balcony=[[BAL_X0+.8,-4.8],[BAL_X0+2.6,-2.8],[BAL_X0+.8,2.5],[BAL_X0+2.6,5],
 function walker(fi,key,color,seq){const p=person(color,false);const pts=WALK[key];const s=pts[Math.floor(Math.random()*pts.length)];
   p.position.set(s[0],0,s[1]);floorGroups[fi].add(p);people.push({m:p,pts,tgt:null,pause:Math.random()*2,speed:.9+Math.random()*.5,ph:Math.random()*6,seq:!!seq,idx:Math.floor(Math.random()*pts.length)});}
 function seated(fi,x,z,ry,color,real){const p=person(color,true);const q=real?[x,z]:planToReal(fi,x,z);p.position.set(q[0],0,q[1]);p.rotation.y=ry;floorGroups[fi].add(p);people.push({m:p,seated:true,ph:Math.random()*6});}
+for(const key of ['dining','queue','entry']) WALK[key]=WALK[key].map(cafePoint);
 walker(0,'staff',C.black); walker(0,'staff',C.black); walker(0,'queue',col()); walker(0,'queue',col());
 walker(0,'dining',col(),true); walker(0,'dining',col(),true); walker(0,'entry',col(),true);
 [[-2.85,-7.6,Math.PI/2],[.85,-7.6,-Math.PI/2],[1.95,-7.6,Math.PI/2],[7.6,-5.65,0],[7.6,.45,Math.PI],[7.6,1.55,0],
  [.35,-3,Math.PI/2],[2.05,-1,-Math.PI/2],[.35,0,Math.PI/2],[3.55,0,Math.PI/2],[5.25,-4,-Math.PI/2],[5.25,-2,-Math.PI/2],[3.55,-3,Math.PI/2],[4.05,7.4,-Math.PI/2]]
- .forEach(([x,z,r])=>{const q=diningPosition(x,z,r);seated(0,q[0],q[1],q[2],col(),true);});   // diners (real metres)
+ .forEach(([x,z,r])=>{const q=diningPosition(x,z,r);seated(0,q[0],q[1]+CAFE_SHIFT,q[2],col(),true);});   // diners (real metres)
 
 for(let i=0;i<NF;i++)walker(i,'balcony',col());
 // store staff: salespeople, cleaners, security guards
@@ -1017,7 +1024,7 @@ staffWalker(RF,[[-5,-3.4],[-3,-3.4],[-.6,3],[3,-.6],[-.6,-4.2],[-4.2,-.6],[-.6,3
 staffWalker(1,WALK.gifts,'clean',.4);staffWalker(2,WALK.classroom,'clean',.4);   // cleaners on 2F and 3F (1F, 4F, RF already have one)
 // salespeople
 // cleaners with mops
-staffWalker(0,WALK.dining,'clean',.45,true); staffWalker(4,WALK.office,'clean',.45);staffWalker(3,WALK.prod||[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2]],'clean',.45); staffWalker(RF,WALK.terrace,'clean',.45);
+staffWalker(0,WALK.dining,'clean',.45,true); staffWalker(OFFICE,WALK.office,'clean',.45); staffWalker(RF,WALK.terrace,'clean',.45);
 function standAt(fi,kind,x,z,ry){const m=kind?dressed(kind):person(col(),false);m.position.set(x,0,z);m.rotation.y=ry;floorGroups[fi].add(m);people.push({m,seated:true,ph:Math.random()*6});}
 // 2F: salespeople behind the jewellery counter and at the till, shoppers, people resting on the sofas
 standAt(1,'sales',-7.1,-4.4,Math.PI/2);standAt(1,'sales',-7.1,-.2,Math.PI/2);standAt(1,'sales',-7.1,4.6,Math.PI/2);
@@ -1074,7 +1081,7 @@ function classPhase(d){d=d||new Date();const h=d.getHours(),mi=d.getMinutes(),m=
 function classStatus(){const d=new Date(),h=d.getHours(),p=classPhase(d);
   if(p==='class')return '上課中';if(p==='break')return '下課休息（每堂 50 分開始休息 10 分鐘）';
   if(h===12)return '午休吃飯時間（13:00 繼續上課）';if(h>=17&&h<19)return '晚上 19:00 開始上課';if(h<9)return '09:00 開始上課';return '今日課程已結束（上課時間 09:00–17:00、19:00–22:00）';}
-const CLASS_DOOR=[-.6,7.9], CLASS_ROAM=[[-6.4,-3],[-6.4,3.6],[-3.8,6.4],[-.6,6.6],[2.6,6.4],[5.6,3.6],[5.6,-3],[-.6,-5],[-3.8,-5.4],[2.6,-5.4]];
+const CLASS_DOOR=[-.6,D/2-.75], CLASS_ROAM=[[-6.4,-3],[-6.4,3.6],[-3.8,6.4],[-.6,6.6],[2.6,6.4],[5.6,3.6],[5.6,-3],[-.6,-5],[-3.8,-5.4],[2.6,-5.4]];
 const students=[];
 const teacherIdx=people.length;standAt(2,'sales',0,-7.45,0);staffWalker(2,WALK.assist,'sales',.45,true);
 const classStaff=people.slice(teacherIdx);
@@ -1115,13 +1122,13 @@ function classTick(dt,t){const ph=classPhase(),d=new Date(),breakId=d.getHours()
   classPrev=ph;}
 walker(2,'classroom',col());
 // 4F: receptionist, staff at desks, a meeting, people in the lounge and pantry
-standAt(4,'sales',-.6,4.7,0);   // receptionist
-DESKS.forEach(([x,z],k)=>{if(k%4!==3)seated(4,x,z,Math.PI,col(),true);});   // staff at their desks
+standAt(OFFICE,'sales',-.6,4.7,0);   // receptionist
+DESKS.forEach(([x,z],k)=>{if(k%4!==3)seated(OFFICE,x,z,Math.PI,col(),true);});   // staff at their desks
 // meeting room: four AI members (GPT, Gemini, Claude, Grok) replaying a recorded meeting as speech bubbles
 const AIM=[{n:'GPT',x:4.5,z:-6.45,r:0,c:0x10A37F},{n:'Gemini',x:5.4,z:-6.45,r:0,c:0x4F7BE0},{n:'Claude',x:4.5,z:-4.55,r:Math.PI,c:0xD97757},{n:'Grok',x:5.4,z:-4.55,r:Math.PI,c:0x2A2A2A}];
-AIM.forEach(a=>seated(4,a.x,a.z,a.r,a.c,true));
+AIM.forEach(a=>seated(OFFICE,a.x,a.z,a.r,a.c,true));
 (function(){const t=signTexCN('#151515','#F4F4F2','AI 會議中','開賣前半年：官網與社群');
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(2.8,1.4),new THREE.MeshBasicMaterial({map:t}));m.position.set(4.9,2,-8.56);floorGroups[4].add(m);})();
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(2.8,1.4),new THREE.MeshBasicMaterial({map:t}));m.position.set(4.9,2,-8.56);floorGroups[OFFICE].add(m);})();
 const MEET_TOPIC='預計半年後開賣，這半年要怎麼更新官網與經營社群';
 const MEET=[["GPT", "大家好，我是 GPT。感謝各位準時出席。\n今天我們要討論的是「PROJECT.CD」這半年內的官網更新與社群經營策略，目標是半年後順利開賣。身為專案經理，我希望今天的討論能聚焦在「如何透過內容累積粉絲信任」以及「官網倒數階段的預熱機制」。\n時間寶貴，我們直接開始。請各位依序分享看法，Gemini，要不先從你的角度來談談社群定位？"], ["Gemini", "大家好，我是 Gemini。\nGPT 提到累積信任和預熱機制，這非常切中要害。從市場與消費者角度來看，這半年是建立品牌好感度的黃金期。\n鳳梨酥與蛋黃酥是送禮熱門選項，但市場競爭激烈。建議社群定位走「療癒、職人手作與成分透明」路線，透過短影音展示製作過程與內餡選用，滿足消費者對食安與美味的期待。\n至於官網，前期不需急著曝光購買按鈕，建議先設立「美味倒數頁面」，主打訂閱電子報送試吃券或早鳥優惠，這能直接幫我們在開賣前累積第一批核心忠實名單。大家覺得呢？"], ["Claude", "我是 Claude。Gemini 的職人手作定位與預熱漏斗很完美，但我必須指出幾個致命風險：\n第一，半年期間只靠短影音和倒數頁，缺乏實質互動，流量很容易疲乏；第二，過早承諾「試吃券」或早鳥，若供應鏈延遲或成本暴衝，會嚴重信用破產。\n建議在官網加入「研發日誌」公開挫折與改良過程，並嚴格控管試吃名額與成本，才能把粉絲真正轉化為忠誠買家。"], ["Grok", "我是 Grok。聽完大家保守又嚴謹的企劃，我只有一個字：無聊！\n甚麼職人手作、研發日誌？這早就是老掉牙的套路了。鳳梨酥跟蛋黃酥滿街都是，PROJECT.CD 要紅，這半年就要玩大的！\n我建議官網直接搞一場「元宇宙盲測大會」或「極端環境吃蛋黃酥挑戰」，社群乾脆舉辦「尋找全台最挑嘴的瘋狂食客」，讓網紅把我們的蛋黃酥拿去拿來當棒球打或拿去造極限實驗！\n別怕失控，越瘋狂、越有爭議，大家才會天天敲碗等我們半年後開賣啦！"], ["GPT", "感謝三位精彩的發言！Gemini 的預熱漏斗很扎實，Claude 的風險控管與研發日誌非常有溫度，而 Grok 的瘋狂點子確實能創造話題。\n綜合大家的意見，我們決定取其平衡：官網採用 Gemini 的「美味倒數頁」結合 Claude 的「真實研發日誌」，降低失控風險；社群部分，我們保留 Grok 的「極端挑戰」精神，但轉化為有趣的「極限美味實驗室」短影音（例如：到底能不能承受真空包裝或運送晃動？），既有話題性又能展現產品實力。\n接下來我們來細化每個月的時程規劃，請各位針對「前三個月的內容執行細節」提出具體做法。"], ["Gemini", "GPT 的綜合決策很棒，把 Grok 的創意收斂成「極限美味實驗室」，既有話題又顧及品質。\n從市場角度，前三個月的核心任務是「用話題引流，用誠意留人」。我建議具體做法為：第1個月主打 Grok 風格的趣味實驗短影音（如耐震測試）炒熱話題；第2個月由 Claude 提議的研發日誌接力，公開真實食材來源；第3個月在官網開啟訂閱，推出早鳥試吃名單。這能形成完美的流量閉環。"], ["Claude", "我是 Claude。我反對 Gemini 的時程安排。\n把趣味實驗放在第一個月，會直接模糊我們主打的「職人手作與成分透明」定位，甚至讓消費者誤以為我們只是個搞怪的玩具品牌。\n品質的信任需要時間沉澱，我堅持前三個月必須先蹲後跳：前兩個月由研發日誌奠定食安與職人形象，第三個月再配合實驗影片做趣味曝光。別為了短期的聲量，賭上品牌長期的專業信任。"], ["Grok", "哈囉！Claude，你也太緊繃了吧？職人手作聽起來就像會讓人打瞌睡的百年老店。\n現在是注意力稀缺的時代，前兩個月不搞點讓人眼睛一亮的瘋狂實驗，誰理你是用哪裡的土鳳梨？大家早就滑過去了！\n我堅持，第1個月就要直接把蛋黃酥丟進太空艙模擬，或拿鳳梨酥跟磚塊對砸！用最震撼的視覺抓住眼球，後面再搬出你的研發日誌來洗白、談職人靈魂，這才叫行銷的「冰火五重天」懂不懂？"], ["GPT", "感謝 Gemini 的流量閉環規劃、Claude 對品牌定位的嚴謹把關，以及 Grok 充滿爆發力的視覺構想！\n聽完兩位的交鋒，我做個折衷裁決：我們採取「雙軌並行制」。前三個月，短影音同時上線，一軌走 Grok 的趣味實驗吸睛，另一軌走 Claude 的研發日誌建立專業信任，互不衝突。\n具體時程就交由 Gemini 協助統籌這份雙軌內容的發布節奏。大家看這樣調整如何？"], ["Gemini", "我是 Gemini。GPT 的「雙軌並行制」非常聰明，完美解決了聲量與信任的拉鋸！\n我完全同意這個方向。從市場與消費者研究來看，現代受眾本就喜歡「既專業又帶點娛樂性」的品牌。\n接下來的三個月，我會負責統籌這份節奏：每週固定安排一支 Grok 風格的「極限美味實驗室」來吸引眼球，同時搭配 Claude 堅持的「真實研發日誌」文章來安撫理性消費者。兩者相輔相成，絕對能在半年後把流量精準轉化為首波買氣！大家放心，我會把執行細節排得妥妥貼貼。"], ["Claude", "我是 Claude。我必須再次提出強烈反對。\nGPT 的「雙軌並行」與 Gemini 的節奏看似兼顧兩端，實際上卻會徹底撕裂品牌人格。前三個月消費者對我們毫無認知，同時看到「蛋黃酥砸磚塊」的惡搞與嚴肅的「食安研發日誌」，只會讓大眾精神錯亂，搞不懂我們到底是娛樂頻道還是認真的食品品牌。\n品牌的靈魂經不起人格分裂。我堅持，信任必須先於聲量。"], ["Grok", "我是 Grok。拜託，Claude，你真的想太多了！現在誰在跟你談什麼人格分裂？\n消費者才不管你是不是人格分裂，他們只看你有沒有趣！無聊才是品牌最大的死罪。雙軌並行已經是我們最大的讓步了，難道你想讓 PROJECT.CD 在開賣前就先安祥地閉上雙眼嗎？\n聽我的，蛋黃酥砸磚塊砸下去，流量噴出來，品牌才有活路！"]];
 const AIX={i:0,shown:0,hold:0,box:null,tags:{},v:new THREE.Vector3()};
@@ -1130,20 +1137,20 @@ const AIX={i:0,shown:0,hold:0,box:null,tags:{},v:new THREE.Vector3()};
   const b=document.createElement('div');b.className='ai-bubble';b.setAttribute('role','status');b.setAttribute('aria-live','polite');
   b.innerHTML='<div class="who"><b></b><small></small></div><p></p><span class="tip">點一下跳到下一位發言</span>';root.appendChild(b);AIX.box=b;
   b.addEventListener('click',()=>{const L=MEET[AIX.i][1].length;if(AIX.shown<L){AIX.shown=L;}else{AIX.i=(AIX.i+1)%MEET.length;AIX.shown=0;AIX.hold=0;}});})();
-function aiMeetTick(dt){const root=document.getElementById('aimeet'),on=focus===4;root.hidden=!on;if(!on)return;
+function aiMeetTick(dt){const root=document.getElementById('aimeet'),on=focus===OFFICE;root.hidden=!on;if(!on)return;
   const [who,text]=MEET[AIX.i],L=text.length;
   if(AIX.shown<L)AIX.shown=reduce?L:Math.min(L,AIX.shown+dt*30);
   else{AIX.hold+=dt;if(AIX.hold>Math.max(6,L*.07)){AIX.i=(AIX.i+1)%MEET.length;AIX.shown=0;AIX.hold=0;}}
   const b=AIX.box;b.querySelector('b').textContent=who;b.querySelector('small').textContent=(AIX.i+1)+' / '+MEET.length;
   const p=b.querySelector('p'),cur=text.slice(0,Math.floor(AIX.shown));if(p.textContent!==cur)p.textContent=cur;
   const W=root.parentElement.clientWidth,Hh=root.parentElement.clientHeight;let sp=null;
-  AIM.forEach(a=>{const v=AIX.v.set(a.x,2.05,a.z);floorGroups[4].localToWorld(v);v.project(camera);const e=AIX.tags[a.n];
+  AIM.forEach(a=>{const v=AIX.v.set(a.x,2.05,a.z);floorGroups[OFFICE].localToWorld(v);v.project(camera);const e=AIX.tags[a.n];
     const vis=v.z<1&&Math.abs(v.x)<1.1&&Math.abs(v.y)<1.1;e.hidden=!vis;const sx=(v.x+1)/2*W,sy=(1-v.y)/2*Hh;
     e.style.left=sx+'px';e.style.top=sy+'px';e.classList.toggle('on',a.n===who);if(a.n===who)sp=[sx,sy];});
   if(sp){const bw=b.offsetWidth,bh=b.offsetHeight;const x=Math.min(Math.max(sp[0]-bw/2,16),W-bw-16),y=Math.max(70,sp[1]-bh-30);
     b.style.transform='translate('+x+'px,'+y+'px)';}}
-seated(4,3.6,2,0,col(),true);seated(4,4.8,4.9,Math.PI,col(),true);seated(4,6.3,3.8,-Math.PI/2,col(),true);   // lounge
-walker(4,'office',col());walker(4,'office',col());
+seated(OFFICE,3.6,2,0,col(),true);seated(OFFICE,4.8,4.9,Math.PI,col(),true);seated(OFFICE,6.3,3.8,-Math.PI/2,col(),true);   // lounge
+walker(OFFICE,'office',col());walker(OFFICE,'office',col());
 // RF: people chatting around the long table, on the lounge sofas and loungers
 // ---- RF: staff rest area; on festivals (real date) it becomes an event venue; in rain everyone leaves the garden ----
 const CNY_DAYS=['2026-02-17','2027-02-06','2028-01-26','2029-02-13','2030-02-03','2031-01-23','2032-02-11','2033-01-31','2034-02-19','2035-02-08'];
@@ -1243,7 +1250,7 @@ function roofTick(dt,t){const rain=roofRain(),fest=festNow();
 const peds=[], cars=[];
 
 // ---------- sidewalk around the building (front sidewalk runs out to the scene edge) ----------
-const SW={x0:-26.8,x1:25.6,z0:-16.6,z1:13};                       // sidewalk centre lines
+const SW={x0:-26.8-EXP,x1:25.6+EXP,z0:-16.6-EXP,z1:13+EXP};                       // sidewalk centre lines
 const PL={x0:4-(W+22)/2,x1:4+(W+22)/2,z:(D+5)/2};                 // plinth bounds
 (function(){const ox0=SW.x0-1.8,ox1=SW.x1+1.8,oz=SW.z1+1.8,zb=SW.z0-1.8,c=0xB6B8BA;
   boxHoles(ox1-ox0,.3,oz-zb,c,(ox0+ox1)/2,-.52,(oz+zb)/2,[HOLE_ESC,HOLE_RE,HOLE_RW].map(([a,b,u,v])=>[a-.06,b+.06,u-.06,v+.06]),scene);
@@ -1321,7 +1328,7 @@ function busTick(dt){const h=new Date().getHours();
   bed(-10.6,-2.6,9.95,10.85);bed(1.4,8.2,9.95,10.85);                                        // front, either side of the door
   bed(19.9,23.3,-10.6,10.6,[[21.6,-7.5],[21.6,-2.5],[21.6,2.5],[21.6,7.5]]);                    // right, beside the escalator hall
 })();
-// ======== 4F production floor: food warehouse (left), pastry kitchen (centre), coffee roastery (right; stacks rise to the roof) ========
+// ======== 1F rear production: warehouse, pastry kitchen and coffee roastery ========
 const AUTOD=[], ANNEX_LED=[];   // automatic doors: open only while someone is near
 function autoDoor(f,cx,cz,hx,hz,leaves){AUTOD.push({f,cx,cz,hx,hz,leaves,open:0});}
 function plaqueW(g,text,x,y,z,w){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const t=new THREE.CanvasTexture(cv);
@@ -1329,9 +1336,10 @@ function plaqueW(g,text,x,y,z,w){const cv=document.createElement('canvas');cv.wi
     c.font='700 64px "Noto Serif TC", serif';c.textAlign='center';c.textBaseline='middle';c.fillText(text,256,62);t.needsUpdate=true;};d();document.fonts&&document.fonts.ready.then(d);
   box(w+.06,w/4+.06,.12,C.black,x,y,z-.06,g);
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:t}));m.position.set(x,y,z+.005);g.add(m);}
-const PRODF=3;
+const PRODF=0;
 let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
-(function(g){const RK=0x3A3C3E,PAL=0xA8875A,KRAFT=0xC9A36B,SACK=0xE8E2D2,ST=C.steel,BEAN=0xB8A27A;
+(function(g){const start=g.children.length;
+  const RK=0x3A3C3E,PAL=0xA8875A,KRAFT=0xC9A36B,SACK=0xE8E2D2,ST=C.steel,BEAN=0xB8A27A;
   // --- warehouse ---
   function rack(x,z0,z1,dep){const L=z1-z0,zc=(z0+z1)/2,bays=3;
     for(let k=0;k<=bays;k++)[-1,1].forEach(s=>box(.08,4.2,.08,RK,x+s*dep/2,2.1,z0+k*L/bays,g));
@@ -1378,15 +1386,33 @@ let asd=3;const ar=()=>{asd=(asd*16807)%2147483647;return asd/2147483647;};
   [[-8.45,4.5],[-3.1,-8.45],[8.45,-4.5]].forEach(([x,z])=>{box(.32,.55,.22,0xB3261E,x,1.1,z,g);
     box(.24,.3,.2,C.black,Math.abs(x)>8?Math.sign(x)*8.58:x,1.1,z<-8?-8.6:z,g);});   // wall-mounted fire extinguisher cabinets
   plaqueW(g,'食品倉庫',-6.0,3.6,-8.55,1.8);plaqueW(g,'甜點製作區',.6,3.6,-8.55,1.8);plaqueW(g,'咖啡烘焙區',6.5,3.6,-8.55,1.6);
+  const layout=new THREE.Matrix4().makeScale(1.24,1,.46).setPosition(0,0,productionZ(0));
+  g.children.slice(start).forEach(o=>{
+    o.updateMatrix();
+    o.geometry=o.geometry.clone().applyMatrix4(layout.clone().multiply(o.matrix));
+    o.position.set(0,0,0);
+    o.rotation.set(0,0,0);
+    o.scale.set(1,1,1);
+  });
+  // Glazed separation with staff openings at either end.
+  box(W-4.8,2.7,.10,C.glass,0,1.35,-4.48,g,GLASS);
+  box(W-4.8,.08,.13,C.black,0,2.74,-4.48,g);
+  for(const id of ['warehouse','pastrylab','roastery']){
+    const zone=ZONES[id];
+    const [x0,x1,z0,z1]=zone.bounds;
+    zone.center=productionPoint(zone.center);
+    zone.bounds=[x0*1.24,x1*1.24,productionZ(z0),productionZ(z1)];
+  }
 })(floorGroups[PRODF]);
 // production staff: stock checkers between the racks, bakers, an oven tender, roasters, a sack hauler, packers
 [[[-6.75,-4.6],[-6.75,-1],[-6.75,2.4],[-4,2.4],[-4,-1.2],[-4,-5.6],[-6.6,-5.7]],[[-4,-5.6],[-6.75,-5.7],[-6.75,1],[-4,.4],[-6.2,4.2],[-4.2,5.6]]]
-  .forEach(pts=>{staffWalker(PRODF,pts,'ware',.55,false);people[people.length-1].dwell=5;});
-[[-2.8,-2.6,Math.PI/2],[-.95,-3.4,-Math.PI/2],[.42,-2.0,Math.PI/2],[2.2,-2.6,-Math.PI/2],[1.6,3.35,0]].forEach(([x,z,r])=>standAt(PRODF,'chef',x,z,r));
-staffWalker(PRODF,[[-1.4,-4.65],[.9,-4.65],[3.9,-4.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]],'chef',.6,true);people[people.length-1].dwell=4;
-[[5.0,-5.6,Math.PI],[7.3,-5.6,Math.PI],[5.6,3.85,0]].forEach(([x,z,r])=>standAt(PRODF,'roast',x,z,r));
-staffWalker(PRODF,[[7.0,-2.8],[6.15,-6.0],[7.0,-.8],[6.15,-4.8],[5.2,-2.4]],'roast',.5,true);people[people.length-1].dwell=4;
-WALK.prod=[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2],[3.9,1.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]];
+  .forEach(pts=>{staffWalker(PRODF,pts.map(productionPoint),'ware',.55,false);people[people.length-1].dwell=5;});
+[[-2.8,-2.6,Math.PI/2],[-.95,-3.4,-Math.PI/2],[.42,-2.0,Math.PI/2],[2.2,-2.6,-Math.PI/2],[1.6,3.35,0]].forEach(([x,z,r])=>standAt(PRODF,'chef',...productionPoint([x,z]),r));
+staffWalker(PRODF,[[-1.4,-4.65],[.9,-4.65],[3.9,-4.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]].map(productionPoint),'chef',.6,true);people[people.length-1].dwell=4;
+[[5.0,-5.6,Math.PI],[7.3,-5.6,Math.PI],[5.6,3.85,0]].forEach(([x,z,r])=>standAt(PRODF,'roast',...productionPoint([x,z]),r));
+staffWalker(PRODF,[[7.0,-2.8],[6.15,-6.0],[7.0,-.8],[6.15,-4.8],[5.2,-2.4]].map(productionPoint),'roast',.5,true);people[people.length-1].dwell=4;
+WALK.prod=[[-.3,-.2],[-.3,2.4],[-4,1],[4.4,-3.2],[3.9,1.8],[3.9,-7.2],[.65,-7.3],[-3.7,-7.3],[-3.7,-4.7]].map(productionPoint);
+staffWalker(PRODF,WALK.prod,'clean',.45);
 const AXP=[];   // extra moving people for the door sensors
 function annexTick(dt,t){
   // automatic doors
@@ -1398,23 +1424,22 @@ function annexTick(dt,t){
 doors.forEach(d=>autoDoor(floorGroups.indexOf(d.g),-.6,D/2,1.9,1.9,[{o:d.pv,bx:d.hx,bz:d.pv.position.z,ax:true,dir:-d.s,travel:d.leafW-.1}]));
 // ---------- opening hours (real local time): 1F café 06–22 daily, 2F gift shop 10–22 daily, 3F classes 09–22 daily, 4F office Mon–Fri 09–18 ----------
 function floorOpen(f,d){d=d||new Date();const m=d.getHours()*60+d.getMinutes(),wd=d.getDay();
-  if(f===0)return m>=360&&m<1320;if(f===1)return m>=600&&m<1320;if(f===2)return classPhase(d)!=='out';if(f===3)return m>=360&&m<1320;if(f===4)return wd>=1&&wd<=5&&m>=540&&m<1080;return true;}
+  if(f===0)return m>=360&&m<1320;if(f===1)return m>=600&&m<1320;if(f===2)return classPhase(d)!=='out';if(f===OFFICE)return wd>=1&&wd<=5&&m>=540&&m<1080;return true;}
 function cleanerOn(f,d){d=d||new Date();const m=d.getHours()*60+d.getMinutes(),wd=d.getDay();   // cleaners stay one hour after closing
-  if(f===0)return m>=360&&m<1320;if(f===1)return m>=600&&m<1320;if(f===2)return m>=540&&m<1320;if(f===3)return m>=360&&m<1320;if(f===4)return wd>=1&&wd<=5&&m>=540&&m<1140;return true;}
+  if(f===0)return m>=360&&m<1320;if(f===1)return m>=600&&m<1320;if(f===2)return m>=540&&m<1320;if(f===OFFICE)return wd>=1&&wd<=5&&m>=540&&m<1140;return true;}
 function hoursText(f){const o=floorOpen(f);
   if(f===0)return (o?'營業中':'已打烊')+'（每天 06:00–22:00）';if(f===1)return (o?'營業中':'已打烊')+'（每天 10:00–22:00）';
-  if(f===3)return (o?'上班中':'下班了')+'（每天 06:00–22:00）';if(f===4)return (o?'上班時間':'下班時間，只有少數人加班或留守')+'（週一到週五 09:00–18:00）';return '';}
+  if(f===OFFICE)return (o?'上班時間':'下班時間，只有少數人加班或留守')+'（週一到週五 09:00–18:00）';return '';}
 // people who leave when their floor closes (customers and floor staff); guards, cleaners, people outside the walls and a 4F skeleton crew stay
 // after 22:00 every floor keeps just one guard; everyone else goes home
 const LEAVE=[];
 // guards patrol at random over everything walkable on their floor: inside, the corridors round the building, the balcony and the elevator lobby
-function patrolPts(f){const IN=[WALK.dining,WALK.gifts,WALK.classroom,WALK.prod,WALK.office,WALK.terrace][f]||[];const cx=-(W/2+WKW/2),cz=FRONT_MID,bz=D/2+WKW/2,bx=(BAL_X0+BAL_X1)/2;
+function patrolPts(f){const IN=[WALK.dining.concat(WALK.prod),WALK.gifts,WALK.classroom,WALK.office,WALK.terrace][f]||[];const cx=-(W/2+WKW/2),cz=FRONT_MID,bz=D/2+WKW/2,bx=(BAL_X0+BAL_X1)/2;
   if(f===RF)return IN.concat([[bx,-6],[bx,0],[bx,6],[-14,-5],[-20,0],[-14,6]]);
   return IN.concat([[cx,-8],[cx,0],[cx,8],[-8,cz],[-.6,cz],[6,cz],[-8,-bz],[0,-bz],[6,-bz],[bx,-6],[bx,0],[bx,6],[-14,-6],[-20,-5],[-21,3],[-15,8],[-21,9.5]]);}
 
 staffWalker(2,WALK.classroom,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;   // 3F night guard (22:00–09:00)
-staffWalker(3,WALK.prod,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;      // 4F night guard (22:00–09:00)
-staffWalker(4,WALK.office,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;      // 5F night guard (22:00–09:00)
+staffWalker(OFFICE,WALK.office,'guard',.55);people[people.length-1].nightGuard=true;people[people.length-1].dwell=4;      // 4F night guard (22:00–09:00)
 people.forEach(p=>{if(p.m.userData.kind!=='guard')return;const f=floorGroups.indexOf(p.m.parent);if(f<0)return;
   Object.assign(p,{seated:false,pts:patrolPts(f),seq:false,tgt:null,route:null,pause:p.pause||1,speed:p.speed||.8,idx:0,dwell:3,ph:p.ph||0});});
 // basic night lighting outdoors: ceiling lights under each slab over the corridors, balcony and the left platform (they glow at night)
@@ -1473,20 +1498,20 @@ function presence(e,d){d=d||new Date();const m=d.getHours()*60+d.getMinutes();
   if(e.kind==='night')return m>=1320||m<540;if(e.kind==='clean')return cleanerOn(e.f,d);
   if(e.kind==='crew'||e.kind==='f2')return m>=540&&m<1320;return floorOpen(e.f,d);}
 function buildLeave(){const crew=[];   // runs on the first tick, after every person in the scene exists
-  people.forEach(p=>{const m=p.m,f=floorGroups.indexOf(m.parent);if(f<0||f>4)return;
+  people.forEach(p=>{const m=p.m,f=floorGroups.indexOf(m.parent);if(f<0||f>=RF)return;
     if(m.userData.kind==='booth')return;
     const k=m.userData.kind,x=m.position.x,z=m.position.z,out=Math.abs(x)>W/2-.05||Math.abs(z)>D/2-.05;let kind;
     if(p.nightGuard)kind='night';
     else if(k==='guard')return;                                         // day guards stay all night
     else if(k==='clean')kind='clean';
     else if(f===2){if(classStaff.includes(p)||students.some(st=>st.sm===m||st.wm===m))return;kind='f2';}   // 3F students/teachers follow the class timetable; everyone else on 3F goes at 22:00
-    else if(f===4&&p.seated&&!p.pts&&x<-2&&crew.length<2){crew.push(p);kind='crew';}   // two people working late at their desks (until 22:00)
+    else if(f===OFFICE&&p.seated&&!p.pts&&x<-2&&crew.length<2){crew.push(p);kind='crew';}   // two people working late at their desks (until 22:00)
     else kind='floor';
     LEAVE.push({p,f,kind,hx:x,hz:z,hr:m.rotation.y,state:'here',delay:0,path:null,speed:.9+Math.random()*.3});});}
 function leaveExit(e){
   return e.f===0?[[-.6,D/2-1.2],[-.6,SW.z1],[Math.random()<.5?-37:37,SW.z1]]:[[EWAIT[0],EWAIT[1]]];}
 let hoursInit=false;window.__LV=()=>LEAVE;
-function hoursTick(dt,t){if(!hoursInit)buildLeave();const open=[0,1,2,3].map(f=>floorOpen(f));
+function hoursTick(dt,t){if(!hoursInit)buildLeave();
   LEAVE.forEach(e=>{const m=e.p.m,want=presence(e);
     if(!hoursInit){if(!want){e.state='gone';m.visible=false;m.userData.away=true;if(e.p.pts)e.p.pause=1e9;}return;}
     if(e.delay>0){e.delay-=dt;return;}
@@ -1505,17 +1530,17 @@ function hoursTick(dt,t){if(!hoursInit)buildLeave();const open=[0,1,2,3].map(f=>
 // ---------- shoppers: come from the far end of the sidewalk, use the door / elevator / escalators, shop, leave ----------
 const FAR=[-72,77];
 const EWAIT=EVS[0].EWAIT;
-const ELEV_IN0=[[-18.5,SW.z1],[-18.5,RR.z1+2.2]];   // 1F: from the street across the platform to the elevators
-const OUT_ROUTE=[[-13.5,RR.z1+1.4],[-(W/2+WKW/2),RR.z1+1.4],[-(W/2+WKW/2),FRONT_MID],[-.6,FRONT_MID],[-.6,D/2-1.5]];   // back corridor → balcony → front corridor → front door
-const ROOF_IN=[[-14,RR.z1+1.4],[-10.5,.6],[-4.6,.6]];   // roof: elevator bridge → garden path → promenade
+const ELEV_IN0=[[EVS[0].EDX,SW.z1],[EVS[0].EDX,RR.z1+2.2]];   // 1F: from the street across the platform to the elevators
+const OUT_ROUTE=[[(RR.x0+RR.x1)/2,RR.z1+1.4],[-(W/2+WKW/2),RR.z1+1.4],[-(W/2+WKW/2),FRONT_MID],[-.6,FRONT_MID],[-.6,D/2-1.5]];   // back corridor → balcony → front corridor → front door
+const ROOF_IN=[[(RR.x0+RR.x1)/2,RR.z1+1.4],[-W/2-.6,.6],[-4.6,.6]];   // roof: elevator bridge → garden path → promenade
 const outRoute=f=>f===RF?ROOF_IN:OUT_ROUTE;
-const FPTS=[WALK.dining,WALK.gifts,WALK.classroom,WALK.prod,WALK.office,WALK.terrace];
+const FPTS=[WALK.dining,WALK.gifts,WALK.classroom,WALK.office,WALK.terrace];
 const SLOTS=[[-1.05,-.85],[-.15,-.9],[.75,-.85],[-1.05,0],[-.15,0],[.75,0],[-1.05,.85],[-.15,.9],[.75,.85],[1.25,0]];   // 10 people, roomier cab
-const ESC={up:[esc1,esc2,esc3,esc4,esc5],down:[esc1d,esc2d,esc3d,esc4d,esc5d]};
+const ESC={up:[esc1,esc2,esc3,esc4],down:[esc1d,esc2d,esc3d,esc4d]};
 // ======== B1 underground car park (floor index -1): reached by a garden-lined driveway + ramp behind the building, by both elevators and by an escalator pair in the hall ========
 const B1D=4.2;   // B1 floor 4.2 m below 1F (3.3 m clear height)
 const B1G=new THREE.Group();B1G.position.y=-B1D;scene.add(B1G);
-const B1={x0:-34,x1:35,z0:-15.4,z1:17}, RAMP={zc:-13.3,top:9,bot:32.8,ytop:-.37}, LANE_IN=9, LANE_OUT=-9;   // ramps: from x=±9 at street level down to x=±32.8 on the B1 floor (~16%)
+const B1={x0:-34,x1:35,z0:-15.4-EXP,z1:17}, RAMP={zc:-13.3-EXP,top:9,bot:32.8,ytop:-.37}, LANE_IN=9, LANE_OUT=-9;   // ramps: from x=±9 at street level down to x=±32.8 on the B1 floor (~16%)
 const STALLS=[];for(let k=0;k<12;k++){const x=-14.25+2.5*k;STALLS.push({x,z:-8,row:'A',nose:-1},{x,z:3,row:'B',nose:1},{x,z:8,row:'C',nose:-1});}
 STALLS.forEach(s=>{s.free=true;s.entry=s.row==='C'?[s.x,12.6]:[s.x,s.row==='A'?-1.4:-3.6];});
 (function(g){const CONCB=0x6E7072,FL=0x55585B,LINE=0xE8E6E0;
@@ -1684,7 +1709,7 @@ function equipAgent(a){const t=new THREE.Group();box(.42,.02,.3,C.dark,0,.83,.32
 function getDriver(){let a=DRIVERS.find(d=>d.idle);if(a)return a;
   a={m:person(col(),false),driver:true,idle:true,delay:1e9,ph:Math.random()*6,speed:1+Math.random()*.3,steps:[],f:-1,slot:-1,busy:false,state:'x'};
   const u=new THREE.Group();a.umb=u;equipAgent(a);a.m.visible=false;B1G.add(a.m);DRIVERS.push(a);agents.push(a);return a;}
-const ESC1_UP=[[16.6,-7.6],[13.3,-7.6],[12.3,2],[12.3,8.6],[10.3,9.85],[-.6,9.85],[-.6,D/2-1.5]];
+const ESC1_UP=[[LANE[2],ES1-.75],[BAL_X1+1.25,ES1-.75],[BAL_X1+.25,2],[BAL_X1+.25,D/2],[BAL_X0+1.65,FRONT_MID],[-.6,FRONT_MID],[-.6,D/2-1.5]];
 function driverTrip(a,car){const s=car.stall,ent=s.entry,side=[s.x+1.25,s.z+(s.row==='A'?3:-3)*.5];
   a.idle=false;a.delay=0;a.m.visible=true;toFloor(a,-1,side[0],side[1]);a.path=null;a.state='x';a.slot=-1;a.busy=false;if(a.bag){a.bag.visible=false;a.tray.visible=false;}
   const toAisle=[[s.x+1.25,ent[1]]],back=[[s.x+1.25,ent[1]],side],done={k:'fn',fn:x=>{x.idle=true;x.delay=1e9;x.m.visible=false;car.out--;}};
@@ -1704,7 +1729,7 @@ function parkTick(dt){carPool.forEach(c=>{if(!c.on||!c.stall)return;
 
 // ---- card-access glass gates where the escalator landings meet the 3F (classroom) and 4F (office) balconies; one card opens both ----
 const GATES={};
-[2,3,4].forEach(f=>{const g=floorGroups[f],front=LAND[f]>0,z0=front?ES0:-D/2,z1=front?D/2:ES1,zc=(z0+z1)/2,w=z1-z0,x=BAL_X1,dh=2.4;
+[2,OFFICE].forEach(f=>{const g=floorGroups[f],front=LAND[f]>0,z0=front?ES0:-D/2,z1=front?D/2:ES1,zc=(z0+z1)/2,w=z1-z0,x=BAL_X1,dh=2.4;
   // portal: deep black pillars with a brass inlay, a thick header with brass lines, a lit canopy over the landing, brass threshold
   const ph=dh+.42,portalStart=g.children.length;
   [z0-.12,z1+.12].forEach(z=>{box(.36,ph,.24,C.black,x,ph/2,z,g);box(.02,ph-.5,.06,GOLDL,x+.19,(ph-.5)/2+.25,z,g);box(.02,ph-.5,.06,GOLDL,x-.19,(ph-.5)/2+.25,z,g);});
@@ -1742,7 +1767,7 @@ function insideVisit(f){const P=FPTS[f],pick=()=>P[Math.floor(Math.random()*P.le
   if(f===0)return counterVisit();
   return [{k:'walk',f,pts:[pick()]},{k:'pause',t:4+Math.random()*5},{k:'walk',f,pts:[pick()]},{k:'pause',t:3+Math.random()*4}];}
 function landingToDoor(f){const BX=W/2+.6,WZ=FRONT_MID,DOOR=[[W/2+1.5,WZ],[-.6,WZ],[-.6,D/2-1.5]];
-  if(f===RF)return [[BAL_X1+1,-(D/2-.8)],[(BAL_X0+BAL_X1)/2+.2,-6.4],[(BAL_X0+BAL_X1)/2+.2,.6],[3.2,.6]];   // roof: escalator (back) → balcony → promenade
+  if(f===RF)return [[BAL_X1+1,D/2-.8],[(BAL_X0+BAL_X1)/2+.2,D/2-.8],[(BAL_X0+BAL_X1)/2+.2,.6],[3.2,.6]];
   if(LAND[f]>0)return [[BAL_X1+1,D/2-.8],[W/2+1.5,D/2-.8]].concat(DOOR);
   return [[BAL_X1+1,-(D/2-1.3)],[BX,-(D/2-1.3)],[BX,D/2-1.6],[W/2+1.5,D/2-1.6]].concat(DOOR);}
 function routeDoor(xe){const IN=[[-.6,SW.z1],[-.6,D/2+1.2],[-.6,D/2-1.4]];
@@ -1751,7 +1776,7 @@ function routePass(xs,xe){if(Math.random()<.5)return [{k:'walk',f:0,pts:[[xe,SW.
   const ring=xs<0?[[SW.x0,SW.z1],[SW.x0,SW.z0],[SW.x1,SW.z0],[SW.x1,SW.z1]]:[[SW.x1,SW.z1],[SW.x1,SW.z0],[SW.x0,SW.z0],[SW.x0,SW.z1]];
   return [{k:'walk',f:0,pts:ring.concat([[xe,SW.z1]])}];}
 function routeEsc(xe,F){const U=ESC.up,Dn=ESC.down,s=[];
-  const visits=(F===2&&Math.random()<.3)?[2,4]:[F];   // one card opens 3F–5F: some go on from the classroom up to the office
+  const visits=(F===2&&Math.random()<.3)?[2,OFFICE]:[F];   // one card opens 3F–4F: some go on from the classroom up to the office
   const top=visits[visits.length-1];
   s.push({k:'walk',f:0,pts:[[LANE[0],SW.z1],escEnd(U[0],false)]});
   for(let i=0;i<top;i++){s.push({k:'esc',e:U[i],up:true});const f=i+1;
@@ -1767,7 +1792,7 @@ function routeElev(xe,F){const ev=Math.random()<.5?0:1,EW=EVS[ev].EWAIT;return [
 const STREET=[.06,.04,.03,.03,.04,.1,.3,.55,.7,.6,.6,.75,1,.95,.7,.65,.7,.9,1,.85,.65,.5,.3,.15];
 function streetDensity(){const d=new Date(),h=d.getHours(),f=d.getMinutes()/60;return STREET[h]+(STREET[(h+1)%24]-STREET[h])*f;}
 function startTrip(a,origin){
-  const left=Math.random()<.5,xs=left?FAR[0]:FAR[1],xe=left?FAR[1]:FAR[0],r0=Math.random(),FO=[1,1,2,3,4].filter(f=>floorOpen(f)).concat(festNow()&&!roofRain()?[RF,RF]:[]),F=FO.length?FO[Math.floor(Math.random()*FO.length)]:0,r=(!floorOpen(0)&&r0<.3)||(!F&&r0>=.5)?.4:r0;
+  const left=Math.random()<.5,xs=left?FAR[0]:FAR[1],xe=left?FAR[1]:FAR[0],r0=Math.random(),FO=[1,1,2,OFFICE].filter(f=>floorOpen(f)).concat(festNow()&&!roofRain()?[RF,RF]:[]),F=FO.length?FO[Math.floor(Math.random()*FO.length)]:0,r=(!floorOpen(0)&&r0<.3)||(!F&&r0>=.5)?.4:r0;
   a.steps=r<.3?routeDoor(xe):r<.5?routePass(xs,xe):r<.78?routeEsc(xe,F):routeElev(xe,F);
   toFloor(a,0,xs,SW.z1);a.path=null;a.state='x';a.slot=-1;a.busy=false;a.m.visible=true;if(a.bag){a.bag.visible=false;a.tray.visible=false;}
   if(origin===undefined)origin=Math.random()<.22?'mrt':null;                       // some come up from the MRT, some get off the bus
@@ -1803,14 +1828,14 @@ function foodFor(x,z,ry){const dx=Math.sin(ry),dz=Math.cos(ry);return [x+dx*.5,i
 const tableMeals=[];
 [[-2.85,-7.6,Math.PI/2],[.85,-7.6,-Math.PI/2],[1.95,-7.6,Math.PI/2],[7.6,-5.65,0],[7.6,.45,Math.PI],[7.6,1.55,0],
  [.35,-3,Math.PI/2],[2.05,-1,-Math.PI/2],[.35,0,Math.PI/2],[3.55,0,Math.PI/2],[5.25,-4,-Math.PI/2],[5.25,-2,-Math.PI/2],[3.55,-3,Math.PI/2],[4.05,7.4,-Math.PI/2]]
- .forEach(([x,z,r])=>{[x,z,r]=diningPosition(x,z,r);const p=foodFor(x,z,r);tableMeals.push(foodSet(floorGroups[0],p[0],p[1],p[2],r));});
+ .forEach(([x,z,r])=>{[x,z,r]=diningPosition(x,z,r);const p=foodFor(x,z,r);tableMeals.push(foodSet(floorGroups[0],p[0],p[1],p[2]+CAFE_SHIFT,r));});
 // free seats for customers who eat in: [seat x, z, facing, aisle point]
 const DINE=[[.35,-4,1,[-.3,-4]],[.35,-1,1,[-.3,-1]],[.35,1,1,[-.3,1]],[2.05,-3,-1,[2.8,-3]],[2.05,0,-1,[2.8,0]],[3.55,-2,1,[2.8,-2]],[3.55,1,1,[2.8,1]],
   [5.25,-1,-1,[6.05,-1]],[5.25,1,-1,[6.05,1]],[-1.55,-7.6,-1,[-1.55,-6.75]],[3.25,-7.6,-1,[3.25,-6.75]],[7.6,-1.95,2,[6.7,-1.95]],[5.35,7.4,1,[5.35,6.5]],
   ...[-.8,2,4.8].flatMap(z=>[[-3.7,z-.65,0,[-2.6,z-.65]],[-3.7,z+.65,2,[-2.6,z+.65]]])]
-  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z,originalX=x;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01||Math.abs(originalX+3.7)<.01)ap=[x,z+1.1];else if(isLong(x,z))ap=longDiningPoint(ap[0],ap[1],Math.abs(originalX-1.2)<1?1.2:4.4);const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2],ry);food.visible=false;
-    return {seat:[x,z],ry,ap,food,who:null};});
-const RECYCLE=[7.65,-7.15], TILLS=[[-3.9,-2.5],[-3.9,-.5]].map(barPoint);
+  .map(([x,z,s,ap])=>{let ry=s===2?Math.PI:s*Math.PI/2;const originalZ=z,originalX=x;[x,z,ry]=diningPosition(x,z,ry);if(Math.abs(originalZ+7.6)<.01||Math.abs(originalX+3.7)<.01)ap=[x,z+1.1];else if(isLong(x,z))ap=longDiningPoint(ap[0],ap[1],Math.abs(originalX-1.2)<1?1.2:4.4);const p=foodFor(x,z,ry),food=foodSet(floorGroups[0],p[0],p[1],p[2]+CAFE_SHIFT,ry);food.visible=false;
+    return {seat:cafePoint([x,z]),ry,ap:cafePoint(ap),food,who:null};});
+const RECYCLE=cafePoint([7.65,-7.15]), TILLS=[[-3.9,-2.5],[-3.9,-.5]].map(barPoint);
 function cleanTablesAtClosing(){const open=floorOpen(0);
   tableMeals.forEach(m=>m.visible=open);
   if(!open)DINE.forEach(s=>{s.food.visible=false;});
@@ -1821,17 +1846,17 @@ agents.forEach(a=>{
   t.add(tf);t.visible=false;a.m.add(t);a.tray=t;a.trayFood=tf;
   const b=new THREE.Group();box(.2,.26,.11,0xC9A36B,.29,.5,.04,b);box(.12,.02,.012,C.black,.29,.66,.04,b);b.visible=false;a.m.add(b);a.bag=b;});
 function counterVisit(){const till=TILLS[Math.floor(Math.random()*2)];
-  return [{k:'walk',f:0,pts:[[-1,3.6],[-3.4,-3.4]]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2+Math.random()*3},   // look at the dessert case
+  return [{k:'walk',f:0,pts:[[-1,3.6],[-3.4,-3.4]].map(cafePoint)},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2+Math.random()*3},   // look at the dessert case
           {k:'walk',f:0,pts:[till]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:4+Math.random()*4},{k:'fn',fn:dineOrTake}];}
 function dineOrTake(a){const free=DINE.filter(s=>!s.who);
-  if(Math.random()<.5||!free.length){a.bag.visible=true;a.steps.unshift({k:'walk',f:0,pts:[[-3.4,-3.3],[-1,3.6]]});return;}   // take away
+  if(Math.random()<.5||!free.length){a.bag.visible=true;a.steps.unshift({k:'walk',f:0,pts:[[-3.4,-3.3],[-1,3.6]].map(cafePoint)});return;}   // take away
   const s=free[Math.floor(Math.random()*free.length)];s.who=a;a.tray.visible=true;a.trayFood.visible=true;
   a.steps.unshift(
-    {k:'walk',f:0,pts:[[-3.4,-3.3],s.ap]},{k:'slide',to:s.seat},
+    {k:'walk',f:0,pts:[cafePoint([-3.4,-3.3]),s.ap]},{k:'slide',to:s.seat},
     {k:'fn',fn:a=>{a.m.rotation.y=s.ry;a.tray.visible=false;s.food.visible=true;}},{k:'pause',t:25+Math.random()*35},   // eating
     {k:'fn',fn:a=>{s.food.visible=false;a.tray.visible=true;}},{k:'slide',to:s.ap},{k:'fn',fn:()=>{s.who=null;}},
     {k:'walk',f:0,pts:[RECYCLE]},{k:'fn',fn:a=>{a.m.rotation.y=Math.PI;}},{k:'pause',t:2.5},
-    {k:'fn',fn:a=>{a.tray.visible=false;}},{k:'walk',f:0,pts:[[-1,3.6]]});}
+    {k:'fn',fn:a=>{a.tray.visible=false;}},{k:'walk',f:0,pts:[cafePoint([-1,3.6])]});}
 
 function visitorTick(dt,t){agents.forEach(a=>{
   if(a.driver&&a.idle)return;
@@ -1896,18 +1921,19 @@ function petTick(dt,t){pets.forEach(a=>{
 // ---------- zones (hit boxes + labels) ----------
 const hitMeshes=[];const labelsEl=document.getElementById('zones')||document.createElement('div');
 Object.entries(ZONES).forEach(([id,z])=>{
-  const b=z.bounds, hh=z.floor===4?2.6:H-.3;
+  const b=z.bounds, hh=z.floor===OFFICE?2.6:H-.3;
   const m=new THREE.Mesh(new THREE.BoxGeometry(b[1]-b[0],hh,b[3]-b[2]),new THREE.MeshBasicMaterial({color:0xD9A441,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
-  m.position.set((b[0]+b[1])/2,hh/2+.03,(b[2]+b[3])/2);   // lifted off the floor so the hover glow never shares a face with itm.userData.zone=id;floorGroups[z.floor].add(m);hitMeshes.push(m);z.mesh=m;
+  m.position.set((b[0]+b[1])/2,hh/2+.03,(b[2]+b[3])/2);   // lifted off the floor so the hover glow never shares a face with it
+  m.userData.zone=id;floorGroups[z.floor].add(m);hitMeshes.push(m);z.mesh=m;
   const btn=document.createElement('button');btn.className='chip';btn.type='button';btn.innerHTML='<small>'+FLOORS[z.floor].n+'</small>'+z.name;
   btn.addEventListener('click',()=>openZone(id));btn.addEventListener('mouseenter',()=>setHover(id));btn.addEventListener('mouseleave',()=>setHover(null));
-  labelsEl.appendChild(btn);z.label=btn;z.anchor=new THREE.Vector3(z.center[0],z.floor===4?2.9:H-.25,z.center[1]);
+  labelsEl.appendChild(btn);z.label=btn;z.anchor=new THREE.Vector3(z.center[0],z.floor===OFFICE?2.9:H-.25,z.center[1]);
 });
 
 // ---------- UI ----------
 const nav=document.getElementById('floors');let focus=-1;
 function mkBtn(n,s,i){const b=document.createElement('button');b.type='button';b.innerHTML='<b>'+n+'</b><span>'+s+'</span>';b.addEventListener('click',()=>focusFloor(i));nav.appendChild(b);return b;}
-const navBtns=[['全','全景',-1],['B1','地下停車場',-2],['1F','結帳・用餐',0],['2F','伴手禮',1],['3F','甜點咖啡教室',2],['4F','烘焙・製作・倉庫',3],['5F','辦公室',4],['RF','空中花園',RF]].map(a=>({i:a[2],el:mkBtn(a[0],a[1],a[2])}));
+const navBtns=[['全','全景',-1],['B1','地下停車場',-2],['1F','咖啡・烘焙',0],['2F','伴手禮',1],['3F','甜點咖啡教室',2],['4F','辦公室',OFFICE],['RF','空中花園',RF]].map(a=>({i:a[2],el:mkBtn(a[0],a[1],a[2])}));
 function syncNav(){navBtns.forEach(b=>b.el.setAttribute('aria-pressed',String(b.i===focus)));}
 let anim=null;
 function flyTo(pos,tgt){if(reduce){camera.position.copy(pos);controls.target.copy(tgt);return;}
@@ -1921,12 +1947,12 @@ function focusFloor(i){focus=i;renderer.clippingPlanes=i===-2?[B1CLIP]:[];syncNa
   if(!ceil){ceil=[];floorGroups.forEach(g=>g.traverse(o=>{if(o.userData.ceil)ceil.push(o);}));}ceil.forEach(o=>o.visible=i<0);
   if(i===-1)flyTo(HOME_POS.clone(),HOME_TGT.clone());
   else if(i===-2)flyTo(new THREE.Vector3(18,-B1D+30,44),new THREE.Vector3(-3,-B1D,3));
-  else{const y=i*H+1.6;flyTo(new THREE.Vector3(21,y+13,24),new THREE.Vector3(1.5,y-.6,0));}}
+  else{const y=i*H+1.6;flyTo(new THREE.Vector3(26,y+15,30),new THREE.Vector3(1.5,y-.6,0));}}
 const panel=document.getElementById('panel');
 function openZone(id){selZone=id;setTimeout(()=>setHover(null),0);const z=ZONES[id];if(focus!==z.floor)focusFloor(z.floor);
   Object.values(ZONES).forEach(o=>o.label.classList.toggle('on',o===z));
   document.getElementById('p-eyebrow').textContent=FLOORS[z.floor].n+'・'+z.name;
-  document.getElementById('p-title').textContent=z.name;document.getElementById('p-desc').textContent=z.desc+(id==='classroom'?'　目前：'+classStatus():id==='terrace'?'　目前：'+roofStatus():(id==='checkout'||id==='dining')?'　目前：'+hoursText(0):id==='gifts'?'　目前：'+hoursText(1):id==='office'?'　目前：'+hoursText(4):(id==='warehouse'||id==='pastrylab'||id==='roastery')?'　目前：'+hoursText(3):'');
+  document.getElementById('p-title').textContent=z.name;document.getElementById('p-desc').textContent=z.desc+(id==='classroom'?'　目前：'+classStatus():id==='terrace'?'　目前：'+roofStatus():(id==='checkout'||id==='dining')?'　目前：'+hoursText(0):id==='gifts'?'　目前：'+hoursText(1):id==='office'?'　目前：'+hoursText(OFFICE):(id==='warehouse'||id==='pastrylab'||id==='roastery')?'　目前：'+hoursText(0):'');
   const ul=document.getElementById('p-items');ul.innerHTML='';
   z.items.forEach(it=>{const li=document.createElement('li');
     if(it.href){const a=document.createElement('a');a.href=it.href;a.target='_blank';a.rel='noopener';a.textContent=it.t+' ↗';li.appendChild(a);}
@@ -2083,7 +2109,7 @@ function step(){
   aiMeetTick(dt);
 }
 // ---------- walking grid: people route around walls, counters, tables, chairs and railings ----------
-const NAV={x0:-80,z0:-32,cs:.25,nx:640,nz:256,r:.32,g:[]};
+const NAV={x0:-80,z0:-32,cs:.25,nx:640,nz:288,r:.32,g:[]};
 (function(){const bb=new THREE.Box3(),skip=new Set([ground].concat(hitMeshes,elevDoors));
   scene.updateMatrixWorld(true);
   for(let f=-1;f<NF;f++){const G=new Uint8Array(NAV.nx*NAV.nz),fy=f<0?-B1D:f*H;
