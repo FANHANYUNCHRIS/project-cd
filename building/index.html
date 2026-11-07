@@ -87,6 +87,7 @@ aside li a{color:var(--fg);font-weight:700;text-decoration:underline;text-underl
   <header>
     <div class="brand">Project.CD</div>
     <span class="demo">示範版</span>
+    <span class="demo" id="parking-size" hidden></span>
     <div class="wx" role="group" aria-label="天氣"><span id="clock"></span><button type="button" data-w="auto" title="依臺北市天氣預報">預報</button><button type="button" data-w="sun">晴</button><button type="button" data-w="cloud">陰</button><button type="button" data-w="rain">雨</button></div>
   </header>
   <div id="dock">
@@ -1934,7 +1935,13 @@ Object.entries(ZONES).forEach(([id,z])=>{
 const nav=document.getElementById('floors');let focus=-1;
 function mkBtn(n,s,i){const b=document.createElement('button');b.type='button';b.innerHTML='<b>'+n+'</b><span>'+s+'</span>';b.addEventListener('click',()=>focusFloor(i));nav.appendChild(b);return b;}
 const navBtns=[['全','全景',-1],['B1','地下停車場',-2],['1F','咖啡甜點',0],['2F','甜點製作・咖啡烘豆',1],['3F','甜點咖啡教室',2],['4F','辦公室',OFFICE],['RF','空中花園',RF]].map(a=>({i:a[2],el:mkBtn(a[0],a[1],a[2])}));
-function syncNav(){navBtns.forEach(b=>b.el.setAttribute('aria-pressed',String(b.i===focus)));}
+const parkingSize=document.getElementById('parking-size');
+const parkingWidth=B1.x1-B1.x0, parkingDepth=B1.z1-B1.z0;
+parkingSize.textContent=`B1 停車區 ${Math.round(parkingWidth*parkingDepth*121/400)} 坪 · ${parkingWidth.toFixed(2)} × ${parkingDepth.toFixed(2)} m`;
+function syncNav(){
+  navBtns.forEach(b=>b.el.setAttribute('aria-pressed',String(b.i===focus)));
+  parkingSize.hidden=focus!==-2;
+}
 let anim=null;
 function flyTo(pos,tgt){if(reduce){camera.position.copy(pos);controls.target.copy(tgt);return;}
   anim={t0:performance.now(),dur:900,p0:camera.position.clone(),q0:controls.target.clone(),p1:pos,q1:tgt};}
@@ -1946,7 +1953,7 @@ const B1CLIP=new THREE.Plane(new THREE.Vector3(0,-1,0),-.95);
 function focusFloor(i){focus=i;renderer.clippingPlanes=i===-2?[B1CLIP]:[];syncNav();renderer.shadowMap.needsUpdate=true;xray.forEach(o=>o.visible=i<0);halos.forEach(h=>{if(h.userData.halo)h.visible=i<0;});doors.forEach(d=>d.pv.visible=i<0);elevDoors.forEach(d=>d.visible=i<0);floorGroups.forEach((g,k)=>g.visible=(i===-1||k===i));tallParts().forEach(o=>o.visible=i<0);
   if(!ceil){ceil=[];floorGroups.forEach(g=>g.traverse(o=>{if(o.userData.ceil)ceil.push(o);}));}ceil.forEach(o=>o.visible=i<0);
   if(i===-1)flyTo(HOME_POS.clone(),HOME_TGT.clone());
-  else if(i===-2)flyTo(new THREE.Vector3(18,-B1D+30,44),new THREE.Vector3(-3,-B1D,3));
+  else if(i===-2)flyTo(new THREE.Vector3(9,-B1D+44,24),new THREE.Vector3(0,-B1D,0));
   else{const y=i*H+1.6;flyTo(new THREE.Vector3(26,y+15,30),new THREE.Vector3(1.5,y-.6,0));}}
 const panel=document.getElementById('panel');
 function openZone(id){const z=ZONES[id];if(focus!==z.floor)focusFloor(z.floor);
