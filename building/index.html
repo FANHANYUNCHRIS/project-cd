@@ -1924,6 +1924,7 @@ Object.entries(ZONES).forEach(([id,z])=>{
   const b=z.bounds, hh=z.floor===OFFICE?2.6:H-.3;
   const m=new THREE.Mesh(new THREE.BoxGeometry(b[1]-b[0],hh,b[3]-b[2]),new THREE.MeshBasicMaterial({color:0xD9A441,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
   m.position.set((b[0]+b[1])/2,hh/2+.03,(b[2]+b[3])/2);   // lifted off the floor so the hover glow never shares a face with it
+  if(id==='terrace')m.material.colorWrite=false; // Keep the roof clickable without drawing its highlight.
   m.userData.zone=id;floorGroups[z.floor].add(m);hitMeshes.push(m);z.mesh=m;
   const btn=document.createElement('button');btn.className='chip';btn.type='button';btn.innerHTML='<small>'+FLOORS[z.floor].n+'</small>'+z.name;
   btn.addEventListener('click',()=>openZone(id));btn.addEventListener('mouseenter',()=>setHover(id));btn.addEventListener('mouseleave',()=>setHover(null));
