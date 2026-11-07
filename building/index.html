@@ -1922,10 +1922,9 @@ function petTick(dt,t){pets.forEach(a=>{
 const hitMeshes=[];const labelsEl=document.getElementById('zones')||document.createElement('div');
 Object.entries(ZONES).forEach(([id,z])=>{
   const b=z.bounds, hh=z.floor===OFFICE?2.6:H-.3;
-  const m=new THREE.Mesh(new THREE.BoxGeometry(b[1]-b[0],hh,b[3]-b[2]),new THREE.MeshBasicMaterial({color:0xD9A441,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
+  const m=new THREE.Mesh(new THREE.BoxGeometry(b[1]-b[0],hh,b[3]-b[2]),new THREE.MeshBasicMaterial({visible:false}));
   m.position.set((b[0]+b[1])/2,hh/2+.03,(b[2]+b[3])/2);   // lifted off the floor so the hover glow never shares a face with it
-  if(id==='terrace')m.material.colorWrite=false; // Keep the roof clickable without drawing its highlight.
-  m.userData.zone=id;floorGroups[z.floor].add(m);hitMeshes.push(m);z.mesh=m;
+  m.userData.zone=id;floorGroups[z.floor].add(m);hitMeshes.push(m);
   const btn=document.createElement('button');btn.className='chip';btn.type='button';btn.innerHTML='<small>'+FLOORS[z.floor].n+'</small>'+z.name;
   btn.addEventListener('click',()=>openZone(id));btn.addEventListener('mouseenter',()=>setHover(id));btn.addEventListener('mouseleave',()=>setHover(null));
   labelsEl.appendChild(btn);z.label=btn;z.anchor=new THREE.Vector3(z.center[0],z.floor===OFFICE?2.9:H-.25,z.center[1]);
@@ -1950,7 +1949,7 @@ function focusFloor(i){focus=i;renderer.clippingPlanes=i===-2?[B1CLIP]:[];syncNa
   else if(i===-2)flyTo(new THREE.Vector3(18,-B1D+30,44),new THREE.Vector3(-3,-B1D,3));
   else{const y=i*H+1.6;flyTo(new THREE.Vector3(26,y+15,30),new THREE.Vector3(1.5,y-.6,0));}}
 const panel=document.getElementById('panel');
-function openZone(id){selZone=id;setTimeout(()=>setHover(null),0);const z=ZONES[id];if(focus!==z.floor)focusFloor(z.floor);
+function openZone(id){const z=ZONES[id];if(focus!==z.floor)focusFloor(z.floor);
   Object.values(ZONES).forEach(o=>o.label.classList.toggle('on',o===z));
   document.getElementById('p-eyebrow').textContent=FLOORS[z.floor].n+'・'+z.name;
   document.getElementById('p-title').textContent=z.name;document.getElementById('p-desc').textContent=z.desc+(id==='classroom'?'　目前：'+classStatus():id==='terrace'?'　目前：'+roofStatus():(id==='checkout'||id==='dining')?'　目前：'+hoursText(0):id==='office'?'　目前：'+hoursText(OFFICE):(id==='warehouse'||id==='pastrylab'||id==='roastery')?'　目前：'+hoursText(PRODF):'');
@@ -1959,9 +1958,8 @@ function openZone(id){selZone=id;setTimeout(()=>setHover(null),0);const z=ZONES[
     if(it.href){const a=document.createElement('a');a.href=it.href;a.target='_blank';a.rel='noopener';a.textContent=it.t+' ↗';li.appendChild(a);}
     else{li.textContent=it.t;const e=document.createElement('em');e.textContent='示範';li.appendChild(e);}ul.appendChild(li);});
   panel.hidden=false;}
-document.getElementById('close').addEventListener('click',()=>{panel.hidden=true;selZone=null;setHover(null);Object.values(ZONES).forEach(o=>o.label.classList.remove('on'));});
-let selZone=null;
-function setHover(id){Object.entries(ZONES).forEach(([k,z])=>{z.mesh.material.opacity=k===id?.16:k===selZone?.1:0;});renderer.domElement.style.cursor=id?'pointer':'';}
+document.getElementById('close').addEventListener('click',()=>{panel.hidden=true;setHover(null);Object.values(ZONES).forEach(o=>o.label.classList.remove('on'));});
+function setHover(id){renderer.domElement.style.cursor=id?'pointer':'';}
 const ray=new THREE.Raycaster(),mv=new THREE.Vector2();let down=null;
 function pick(e){const r=renderer.domElement.getBoundingClientRect();mv.x=((e.clientX-r.left)/r.width)*2-1;mv.y=-((e.clientY-r.top)/r.height)*2+1;
   ray.setFromCamera(mv,camera);const h=ray.intersectObjects(hitMeshes.filter(m=>m.parent.visible),false);return h.length?h[0].object.userData.zone:null;}
