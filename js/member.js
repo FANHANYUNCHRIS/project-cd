@@ -506,12 +506,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let animateCartBadge = false;
+
     function renderCartBadge() {
         const count = cartItems.reduce((sum, it) => sum + it.qty, 0);
         [cartBadge, cartBadgeMobile].forEach(badge => {
             badge.textContent = count;
             badge.hidden = count === 0;
+
+            if (animateCartBadge && count > 0) {
+                badge.classList.remove('cart-badge-pop');
+                requestAnimationFrame(() => {
+                    badge.classList.add('cart-badge-pop');
+                    badge.addEventListener('animationend', () => badge.classList.remove('cart-badge-pop'), { once: true });
+                });
+            }
         });
+        animateCartBadge = false;
     }
 
     function renderCartModal() {
@@ -629,6 +640,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItems.push({ productId, name, price, qty });
         }
         saveCart();
+        animateCartBadge = true;
+        renderCartBadge();
 
         const originalText = addToCartBtn.textContent;
         addToCartBtn.textContent = '已加入！';
