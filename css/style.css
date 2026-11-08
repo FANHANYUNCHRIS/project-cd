@@ -2512,10 +2512,12 @@ a.faq-card {
 
 /* 電腦版排成 2 欄（目前 6 顆剛好排 3 排，2/2/2），用 grid 而不是
    flex-wrap+固定容器寬度去湊，欄數不會因為圖示總數變動而跑掉 */
+/* 觸控範圍 44px（iOS HIG 最小觸控目標），間距縮成 --sp-1，
+   圖示中心距維持原本的 48px（32+16 → 44+4），視覺排列不變 */
 .footer-social {
     display: grid;
-    grid-template-columns: repeat(3, var(--sp-8));
-    gap: 16px;
+    grid-template-columns: repeat(3, 44px);
+    gap: var(--sp-1);
 }
 
 .footer-social a {
@@ -2524,10 +2526,10 @@ a.faq-card {
     text-decoration: none;
     /* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
        寬度都不一樣（量過 LINE 32px、YouTube 35px、Instagram 29px…），
-       圖示本身大小看起來就會不一致，用固定的 32×32px（=--sp-8）方框
-       置中對齊，每一顆才會是真正一樣大 */
-    width: var(--sp-8);
-    height: var(--sp-8);
+       圖示本身大小看起來就會不一致，用固定的 44×44px 方框置中對齊，
+       每一顆才會是真正一樣大，也達到 iOS HIG 44pt 最小觸控目標 */
+    width: 44px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -5337,20 +5339,20 @@ a.faq-card {
     /* 9 顆 icon 排成每排兩顆（LINE+YouTube／Facebook+Instagram／Game+Education／
        常見問題+聯繫我們+音效開關，順序見 index.html 的排列），用 flex-wrap
        讓它每兩顆自動換行——這是圖示排列常見做法，不是文字斷行，跟上面
-       「嚴禁換行」的地址/信箱不是同一回事。圖示現在固定 32px 見方
-       （--sp-8，見 .footer-social a），2 顆(32px)+1個間距(--sp-4=16px)=80px，
+       「嚴禁換行」的地址/信箱不是同一回事。圖示現在固定 44px 見方
+       （觸控目標，見 .footer-social a），2 顆(44px)+1個間距(--sp-1=4px)=92px，
        精確算好，不用再抓餘裕 */
     /* 手機版改回 flex-wrap（不是電腦版的 3 欄 grid），窄螢幕排不下 3 顆，
        固定寬度湊出每排 2 顆 */
     .footer-social {
         display: flex;
         flex-wrap: wrap;
-        max-width: 80px;
-        /* column-gap 維持 16px（是上面算好的 80px 寬度的一部分，動了兩顆
-           icon 會塞不進一排），只縮小 row-gap——4 排 icon 疊起來的總高度
-           比左欄文字內容高出一截，兩欄視覺底部對不齊，縮小排與排的間距
-           把右欄總高度拉近左欄 */
-        row-gap: 12px;
+        max-width: 92px;
+        /* column-gap 4px 是上面算好的 92px 寬度的一部分，動了兩顆 icon 會
+           塞不進一排。row-gap 設 0：觸控框已經是 44px，排與排的中心距
+           維持原本的 44px（32+12 → 44+0），右欄總高度不變，兩欄底部照樣對齊 */
+        column-gap: var(--sp-1);
+        row-gap: 0;
     }
 
     /* 左欄空間有限，時間/信箱這兩行的文字前綴（「營業時間：」「官方信箱：」）
