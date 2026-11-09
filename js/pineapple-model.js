@@ -269,6 +269,8 @@ THE SOFTWARE.
         const isShowcase = stage.classList.contains('pastry-stage');
         const initialRotation = new THREE.Euler(0.14, isShowcase ? -Math.PI / 4 : -0.55, -0.045);
         cake.rotation.copy(initialRotation);
+        cake.updateMatrix();
+        const initialModelMatrix = cake.matrix.clone();
         scene.add(cake);
 
         function render() {
@@ -284,7 +286,23 @@ THE SOFTWARE.
             const fit = Math.max(1, (isShowcase ? 1.22 : 1.08) / camera.aspect);
             camera.position.set(0, distance * 0.31 * fit, distance * fit);
             camera.lookAt(0, 0, 0);
-            camera.updateProjectionMatrix();
+            camera.clearViewOffset();
+
+            if (isShowcase) {
+                // Center the projected silhouette at the default viewing angle.
+                camera.updateMatrixWorld();
+                const projection = new THREE.Matrix4()
+                    .multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+                    .multiply(initialModelMatrix);
+                const bounds = new THREE.Box2();
+                const vertex = new Vector3();
+                for (let i = 0; i < positions.count; i++) {
+                    vertex.fromBufferAttribute(positions, i).applyMatrix4(projection);
+                    bounds.expandByPoint(vertex);
+                }
+                const center = bounds.getCenter(new THREE.Vector2());
+                camera.setViewOffset(width, height, center.x * width / 2, -center.y * height / 2, width, height);
+            }
             render();
         }
         resize();

@@ -6199,7 +6199,7 @@ a.faq-card {
 .pastry-gallery { position: relative; min-width: 0; margin: 0; }
 .pastry-view-switch {
     position: absolute;
-    top: calc(100% + var(--sp-2));
+    top: calc(100% + var(--pastry-controls-gap));
     inset-inline: 0;
     display: flex;
     justify-content: center;
@@ -6367,9 +6367,9 @@ a.faq-card {
 #brand .team-avatar-list { gap: var(--sp-3); }
 #brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
 #products.pastry-product { display: flex; align-items: center; }
-.pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
+.pastry-content { --pastry-controls-gap: var(--sp-6); width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
 @media (min-width: 1025px) {
-    .pastry-content { padding-bottom: calc(44px + var(--sp-2)); }
+    .pastry-content { padding-bottom: calc(44px + var(--pastry-controls-gap)); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { align-self: stretch; }
     .pastry-content > .pastry-intro { align-content: center; }
     .pastry-content > .pastry-purchase { justify-content: center; }
@@ -6381,7 +6381,7 @@ a.faq-card {
     #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
     .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { padding: var(--sp-3); }
-    .pastry-gallery { margin-bottom: calc(44px + var(--sp-2)); }
+    .pastry-gallery { margin-bottom: calc(44px + var(--pastry-controls-gap)); }
     .pastry-stage { height: min(24dvh, 200px); }
 }
 #brand { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
