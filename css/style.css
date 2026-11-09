@@ -98,7 +98,7 @@
        （按鈕 hover 變暗、footer 分隔線），數值不變，純粹收進變數方便之後
        統一調整，不改變視覺 */
     --ink-hover: #333336;
-    --footer-border: #333;
+    --footer-border: var(--ink-line);
 
     /* ===== 玻璃托盤分層對比（2026-09）=====
        原本托盤 #f1f1ef 跟區塊背景 #EBEBEC 只差 6/255（不到 3%），肉眼分不出
@@ -210,7 +210,7 @@ body {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory; /* 全頁靈敏對齊，原本設在 html 上 */
-    background-color: #EBEBEC;
+    background-color: var(--white);
     color: var(--ink);
     font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
 }
@@ -2296,6 +2296,7 @@ a.faq-card {
 /* 商城和頁尾接在四個主畫面之後，依內容高度排列。 */
 .shop-footer-screen {
     min-height: auto;
+    background: var(--white);
     display: flex;
     flex-direction: column;
     scroll-snap-align: end;
@@ -2426,8 +2427,8 @@ a.faq-card {
    避免這個面板萬一空間不夠時 footer 被壓扁 */
 .footer {
     flex-shrink: 0;
-    background-color: var(--ink);
-    color: var(--paper);
+    background-color: var(--white);
+    color: var(--ink);
     padding: 32px 5% 16px;
     border-top: 1px solid var(--footer-border);
 }
@@ -2456,7 +2457,7 @@ a.faq-card {
 }
 
 .footer-title {
-    color: var(--white);
+    color: var(--ink);
     font-size: var(--fs-h4);
     font-weight: bold;
     margin-bottom: var(--sp-4);
@@ -2480,7 +2481,7 @@ a.faq-card {
     justify-content: center;
     width: 16px;
     margin-right: 8px;
-    color: var(--paper-soft);
+    color: var(--ink-soft);
 }
 
 .footer-links {
@@ -2497,14 +2498,14 @@ a.faq-card {
 }
 
 .footer-links a {
-    color: var(--paper);
+    color: var(--ink);
     text-decoration: none;
     font-size: var(--fs-small);
     transition: color 0.2s ease-in-out;
 }
 
 .footer-links a:hover {
-    color: var(--white);
+    text-decoration: underline;
 }
 
 /* 電腦版排成 2 欄（目前 6 顆剛好排 3 排，2/2/2），用 grid 而不是
@@ -2518,7 +2519,7 @@ a.faq-card {
 }
 
 .footer-social a {
-    color: var(--paper);
+    color: var(--ink);
     font-size: 24px;
     text-decoration: none;
     /* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
@@ -2560,7 +2561,7 @@ a.faq-card {
     text-align: center;
     padding-top: var(--sp-3);
     font-size: var(--fs-caption);
-    color: var(--paper);
+    color: var(--ink);
 }
 
 /* =========================================
@@ -6168,7 +6169,7 @@ a.faq-card {
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     align-items: center;
     gap: var(--sp-8);
-    background: var(--surface-sunken);
+    background: var(--white);
     color: var(--ink);
 }
 .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) {
@@ -6250,7 +6251,7 @@ a.faq-card {
 }
 
 /* 品牌介紹以故事與團隊兩個頁籤呈現。 */
-#brand { background: var(--surface-sunken); }
+#brand { background: var(--white); }
 #brand [role="tabpanel"][hidden] { display: none !important; }
 .brand-section-header {
     display: flex;
@@ -6303,9 +6304,10 @@ a.faq-card {
     place-items: center;
     margin: 0;
     min-height: min(46dvh, 384px);
-    background: var(--ink);
+    border: 1px solid var(--ink-line);
+    background: var(--white);
 }
-.brand-emblem img { display: block; width: min(50%, 224px); height: auto; }
+.brand-emblem img { display: block; width: min(50%, 224px); height: auto; filter: brightness(0); }
 #brand .team-avatar-rail { border: 0; background: transparent; box-shadow: none; padding: var(--sp-2); }
 #brand .team-info-merged, #brand .team-mobile-card {
     background: transparent;
@@ -6445,8 +6447,8 @@ a.faq-card {
     align-items: center;
     gap: var(--sp-12);
     min-height: 100dvh;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--white);
+    color: var(--ink);
 }
 .building-showcase h2 { font-size: var(--fs-display); }
 .building-showcase p { line-height: 1.7; margin-block: var(--sp-4); }
@@ -6457,8 +6459,8 @@ a.faq-card {
     gap: var(--sp-3);
     min-height: 44px;
     padding-inline: var(--sp-4);
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
     text-decoration: none;
 }
 .building-showcase-stage {
@@ -6466,7 +6468,7 @@ a.faq-card {
     display: grid;
     place-items: center;
     min-width: 0;
-    border: 1px solid var(--glass-edge-mid);
+    border: 1px solid var(--ink-line);
     height: min(52dvh, 480px);
 }
 .building-showcase-stage svg { width: min(75%, 320px); height: 90%; }
