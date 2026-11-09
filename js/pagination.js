@@ -69,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             limit = section.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
             if (section.id === 'brand') {
                 limit -= section.querySelector('.brand-section-header').getBoundingClientRect().height;
-                limit -= section.querySelector('.brand-building-entry').getBoundingClientRect().height;
-                limit -= parseFloat(style.rowGap) * 2;
+                limit -= parseFloat(style.rowGap);
             }
         }
         // Split long prose into spans without changing or discarding any text.

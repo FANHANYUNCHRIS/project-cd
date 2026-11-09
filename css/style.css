@@ -2291,22 +2291,12 @@ a.faq-card {
    照自己內容的高度顯示（不撐滿、不置中），footer 緊接在後面；如果兩者
    加起來還沒到 100vh，剩餘空間留在 footer 下方（頁尾多一點留白是正常的，
    不會像卡片飄在空白中間那樣像排版錯誤），矮螢幕也不會再裁到版權列 */
-/* min-height:100vh 是必要的下限，不能拿掉：這裡是全站 scroll-snap 流程
-   裡的「最後一頁」，如果面板矮於一個螢幕，文件可捲動的總高度會不夠，
-   瀏覽器物理上捲不到讓它貼齊視窗頂端的位置——捲到底時上一頁的內容會
-   卡在頂端一截露出來（使用者截圖回報過這個現象）。只有不是最後一頁的
-   區塊才能安全拿掉 min-height（後面還有內容可以繼續捲）。
-   多出來的高度怎麼分配試過三種都被打回票：置中讓卡片浮在空白正中間、
-   footer 背景拉伸變成一大塊黑、兩塊中間插一段空隙——都會讓使用者覺得
-   「這裡排版怪怪的」。改成卡片跟 footer 維持固定的緊湊間距（不隨視窗
-   高度伸縮），多出來的高度全部推到最上面、標題跟導覽列之間，讀起來
-   像是「這一頁上方留白比較多」，不會被誤會成中間排版錯位 */
+/* 商城和頁尾接在四個主畫面之後，依內容高度排列。 */
 .shop-footer-screen {
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     flex-direction: column;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    scroll-snap-align: end;
 }
 
 /* flex-grow:1 撐滿面板剩餘高度，justify-content:flex-end 把內容（標題+
@@ -6356,7 +6346,7 @@ a.faq-card {
     min-height: 100dvh;
     padding-block: var(--sp-16);
 }
-#brand { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-content: stretch; gap: var(--sp-4); }
+#brand { display: grid; grid-template-rows: auto minmax(0, 1fr); align-content: stretch; gap: var(--sp-4); }
 #brand > [role="tabpanel"] { align-self: center; min-width: 0; }
 #brand .team-switcher { height: auto; min-height: 0; }
 #brand .team-portrait { min-height: 160px; }
@@ -6444,4 +6434,60 @@ a.faq-card {
     0% { transform: scale(1); }
     45% { transform: scale(1.3); }
     100% { transform: scale(1); }
+}
+
+/* 第四個主畫面：只有進入展示時才載入互動大樓。 */
+.building-showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    align-items: center;
+    gap: var(--sp-12);
+    min-height: 100dvh;
+    background: var(--ink);
+    color: var(--paper);
+}
+.building-showcase h2 { font-size: var(--fs-display); }
+.building-showcase p { line-height: 1.7; margin-block: var(--sp-4); }
+.building-showcase-kicker { font-size: var(--fs-small); opacity: .8; }
+.building-showcase-action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-3);
+    min-height: 44px;
+    padding-inline: var(--sp-4);
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+}
+.building-showcase-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    border: 1px solid var(--glass-edge-mid);
+    height: min(52dvh, 480px);
+}
+.building-showcase-stage svg { width: min(75%, 320px); height: 90%; }
+.building-showcase-stage iframe { display: block; width: 100%; height: 100%; border: 0; }
+.building-showcase-close {
+    position: absolute;
+    z-index: 1;
+    inset: var(--sp-2) var(--sp-2) auto auto;
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 50%;
+    color: var(--ink);
+    background: var(--paper);
+    font-size: 24px;
+    cursor: pointer;
+}
+.building-is-open { grid-template-columns: minmax(0, 1fr); }
+.building-is-open .building-showcase-copy,
+.building-is-open .building-showcase-stage svg { display: none; }
+.building-is-open .building-showcase-stage { height: 72dvh; }
+@media (max-width: 1024px) {
+    .building-showcase { grid-template-columns: minmax(0, 1fr); align-content: center; gap: var(--sp-5); padding-block: var(--sp-8) 112px; }
+    .building-showcase h2 { font-size: var(--fs-h2); }
+    .building-showcase-stage { height: min(36dvh, 280px); }
 }

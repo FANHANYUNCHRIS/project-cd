@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261109-pastry-mirror">
+    <link rel="stylesheet" href="css/style.css?v=20261109-building-section">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261109-pastry-actions" defer></script>
+    <script src="js/script.js?v=20261109-building-section" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -114,7 +114,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
     <script src="js/member.js" defer></script>
-    <script src="js/pagination.js?v=20261109-view-switch" defer></script>
+    <script src="js/pagination.js?v=20261109-building-section" defer></script>
 </head>
 
 <body>
@@ -160,6 +160,9 @@
                         <span class="nav-text">品牌</span>
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">groups</span>
                     </a>
+                </li>
+                <li class="nav-brand-tab">
+                    <a href="#virtual-building" aria-label="虛擬大樓"><span class="nav-text">虛擬大樓</span></a>
                 </li>
                 <li>
                     <a href="#shop" aria-label="商城">
@@ -382,15 +385,26 @@
 
         </div>
 
-        <div class="brand-building-entry">
-            <p>Project.CD 的虛擬空間</p>
-            <a href="building/index.html" target="_blank" rel="noopener" aria-label="探索虛擬大樓（另開分頁）">探索虛擬大樓 <span aria-hidden="true">↗</span></a>
-        </div>
-
-        <a href="#shop" class="scroll-down-indicator on-light" aria-label="往下滾動">
-            <span>SCROLL DOWN</span>
+        <a href="#virtual-building" class="scroll-down-indicator on-light" aria-label="前往虛擬大樓">
+            <span>虛擬大樓</span>
             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </a>
+    </section>
+
+    <section id="virtual-building" class="fullscreen-section dark-section building-showcase" aria-labelledby="virtual-building-title">
+        <div class="building-showcase-copy">
+            <p class="building-showcase-kicker">Project.CD ／ 虛擬空間</p>
+            <h2 id="virtual-building-title">虛擬大樓</h2>
+            <p>從咖啡廳走到空中花園，探索 Project.CD 的每一層。</p>
+            <a class="building-showcase-action" href="building/index.html" id="building-showcase-launch">進入 3D 大樓 <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="building-showcase-stage">
+            <svg viewBox="0 0 320 280" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M64 216V62l113-32 80 36v146l-80 38z M177 30v220 M64 62l113 38 80-34 M64 94l113 38 80-34 M64 126l113 38 80-34 M64 158l113 38 80-34 M64 190l113 38 80-34 M94 72v154 M126 83v154 M217 83v146"/>
+                <path opacity=".4" d="M32 222l145 48 112-52 M64 62l-30 9v130 M257 66l29 13v115"/>
+            </svg>
+            <button type="button" class="building-showcase-close" id="building-showcase-close" aria-label="關閉 3D 大樓" hidden>×</button>
+        </div>
     </section>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
@@ -610,7 +624,7 @@
                         <!-- Project.CD 咖啡大樓 3D 模型，放在 building/ 資料夾（從 Claude 成品搬進來，
                              GPT 與 Claude 共同編輯這一份）。天氣「預報」讀 building/weather.json，
                              不會自動更新，預報時段過了就顯示晴天 -->
-                        <a href="building/index.html" target="_blank" rel="noopener" class="social-building" aria-label="虛擬大樓（另開分頁）" title="Project.CD 咖啡大樓"><i class="fa-solid fa-building" aria-hidden="true"></i></a>
+                        <a href="#virtual-building" class="social-building" aria-label="虛擬大樓" title="Project.CD 咖啡大樓"><i class="fa-solid fa-building" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -626,7 +640,7 @@
         <a href="#home" class="section-dot" data-target="home" aria-label="首頁"></a>
         <a href="#products" class="section-dot" data-target="products" aria-label="產品"></a>
         <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
-        <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
+        <a href="#virtual-building" class="section-dot" data-target="virtual-building" aria-label="虛擬大樓"></a>
     </nav>
 
     <!-- 左側頁碼標籤：跟右側小圓點對稱、份量一樣輕，顯示目前第幾頁/共幾頁 -->

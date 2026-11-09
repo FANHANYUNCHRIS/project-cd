@@ -88,6 +88,28 @@ document.addEventListener('DOMContentLoaded', () => {
        操作區（不是純裝飾的頂欄），跟著捲動消失反而讓人點不到，改成不管往上
        往下捲，導覽列都固定顯示，跟桌機版行為一致 */
 
+    const buildingLaunch = document.getElementById('building-showcase-launch');
+    const buildingClose = document.getElementById('building-showcase-close');
+    const buildingSection = document.getElementById('virtual-building');
+    let buildingFrame;
+    buildingLaunch.addEventListener('click', event => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        buildingFrame = document.createElement('iframe');
+        buildingFrame.title = 'Project.CD 互動 3D 大樓';
+        buildingFrame.src = buildingLaunch.href;
+        buildingClose.before(buildingFrame);
+        buildingSection.classList.add('building-is-open');
+        buildingClose.hidden = false;
+        buildingClose.focus({ preventScroll: true });
+    });
+    buildingClose.addEventListener('click', () => {
+        buildingFrame.remove();
+        buildingSection.classList.remove('building-is-open');
+        buildingClose.hidden = true;
+        buildingLaunch.focus({ preventScroll: true });
+    });
+
     // 品牌故事與角色資料分開呈現，沿用既有角色內容分頁。
     (function initBrandTabs() {
         const tabs = [...document.querySelectorAll('.brand-tabs [role="tab"]')];
