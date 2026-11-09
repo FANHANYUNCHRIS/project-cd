@@ -268,9 +268,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvas = stage.querySelector('canvas');
         const status = stage.querySelector('[role="status"]');
         try {
-            await window.initPineappleModel(stage);
+            const setInteractive = await window.initPineappleModel(stage);
             canvas.hidden = false;
             status.hidden = true;
+            return setInteractive;
         } catch (error) {
             status.textContent = '目前無法顯示 3D 模型';
             console.warn('鳳梨酥 3D 模型無法載入', error);
@@ -291,6 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="pastry-description">${product.desc}</p>
             </div>
             <figure class="pastry-gallery">
+                <div class="pastry-view-switch" role="group" aria-label="鳳梨酥展示模式">
+                    <button type="button" aria-pressed="false" data-view="2d" disabled>2D</button>
+                    <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
+                </div>
                 <div class="pastry-stage pineapple-model-stage">
                     <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
                     <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
@@ -312,10 +317,20 @@ document.addEventListener('DOMContentLoaded', () => {
         placeholder.replaceWith(section);
 
         const stage = section.querySelector('.pastry-stage');
-        const modelObserver = new IntersectionObserver(([entry]) => {
+        const modelObserver = new IntersectionObserver(async ([entry]) => {
             if (!entry.isIntersecting) return;
             modelObserver.disconnect();
-            showPineappleModel(stage);
+            const setInteractive = await showPineappleModel(stage);
+            if (!setInteractive) return;
+            const viewButtons = section.querySelectorAll('.pastry-view-switch button');
+            viewButtons.forEach(button => {
+                button.disabled = false;
+                button.addEventListener('click', () => {
+                    if (button.getAttribute('aria-pressed') === 'true') return;
+                    setInteractive(button.dataset.view === '3d');
+                    viewButtons.forEach(option => option.setAttribute('aria-pressed', String(option === button)));
+                });
+            });
         });
         modelObserver.observe(stage);
     })();

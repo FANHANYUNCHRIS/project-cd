@@ -6192,6 +6192,27 @@ a.faq-card {
 .pastry-intro h2 span { display: block; font-size: var(--fs-body); font-weight: 400; margin-top: var(--sp-2); }
 .pastry-description { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-8); }
 .pastry-gallery { min-width: 0; margin: 0; }
+.pastry-view-switch {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-2);
+}
+.pastry-view-switch button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    border: 1px solid var(--glass-edge-light);
+    border-radius: 20px;
+    background: var(--glass-edge-mid);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--fs-small);
+    cursor: pointer;
+}
+.pastry-view-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.pastry-view-switch button:disabled { cursor: default; }
+.pineapple-model-stage canvas.is-static { cursor: default; touch-action: auto; }
+
 .pastry-stage { height: min(48svh, 456px); display: grid; place-items: center; }
 .pastry-stage img, .pastry-illustration, .pastry-illustration svg { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
 .pineapple-model-stage canvas {

@@ -266,7 +266,8 @@ THE SOFTWARE.
         const size = new THREE.Box3().setFromObject(cake).getSize(new Vector3());
         // 1 mm = 0.05 scene units. The vertical axis is Y.
         cake.scale.set(67 * 0.05 / size.x, 22 * 0.05 / size.y, 35 * 0.05 / size.z);
-        cake.rotation.set(0.14, -0.55, -0.045);
+        const initialRotation = new THREE.Euler(0.14, -0.55, -0.045);
+        cake.rotation.copy(initialRotation);
         scene.add(cake);
 
         function render() {
@@ -287,11 +288,12 @@ THE SOFTWARE.
         resize();
         new ResizeObserver(resize).observe(stage);
 
+        let interactive = true;
         let pointerId;
         let lastX;
         let lastY;
         canvas.addEventListener('pointerdown', event => {
-            if (pointerId !== undefined || event.button !== 0) return;
+            if (!interactive || pointerId !== undefined || event.button !== 0) return;
             pointerId = event.pointerId;
             lastX = event.clientX;
             lastY = event.clientY;
@@ -311,11 +313,28 @@ THE SOFTWARE.
         const arrows = { ArrowLeft: [0, -0.1], ArrowRight: [0, 0.1], ArrowUp: [-0.1, 0], ArrowDown: [0.1, 0] };
         canvas.addEventListener('keydown', event => {
             const direction = arrows[event.key];
-            if (!direction) return;
+            if (!interactive || !direction) return;
             event.preventDefault();
             cake.rotation.x += direction[0];
             cake.rotation.y += direction[1];
             render();
         });
+
+        return function setInteractive(enabled) {
+            interactive = enabled;
+            canvas.tabIndex = enabled ? 0 : -1;
+            canvas.classList.toggle('is-static', !enabled);
+            canvas.setAttribute('aria-label', enabled
+                ? '鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉'
+                : '鳳梨酥 2D 固定視角');
+            if (enabled) return;
+
+            if (pointerId !== undefined && canvas.hasPointerCapture(pointerId)) {
+                canvas.releasePointerCapture(pointerId);
+            }
+            pointerId = undefined;
+            cake.rotation.copy(initialRotation);
+            render();
+        };
     };
 })(window.THREE);
