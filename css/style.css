@@ -6181,7 +6181,18 @@ a.faq-card {
 .pastry-gallery { min-width: 0; margin: 0; }
 .pastry-stage { height: min(48svh, 456px); display: grid; place-items: center; }
 .pastry-stage img, .pastry-illustration, .pastry-illustration svg { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
-.pastry-stage [hidden] { display: none; }
+.pineapple-model-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    cursor: grab;
+    touch-action: none;
+}
+.pineapple-model-stage canvas:active { cursor: grabbing; }
+.pineapple-model-stage canvas:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+.pineapple-model-stage [hidden] { display: none; }
 .pastry-image-note { text-align: center; font-size: var(--fs-caption); color: var(--ink-soft); line-height: 1.6; }
 .pastry-thumbnails { display: flex; justify-content: center; gap: var(--sp-3); margin-top: var(--sp-5); }
 .pastry-thumbnails button { width: var(--sp-16); min-height: 44px; background: transparent; border: 1px solid transparent; color: var(--ink); cursor: pointer; padding: var(--sp-1); font: inherit; }
@@ -6337,9 +6348,8 @@ a.faq-card {
     .brand-building-icon > svg { width: var(--sp-12); height: var(--sp-12); }
 }
 
-/* 去背鳳梨酥照片完整呈現，單張照片不顯示切圖控制。 */
-#product-modal .gallery-main img { object-fit: contain; padding: var(--sp-6); }
-#product-modal :is(.gallery-nav-btn, .gallery-thumbs, .gallery-dots)[hidden] { display: none; }
+/* 鳳梨酥 3D 展示沿用商品詳情的媒體區。 */
+#product-modal .pineapple-model-stage { display: grid; place-items: center; }
 #product-modal .gallery-main { height: min(40dvh, 320px); aspect-ratio: auto; }
 
 /* 關閉的彈窗退出排版與背景模糊合成，避免八層全螢幕材質持續參與捲動。 */
@@ -6349,16 +6359,6 @@ a.faq-card {
 /* =========================================
    Micro-interactions：輕量操作回饋
    ========================================= */
-@media (hover: hover) and (pointer: fine) {
-    .pastry-stage img:not([hidden]) {
-        transition: transform 380ms cubic-bezier(0.2, 0.75, 0.25, 1);
-    }
-
-    .pastry-stage:hover img:not([hidden]) {
-        transform: scale(1.035);
-    }
-}
-
 .pastry-buy:active,
 .btn-modal-cta:active,
 .btn-submit:active,

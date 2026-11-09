@@ -100,9 +100,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261105-performance">
+    <link rel="stylesheet" href="css/style.css?v=20261109-model">
 
-    <script src="js/script.js?v=20261105-photo" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+    <script src="js/pineapple-model.js" defer></script>
+    <script src="js/script.js?v=20261109-model" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -665,17 +667,10 @@
             <button class="modal-close" id="product-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <div class="product-modal-content">
                 <div class="product-gallery">
-                    <div class="gallery-main">
-                        <img id="product-modal-main-img" src="" alt="產品大圖">
-                        <!-- 手機版專用：大圖左右切換箭頭＋疊加在圖片內部的圓點指示器，
-                             桌機版隱藏（見 CSS），桌機版維持縮圖列可以直接跳到任一張圖。
-                             圓點疊在圖片上（不是獨立一排），省下一整排的垂直空間，
-                             手機版彈窗才塞得進一屏不用捲動 -->
-                        <button type="button" class="gallery-nav-btn gallery-nav-prev" id="gallery-nav-prev" aria-label="上一張圖片"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-                        <button type="button" class="gallery-nav-btn gallery-nav-next" id="gallery-nav-next" aria-label="下一張圖片"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-                        <div class="gallery-dots" id="product-modal-dots"></div>
+                    <div class="gallery-main pineapple-model-stage">
+                        <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
+                        <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
                     </div>
-                    <div class="gallery-thumbs" id="product-modal-thumbs"></div>
                 </div>
                 <div class="product-detail-body">
                     <div class="product-title-row">
@@ -701,7 +696,7 @@
 
                         <div class="product-modal-tab-panel" id="product-modal-panel-desc" role="tabpanel">
                             <p id="product-modal-desc" class="desc">產品詳細說明</p>
-                            <p class="pastry-image-note">鳳梨酥參考照片・非本店商品實拍</p>
+                            <p class="pastry-image-note">3D 示意・67 × 35 × 22 mm</p>
                         </div>
                         <div class="product-modal-tab-panel" id="product-modal-panel-ingredients" role="tabpanel" hidden>
                             <div class="product-modal-ingredients-badges" id="product-modal-ingredients"></div>

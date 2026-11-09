@@ -73,8 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
             allergens: "蛋、奶、麩質",
             ingredients: ["土鳳梨餡", "法國奶油", "中筋麵粉", "雞蛋", "細砂糖", "鹽"],
-            notice: genericProductNotices,
-            images: ["images/pineapple-photo-cutout.webp"]
+            notice: genericProductNotices
         }
     };
 
@@ -265,6 +264,19 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        5. 產品區塊：一個產品一個滿版畫面
        ========================================= */
+    async function showPineappleModel(stage) {
+        const canvas = stage.querySelector('canvas');
+        const status = stage.querySelector('[role="status"]');
+        try {
+            await window.initPineappleModel(stage);
+            canvas.hidden = false;
+            status.hidden = true;
+        } catch (error) {
+            status.textContent = '目前無法顯示 3D 模型';
+            console.warn('鳳梨酥 3D 模型無法載入', error);
+        }
+    }
+
     (function initProductPanels() {
         const placeholder = document.getElementById('products-placeholder');
         if (!placeholder) return;
@@ -279,10 +291,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="pastry-description">${product.desc}</p>
             </div>
             <figure class="pastry-gallery">
-                <div class="pastry-stage" role="img" aria-label="鳳梨酥完整外觀與剖面參考照片">
-                    <img src="${product.images[0]}" alt="鳳梨酥完整外觀與剖面參考照片" decoding="async">
+                <div class="pastry-stage pineapple-model-stage">
+                    <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
+                    <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
                 </div>
-                <figcaption class="pastry-image-note">鳳梨酥參考照片・非本店商品實拍</figcaption>
+                <figcaption class="pastry-image-note">3D 示意・67 × 35 × 22 mm</figcaption>
             </figure>
             <div class="pastry-purchase">
                 <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
@@ -296,14 +309,16 @@ document.addEventListener('DOMContentLoaded', () => {
         content.className = 'pastry-content';
         [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
         section.prepend(content);
-        const image = section.querySelector('.pastry-stage img');
-        const note = section.querySelector('.pastry-image-note');
-        image.addEventListener('error', () => {
-            image.hidden = true;
-            note.textContent = '照片暫時無法載入，請重新整理';
-        });
         section.querySelectorAll('.pastry-buy, .pastry-details').forEach(button => button.addEventListener('click', () => openProductModal('1')));
         placeholder.replaceWith(section);
+
+        const stage = section.querySelector('.pastry-stage');
+        const modelObserver = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            modelObserver.disconnect();
+            showPineappleModel(stage);
+        });
+        modelObserver.observe(stage);
     })();
 
     /* =========================================
@@ -659,12 +674,8 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================= */
     const productModal = document.getElementById('product-modal');
     const productModalClose = document.getElementById('product-modal-close');
-    const mainImg = document.getElementById('product-modal-main-img');
-    const galleryMain = document.querySelector('.gallery-main');
-    const thumbsBox = document.getElementById('product-modal-thumbs');
-    const dotsBox = document.getElementById('product-modal-dots');
-    const navPrevBtn = document.getElementById('gallery-nav-prev');
-    const navNextBtn = document.getElementById('gallery-nav-next');
+    const modalModelStage = productModal.querySelector('.pineapple-model-stage');
+    let modalModelRequested = false;
     const modalTitle = document.getElementById('product-modal-title');
     const modalPrice = document.getElementById('product-modal-price');
     const modalQty = document.getElementById('product-modal-qty');
@@ -723,44 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', () => setProductModalTab(tab.dataset.panel));
     });
 
-    // 圖片尚未上傳（404）時，顯示品牌色佔位圖示，而不是瀏覽器預設的裂圖
-    mainImg.addEventListener('load', () => mainImg.parentElement.classList.remove('img-fallback'));
-    mainImg.addEventListener('error', () => mainImg.parentElement.classList.add('img-fallback'));
-
-    // 目前開啟的商品圖片清單／索引——手機版箭頭/圓點/滑動跟桌機版縮圖列
-    // 共用同一份狀態，切換來源不同但結果一致
-    let galleryImages = [];
-    let galleryName = '';
-    let galleryIndex = 0;
-
-    function showGalleryImage(index) {
-        galleryIndex = (index + galleryImages.length) % galleryImages.length;
-        const imgSrc = galleryImages[galleryIndex];
-
-        mainImg.src = imgSrc;
-        mainImg.alt = `${galleryName}商品照片 ${galleryIndex + 1}`;
-
-        document.querySelectorAll('.thumb-item').forEach((t, i) => t.classList.toggle('active', i === galleryIndex));
-        document.querySelectorAll('.gallery-dot').forEach((d, i) => d.classList.toggle('active', i === galleryIndex));
-    }
-
-    navPrevBtn.addEventListener('click', () => showGalleryImage(galleryIndex - 1));
-    navNextBtn.addEventListener('click', () => showGalleryImage(galleryIndex + 1));
-
-    // 手機版滑動切圖：只看水平位移，避免跟彈窗本身的垂直捲動互相干擾
-    let touchStartX = 0;
-    let touchStartY = 0;
-    galleryMain.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].clientX;
-        touchStartY = e.changedTouches[0].clientY;
-    }, { passive: true });
-    galleryMain.addEventListener('touchend', (e) => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const dy = e.changedTouches[0].clientY - touchStartY;
-        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-        showGalleryImage(galleryIndex + (dx < 0 ? 1 : -1));
-    }, { passive: true });
-
     function openProductModal(productId) {
         const data = productsData[productId];
         if (!data) return;
@@ -781,37 +754,12 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAllergen.textContent = `本產品含${data.allergens}，不適合對其過敏體質者食用`;
         setProductModalNotices(data.notice);
 
-        galleryImages = data.images;
-        galleryName = data.name;
-
-        thumbsBox.innerHTML = '';
-        dotsBox.innerHTML = '';
-
-        data.images.forEach((imgSrc, index) => {
-            const thumb = document.createElement('div');
-            thumb.className = `thumb-item ${index === 0 ? 'active' : ''}`;
-            thumb.innerHTML = `<img src="${imgSrc}" alt="${data.name}縮圖 ${index + 1}" loading="lazy">`;
-
-            const thumbImg = thumb.querySelector('img');
-            thumbImg.addEventListener('error', () => thumb.classList.add('img-fallback'), { once: true });
-
-            thumb.addEventListener('click', () => showGalleryImage(index));
-
-            thumbsBox.appendChild(thumb);
-
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = `gallery-dot ${index === 0 ? 'active' : ''}`;
-            dot.setAttribute('aria-label', `第 ${index + 1} 張圖片，共 ${data.images.length} 張`);
-            dot.addEventListener('click', () => showGalleryImage(index));
-            dotsBox.appendChild(dot);
-        });
-
-        const hasMultipleImages = data.images.length > 1;
-        [navPrevBtn, navNextBtn, thumbsBox, dotsBox].forEach(control => { control.hidden = !hasMultipleImages; });
-        showGalleryImage(0);
         setProductModalTab('desc');
         openModal(productModal);
+        if (!modalModelRequested) {
+            modalModelRequested = true;
+            showPineappleModel(modalModelStage);
+        }
     }
 
     productModalClose.addEventListener('click', () => {
