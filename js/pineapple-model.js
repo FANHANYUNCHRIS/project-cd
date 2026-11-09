@@ -266,7 +266,8 @@ THE SOFTWARE.
         const size = new THREE.Box3().setFromObject(cake).getSize(new Vector3());
         // 1 mm = 0.05 scene units. The vertical axis is Y.
         cake.scale.set(67 * 0.05 / size.x, 22 * 0.05 / size.y, 35 * 0.05 / size.z);
-        const initialRotation = new THREE.Euler(0.14, -0.55, -0.045);
+        const isShowcase = stage.classList.contains('pastry-stage');
+        const initialRotation = new THREE.Euler(0.14, isShowcase ? -Math.PI / 4 : -0.55, -0.045);
         cake.rotation.copy(initialRotation);
         scene.add(cake);
 
@@ -279,8 +280,9 @@ THE SOFTWARE.
             if (!width || !height) return;
             renderer.setSize(width, height, false);
             camera.aspect = width / height;
-            const distanceScale = Math.max(1, 1.08 / camera.aspect);
-            camera.position.set(0, 2.1 * distanceScale, 6.8 * distanceScale);
+            const distance = isShowcase ? 5.5 : 6.8;
+            const fit = Math.max(1, (isShowcase ? 1.22 : 1.08) / camera.aspect);
+            camera.position.set(0, distance * 0.31 * fit, distance * fit);
             camera.lookAt(0, 0, 0);
             camera.updateProjectionMatrix();
             render();

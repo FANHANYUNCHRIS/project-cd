@@ -292,13 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="pastry-description">${product.desc}</p>
             </div>
             <figure class="pastry-gallery">
-                <div class="pastry-view-switch" role="group" aria-label="鳳梨酥展示模式">
-                    <button type="button" aria-pressed="false" data-view="2d" disabled>2D</button>
-                    <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
-                </div>
                 <div class="pastry-stage pineapple-model-stage">
                     <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
                     <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
+                </div>
+                <div class="pastry-view-switch" role="group" aria-label="鳳梨酥展示模式">
+                    <button type="button" aria-pressed="false" data-view="2d" disabled>2D</button>
+                    <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
                 </div>
             </figure>
             <div class="pastry-purchase">

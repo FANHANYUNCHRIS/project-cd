@@ -6196,8 +6196,11 @@ a.faq-card {
 .pastry-intro h2 { font-size: var(--fs-h1); line-height: 1.4; }
 .pastry-intro h2 span { display: block; font-size: var(--fs-body); font-weight: 400; margin-top: var(--sp-2); }
 .pastry-description { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-8); }
-.pastry-gallery { min-width: 0; margin: 0; }
+.pastry-gallery { position: relative; min-width: 0; margin: 0; }
 .pastry-view-switch {
+    position: absolute;
+    top: calc(100% + var(--sp-2));
+    inset-inline: 0;
     display: flex;
     justify-content: center;
     gap: var(--sp-2);
@@ -6366,6 +6369,7 @@ a.faq-card {
 #products.pastry-product { display: flex; align-items: center; }
 .pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
 @media (min-width: 1025px) {
+    .pastry-content { padding-bottom: calc(44px + var(--sp-2)); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { align-self: stretch; }
     .pastry-content > .pastry-intro { align-content: center; }
     .pastry-content > .pastry-purchase { justify-content: center; }
@@ -6377,6 +6381,7 @@ a.faq-card {
     #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
     .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { padding: var(--sp-3); }
+    .pastry-gallery { margin-bottom: calc(44px + var(--sp-2)); }
     .pastry-stage { height: min(24dvh, 200px); }
 }
 #brand { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
