@@ -6302,6 +6302,11 @@ a.faq-card {
 #brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
 #products.pastry-product { display: flex; align-items: center; }
 .pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
+@media (min-width: 1025px) {
+    .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { align-self: stretch; }
+    .pastry-content > .pastry-intro { align-content: center; }
+    .pastry-content > .pastry-purchase { justify-content: center; }
+}
 #brand .screen-pages, #products .screen-pages { margin-top: var(--sp-3); }
 @media (max-width: 1024px) {
     #brand, #products.pastry-product { padding-top: var(--sp-6); padding-bottom: calc(112px + env(safe-area-inset-bottom)); }

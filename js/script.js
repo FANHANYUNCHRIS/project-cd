@@ -295,7 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
                     <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
                 </div>
-                <figcaption class="pastry-image-note">3D 示意・67 × 35 × 22 mm</figcaption>
             </figure>
             <div class="pastry-purchase">
                 <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
