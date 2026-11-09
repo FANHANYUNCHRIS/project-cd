@@ -6495,3 +6495,98 @@ a.faq-card {
     .building-showcase h2 { font-size: var(--fs-h2); }
     .building-showcase-stage { height: min(36dvh, 280px); }
 }
+
+/* 粉彩主視覺與白色浮層。 */
+.hero-banner,
+.pastry-product,
+#brand {
+    --pastel-art:
+        radial-gradient(ellipse at 7% 10%, #ffe6ac, transparent 52%),
+        radial-gradient(ellipse at 92% 14%, #f3addd, transparent 59%),
+        radial-gradient(ellipse at 9% 95%, #9eafff, transparent 58%),
+        radial-gradient(ellipse at 94% 91%, #b9eaf3, transparent 57%),
+        #f5d9eb;
+    --pastel-shadow: 0 16px 40px -18px rgba(61, 51, 90, .28);
+}
+
+.hero-banner .hero-copy {
+    display: grid;
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+    align-items: stretch;
+    width: min(100%, 1160px);
+    padding: var(--sp-5);
+    border: 1px solid var(--white);
+    border-radius: 36px;
+    background: rgba(250, 249, 253, .88);
+    box-shadow: var(--pastel-shadow);
+    text-align: left;
+}
+.hero-story {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--sp-4);
+    padding: var(--sp-8);
+}
+.hero-kicker {
+    color: var(--ink-soft);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: .14em;
+}
+.hero-story .hero-title { font-size: clamp(44px, 6vw, 88px); line-height: 1.05; animation: none; }
+.hero-story .hero-tagline { margin: 0; animation: none; }
+.hero-product-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-3);
+    min-height: 44px;
+    padding-inline: var(--sp-5);
+    border-radius: 999px;
+    background: #382465;
+    color: var(--white);
+    font-weight: 700;
+    text-decoration: none;
+}
+.hero-product-button:hover { background: #4d3382; }
+.hero-art {
+    display: grid;
+    place-items: center;
+    min-height: min(58svh, 510px);
+    border-radius: 24px;
+    background: var(--pastel-art);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6);
+}
+.hero-banner .hero-logo-stage { width: min(62%, 280px, 35svh); }
+.hero-banner .hero-forest { opacity: .18; }
+.hero-snow { z-index: 3; }
+
+.pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) {
+    border-color: #eae6f1;
+    border-radius: 28px;
+    background: linear-gradient(155deg, #fff 35%, #f6f2fb);
+    box-shadow: var(--pastel-shadow);
+}
+.pastry-content > .pastry-gallery {
+    background:
+        radial-gradient(ellipse at center, rgba(255, 255, 255, .78) 0%, transparent 77%),
+        var(--pastel-art);
+}
+.pastry-view-switch button:not([aria-pressed="true"]) { background: rgba(255, 255, 255, .82); }
+.pastry-view-switch button[aria-pressed="true"], .pastry-buy { background: #382465; }
+#brand .brand-emblem {
+    border: 1px solid #eee7f5;
+    border-radius: 28px;
+    background: var(--pastel-art);
+    box-shadow: var(--pastel-shadow);
+}
+
+@media (max-width: 1024px) {
+    .hero-banner.fullscreen-section { height: auto; padding-block: var(--sp-5) 108px; }
+    .hero-banner .hero-copy { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); padding: var(--sp-4); }
+    .hero-story { gap: var(--sp-3); padding: var(--sp-2); }
+    .hero-story .hero-title { font-size: clamp(36px, 9vw, 56px); }
+    .hero-story .hero-title br { display: none; }
+    .hero-art { min-height: min(32svh, 230px); }
+    .hero-banner .hero-logo-stage { width: min(46%, 160px, 22svh); }
+}
