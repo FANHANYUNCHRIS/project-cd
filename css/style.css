@@ -6165,14 +6165,27 @@ a.faq-card {
     #brand .team-switcher { height: auto; }
 }
 
-/* 單款鳳梨酥：介紹、無框商品展示、選購資訊。 */
+/* 單款鳳梨酥：介紹、3D 展示與選購資訊。 */
 .pastry-product {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     align-items: center;
     gap: var(--sp-8);
-    background: var(--white);
+    background: var(--surface-sunken);
     color: var(--ink);
+}
+.pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) {
+    padding: var(--sp-5);
+    border: 1px solid var(--glass-edge-mid);
+    border-top-color: var(--glass-edge-light);
+    border-bottom-color: var(--glass-edge-dark);
+    border-radius: 20px;
+    background: linear-gradient(145deg, var(--glass-edge-light), var(--glass-edge-mid));
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
+    box-shadow:
+        0 12px 32px -10px rgba(22, 22, 26, 0.22),
+        inset 0 1px 1px var(--glass-edge-light);
 }
 .pastry-kicker { font-size: var(--fs-small); color: var(--ink-soft); margin-bottom: var(--sp-5); }
 .pastry-intro h2 { font-size: var(--fs-h1); line-height: 1.4; }
@@ -6305,6 +6318,7 @@ a.faq-card {
     #brand .team-mobile-card { gap: var(--sp-3); }
     #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
     .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+    .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { padding: var(--sp-3); }
     .pastry-stage { height: min(24dvh, 200px); }
 }
 #brand { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
