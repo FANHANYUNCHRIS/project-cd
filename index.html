@@ -103,7 +103,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261109-pastry-actions" defer></script>
+    <script src="js/script.js?v=20261109-brand-page" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -156,8 +156,8 @@
                      區塊（不是獨立功能），手機版不給分頁列入口，直接捲過去即可；
                      這個 <li> 桌機版仍正常顯示，只在手機版分頁列隱藏 -->
                 <li class="nav-brand-tab">
-                    <a href="#brand" aria-label="品牌">
-                        <span class="nav-text">品牌</span>
+                    <a href="brand.html" aria-label="品牌設計">
+                        <span class="nav-text">品牌設計</span>
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">groups</span>
                     </a>
                 </li>
@@ -278,120 +278,6 @@
     <!-- 產品區塊：一個產品一個滿版畫面，由 js/script.js 的 initProductPanels()
          依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
     <div id="products-placeholder"></div>
-
-    <!-- 品牌故事與團隊分頁，共用虛擬大樓入口。 -->
-    <section id="brand" class="fullscreen-section" aria-labelledby="brand-title">
-        <header class="brand-section-header">
-            <h2 id="brand-title">關於 Project.CD</h2>
-            <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
-                <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
-                <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">品牌團隊</button>
-            </div>
-        </header>
-        <div class="brand-story-panel" id="brand-story-panel" role="tabpanel" aria-labelledby="brand-story-tab" tabindex="0">
-            <div class="brand-story-copy">
-                <p class="brand-eyebrow">咖啡與甜點</p>
-                <h3>從家裡出發，<br>把甜點送進日常。</h3>
-                <p class="brand-story-description">Project.CD 是一間線上咖啡甜點店。我們在家手工製作，讓一盒甜點成為你我相遇的方式。</p>
-            </div>
-            <figure class="brand-emblem">
-                <img src="images/unicorn-logo-white.png" alt="Project.CD 獨角獸標誌" width="512" height="512" loading="lazy">
-            </figure>
-        </div>
-        <div id="brand-team-panel" role="tabpanel" aria-labelledby="brand-team-tab" hidden>
-        <div class="team-switcher">
-            <div class="team-avatar-rail">
-                <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
-                    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
-                </button>
-                <div class="team-avatar-list" id="team-avatar-list"></div>
-                <button class="team-nav-btn" id="team-nav-down" aria-label="下一位成員" type="button">
-                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div class="team-info-merged">
-                <div class="team-info-header">
-                    <h3 class="team-info-name" id="team-info-name"></h3>
-                </div>
-
-                <div class="team-stat-list">
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">工作職位</span>
-                        <span class="team-stat-value" id="team-info-job"></span>
-                    </div>
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">戰鬥職位</span>
-                        <span class="team-stat-value" id="team-info-battle"></span>
-                    </div>
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">專用武器</span>
-                        <span class="team-stat-value" id="team-info-weapon"></span>
-                    </div>
-                </div>
-
-                <div class="team-file-block">
-                    <span class="team-file-tab">角色檔案</span>
-                    <p class="team-info-quote" id="team-info-quote"></p>
-                    <p class="team-info-bio" id="team-info-bio"></p>
-                </div>
-            </div>
-
-            <div class="team-portrait" id="team-portrait" role="img" aria-label="">
-                <div class="team-portrait-text" id="team-portrait-text"></div>
-            </div>
-
-            <!-- 手機版專用排版（使用者指定：頭像列→單一合併大卡片，卡片內依序是
-                 姓名+座右銘→立繪→四宮格數據→自我介紹，全部同一張卡片背景），
-                 桌機版維持原本 .team-info-merged 那張合併卡片、.team-portrait
-                 立繪不變。內容跟桌機版是同一份資料，只是拆開重排、各自獨立成
-                 .team-switcher 底下的直接子項，才能用 CSS order 排出這個順序
-                 ——沒有用 display:contents 去拆 .team-info-merged（那個技巧在
-                 Safari 上有名的相容性問題，這次改版已經踩過一次雷），改用
-                 「桌機/手機各自一份對應的元素、CSS 只顯示其中一份」，id 各自
-                 獨立，script.js 的 showMember() 會同時寫入兩份。立繪也比照
-                 辦理另外複製一份（.team-mobile-portrait），因為 .team-portrait
-                 是桌機版 .team-switcher 的直接 flex 子項、order 排版依賴這一點，
-                 搬進手機卡片裡會讓桌機版排版跟著壞掉 -->
-            <div class="team-mobile-card">
-                <div class="team-mobile-namequote">
-                    <h3 class="team-mobile-name" id="team-mobile-name"></h3>
-                    <p class="team-mobile-quote" id="team-mobile-quote"></p>
-                </div>
-
-                <div class="team-mobile-portrait" id="team-mobile-portrait" role="img" aria-label=""></div>
-
-                <div class="team-mobile-stats">
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">工作職位</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-job"></span>
-                    </div>
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">戰鬥職位</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-battle"></span>
-                    </div>
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">專用武器</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-weapon"></span>
-                    </div>
-                </div>
-
-                <p class="team-mobile-bio" id="team-mobile-bio"></p>
-            </div>
-        </div>
-
-        </div>
-
-        <div class="brand-building-entry">
-            <p>Project.CD 的虛擬空間</p>
-            <a href="building/index.html" target="_blank" rel="noopener" aria-label="探索虛擬大樓（另開分頁）">探索虛擬大樓 <span aria-hidden="true">↗</span></a>
-        </div>
-
-        <a href="#shop" class="scroll-down-indicator on-light" aria-label="往下滾動">
-            <span>SCROLL DOWN</span>
-            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-        </a>
-    </section>
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
@@ -581,6 +467,7 @@
                              用 script.js 裡既有的 policyData.terms 動態塞進
                              #faq-terms-body，內容只維護一份，不會跟 policy-link 那邊
                              （會員註冊條款打勾、聯繫表單隱私權連結還是用得到）分岔 -->
+                        <li><a href="brand.html">品牌設計</a> · <a href="building/index.html">虛擬辦公大樓</a></li>
                         <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> 常見問題與服務條款</a></li>
                     </ul>
                     <p><i class="fa-solid fa-location-dot" aria-hidden="true"></i> 台北市內湖區</p>
@@ -625,7 +512,6 @@
     <nav class="section-dots" id="section-dots" aria-label="頁面章節導覽">
         <a href="#home" class="section-dot" data-target="home" aria-label="首頁"></a>
         <a href="#products" class="section-dot" data-target="products" aria-label="產品"></a>
-        <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
         <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
     </nav>
 
@@ -633,7 +519,7 @@
     <div class="section-index" id="section-index" aria-hidden="true">
         <span class="section-index-current" id="section-index-current">01</span>
         <span class="section-index-sep"></span>
-        <span class="section-index-total">04</span>
+        <span class="section-index-total">03</span>
     </div>
 
     <!-- 顧客服務條款彈窗 -->

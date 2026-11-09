@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>品牌設計｜Project.CD</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css?v=20261109-brand-page">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/brand.js" defer></script>
+    <script src="js/pagination.js?v=20261109-view-switch" defer></script>
+</head>
+<body class="brand-page">
+    <main>
+    <section id="brand" class="fullscreen-section" aria-labelledby="brand-title">
+        <header class="brand-section-header">
+            <h1 id="brand-title">Project.CD 品牌設計</h1>
+            <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
+                <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
+                <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">品牌團隊</button>
+            </div>
+        </header>
+        <div class="brand-story-panel" id="brand-story-panel" role="tabpanel" aria-labelledby="brand-story-tab" tabindex="0">
+            <div class="brand-story-copy">
+                <p class="brand-eyebrow">咖啡與甜點</p>
+                <h3>從家裡出發，<br>把甜點送進日常。</h3>
+                <p class="brand-story-description">Project.CD 是一間線上咖啡甜點店。我們在家手工製作，讓一盒甜點成為你我相遇的方式。</p>
+            </div>
+            <figure class="brand-emblem">
+                <img src="images/unicorn-logo-white.png" alt="Project.CD 獨角獸標誌" width="512" height="512" loading="lazy">
+            </figure>
+        </div>
+        <div id="brand-team-panel" role="tabpanel" aria-labelledby="brand-team-tab" hidden>
+        <div class="team-switcher">
+            <div class="team-avatar-rail">
+                <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
+                    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+                </button>
+                <div class="team-avatar-list" id="team-avatar-list"></div>
+                <button class="team-nav-btn" id="team-nav-down" aria-label="下一位成員" type="button">
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="team-info-merged">
+                <div class="team-info-header">
+                    <h3 class="team-info-name" id="team-info-name"></h3>
+                </div>
+
+                <div class="team-stat-list">
+                    <div class="team-stat-row">
+                        <span class="team-stat-label">工作職位</span>
+                        <span class="team-stat-value" id="team-info-job"></span>
+                    </div>
+                    <div class="team-stat-row">
+                        <span class="team-stat-label">戰鬥職位</span>
+                        <span class="team-stat-value" id="team-info-battle"></span>
+                    </div>
+                    <div class="team-stat-row">
+                        <span class="team-stat-label">專用武器</span>
+                        <span class="team-stat-value" id="team-info-weapon"></span>
+                    </div>
+                </div>
+
+                <div class="team-file-block">
+                    <span class="team-file-tab">角色檔案</span>
+                    <p class="team-info-quote" id="team-info-quote"></p>
+                    <p class="team-info-bio" id="team-info-bio"></p>
+                </div>
+            </div>
+
+            <div class="team-portrait" id="team-portrait" role="img" aria-label="">
+                <div class="team-portrait-text" id="team-portrait-text"></div>
+            </div>
+
+            <!-- 手機版專用排版（使用者指定：頭像列→單一合併大卡片，卡片內依序是
+                 姓名+座右銘→立繪→四宮格數據→自我介紹，全部同一張卡片背景），
+                 桌機版維持原本 .team-info-merged 那張合併卡片、.team-portrait
+                 立繪不變。內容跟桌機版是同一份資料，只是拆開重排、各自獨立成
+                 .team-switcher 底下的直接子項，才能用 CSS order 排出這個順序
+                 ——沒有用 display:contents 去拆 .team-info-merged（那個技巧在
+                 Safari 上有名的相容性問題，這次改版已經踩過一次雷），改用
+                 「桌機/手機各自一份對應的元素、CSS 只顯示其中一份」，id 各自
+                 獨立，script.js 的 showMember() 會同時寫入兩份。立繪也比照
+                 辦理另外複製一份（.team-mobile-portrait），因為 .team-portrait
+                 是桌機版 .team-switcher 的直接 flex 子項、order 排版依賴這一點，
+                 搬進手機卡片裡會讓桌機版排版跟著壞掉 -->
+            <div class="team-mobile-card">
+                <div class="team-mobile-namequote">
+                    <h3 class="team-mobile-name" id="team-mobile-name"></h3>
+                    <p class="team-mobile-quote" id="team-mobile-quote"></p>
+                </div>
+
+                <div class="team-mobile-portrait" id="team-mobile-portrait" role="img" aria-label=""></div>
+
+                <div class="team-mobile-stats">
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">工作職位</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-job"></span>
+                    </div>
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">戰鬥職位</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-battle"></span>
+                    </div>
+                    <div class="team-mobile-stat-box">
+                        <span class="team-mobile-stat-label">專用武器</span>
+                        <span class="team-mobile-stat-value" id="team-mobile-weapon"></span>
+                    </div>
+                </div>
+
+                <p class="team-mobile-bio" id="team-mobile-bio"></p>
+            </div>
+        </div>
+
+        </div>
+
+        <nav class="brand-building-entry" aria-label="Project.CD 官網導覽">
+            <a href="index.html">← 官網首頁</a>
+            <a href="building/index.html">虛擬辦公大樓 ↗</a>
+        </nav>
+    </section>
+    </main>
+</body>
+</html>
