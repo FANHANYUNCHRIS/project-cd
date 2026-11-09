@@ -305,15 +305,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
                 <div class="pastry-spec"><span>售價</span><strong>${product.price}</strong></div>
                 <div class="pastry-spec"><span>過敏原</span><span>${product.allergens}</span></div>
-                <button type="button" class="pastry-buy">選購鳳梨酥 <span aria-hidden="true">↗</span></button>
-                <button type="button" class="pastry-details">成分與商品注意事項</button>
+                <button type="button" class="pastry-buy">本網站購買 <span aria-hidden="true">↗</span></button>
+                <button type="button" class="pastry-details" data-dialog="pastry-marketplaces">線上電商購買</button>
+                <button type="button" class="pastry-details" data-dialog="pastry-notices">產品注意事項</button>
             </div>
             <a href="#brand" class="scroll-down-indicator on-light" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
         const content = document.createElement('div');
         content.className = 'pastry-content';
         [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
         section.prepend(content);
-        section.querySelectorAll('.pastry-buy, .pastry-details').forEach(button => button.addEventListener('click', () => openProductModal('1')));
+        section.querySelector('.pastry-buy').addEventListener('click', () => openProductModal('1'));
+        document.querySelector('.pastry-notice-content').innerHTML = `
+            <p><strong>過敏原</strong> ${product.allergens}</p>
+            <p><strong>成分</strong> ${product.ingredients.join('、')}</p>
+            <ul>${product.notice.map(notice => `<li>${notice}</li>`).join('')}</ul>`;
+        section.querySelectorAll('[data-dialog]').forEach(button => {
+            const dialog = document.getElementById(button.dataset.dialog);
+            button.addEventListener('click', () => openModal(dialog));
+            dialog.querySelector('.modal-close').addEventListener('click', () => closeModal(dialog));
+        });
         placeholder.replaceWith(section);
 
         const stage = section.querySelector('.pastry-stage');
@@ -799,6 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalCta) {
         modalCta.addEventListener('click', () => {
             closeModal(productModal);
+            openModal(document.getElementById('cart-modal'));
         });
     }
 

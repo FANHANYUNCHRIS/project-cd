@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261109-pastry-centered">
+    <link rel="stylesheet" href="css/style.css?v=20261109-pastry-actions">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261109-pastry-centered" defer></script>
-    <script src="js/script.js?v=20261109-pastry-framing" defer></script>
+    <script src="js/pineapple-model.js?v=20261109-pastry-actions" defer></script>
+    <script src="js/script.js?v=20261109-pastry-actions" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -647,7 +647,7 @@
 
     <!-- 產品詳細介紹與多圖藝廊彈窗 (支持 6 張縮圖) -->
     <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="product-modal-title" aria-hidden="true" inert>
-        <div class="modal-container product-modal-box">
+        <div class="modal-container product-modal-box pastry-glass-dialog">
             <button class="modal-close" id="product-modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             <div class="product-modal-content">
                 <div class="product-gallery">
@@ -700,12 +700,32 @@
                             </div>
                             <span id="product-modal-price" class="price">NT$ 0</span>
                         </div>
-                        <button type="button" class="btn-modal-cta" id="product-modal-add-cart">進入匯款資訊</button>
+                        <button type="button" class="btn-modal-cta" id="product-modal-add-cart">加入購物車</button>
                         <p class="cart-add-note" id="product-modal-add-note" hidden>請先登入會員才能加入購物車</p>
-                        <a href="#shop" id="product-modal-cta" class="btn-modal-cta-secondary">或前往第三方商城選購</a>
+                        <button type="button" id="product-modal-cta" class="btn-modal-cta-secondary">前往購物車</button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="pastry-marketplaces" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pastry-marketplaces-title" aria-hidden="true" inert>
+        <div class="modal-container pastry-glass-dialog">
+            <button type="button" class="modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            <h3 id="pastry-marketplaces-title" class="modal-title">線上電商購買</h3>
+            <div class="pastry-market-links">
+                <a class="btn-modal-cta-secondary" href="https://shopee.tw/" target="_blank" rel="noopener noreferrer">蝦皮購物 <span aria-hidden="true">↗</span></a>
+                <a class="btn-modal-cta-secondary" href="https://myship.7-11.com.tw/Home/Main" target="_blank" rel="noopener noreferrer">7-ELEVEN 賣貨便 <span aria-hidden="true">↗</span></a>
+                <a class="btn-modal-cta-secondary" href="https://famishop.fami.life/" target="_blank" rel="noopener noreferrer">全家好賣+ <span aria-hidden="true">↗</span></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="pastry-notices" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pastry-notices-title" aria-hidden="true" inert>
+        <div class="modal-container pastry-glass-dialog">
+            <button type="button" class="modal-close" aria-label="關閉"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            <h3 id="pastry-notices-title" class="modal-title">產品注意事項</h3>
+            <div class="pastry-notice-content"></div>
         </div>
     </div>
 

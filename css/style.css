@@ -6196,11 +6196,8 @@ a.faq-card {
 .pastry-intro h2 { font-size: var(--fs-h1); line-height: 1.4; }
 .pastry-intro h2 span { display: block; font-size: var(--fs-body); font-weight: 400; margin-top: var(--sp-2); }
 .pastry-description { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.8; margin-top: var(--sp-8); }
-.pastry-gallery { position: relative; min-width: 0; margin: 0; }
+.pastry-gallery { display: flex; flex-direction: column; min-width: 0; margin: 0; gap: var(--sp-4); }
 .pastry-view-switch {
-    position: absolute;
-    top: calc(100% + var(--pastry-controls-gap));
-    inset-inline: 0;
     display: flex;
     justify-content: center;
     gap: var(--sp-2);
@@ -6221,7 +6218,7 @@ a.faq-card {
 .pastry-view-switch button:disabled { cursor: default; }
 .pineapple-model-stage canvas.is-static { cursor: default; touch-action: auto; }
 
-.pastry-stage { height: min(48svh, 456px); display: grid; place-items: center; }
+.pastry-stage { height: min(53svh, 500px); display: grid; place-items: center; }
 .pastry-stage img, .pastry-illustration, .pastry-illustration svg { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
 .pineapple-model-stage canvas {
     display: block;
@@ -6367,9 +6364,8 @@ a.faq-card {
 #brand .team-avatar-list { gap: var(--sp-3); }
 #brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
 #products.pastry-product { display: flex; align-items: center; }
-.pastry-content { --pastry-controls-gap: var(--sp-6); width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
+.pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
 @media (min-width: 1025px) {
-    .pastry-content { padding-bottom: calc(44px + var(--pastry-controls-gap)); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { align-self: stretch; }
     .pastry-content > .pastry-intro { align-content: center; }
     .pastry-content > .pastry-purchase { justify-content: center; }
@@ -6381,7 +6377,6 @@ a.faq-card {
     #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
     .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { padding: var(--sp-3); }
-    .pastry-gallery { margin-bottom: calc(44px + var(--pastry-controls-gap)); }
     .pastry-stage { height: min(24dvh, 200px); }
 }
 #brand { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
@@ -6407,6 +6402,19 @@ a.faq-card {
 @media (max-width: 1024px) {
     :root { --page-content-max: 480px; }
 }
+
+/* 產品購買與注意事項共用霧面玻璃。 */
+.modal-container.pastry-glass-dialog {
+    background: linear-gradient(145deg, var(--glass-edge-light), rgba(255, 255, 255, .78));
+    border: 1px solid var(--glass-edge-light);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+}
+.pastry-glass-dialog:not(.product-modal-box) { width: min(100%, 480px); }
+.pastry-market-links, .pastry-notice-content { display: grid; gap: var(--sp-3); }
+.pastry-market-links a { min-height: 44px; }
+.pastry-notice-content { color: var(--ink); font-size: var(--fs-small); line-height: 1.6; }
+.pastry-notice-content ul { padding-inline-start: var(--sp-5); }
 
 /* 鳳梨酥 3D 展示沿用商品詳情的媒體區。 */
 #product-modal .pineapple-model-stage { display: grid; place-items: center; }

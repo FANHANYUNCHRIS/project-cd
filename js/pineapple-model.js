@@ -263,9 +263,15 @@ THE SOFTWARE.
             crumb.rotation.set(random() * 6, random() * 6, random() * 6);
             cake.add(crumb);
         }
-        const size = new THREE.Box3().setFromObject(cake).getSize(new Vector3());
+        const modelBounds = new THREE.Box3().setFromObject(cake);
+        const size = modelBounds.getSize(new Vector3());
         // 1 mm = 0.05 scene units. The vertical axis is Y.
         cake.scale.set(67 * 0.05 / size.x, 22 * 0.05 / size.y, 35 * 0.05 / size.z);
+        const radius = new Vector3(
+            Math.max(-modelBounds.min.x, modelBounds.max.x),
+            Math.max(-modelBounds.min.y, modelBounds.max.y),
+            Math.max(-modelBounds.min.z, modelBounds.max.z)
+        ).multiply(cake.scale).length();
         const isShowcase = stage.classList.contains('pastry-stage');
         const initialRotation = new THREE.Euler(0.14, isShowcase ? -Math.PI / 4 : -0.55, -0.045);
         cake.rotation.copy(initialRotation);
@@ -282,9 +288,11 @@ THE SOFTWARE.
             if (!width || !height) return;
             renderer.setSize(width, height, false);
             camera.aspect = width / height;
-            const distance = isShowcase ? 5.5 : 6.8;
-            const fit = Math.max(1, (isShowcase ? 1.22 : 1.08) / camera.aspect);
-            camera.position.set(0, distance * 0.31 * fit, distance * fit);
+            // Fit the whole rotation sphere, leaving room for the framing offset.
+            const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
+            const safeAngle = Math.atan(Math.tan(halfFov) * Math.min(1, camera.aspect) * 0.85);
+            const distance = Math.max(isShowcase ? 5.5 : 6.8, radius / Math.sin(safeAngle));
+            camera.position.set(0, 0.31, 1).setLength(distance);
             camera.lookAt(0, 0, 0);
             camera.clearViewOffset();
 
@@ -301,6 +309,7 @@ THE SOFTWARE.
                     bounds.expandByPoint(vertex);
                 }
                 const center = bounds.getCenter(new THREE.Vector2());
+                center.clampScalar(-0.12, 0.12);
                 camera.setViewOffset(width, height, center.x * width / 2, -center.y * height / 2, width, height);
             }
             render();
