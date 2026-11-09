@@ -273,6 +273,7 @@ THE SOFTWARE.
             Math.max(-modelBounds.min.z, modelBounds.max.z)
         ).multiply(cake.scale).length();
         const isShowcase = stage.classList.contains('pastry-stage');
+        const horizontalDirection = isShowcase ? -1 : 1;
         const initialRotation = new THREE.Euler(0.14, isShowcase ? -Math.PI / 4 : -0.55, -0.045);
         cake.rotation.copy(initialRotation);
         cake.updateMatrix();
@@ -330,7 +331,7 @@ THE SOFTWARE.
         });
         canvas.addEventListener('pointermove', event => {
             if (event.pointerId !== pointerId) return;
-            cake.rotation.y += (event.clientX - lastX) * 0.009;
+            cake.rotation.y += (event.clientX - lastX) * 0.009 * horizontalDirection;
             cake.rotation.x += (event.clientY - lastY) * 0.009;
             lastX = event.clientX;
             lastY = event.clientY;
@@ -345,7 +346,7 @@ THE SOFTWARE.
             if (!interactive || !direction) return;
             event.preventDefault();
             cake.rotation.x += direction[0];
-            cake.rotation.y += direction[1];
+            cake.rotation.y += direction[1] * horizontalDirection;
             render();
         });
 
