@@ -6054,39 +6054,27 @@ a.faq-card {
     .modal-container .account-column:not(:first-child) { padding-top: var(--sp-4); }
 }
 
-/* 使用者參考圖確認的導覽列材質：霧面浮凸、左上亮邊、深色選取。
-   沿用既有灰階 token；桌機留白依使用者回饋放寬，手機凹槽與互動維持原樣。
-   此為實體表面與陰影的處理，不使用半透明 Materials 或背景偵測。 */
+/* 導覽列材質（2026-11 使用者要求改為平面）：原本是霧面漸層＋多層浮凸陰影，
+   現在改成純白不透明底＋髮絲邊、不加任何陰影或漸層；選取狀態為純黑實色。
+   仍維持「永遠不透明白色浮島」架構，不使用半透明 Materials 或背景偵測。 */
 .navbar {
-    --nav-matte: linear-gradient(var(--white), var(--surface-sunken) 32%, var(--paper));
-    /* 亮邊在深底分離輪廓，接觸陰影與下緣厚度在淺底保留浮起感。 */
-    --nav-raised-shadow: inset 0 1px 2px var(--glass-edge-light),
-        inset 0 -1px 2px rgba(22, 22, 26, .08),
-        0 0 0 1px var(--glass-edge-mid),
-        0 2px 3px rgba(22, 22, 26, .12),
-        0 4px 8px rgba(22, 22, 26, .12);
-    --nav-selected-shadow: inset 0 1px 2px var(--glass-edge-mid),
-        inset 0 -1px 2px rgba(0, 0, 0, .24),
-        0 0 0 1px var(--glass-edge-mid),
-        0 2px 3px rgba(22, 22, 26, .16),
-        0 4px 8px rgba(22, 22, 26, .16);
+    --nav-matte: var(--white);
+    --nav-flat-edge: 0 0 0 1px var(--ink-line);
+    --nav-raised-shadow: var(--nav-flat-edge);
+    --nav-selected-shadow: none;
 }
 .navbar :is(.nav-icon-btn, .nav-icon-link) {
     background: var(--nav-matte);
-    border-color: var(--glass-edge-mid);
-    box-shadow: var(--nav-raised-shadow);
+    border-color: transparent;
+    box-shadow: var(--nav-flat-edge);
 }
 @media (min-width: 1025px) {
     .navbar .nav-links {
-        gap: var(--sp-3);
-        padding: var(--sp-1) var(--sp-2);
+        gap: var(--sp-1);
+        padding: var(--sp-1);
         background: var(--nav-matte);
-        border-color: var(--glass-edge-mid);
-        box-shadow: inset 0 1px 2px var(--glass-edge-light),
-            inset 0 -1px 2px rgba(22, 22, 26, .08),
-            0 0 0 1px var(--glass-edge-mid),
-            0 2px 4px rgba(22, 22, 26, .08),
-            0 8px 16px rgba(22, 22, 26, .12);
+        border-color: transparent;
+        box-shadow: var(--nav-flat-edge);
     }
     .navbar .nav-links a {
         display: inline-flex;
@@ -6094,14 +6082,15 @@ a.faq-card {
         justify-content: center;
         min-height: 0;
         padding-inline: var(--sp-5);
-        background: var(--nav-matte);
+        background: transparent;
         color: var(--ink);
-        box-shadow: var(--nav-raised-shadow);
+        box-shadow: none;
     }
+    .navbar .nav-links a:not(.active):hover { background: var(--surface-sunken); }
     .navbar .nav-links a.active {
-        background: linear-gradient(var(--ink-hover), var(--ink));
+        background: var(--ink);
         color: var(--paper);
-        box-shadow: var(--nav-selected-shadow);
+        box-shadow: none;
     }
 }
 @media (max-width: 1024px) {
@@ -6109,17 +6098,16 @@ a.faq-card {
         background: var(--nav-matte);
         -webkit-mask: var(--nav-shape) center / 100% 76px no-repeat;
         mask: var(--nav-shape) center / 100% 76px no-repeat;
-        box-shadow: inset 0 1px 2px var(--glass-edge-light),
-            inset 0 -1px 2px var(--ink-line);
+        box-shadow: none;
     }
     .navbar .nav-links :is(a, .nav-more-btn) {
         background: transparent;
         box-shadow: none;
     }
     .navbar .nav-links .mobile-tab-selected {
-        background: linear-gradient(var(--ink-hover), var(--ink)) !important;
+        background: var(--ink) !important;
         color: var(--paper);
-        box-shadow: var(--nav-selected-shadow);
+        box-shadow: none;
     }
 }
 
