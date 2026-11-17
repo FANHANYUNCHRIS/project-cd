@@ -446,6 +446,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionDots = document.querySelectorAll('.section-dot');
     const sectionIndexEl = document.getElementById('section-index');
     const sectionIndexCurrent = document.getElementById('section-index-current');
+    // 總頁數跟著右側小圓點數量自動計算，新增或移除章節時不用再手動改數字
+    const sectionIndexTotal = document.getElementById('section-index-total');
+    if (sectionIndexTotal) sectionIndexTotal.textContent = String(sectionDots.length).padStart(2, '0');
 
     const observerOptions = {
         root: null,

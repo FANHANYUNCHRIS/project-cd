@@ -6495,3 +6495,138 @@ a.faq-card {
     .building-showcase h2 { font-size: var(--fs-h2); }
     .building-showcase-stage { height: min(36dvh, 280px); }
 }
+
+/* =========================================
+   2026-11 整體精修：統一四個主畫面的標題系統與展示框
+   設計系統 02 節：中文 Noto Sans TC、數字英文 Inter，只靠字重與 9 階字級分層。
+   品牌區原本的明體標題、各區不一致的標題字級（40/48/32px）在這裡收斂成同一套：
+   小標籤 Caption 12/700 → 主標題 Display 48/900（手機 H2 32）→ 內文 Body 16。
+   ========================================= */
+.pastry-kicker,
+.brand-eyebrow,
+.building-showcase-kicker,
+.shopping-section .shop-eyebrow {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: none;
+    opacity: 1;
+    margin-bottom: var(--sp-4);
+}
+
+.pastry-intro h2,
+.brand-story-copy h3,
+.building-showcase h2,
+.shopping-section .section-title {
+    font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    font-size: var(--fs-display);
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
+}
+
+.pastry-intro h2 span {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--ink-soft);
+}
+
+.pastry-description,
+.brand-story-description,
+.building-showcase-copy > p:not(.building-showcase-kicker) {
+    font-size: var(--fs-body);
+    line-height: 1.8;
+    color: var(--ink-soft);
+}
+.pastry-description { margin-top: var(--sp-6); }
+.building-showcase-copy > p:not(.building-showcase-kicker) { margin-block: var(--sp-6) var(--sp-8); max-width: 29em; }
+
+/* 首頁副標：16px 在滿版主視覺上份量太輕，提到 Lead 18px，字距稍開做出標語感 */
+.hero-tagline {
+    font-size: var(--fs-lead);
+    letter-spacing: 0.24em;
+    margin-top: var(--sp-1);
+}
+
+/* 展示框：品牌標誌框、虛擬大樓框原本是 1px 細線空框，跟產品區的圓角玻璃卡片是兩種語言。
+   統一成跟產品卡片同樣 20px 圓角的托盤底色（--surface-sunken），層次靠底色落差而非線框。 */
+.brand-emblem,
+.building-showcase-stage {
+    border: 0;
+    border-radius: 20px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    overflow: hidden;
+}
+.building-showcase-stage svg { color: var(--ink); }
+.building-showcase-action,
+.pastry-buy { border-radius: 12px; }
+.building-showcase-action {
+    min-height: var(--sp-12);
+    padding-inline: var(--sp-6);
+    font-weight: 700;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+.building-showcase-action:hover { background: var(--ink-hover, #000); }
+.building-showcase-action:active { transform: scale(0.96); transition-duration: 0.08s; }
+
+/* 品牌頁籤標頭：小標「關於 Project.CD」跟其他區的小標籤對齊同一個 Caption 規格 */
+.brand-section-header h2 {
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+}
+
+/* 商城：三張通路卡原本只有 260px 寬、浮在大片空白中間。
+   改成三欄等寬網格、卡片加高，「前往選購」常駐顯示（觸控裝置沒有 hover，原本永遠看不到）。 */
+.shopping-section .section-title { margin-bottom: var(--sp-12); }
+.shop-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-6);
+    max-width: 960px;
+}
+.shop-glass-card {
+    max-width: none;
+    min-height: 220px;
+    justify-content: center;
+    gap: var(--sp-3);
+    padding: var(--sp-10) var(--sp-6);
+}
+.shop-link-icon { font-size: var(--fs-h1); margin-bottom: var(--sp-2); }
+.shop-link-arrow {
+    opacity: 0.85;
+    transform: none;
+    font-size: var(--fs-small);
+    letter-spacing: 0.04em;
+}
+.shop-glass-card:hover .shop-link-arrow { opacity: 1; }
+.shop-glass-card:hover .shop-link-arrow i { transform: translateX(3px); }
+.shop-link-arrow i { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@media (max-width: 1024px) {
+    .pastry-intro h2,
+    .brand-story-copy h3,
+    .building-showcase h2,
+    .shopping-section .section-title { font-size: var(--fs-h2); }
+    .hero-tagline { font-size: var(--fs-body); letter-spacing: 0.16em; }
+    .pastry-description { margin-top: var(--sp-4); }
+    .building-showcase-copy > p:not(.building-showcase-kicker) { margin-block: var(--sp-4) var(--sp-6); }
+    .shopping-section .section-title { margin-bottom: var(--sp-6); }
+    /* 手機維持既有定案的「一排三個 app 圖示磚」設計（見上方 1024px 段落說明），
+       這裡只把桌機版新加的卡片高度、內距、圖示字級還原回去 */
+    .shop-links { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-6); }
+    .shop-glass-card { min-height: 0; padding: 0; gap: var(--sp-2); }
+    .shop-link-icon { font-size: 64px; margin-bottom: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .building-showcase-action,
+    .shop-link-arrow i { transition: none; }
+}
