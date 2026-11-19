@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buildingLaunch.focus({ preventScroll: true });
     });
 
-    // 品牌故事與角色資料分開呈現，沿用既有角色內容分頁。
+    // 品牌故事、研究方法、原物料、品牌團隊四個分頁。
     (function initBrandTabs() {
         const tabs = [...document.querySelectorAll('.brand-tabs [role="tab"]')];
         const activate = tab => {
@@ -125,7 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.addEventListener('click', () => activate(tab));
             tab.addEventListener('keydown', event => {
                 let target;
-                if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') target = tabs[1 - index];
+                if (event.key === 'ArrowRight') target = tabs[(index + 1) % tabs.length];
+                if (event.key === 'ArrowLeft') target = tabs[(index + tabs.length - 1) % tabs.length];
                 if (event.key === 'Home') target = tabs[0];
                 if (event.key === 'End') target = tabs[tabs.length - 1];
                 if (!target) return;

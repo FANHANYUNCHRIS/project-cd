@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const controllers = new Map();
     let scheduled = false;
-    const rootSelector = '.modal-overlay > .modal-container, #brand-story-panel, #brand-team-panel, #products .pastry-content';
+    const rootSelector = '.modal-overlay > .modal-container, #brand-story-panel, #brand-method-panel, #brand-material-panel, #brand-team-panel, #products .pastry-content';
     const pendingRoots = new Set();
     const observer = new MutationObserver(records => {
         for (const record of records) {
