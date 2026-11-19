@@ -617,22 +617,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    addToCartBtn.addEventListener('click', () => {
+    // 寫進購物車的共用入口：產品彈窗、首頁產品區的「加入購物車」都走這裡，
+    // 登入檢查、Firestore 同步、徽章動畫只維護一份。未登入回傳 false 並開登入彈窗
+    function addItemToCart({ productId, name, price, qty }) {
         if (!currentUser) {
-            addCartNote.hidden = false;
             openAuthModal('login');
-            return;
+            return false;
         }
-        addCartNote.hidden = true;
-
-        const productId = productModalEl.dataset.productId;
-        const name = document.getElementById('product-modal-title').textContent;
-        // 讀 dataset 存的單價，不是 #product-modal-price 畫面上的文字——
-        // 那格現在顯示的是「單價×數量」小計（見上面 updateModalPrice），
-        // 購物車每一行需要的是單價本身，乘法留給 renderCartModal 自己算
-        const price = parseInt(productModalEl.dataset.unitPrice, 10) || 0;
-        const qty = parseInt(qtyValue.textContent, 10) || 1;
-
         const existing = cartItems.find(it => it.productId === productId);
         if (existing) {
             existing.qty += qty;
@@ -642,6 +633,22 @@ document.addEventListener('DOMContentLoaded', () => {
         saveCart();
         animateCartBadge = true;
         renderCartBadge();
+        return true;
+    }
+    window.addItemToCart = addItemToCart;
+
+    addToCartBtn.addEventListener('click', () => {
+        // 讀 dataset 存的單價，不是 #product-modal-price 畫面上的文字——
+        // 那格現在顯示的是「單價×數量」小計（見上面 updateModalPrice），
+        // 購物車每一行需要的是單價本身，乘法留給 renderCartModal 自己算
+        const added = addItemToCart({
+            productId: productModalEl.dataset.productId,
+            name: document.getElementById('product-modal-title').textContent,
+            price: parseInt(productModalEl.dataset.unitPrice, 10) || 0,
+            qty: parseInt(qtyValue.textContent, 10) || 1
+        });
+        addCartNote.hidden = added;
+        if (!added) return;
 
         const originalText = addToCartBtn.textContent;
         addToCartBtn.textContent = '已加入！';

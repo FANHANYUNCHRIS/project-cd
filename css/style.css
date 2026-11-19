@@ -6649,3 +6649,201 @@ a.faq-card {
     .building-showcase-action,
     .shop-link-arrow i { transition: none; }
 }
+
+/* =========================================
+   2026-11 鳳梨酥單品頁改版（設計稿：鳳梨酥產品區設計稿）
+   只有一樣產品，整區當單品頁：左邊 3D 展示框當主角（設計系統 V2.0 展示框配方），
+   右邊標題 → 三張數值卡（iOS 數值卡）→ 直接購買卡 → 資訊頁籤（iOS 分段控制器）。
+   購買不再先開彈窗；詳細資訊用頁籤切換，不靠框內捲動（使用者指定的資訊呈現原則）。
+   ========================================= */
+.pastry-content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--sp-6) var(--sp-16);
+}
+.pastry-content > .pastry-gallery {
+    position: relative;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    overflow: hidden;
+}
+.pastry-content > .pastry-gallery .pastry-stage { height: min(60svh, 560px); }
+.pastry-gallery .pastry-view-switch {
+    position: absolute;
+    left: 50%;
+    bottom: var(--sp-6);
+    transform: translateX(-50%);
+    gap: var(--sp-1);
+    padding: var(--sp-1);
+    border-radius: 100px;
+    background: var(--white);
+    box-shadow: 0 6px 18px -10px rgba(22, 22, 26, 0.4);
+}
+.pastry-gallery .pastry-view-switch button {
+    padding: 0 var(--sp-5);
+    border: 0;
+    border-radius: 100px;
+    background: transparent;
+    font-weight: 700;
+}
+.pastry-gallery .pastry-view-switch button[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+
+.pastry-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--sp-6);
+    min-width: 0;
+}
+.pastry-info .pastry-kicker { margin-bottom: var(--sp-3); }
+.pastry-info .pastry-description { margin-top: var(--sp-3); max-width: 34em; }
+
+.pastry-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.pastry-stats li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-4);
+    border-radius: 16px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+}
+.pastry-stats strong {
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid rgba(22, 22, 26, 0.3);
+    font-size: var(--fs-h4);
+    font-weight: 900;
+    line-height: 1.6;
+}
+.pastry-stats .pastry-stat-num { font-family: 'Inter', sans-serif; font-weight: 800; }
+.pastry-stats small { margin-left: var(--sp-1); font-size: var(--fs-body); font-weight: 700; }
+.pastry-stats span { font-size: var(--fs-small); color: var(--ink-soft); }
+
+.pastry-info .pastry-purchase {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    border-radius: 16px;
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--ink-line), 0 12px 32px -18px rgba(22, 22, 26, 0.35);
+}
+.pastry-subtotal { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pastry-subtotal span { font-size: var(--fs-caption); color: var(--ink-soft); }
+.pastry-subtotal strong {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.pastry-stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: var(--sp-1);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+}
+.pastry-stepper button {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--fs-h4);
+    font-weight: 700;
+    cursor: pointer;
+}
+.pastry-qty {
+    min-width: var(--sp-12);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.pastry-info .pastry-buy {
+    justify-content: center;
+    min-height: var(--sp-12);
+    padding: 0 var(--sp-8);
+    font-weight: 700;
+    white-space: nowrap;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.pastry-tablist {
+    display: flex;
+    gap: var(--sp-1);
+    padding: var(--sp-1);
+    border-radius: 12px;
+    background: rgba(22, 22, 26, 0.06);
+}
+.pastry-tablist button {
+    flex: 1;
+    min-height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pastry-tablist button[aria-selected="true"] {
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: 0 2px 8px -4px rgba(22, 22, 26, 0.35);
+}
+.pastry-tablist button:focus-visible,
+.pastry-stepper button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pastry-panels {
+    min-height: calc(var(--fs-small) * 1.8 * 3);
+    margin-top: var(--sp-3);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+    color: var(--ink-soft);
+}
+.pastry-panels strong { color: var(--ink); }
+.pastry-panels a { color: var(--ink); text-underline-offset: 3px; }
+
+.pastry-stepper button:active,
+.pastry-tablist button:active { transform: scale(0.96); transition-duration: 0.08s; }
+
+@media (max-width: 1024px) {
+    .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
+    .pastry-content > .pastry-gallery { padding: 0; }
+    .pastry-content > .pastry-gallery .pastry-stage { height: min(22dvh, 184px); }
+    .pastry-info .pastry-kicker { margin-bottom: var(--sp-2); }
+    .pastry-info .pastry-description { margin-top: var(--sp-2); }
+    .pastry-gallery .pastry-view-switch { bottom: var(--sp-3); }
+    .pastry-info { gap: var(--sp-4); }
+    .pastry-stats { gap: var(--sp-2); }
+    .pastry-stats li { padding: var(--sp-3); gap: var(--sp-1); }
+    .pastry-stats strong { font-size: var(--fs-body); }
+    .pastry-stats small { font-size: var(--fs-caption); }
+    .pastry-stats span { font-size: var(--fs-caption); }
+    .pastry-info .pastry-purchase { flex-wrap: wrap; gap: var(--sp-3); }
+    .pastry-info .pastry-buy { flex: 1 0 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pastry-info .pastry-buy,
+    .pastry-tablist button { transition: none; }
+}

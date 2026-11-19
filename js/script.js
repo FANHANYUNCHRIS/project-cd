@@ -307,12 +307,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const section = document.createElement('section');
         section.id = 'products';
         section.className = 'fullscreen-section pastry-product';
+        /* 2026-11 改版（設計稿：鳳梨酥產品區）：只有一樣產品，整區當單品頁設計——
+           左邊 3D 展示框當主角，右邊依序是標題、三張數值卡、直接購買卡、資訊頁籤。
+           購買不再先開彈窗；成分／過敏原／保存／取貨用頁籤切換，不靠框內捲動。 */
+        const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
         section.innerHTML = `
-            <div class="pastry-intro">
-                <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
-                <h2>${product.name}<span>土鳳梨 × 法國奶油</span></h2>
-                <p class="pastry-description">${product.desc}</p>
-            </div>
             <figure class="pastry-gallery">
                 <div class="pastry-stage pineapple-model-stage">
                     <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
@@ -323,28 +322,90 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
                 </div>
             </figure>
-            <div class="pastry-purchase">
-                <div class="pastry-spec"><span>包裝規格</span><strong>${product.qty}</strong></div>
-                <div class="pastry-spec"><span>售價</span><strong>${product.price}</strong></div>
-                <div class="pastry-spec"><span>過敏原</span><span>${product.allergens}</span></div>
-                <button type="button" class="pastry-buy">本網站購買 <span aria-hidden="true">↗</span></button>
-                <button type="button" class="pastry-details" data-dialog="pastry-marketplaces">線上電商購買</button>
-                <button type="button" class="pastry-details" data-dialog="pastry-notices">產品注意事項</button>
+            <div class="pastry-info">
+                <div class="pastry-intro">
+                    <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
+                    <h2>${product.name}</h2>
+                    <p class="pastry-description">${product.desc}</p>
+                </div>
+                <ul class="pastry-stats" aria-label="產品重點">
+                    <li><strong class="pastry-stat-num">10<small>入</small></strong><span>一盒的數量</span></li>
+                    <li><strong>土鳳梨</strong><span>台灣在地小農</span></li>
+                    <li><strong>法國奶油</strong><span>酥皮的奶香來源</span></li>
+                </ul>
+                <div class="pastry-purchase">
+                    <div class="pastry-subtotal">
+                        <span>小計</span>
+                        <strong aria-live="polite">NT$ ${unitPrice.toLocaleString()}</strong>
+                    </div>
+                    <div class="pastry-stepper" role="group" aria-label="數量">
+                        <button type="button" class="pastry-qty-minus" aria-label="減少一盒">−</button>
+                        <span class="pastry-qty"><span class="pastry-qty-value">1</span> 盒</span>
+                        <button type="button" class="pastry-qty-plus" aria-label="增加一盒">+</button>
+                    </div>
+                    <button type="button" class="pastry-buy">加入購物車</button>
+                </div>
+                <div class="pastry-tabs">
+                    <div class="pastry-tablist" role="tablist" aria-label="商品資訊">
+                        <button type="button" role="tab" id="pastry-tab-ing" aria-controls="pastry-panel-ing" aria-selected="true">成分</button>
+                        <button type="button" role="tab" id="pastry-tab-all" aria-controls="pastry-panel-all" aria-selected="false" tabindex="-1">過敏原</button>
+                        <button type="button" role="tab" id="pastry-tab-keep" aria-controls="pastry-panel-keep" aria-selected="false" tabindex="-1">保存</button>
+                        <button type="button" role="tab" id="pastry-tab-ship" aria-controls="pastry-panel-ship" aria-selected="false" tabindex="-1">取貨與通路</button>
+                    </div>
+                    <div class="pastry-panels">
+                        <p role="tabpanel" id="pastry-panel-ing" aria-labelledby="pastry-tab-ing">${product.ingredients.join('、')}</p>
+                        <p role="tabpanel" id="pastry-panel-all" aria-labelledby="pastry-tab-all" hidden>含有<strong>${product.allergens}</strong>，對這些成分過敏者請勿食用。</p>
+                        <p role="tabpanel" id="pastry-panel-keep" aria-labelledby="pastry-tab-keep" hidden>${product.notice.join('')}</p>
+                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），至超商取貨付款。也可在 <a href="https://shopee.tw/" target="_blank" rel="noopener">蝦皮購物</a>、<a href="https://myship.7-11.com.tw/Home/Main" target="_blank" rel="noopener">7-ELEVEN 賣貨便</a>、<a href="https://famishop.fami.life/" target="_blank" rel="noopener">全家好賣+</a> 購買。</p>
+                    </div>
+                </div>
             </div>
             <a href="#brand" class="scroll-down-indicator on-light" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
         const content = document.createElement('div');
         content.className = 'pastry-content';
         [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
         section.prepend(content);
-        section.querySelector('.pastry-buy').addEventListener('click', () => openProductModal('1'));
-        document.querySelector('.pastry-notice-content').innerHTML = `
-            <p><strong>過敏原</strong> ${product.allergens}</p>
-            <p><strong>成分</strong> ${product.ingredients.join('、')}</p>
-            <ul>${product.notice.map(notice => `<li>${notice}</li>`).join('')}</ul>`;
-        section.querySelectorAll('[data-dialog]').forEach(button => {
-            const dialog = document.getElementById(button.dataset.dialog);
-            button.addEventListener('click', () => openModal(dialog));
-            dialog.querySelector('.modal-close').addEventListener('click', () => closeModal(dialog));
+        // 數量與小計：上限 20 盒，跟購物車裡的數量各自獨立
+        let qty = 1;
+        const qtyValue = section.querySelector('.pastry-qty-value');
+        const subtotal = section.querySelector('.pastry-subtotal strong');
+        const setQty = next => {
+            qty = Math.min(Math.max(next, 1), 20);
+            qtyValue.textContent = qty;
+            subtotal.textContent = `NT$ ${(unitPrice * qty).toLocaleString()}`;
+        };
+        section.querySelector('.pastry-qty-minus').addEventListener('click', () => setQty(qty - 1));
+        section.querySelector('.pastry-qty-plus').addEventListener('click', () => setQty(qty + 1));
+
+        const buyBtn = section.querySelector('.pastry-buy');
+        buyBtn.addEventListener('click', () => {
+            if (typeof window.addItemToCart !== 'function') return;
+            const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty });
+            if (!added) return;
+            buyBtn.textContent = '已加入！';
+            setTimeout(() => { buyBtn.textContent = '加入購物車'; }, 1200);
+            setQty(1);
+        });
+
+        // 資訊頁籤：WAI-ARIA tabs，左右方向鍵切換
+        const tabs = [...section.querySelectorAll('.pastry-tablist [role="tab"]')];
+        const selectTab = tab => {
+            tabs.forEach(t => {
+                const on = t === tab;
+                t.setAttribute('aria-selected', String(on));
+                t.tabIndex = on ? 0 : -1;
+                section.querySelector(`#${t.getAttribute('aria-controls')}`).hidden = !on;
+            });
+        };
+        tabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => selectTab(tab));
+            tab.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                e.preventDefault();
+                const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+                selectTab(next);
+                next.focus();
+            });
         });
         placeholder.replaceWith(section);
 
