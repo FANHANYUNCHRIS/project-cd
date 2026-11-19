@@ -6252,11 +6252,7 @@ a.faq-card {
 .pastry-thumbnails svg { display: block; width: 100%; height: var(--sp-10); }
 .pastry-thumbnails span { font-size: var(--fs-caption); }
 .pastry-purchase { display: flex; flex-direction: column; gap: var(--sp-6); min-width: 0; }
-.pastry-spec { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); font-size: var(--fs-small); }
-.pastry-spec > :first-child { color: var(--ink-soft); }
-.pastry-spec strong { font-size: var(--fs-lead); }
 .pastry-buy { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-4); min-height: var(--sp-12); padding: var(--sp-3) var(--sp-5); border: 1px solid var(--ink); background: var(--ink); color: var(--paper); font: inherit; cursor: pointer; }
-.pastry-details { min-height: 44px; padding: var(--sp-2); border: 0; background: transparent; color: var(--ink); font: inherit; font-size: var(--fs-small); text-decoration: underline; text-underline-offset: var(--sp-1); cursor: pointer; }
 .pastry-buy:hover { background: var(--ink-hover); }
 @media (max-width: 1024px) {
     .pastry-product { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
@@ -6417,18 +6413,13 @@ a.faq-card {
     :root { --page-content-max: 480px; }
 }
 
-/* 產品購買與注意事項共用霧面玻璃。 */
+/* 產品詳情彈窗的霧面玻璃。 */
 .modal-container.pastry-glass-dialog {
     background: linear-gradient(145deg, var(--glass-edge-light), rgba(255, 255, 255, .78));
     border: 1px solid var(--glass-edge-light);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
 }
-.pastry-glass-dialog:not(.product-modal-box) { width: min(100%, 480px); }
-.pastry-market-links, .pastry-notice-content { display: grid; gap: var(--sp-3); }
-.pastry-market-links a { min-height: 44px; }
-.pastry-notice-content { color: var(--ink); font-size: var(--fs-small); line-height: 1.6; }
-.pastry-notice-content ul { padding-inline-start: var(--sp-5); }
 
 /* 鳳梨酥 3D 展示沿用商品詳情的媒體區。 */
 #product-modal .pineapple-model-stage { display: grid; place-items: center; }
