@@ -6960,3 +6960,183 @@ a.faq-card {
 @media (prefers-reduced-motion: reduce) {
     .brand-tabs button { transition: none; }
 }
+
+/* =========================================
+   2026-11 虛擬大樓改版（設計稿：虛擬大樓設計稿）
+   右邊展示框改成「大樓剖面圖＋樓層導覽」：點任一層，剖面圖與清單一起反白，
+   下方卡片顯示該層有什麼，「進入這一層」直接開 3D 大樓的那一層（building/index.html?floor=）。
+   樓層與名稱跟 3D 大樓的樓層按鈕一致。手機版拿掉剖面圖，清單排兩欄，進入改開整頁。
+   ========================================= */
+.building-showcase-copy > p:not(.building-showcase-kicker) { margin-block: var(--sp-6); }
+.building-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin: 0 0 var(--sp-8);
+    padding: 0;
+    list-style: none;
+}
+.building-status li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: var(--sp-8);
+    padding-inline: var(--sp-3);
+    border-radius: 100px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    font-size: 13px;
+    font-weight: 700;
+}
+.building-status li[hidden] { display: none; }
+.building-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink);
+}
+.building-status.is-closed .building-status-dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink); }
+.building-num { font-family: 'Inter', sans-serif; font-weight: 600; }
+.building-showcase-copy > p.building-virtual-note { margin: var(--sp-3) 0 0; font-size: 13px; color: var(--ink-soft); }
+
+.building-showcase-stage {
+    display: block;
+    height: auto;
+    min-height: min(60dvh, 560px);
+}
+.building-explorer {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--sp-12);
+    height: 100%;
+    min-height: inherit;
+    box-sizing: border-box;
+    padding: var(--sp-10) var(--sp-12);
+}
+.building-elevation { display: flex; flex-direction: column; align-items: center; }
+.building-elevation-mast { width: 2px; height: var(--sp-5); background: var(--ink); }
+.building-elevation-ground { width: 100%; height: 2px; margin-block: var(--sp-2); background: var(--ink); }
+.building-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 220px;
+    height: 52px;
+    margin-top: -1.5px;
+    padding: 0 var(--sp-4);
+    border: 0;
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.building-block b { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; }
+/* 四扇窗：用一個元素的多重背景畫，不多塞標籤 */
+.building-block i {
+    width: 96px;
+    height: 14px;
+    background:
+        linear-gradient(currentColor, currentColor) 0 0 / 18px 14px no-repeat,
+        linear-gradient(currentColor, currentColor) 26px 0 / 18px 14px no-repeat,
+        linear-gradient(currentColor, currentColor) 52px 0 / 18px 14px no-repeat,
+        linear-gradient(currentColor, currentColor) 78px 0 / 18px 14px no-repeat;
+    opacity: 0.18;
+}
+.building-block.is-roof { width: 184px; border-radius: 12px 12px 0 0; }
+.building-block.is-ground { width: 244px; }
+.building-block.is-basement { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-line); }
+.building-block.is-current { background: var(--ink); color: var(--white); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.building-block:hover:not(.is-current) { background: var(--surface-sunken); }
+
+.building-directory { display: flex; flex-direction: column; gap: var(--sp-5); min-width: 0; }
+.building-directory-title {
+    margin: 0;
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+}
+.building-floor-list { display: flex; flex-direction: column; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+.building-floor {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    width: 100%;
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.building-floor b { width: var(--sp-8); font-family: 'Inter', sans-serif; font-size: var(--fs-small); font-weight: 800; }
+.building-floor span { font-size: 15px; font-weight: 700; }
+.building-floor:hover { background: rgba(22, 22, 26, 0.06); }
+.building-floor[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+.building-floor:active { transform: scale(0.98); }
+
+.building-floor-detail {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: var(--sp-5) var(--sp-6);
+    border-radius: 16px;
+    background: var(--white);
+    box-shadow: 0 8px 24px -16px rgba(22, 22, 26, 0.3), inset 0 0 0 1px rgba(22, 22, 26, 0.08);
+}
+.building-floor-detail p { margin: 0; line-height: 1.5; }
+.building-floor-detail-label { font-size: var(--fs-caption); font-weight: 700; letter-spacing: 0.12em; color: var(--ink-soft); }
+.building-floor-detail-zones { margin-top: var(--sp-1) !important; font-size: var(--fs-body); font-weight: 700; }
+.building-floor-enter {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: 44px;
+    padding-inline: var(--sp-4);
+    border-radius: 100px;
+    box-shadow: inset 0 0 0 1px rgba(22, 22, 26, 0.2);
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+.building-floor-enter:hover { background: var(--surface-sunken); }
+.building-floor-enter:active { transform: scale(0.96); transition-duration: 0.08s; }
+
+.building-is-open .building-explorer { display: none; }
+.building-is-open .building-showcase-stage { height: 72dvh; }
+
+@media (max-width: 1024px) {
+    .building-showcase { gap: var(--sp-4); }
+    .building-showcase-copy > p:not(.building-showcase-kicker) { margin-block: var(--sp-3) var(--sp-4); }
+    .building-status { margin-bottom: var(--sp-4); }
+    .building-showcase-action { width: 100%; justify-content: center; box-sizing: border-box; }
+    .building-showcase-copy > p.building-virtual-note { text-align: center; font-size: var(--fs-caption); }
+    .building-showcase-stage { min-height: 0; height: auto; }
+    .building-explorer { display: block; padding: var(--sp-2); }
+    .building-elevation,
+    .building-directory-title { display: none; }
+    .building-directory { gap: var(--sp-2); }
+    .building-floor-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .building-floor { gap: var(--sp-3); padding: 0 var(--sp-3); }
+    .building-floor b { width: auto; }
+    .building-floor span { font-size: var(--fs-small); line-height: 1.3; }
+    .building-floor-detail { padding: var(--sp-3) var(--sp-4); }
+    .building-floor-detail-zones { font-size: var(--fs-small); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .building-block,
+    .building-floor,
+    .building-floor-enter { transition: none; }
+}

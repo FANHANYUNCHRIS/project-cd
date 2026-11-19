@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-brand">
+    <link rel="stylesheet" href="css/style.css?v=20261120-building">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261120-brand" defer></script>
+    <script src="js/script.js?v=20261120-building" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-brand" defer></script>
-    <script src="js/pagination.js?v=20261120-brand" defer></script>
+    <script src="js/member.js?v=20261120-building" defer></script>
+    <script src="js/pagination.js?v=20261120-building" defer></script>
 </head>
 
 <body>
@@ -428,14 +428,45 @@
         <div class="building-showcase-copy">
             <p class="building-showcase-kicker">Project.CD ／ 虛擬空間</p>
             <h2 id="virtual-building-title">虛擬大樓</h2>
-            <p>從咖啡廳走到空中花園，探索 Project.CD 的每一層。</p>
-            <a class="building-showcase-action" href="building/index.html" id="building-showcase-launch">進入 3D 大樓 <span aria-hidden="true">↗</span></a>
+            <p>從一樓咖啡廳走到頂樓空中花園，探索 Project.CD 的每一層。點樓層，看看裡面有什麼。</p>
+            <ul class="building-status" aria-label="大樓狀態">
+                <li id="building-status-open"><span class="building-status-dot" aria-hidden="true"></span><span id="building-status-text">營業時間</span> <span class="building-num">06:00–22:00</span></li>
+                <li id="building-status-weather" hidden></li>
+            </ul>
+            <a class="building-showcase-action" href="building/index.html" id="building-showcase-launch" data-building-launch>進入 3D 大樓 <span aria-hidden="true">↗</span></a>
+            <p class="building-virtual-note">這是一棟虛擬建築，Project.CD 目前沒有實體門市。</p>
         </div>
         <div class="building-showcase-stage">
-            <svg viewBox="0 0 320 280" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <path d="M64 216V62l113-32 80 36v146l-80 38z M177 30v220 M64 62l113 38 80-34 M64 94l113 38 80-34 M64 126l113 38 80-34 M64 158l113 38 80-34 M64 190l113 38 80-34 M94 72v154 M126 83v154 M217 83v146"/>
-                <path opacity=".4" d="M32 222l145 48 112-52 M64 62l-30 9v130 M257 66l29 13v115"/>
-            </svg>
+            <div class="building-explorer">
+                <div class="building-elevation" aria-hidden="true">
+                    <span class="building-elevation-mast"></span>
+                    <button type="button" tabindex="-1" class="building-block is-roof" data-floor="RF"><b>RF</b></button>
+                    <button type="button" tabindex="-1" class="building-block" data-floor="4F"><b>4F</b><i></i></button>
+                    <button type="button" tabindex="-1" class="building-block" data-floor="3F"><b>3F</b><i></i></button>
+                    <button type="button" tabindex="-1" class="building-block" data-floor="2F"><b>2F</b><i></i></button>
+                    <button type="button" tabindex="-1" class="building-block is-ground" data-floor="1F"><b>1F</b><i></i></button>
+                    <span class="building-elevation-ground"></span>
+                    <button type="button" tabindex="-1" class="building-block is-basement" data-floor="B1"><b>B1</b></button>
+                </div>
+                <div class="building-directory">
+                    <h3 class="building-directory-title">樓層導覽</h3>
+                    <ul class="building-floor-list">
+                        <li><button type="button" class="building-floor" data-floor="RF" data-zones="空中花園" aria-pressed="false"><b>RF</b><span>空中花園</span></button></li>
+                        <li><button type="button" class="building-floor" data-floor="4F" data-zones="辦公室" aria-pressed="false"><b>4F</b><span>辦公室</span></button></li>
+                        <li><button type="button" class="building-floor" data-floor="3F" data-zones="甜點咖啡教室" aria-pressed="false"><b>3F</b><span>甜點咖啡教室</span></button></li>
+                        <li><button type="button" class="building-floor" data-floor="2F" data-zones="甜點製作區、咖啡烘豆區、食品倉庫" aria-pressed="false"><b>2F</b><span>甜點製作・咖啡烘豆</span></button></li>
+                        <li><button type="button" class="building-floor" data-floor="1F" data-zones="結帳區、用餐區" aria-pressed="true"><b>1F</b><span>咖啡甜點</span></button></li>
+                        <li><button type="button" class="building-floor" data-floor="B1" data-zones="地下停車場" aria-pressed="false"><b>B1</b><span>地下停車場</span></button></li>
+                    </ul>
+                    <div class="building-floor-detail" aria-live="polite">
+                        <div>
+                            <p class="building-floor-detail-label"><span class="building-num" id="building-detail-code">1F</span> 有什麼</p>
+                            <p class="building-floor-detail-zones" id="building-detail-zones">結帳區、用餐區</p>
+                        </div>
+                        <a class="building-floor-enter" id="building-floor-enter" href="building/index.html?floor=1F" data-building-launch>進入這一層 <span aria-hidden="true">↗</span></a>
+                    </div>
+                </div>
+            </div>
             <button type="button" class="building-showcase-close" id="building-showcase-close" aria-label="關閉 3D 大樓" hidden>×</button>
         </div>
     </section>

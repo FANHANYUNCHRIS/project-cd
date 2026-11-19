@@ -92,22 +92,78 @@ document.addEventListener('DOMContentLoaded', () => {
     const buildingClose = document.getElementById('building-showcase-close');
     const buildingSection = document.getElementById('virtual-building');
     let buildingFrame;
-    buildingLaunch.addEventListener('click', event => {
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        event.preventDefault();
-        buildingFrame = document.createElement('iframe');
-        buildingFrame.title = 'Project.CD 互動 3D 大樓';
-        buildingFrame.src = buildingLaunch.href;
-        buildingClose.before(buildingFrame);
-        buildingSection.classList.add('building-is-open');
-        buildingClose.hidden = false;
-        buildingClose.focus({ preventScroll: true });
+    let buildingOpener = buildingLaunch;
+    // 「進入 3D 大樓」與「進入這一層」共用：桌機在展示框裡開，手機（≤1024px）直接開整頁。
+    document.querySelectorAll('[data-building-launch]').forEach(link => {
+        link.addEventListener('click', event => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if (window.matchMedia('(max-width: 1024px)').matches) return;
+            event.preventDefault();
+            if (buildingFrame) buildingFrame.remove();
+            buildingOpener = link;
+            buildingFrame = document.createElement('iframe');
+            buildingFrame.title = 'Project.CD 互動 3D 大樓';
+            buildingFrame.src = link.href;
+            buildingClose.before(buildingFrame);
+            buildingSection.classList.add('building-is-open');
+            buildingClose.hidden = false;
+            buildingClose.focus({ preventScroll: true });
+        });
     });
+
+    // 樓層導覽：清單和剖面圖一起反白，下方卡片換成該層內容。
+    (function initBuildingFloors() {
+        const floorButtons = [...buildingSection.querySelectorAll('.building-floor')];
+        const blocks = [...buildingSection.querySelectorAll('.building-block')];
+        const detailCode = document.getElementById('building-detail-code');
+        const detailZones = document.getElementById('building-detail-zones');
+        const enter = document.getElementById('building-floor-enter');
+        const select = code => {
+            floorButtons.forEach(btn => {
+                const on = btn.dataset.floor === code;
+                btn.setAttribute('aria-pressed', String(on));
+                if (on) detailZones.textContent = btn.dataset.zones;
+            });
+            blocks.forEach(block => block.classList.toggle('is-current', block.dataset.floor === code));
+            detailCode.textContent = code;
+            enter.href = 'building/index.html?floor=' + code;
+        };
+        floorButtons.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.floor)));
+        blocks.forEach(block => block.addEventListener('click', () => select(block.dataset.floor)));
+        select('1F');
+    })();
+
+    // 營業狀態（台灣時間 06:00–22:00）與天氣（讀 3D 大樓同一份 building/weather.json，沒有今天的資料就不顯示）。
+    (function initBuildingStatus() {
+        const list = buildingSection.querySelector('.building-status');
+        const text = document.getElementById('building-status-text');
+        const weather = document.getElementById('building-status-weather');
+        const update = () => {
+            const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Taipei', hour: '2-digit', hourCycle: 'h23' }).format(new Date()));
+            const open = hour >= 6 && hour < 22;
+            text.textContent = open ? '營業中' : '已打烊';
+            list.classList.toggle('is-closed', !open);
+        };
+        update();
+        setInterval(update, 60000);
+        fetch('building/weather.json', { cache: 'no-store' })
+            .then(response => (response.ok ? response.json() : null))
+            .then(feed => {
+                if (!feed || !Array.isArray(feed.periods)) return;
+                const now = Date.now();
+                const period = feed.periods.find(p => new Date(p.from).getTime() <= now && now < new Date(p.to).getTime());
+                if (!period || !period.note) return;
+                weather.textContent = '今日天氣 ' + period.note;
+                weather.hidden = false;
+            })
+            .catch(() => {});
+    })();
     buildingClose.addEventListener('click', () => {
         buildingFrame.remove();
+        buildingFrame = null;
         buildingSection.classList.remove('building-is-open');
         buildingClose.hidden = true;
-        buildingLaunch.focus({ preventScroll: true });
+        buildingOpener.focus({ preventScroll: true });
     });
 
     // 品牌故事、研究方法、原物料、品牌團隊四個分頁。

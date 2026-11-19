@@ -2269,6 +2269,8 @@ function introTick(dt){if(!intro.on)return;const now=performance.now()/1000;if(!
 })();
 applyTheme();loadFeed();setInterval(applyEnv,60000);setInterval(loadFeed,600000);
 syncNav();tick();
+// ?floor=1F 這類網址（首頁「進入這一層」）直接開到那一層
+{const want={B1:-2,'1F':0,'2F':1,'3F':2,'4F':OFFICE,RF:RF}[new URLSearchParams(location.search).get('floor')];if(want!==undefined)focusFloor(want);}
 requestAnimationFrame(()=>requestAnimationFrame(()=>{const l=document.getElementById('loader');if(l){l.classList.add('done');setTimeout(()=>l.remove(),700);}}));   // hide once the first frame is on screen
 })();
 </script>
