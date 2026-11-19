@@ -6092,6 +6092,37 @@ a.faq-card {
         color: var(--paper);
         box-shadow: none;
     }
+
+    /* 選中滑塊（V2.1）：黑色選中底從「跳到」下一項改成「滑到」下一項，
+       對應 iOS HIG 分段控制器（UISegmentedControl）的選中滑塊。
+       滑塊是膠囊自己的 ::after，位置與寬度由 js/script.js 量 a.active 後寫進
+       --slider-x / --slider-w；選中狀態仍由既有 navObserver 切換 .active，
+       不另外監聽捲動。曲線用設計系統 04 節的彈簧曲線。
+       JS 沒跑起來時沒有 .has-slider，維持原本的實心黑底，不會壞掉 */
+    .navbar .nav-links.has-slider::after {
+        content: "";
+        position: absolute;
+        z-index: 0;
+        top: var(--sp-1);
+        bottom: var(--sp-1);
+        left: 0;
+        width: var(--slider-w, 0px);
+        transform: translateX(var(--slider-x, 0px));
+        border-radius: 100px;
+        background: var(--ink);
+        opacity: var(--slider-o, 0);
+        pointer-events: none;
+        transition:
+            transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+            width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity 0.15s linear;
+    }
+    .navbar .nav-links.has-slider.slider-instant::after { transition: none; }
+    .navbar .nav-links.has-slider a { position: relative; z-index: 1; }
+    .navbar .nav-links.has-slider a.active { background: transparent; }
+}
+@media (min-width: 1025px) and (prefers-reduced-motion: reduce) {
+    .navbar .nav-links.has-slider::after { transition: opacity 0.15s linear; }
 }
 @media (max-width: 1024px) {
     .navbar .nav-links::before {

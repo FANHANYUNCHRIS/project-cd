@@ -1169,3 +1169,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selected) drawNotch((tabs.indexOf(selected) + 0.5) * 20);
     }).observe(bar);
 });
+
+// 桌機導覽列選中滑塊：量目前 a.active 的位置寫進 CSS 變數，由 style.css 的
+// .nav-links.has-slider::after 畫出並用彈簧曲線滑過去。選中狀態沿用 navObserver
+// 切換的 .active（只觀察連結本身的 class），不另外監聽捲動事件。
+document.addEventListener('DOMContentLoaded', () => {
+    const bar = document.getElementById('nav-links');
+    if (!bar) return;
+    const desktop = window.matchMedia('(min-width: 1025px)');
+    const links = [...bar.querySelectorAll('a[href^="#"]')];
+    let placed = false;
+    const place = (instant = false) => {
+        if (!desktop.matches) return;
+        // 只算看得見的文字連結（手機版專用分頁、隱藏項目的 offsetParent 是 null）
+        const link = links.find(a => a.classList.contains('active') && a.offsetParent);
+        if (!link) {
+            bar.style.setProperty('--slider-o', '0');
+            return;
+        }
+        const jump = instant || !placed;
+        if (jump) bar.classList.add('slider-instant');
+        bar.style.setProperty('--slider-x', `${link.offsetLeft}px`);
+        bar.style.setProperty('--slider-w', `${link.offsetWidth}px`);
+        bar.style.setProperty('--slider-o', '1');
+        if (!placed) {
+            bar.classList.add('has-slider');
+            placed = true;
+        }
+        if (jump) {
+            bar.getBoundingClientRect(); // 先套用位置，再恢復動畫
+            bar.classList.remove('slider-instant');
+        }
+    };
+    const watch = new MutationObserver(() => place());
+    links.forEach(a => watch.observe(a, { attributes: true, attributeFilter: ['class'] }));
+    new ResizeObserver(() => place(true)).observe(bar);
+    desktop.addEventListener('change', () => place(true));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => place(true));
+    place(true);
+});
