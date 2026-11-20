@@ -1,7 +1,12 @@
+// 聖誕樹、下雪、聖誕帽只在 12 月（台灣時間）出現；網址加 ?festive=1 可以提前預覽。
+const isFestiveSeason = new URLSearchParams(location.search).has('festive')
+    || new Intl.DateTimeFormat('en', { timeZone: 'Asia/Taipei', month: 'numeric' }).format(new Date()) === '12';
+document.documentElement.classList.toggle('is-festive', isFestiveSeason);
+
 // 首頁雪花只在可見時播放；負延遲讓首次顯示已有自然分布的飄雪。
 document.addEventListener('DOMContentLoaded', () => {
     const snow = document.querySelector('.hero-snow');
-    if (!snow || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!snow || !isFestiveSeason || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const flakes = document.createDocumentFragment();
     for (let i = 0; i < 48; i++) {
@@ -368,6 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
            左邊 3D 展示框當主角，右邊依序是標題、三張數值卡、直接購買卡、資訊頁籤。
            購買不再先開彈窗；成分／過敏原／保存／取貨用頁籤切換，不靠框內捲動。 */
         const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
+        const heroPrice = document.querySelector('[data-hero-price]');
+        if (heroPrice) heroPrice.textContent = product.price;
         section.innerHTML = `
             <figure class="pastry-gallery">
                 <div class="pastry-stage pineapple-model-stage">
@@ -382,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="pastry-info">
                 <div class="pastry-intro">
                     <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
-                    <h2>${product.name}</h2>
+                    <h2 class="title-sheen reveal-sheen">${product.name}</h2>
                     <p class="pastry-description">${product.desc}</p>
                 </div>
                 <ul class="pastry-stats" aria-label="產品重點">
@@ -527,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        10. 果凍彈跳式頁面浮現 (徹底解決閃爍問題)
        ========================================= */
-    const revealElements = document.querySelectorAll('.reveal-element, .reveal-fade, .reveal-slide-left, .reveal-slide-right, .reveal-zoom');
+    const revealElements = document.querySelectorAll('.reveal-element, .reveal-fade, .reveal-slide-left, .reveal-slide-right, .reveal-zoom, .reveal-sheen');
     const REVEAL_BASE_DELAY = 200; // 滿版吸附會讓區塊瞬間跳出來，延遲一下再播動畫才看得到
     const revealTimers = new WeakMap();
 

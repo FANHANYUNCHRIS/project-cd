@@ -243,7 +243,7 @@ body {
 .reveal-element {
     opacity: 0;
     transform: scale(0.85) translateY(40px);
-    transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), 
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), 
                 opacity 0.45s ease;
     will-change: transform, opacity;
 }
@@ -988,7 +988,7 @@ body {
     transform: scale(1.08);
     border: 3px solid var(--ink);
     box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12);
-    animation: team-avatar-wobble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: team-avatar-wobble 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .team-avatar-item.active::before {
@@ -2409,7 +2409,7 @@ a.faq-card {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.8);
     transform: scale(0.92);
     /* iOS 彈簧感：先超過終值一點再回彈，不是單純減速停止 */
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-container::-webkit-scrollbar {
@@ -2440,7 +2440,7 @@ a.faq-card {
     cursor: pointer;
     z-index: 10;
     transform: rotate(0deg);
-    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: color 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 原本這裡用 box-shadow 畫一圈柔和光圈當 focus-visible 的視覺提示，
@@ -2559,7 +2559,7 @@ a.faq-card {
     color: var(--ink-soft);
     padding: var(--sp-2) var(--sp-1);
     cursor: pointer;
-    transition: background-color 0.3s cubic-bezier(0.34, 1.2, 0.64, 1), color 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, box-shadow 0.3s ease;
 }
 
 .auth-tab.active {
@@ -2759,7 +2759,7 @@ a.faq-card {
     border-radius: 50%;
     background-color: var(--white);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-checkbox-row input[type="checkbox"]:checked + .ios-toggle-track {
@@ -5063,8 +5063,8 @@ a.faq-card {
         opacity: var(--slider-o, 0);
         pointer-events: none;
         transition:
-            transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-            width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+            transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+            width 0.45s cubic-bezier(0.16, 1, 0.3, 1),
             opacity 0.15s linear;
     }
     .navbar .nav-links.has-slider.slider-instant::after { transition: none; }
@@ -5498,7 +5498,7 @@ a.faq-card {
     min-height: var(--sp-12);
     padding-inline: var(--sp-6);
     font-weight: 700;
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
 }
 .building-showcase-action:hover { background: var(--ink-hover, #000); }
 .building-showcase-action:active { transform: scale(0.96); transition-duration: 0.08s; }
@@ -5664,7 +5664,7 @@ a.faq-card {
     padding: 0 var(--sp-8);
     font-weight: 700;
     white-space: nowrap;
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
 }
 
 .pastry-tablist {
@@ -5685,7 +5685,7 @@ a.faq-card {
     font-size: var(--fs-small);
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .pastry-tablist button[aria-selected="true"] {
     background: var(--white);
@@ -5747,7 +5747,7 @@ a.faq-card {
     border-radius: 8px;
     box-shadow: none;
     font-weight: 700;
-    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .brand-tabs button[aria-selected="true"] {
     background: var(--white);
@@ -5998,7 +5998,7 @@ a.faq-card {
     font-size: var(--fs-small);
     font-weight: 700;
     text-decoration: none;
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
 }
 .building-floor-enter:hover { background: var(--surface-sunken); }
 .building-floor-enter:active { transform: scale(0.96); transition-duration: 0.08s; }
@@ -6111,7 +6111,7 @@ a.faq-card {
     font-size: var(--fs-body);
     font-weight: 700;
     text-decoration: none;
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
 }
 .store-direct-action:hover { background: var(--surface-sunken); }
 .store-direct-action:active { transform: scale(0.96); transition-duration: 0.08s; }
@@ -6277,7 +6277,7 @@ a.faq-card {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
     color: rgba(255, 255, 255, 0.92);
     text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.45s cubic-bezier(.34, 1.56, .64, 1);
+    transition: background-color 0.2s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .site-footer-social a { width: 44px; font-size: 18px; }
 .site-footer-pill { gap: var(--sp-2); padding-inline: var(--sp-4); font-size: 13px; }
@@ -6333,4 +6333,307 @@ a.faq-card {
 }
 @media (max-width: 1024px) {
     .building-floor-detail { padding: var(--sp-3) 0 0; }
+}
+
+/* =========================================
+   2026-11 視覺方向：明體＋高級金（設計稿：整體視覺方向設計稿）
+   - 黑白仍是主體，金色只點在最值得看的地方，整頁面積不超過約 5%。
+   - 金色三階：--gold 細線／光暈；--gold-ink 白底上的金字（對比 4.9:1）；
+     --gold-soft 黑底上的金字。
+   - 主標題用思源宋體；英文、數字、LOGO 字用 Cormorant Garamond（強制等高數字）。
+   - 動態曲線全面改成不回彈的 --ease-out；主標題出現時有一道金光掃過。
+   ========================================= */
+:root {
+    --gold: #B8955A;
+    --gold-ink: #8A6A35;
+    --gold-soft: #D8C091;
+    --font-serif: 'Cormorant Garamond', 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 主標題：明體 */
+#brand-title,
+#virtual-building-title,
+#shop > .section-title,
+.pastry-info h2,
+.brand-story-copy h3,
+.brand-panel-head h3,
+.store-direct h3,
+.faq-title,
+.contact-visual-title {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0;
+}
+
+/* LOGO 字與英文：Cormorant Garamond */
+.logo-text,
+.auth-modal-logo-text,
+.site-footer-logo,
+.hero-title,
+#brand .team-file-tab {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+}
+.logo-text { font-size: 22px; letter-spacing: 0.01em; }
+.site-footer-logo { font-size: 34px; letter-spacing: 0.01em; }
+
+/* 小標籤：深金 */
+.pastry-kicker,
+.brand-eyebrow,
+.building-showcase-kicker,
+.shopping-section .shop-eyebrow { color: var(--gold-ink); }
+.section-index-sep { background-color: var(--gold); }
+.site-footer-heading { color: var(--gold-soft); }
+.store-badge { background: transparent; box-shadow: inset 0 0 0 1px var(--gold-soft); color: var(--gold-soft); }
+
+/* ---------- 首頁 ---------- */
+.hero-title {
+    font-size: clamp(56px, 6.8vw, 96px);
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+.hero-tagline {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    margin: 0;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+}
+.hero-tagline::before,
+.hero-tagline::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+}
+.hero-banner .hero-copy { gap: var(--sp-5); }
+.hero-banner .hero-logo-stage { width: min(48vw, 240px, 32svh, max(0px, calc(100svh - 470px))); }
+/* 獨角獸背後常駐的金色光暈；原本的開場背光（::before）保留 */
+.hero-logo-stage::after {
+    content: '';
+    position: absolute;
+    z-index: -2;
+    inset: -28%;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(216, 192, 145, 0.42), rgba(216, 192, 145, 0) 62%);
+    animation: hero-tagline-enter 1.2s ease-out 0.2s both;
+}
+.hero-logo-sheen {
+    background: linear-gradient(115deg, transparent 40%, rgba(216, 192, 145, 0.95) 50%, transparent 60%);
+    background-size: 300% 100%;
+}
+/* 聖誕裝飾只在 12 月（html.is-festive）出現 */
+html:not(.is-festive) .hero-forest,
+html:not(.is-festive) .hero-snow,
+html:not(.is-festive) .hero-santa-hat { display: none; }
+
+.hero-product {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: var(--sp-5);
+    margin-top: var(--sp-6);
+    padding: var(--sp-3);
+    padding-left: var(--sp-4);
+    border-radius: 20px;
+    background: var(--white);
+    box-shadow: 0 16px 40px -24px rgba(22, 22, 26, 0.45), inset 0 0 0 1px rgba(22, 22, 26, 0.08);
+    color: var(--ink);
+    text-decoration: none;
+    text-align: left;
+    animation: hero-tagline-enter 0.8s ease-out 1.8s both;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s ease;
+}
+.hero-product:hover { box-shadow: 0 20px 44px -22px rgba(22, 22, 26, 0.5), inset 0 0 0 1px var(--gold); }
+.hero-product:active { transform: scale(0.98); }
+.hero-product-thumb {
+    width: 72px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--surface-sunken);
+    display: grid;
+    place-items: center;
+}
+/* 縮圖：用漸層畫的一顆鳳梨酥（還沒有產品照片，有照片後換成 <img>） */
+.hero-product-thumb span {
+    width: 52px;
+    height: 34px;
+    border-radius: 7px;
+    background: linear-gradient(170deg, #E9C27A 0%, #D29A47 55%, #B97B32 100%);
+    box-shadow: inset 0 2px 1px rgba(255, 240, 205, 0.7), inset 0 -3px 4px rgba(120, 70, 20, 0.35), 0 6px 10px -6px rgba(90, 50, 10, 0.6);
+}
+.hero-product-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hero-product-text b { font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 18px; font-weight: 900; }
+.hero-product-text span { font-size: 13px; color: var(--ink-soft); }
+.hero-product-price {
+    padding-left: var(--sp-2);
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+    color: var(--gold-ink);
+    white-space: nowrap;
+}
+.hero-product-go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: 48px;
+    padding: 0 var(--sp-5);
+    border-radius: 14px;
+    background: var(--ink);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ---------- 產品區 ---------- */
+.pastry-content > .pastry-gallery {
+    background: radial-gradient(ellipse at 50% 42%, #FBF4E6 0%, var(--surface-sunken) 60%);
+}
+.pastry-content > .pastry-gallery .pastry-stage { position: relative; }
+.pastry-content > .pastry-gallery .pastry-stage::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    width: min(90%, 520px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(216, 192, 145, 0.5), rgba(216, 192, 145, 0) 60%);
+}
+.pastry-content > .pastry-gallery .pastry-stage::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 70%;
+    width: min(60%, 340px);
+    height: 40px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(ellipse, rgba(90, 60, 20, 0.3), rgba(90, 60, 20, 0) 70%);
+}
+.pastry-content > .pastry-gallery .pastry-stage > * { position: relative; z-index: 1; }
+
+/* 三個重點：不再是三張小卡，改成上下細線分隔的一排 */
+.pastry-stats {
+    gap: 0;
+    box-shadow: inset 0 1px 0 var(--ink-line), inset 0 -1px 0 var(--ink-line);
+}
+.pastry-stats li {
+    padding: var(--sp-4) 0 var(--sp-4) var(--sp-5);
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 1px 0 0 var(--ink-line);
+    gap: var(--sp-1);
+}
+.pastry-stats li:first-child { padding-left: 0; box-shadow: none; }
+.pastry-stats strong {
+    padding-bottom: 0;
+    border-bottom: 0;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: var(--fs-h4);
+    font-weight: 900;
+    line-height: 1.7;
+}
+.pastry-stats .pastry-stat-num {
+    font-family: var(--font-serif);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: lining-nums;
+    padding-top: 4px;
+}
+.pastry-stats .pastry-stat-num small { font-family: 'Noto Sans TC', sans-serif; font-size: var(--fs-small); }
+
+/* 購買卡：黑底，價格淺金，按鈕白底細金邊 */
+.pastry-info .pastry-purchase {
+    padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-6);
+    border-radius: 20px;
+    background: var(--ink);
+    color: var(--white);
+    box-shadow: 0 16px 36px -22px rgba(22, 22, 26, 0.6);
+}
+.pastry-subtotal span { color: var(--paper-soft); }
+.pastry-subtotal strong {
+    font-family: var(--font-serif);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--gold-soft);
+}
+.pastry-info .pastry-stepper { background: rgba(255, 255, 255, 0.1); box-shadow: none; }
+.pastry-info .pastry-stepper button { color: var(--white); }
+.pastry-info .pastry-qty { color: var(--white); }
+.pastry-info .pastry-buy {
+    border: 0;
+    border-radius: 14px;
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--gold);
+}
+.pastry-info .pastry-buy:hover { background: #FBF4E6; }
+
+/* ---------- 動態：主標題金光 ---------- */
+/* 一條淺金色光帶用 lighten 疊在標題上：只有黑色字會被「照亮」成金色，白底不受影響 */
+.title-sheen { position: relative; }
+.title-sheen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 35%, var(--gold-soft) 50%, transparent 65%);
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    mix-blend-mode: lighten;
+    opacity: 0;
+}
+.reveal-active.title-sheen::after { animation: title-sheen 1.4s var(--ease-out) 0.25s both; }
+@keyframes title-sheen {
+    0% { opacity: 1; background-position: 100% 0; }
+    100% { opacity: 1; background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .reveal-active.title-sheen::after { animation: none; }
+    .hero-product { animation: none; }
+}
+
+@media (max-width: 1024px) {
+    .hero-tagline { font-size: 17px; letter-spacing: 0.1em; gap: var(--sp-3); }
+    .hero-tagline::before,
+    .hero-tagline::after { width: 24px; }
+    .hero-banner .hero-copy { gap: var(--sp-3); padding-inline: var(--sp-4); }
+    .hero-banner .hero-logo-stage { width: min(44vw, 168px, 24svh, max(0px, calc(100svh - 560px))); }
+    .hero-product {
+        width: 100%;
+        max-width: 480px;
+        box-sizing: border-box;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: var(--sp-3) var(--sp-4);
+        margin-top: var(--sp-4);
+        padding: var(--sp-3);
+    }
+    .hero-product-thumb { width: 60px; height: 52px; }
+    .hero-product-thumb span { width: 44px; height: 29px; border-radius: 6px; }
+    .hero-product-text b { font-size: 16px; }
+    .hero-product-text span { font-size: 12px; }
+    .hero-product-price { font-size: 24px; padding-left: 0; }
+    .hero-product-go { grid-column: 1 / -1; justify-content: center; min-height: 52px; }
+    .pastry-stats li { padding-left: var(--sp-3); }
+    .pastry-stats .pastry-stat-num { font-size: 26px; }
+    .pastry-stats strong { font-size: var(--fs-body); }
+    .pastry-subtotal strong { font-size: 30px; }
 }

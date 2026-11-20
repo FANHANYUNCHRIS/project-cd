@@ -182,13 +182,17 @@ THE SOFTWARE.
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.02;
+        renderer.toneMappingExposure = 0.94;
 
-        const key = new THREE.DirectionalLight(0xffe6bf, 2.7);
+        // 主光改成接近白的暖光，烤色不會被打得太橘；金色交給後方輪廓光
+        const key = new THREE.DirectionalLight(0xfff1dc, 2.5);
         key.position.set(-3, 6, 5);
         const fill = new THREE.DirectionalLight(0xfff6e5, 0.8);
         fill.position.set(4, 1, -2);
-        scene.add(new THREE.HemisphereLight(0xfff4dc, 0x7b654b, 1.05), key, fill);
+        // 2026-11 視覺方向：從後上方打一道暖金色輪廓光，讓酥皮邊緣亮起來，跟展示框的金色背光呼應
+        const rim = new THREE.DirectionalLight(0xffd79c, 1.6);
+        rim.position.set(1.5, 4, -6);
+        scene.add(new THREE.HemisphereLight(0xfff4dc, 0x7b654b, 1.05), key, fill, rim);
 
         let texture;
         try {
@@ -293,7 +297,8 @@ THE SOFTWARE.
             const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
             const safeAngle = Math.atan(Math.tan(halfFov) * Math.min(1, camera.aspect) * 0.85);
             const distance = Math.max(isShowcase ? 5.5 : 6.8, radius / Math.sin(safeAngle));
-            camera.position.set(0, 0.31, 1).setLength(distance);
+            // 展示框用比較高的俯角（3/4 視角），看得到上表面的烤色，不像側面一塊積木
+            camera.position.set(0, isShowcase ? 0.58 : 0.31, 1).setLength(distance);
             camera.lookAt(0, 0, 0);
             camera.clearViewOffset();
 

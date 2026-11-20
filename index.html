@@ -99,13 +99,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-tech">
+    <link rel="stylesheet" href="css/style.css?v=20261120-gold">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261120-tech" defer></script>
+    <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
+    <script src="js/script.js?v=20261120-gold" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 會員/購物車功能：Firebase SDK（compat 版本，不需要建置工具） -->
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-tech" defer></script>
-    <script src="js/pagination.js?v=20261120-tech" defer></script>
+    <script src="js/member.js?v=20261120-gold" defer></script>
+    <script src="js/pagination.js?v=20261120-gold" defer></script>
 </head>
 
 <body>
@@ -269,13 +269,20 @@
                 </svg>
             </div>
             <h1 class="hero-title">Project.CD</h1>
-            <p class="hero-tagline">手作土鳳梨酥</p>
+            <p class="hero-tagline">一個人的甜點研究室</p>
+            <!-- 2026-11 視覺方向（設計稿：整體視覺方向設計稿）：第一眼就看得到賣什麼。
+                 價格由 js/script.js 依 productsData 填入，跟產品區同一個來源 -->
+            <a href="#products" class="hero-product">
+                <span class="hero-product-thumb" aria-hidden="true"><span></span></span>
+                <span class="hero-product-text">
+                    <b>手作土鳳梨酥</b>
+                    <span>土鳳梨餡・法國奶油酥皮・10 入／盒</span>
+                </span>
+                <span class="hero-product-price" data-hero-price>NT$ 500</span>
+                <span class="hero-product-go">看看鳳梨酥 <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
+            </a>
         </div>
 
-        <a href="#products" class="scroll-down-indicator">
-            <span>探索鳳梨酥</span>
-            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-        </a>
     </header>
 
     <!-- 產品區塊：一個產品一個滿版畫面，由 js/script.js 的 initProductPanels()
@@ -285,7 +292,7 @@
     <!-- 品牌故事與團隊分頁，共用虛擬大樓入口。 -->
     <section id="brand" class="fullscreen-section" aria-labelledby="brand-title">
         <header class="brand-section-header">
-            <h2 id="brand-title">關於 Project.CD</h2>
+            <h2 id="brand-title" class="title-sheen reveal-sheen">關於 Project.CD</h2>
             <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
                 <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
                 <button type="button" id="brand-method-tab" role="tab" aria-controls="brand-method-panel" aria-selected="false" tabindex="-1">研究方法</button>
@@ -427,7 +434,7 @@
     <section id="virtual-building" class="fullscreen-section building-showcase" aria-labelledby="virtual-building-title">
         <div class="building-showcase-copy">
             <p class="building-showcase-kicker">Project.CD ／ 虛擬空間</p>
-            <h2 id="virtual-building-title">虛擬大樓</h2>
+            <h2 id="virtual-building-title" class="title-sheen reveal-sheen">虛擬大樓</h2>
             <p>從一樓咖啡廳走到頂樓空中花園，探索 Project.CD 的每一層。點樓層，看看裡面有什麼。</p>
             <ul class="building-status" aria-label="大樓狀態">
                 <li id="building-status-open"><span class="building-status-dot" aria-hidden="true"></span><span id="building-status-text">營業時間</span> <span class="building-num">06:00–22:00</span></li>
@@ -627,7 +634,7 @@
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
             <p class="shop-eyebrow">官方線上商城</p>
-            <h2 class="section-title reveal-zoom">在哪裡買</h2>
+            <h2 class="section-title reveal-zoom title-sheen">在哪裡買</h2>
             <p class="store-intro">官網直接訂購最快，也是唯一能指定取貨日期的地方。各平台賣場正在準備中。</p>
             <div class="store-layout">
                 <article class="store-direct">
