@@ -6133,3 +6133,158 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .party-dialog-speaker { left: var(--sp-4); top: -14px; font-size: 14px; padding: 2px var(--sp-3); }
     .party-dialog-text { font-size: 16px; }
 }
+
+/* =========================================
+   2026-11 電玩科技感點綴（擁有者指定：極簡 iOS 為主、遊戲感當點綴）
+   - 首頁「PRESS START」、左側「STAGE」關卡 HUD、
+     虛擬大樓「SELECT STAGE」選關卡、加入購物車「獲得了」小視窗。
+   - 一律用網站的黑、白、金與 Cormorant 字，不用像素字或霓虹色。
+   ========================================= */
+
+/* 首頁 PRESS START */
+.hero-start {
+    position: absolute;
+    left: 50%;
+    bottom: var(--sp-10);
+    z-index: 3;
+    translate: -50% 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-3);
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    animation: hero-tagline-enter 0.8s ease-out 2.2s both;
+}
+.hero-start::before,
+.hero-start::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-block: 6px solid transparent;
+}
+.hero-start::before { border-left: 9px solid var(--gold); }
+.hero-start::after { border-right: 9px solid var(--gold); }
+.hero-start-text { padding-left: 0.32em; animation: press-start-blink 1.2s steps(1) 3s infinite; }
+.hero-start:hover .hero-start-text,
+.hero-start:focus-visible .hero-start-text { animation: none; color: var(--gold-ink); }
+@keyframes press-start-blink { 0%, 59% { opacity: 1; } 60%, 100% { opacity: 0.2; } }
+
+/* 左側關卡 HUD：STAGE / 01 / 線 / 05 / 關卡名稱（直書） */
+.section-index-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--gold-ink);
+    writing-mode: vertical-rl;
+}
+.section-index-current { display: inline-block; font-size: 22px; font-weight: 600; line-height: 1; }
+.section-index-total { font-size: 14px; font-weight: 600; }
+.section-index-name {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    writing-mode: vertical-rl;
+}
+.section-index.on-dark .section-index-label { color: var(--gold-soft); }
+.section-index.on-dark .section-index-name { color: rgba(255, 255, 255, 0.72); }
+
+/* 虛擬大樓：選擇關卡視窗 */
+.building-directory.rpg-window { position: relative; gap: var(--sp-4); padding: var(--sp-5); }
+.building-directory.rpg-window .building-directory-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-inline: var(--sp-2);
+    letter-spacing: 0;
+    color: inherit;
+}
+.building-directory .floor-cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 12px;
+    height: 14px; /* 蓋掉 .building-showcase-stage svg 的插圖尺寸 */
+    z-index: 1;
+    pointer-events: none;
+    transition: transform 0.22s var(--ease-out);
+}
+.building-directory.rpg-window .building-floor { padding-left: 32px; color: var(--white); }
+.building-directory.rpg-window .building-floor:hover { background: rgba(255, 255, 255, 0.06); }
+.building-directory.rpg-window .building-floor[aria-pressed="true"] {
+    background: rgba(216, 192, 145, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(216, 192, 145, 0.45);
+    color: var(--white);
+}
+.building-directory.rpg-window .building-floor b { color: var(--gold-soft); }
+.building-directory.rpg-window .building-floor-detail {
+    padding: var(--sp-4) var(--sp-2) 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.building-directory.rpg-window .building-floor-detail-label { color: var(--gold-soft); }
+.building-directory.rpg-window .building-floor-detail-zones { color: var(--white); }
+.building-directory.rpg-window .building-floor-enter { background: var(--white); color: var(--ink); box-shadow: inset 0 0 0 1px var(--gold); }
+.building-directory.rpg-window .building-floor-enter:hover { background: #FBF4E6; }
+
+/* 加入購物車：獲得道具 */
+.item-get {
+    position: fixed;
+    left: 50%;
+    top: 96px;
+    z-index: 3000;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    padding: var(--sp-4) var(--sp-6) var(--sp-4) var(--sp-4);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.item-get.is-shown { visibility: visible; animation: item-get-in 0.45s var(--ease-out) both; }
+.item-get:not(.is-shown) { transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+@keyframes item-get-in {
+    0% { opacity: 0; scale: 1 0.06; }
+    35% { opacity: 1; scale: 1 0.06; }
+    100% { opacity: 1; scale: 1 1; }
+}
+.item-get-icon {
+    width: 52px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+}
+.item-get-icon span {
+    width: 38px;
+    height: 25px;
+    border-radius: 6px;
+    background: linear-gradient(170deg, #E9C27A 0%, #D29A47 55%, #B97B32 100%);
+    box-shadow: inset 0 2px 1px rgba(255, 240, 205, 0.7), inset 0 -3px 4px rgba(120, 70, 20, 0.35);
+}
+.item-get-text { display: flex; flex-direction: column; gap: 2px; }
+.item-get-label { font-size: 12px; letter-spacing: 0.16em; color: var(--gold-soft); }
+.item-get-text b { font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 18px; font-weight: 900; }
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-start-text { animation: none; }
+    .floor-cursor { transition: none; }
+    .item-get.is-shown { animation: none; opacity: 1; }
+}
+
+@media (max-width: 1024px) {
+    .hero-start { display: none; }
+    .item-get { top: auto; bottom: calc(104px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 32px); }
+    .building-directory.rpg-window { padding: var(--sp-4); }
+    .building-directory.rpg-window .building-floor { padding-left: 28px; }
+}

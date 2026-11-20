@@ -633,6 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveCart();
         animateCartBadge = true;
         renderCartBadge();
+        if (typeof window.showItemGet === 'function') window.showItemGet(name, qty);
         return true;
     }
     window.addItemToCart = addItemToCart;

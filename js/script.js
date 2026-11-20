@@ -132,7 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
             blocks.forEach(block => block.classList.toggle('is-current', block.dataset.floor === code));
             detailCode.textContent = code;
             enter.href = 'building/index.html?floor=' + code;
+            placeCursor();
         };
+        // 電玩感「選擇關卡」：金色游標滑到目前選中的樓層
+        const cursor = buildingSection.querySelector('.floor-cursor');
+        function placeCursor() {
+            const btn = floorButtons.find(b => b.getAttribute('aria-pressed') === 'true');
+            if (!cursor || !btn || !btn.offsetParent) return;
+            const box = cursor.parentElement.getBoundingClientRect();
+            const r = btn.getBoundingClientRect();
+            cursor.style.transform = `translate(${r.left - box.left + 10}px, ${r.top - box.top + (r.height - 14) / 2}px)`;
+        }
+        window.addEventListener('resize', placeCursor);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeCursor);
         floorButtons.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.floor)));
         blocks.forEach(block => block.addEventListener('click', () => select(block.dataset.floor)));
         select('1F');
@@ -610,6 +622,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     revealElements.forEach(el => revealObserver.observe(el));
 
+    /* 電玩感「獲得道具」：加入購物車成功時，畫面上方跳出 RPG 小視窗（js/member.js 呼叫） */
+    (function initItemGet() {
+        let box = null;
+        let hideTimer = null;
+        window.showItemGet = (name, qty) => {
+            if (!box) {
+                box = document.createElement('div');
+                box.className = 'item-get rpg-window';
+                box.setAttribute('role', 'status');
+                box.innerHTML = '<span class="item-get-icon" aria-hidden="true"><span></span></span><span class="item-get-text"><span class="item-get-label">獲得了</span><b></b></span>';
+                document.body.appendChild(box);
+            }
+            box.querySelector('b').textContent = `${name} ×${qty}`;
+            box.classList.remove('is-shown');
+            void box.offsetWidth;
+            box.classList.add('is-shown');
+            clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => box.classList.remove('is-shown'), 2400);
+        };
+    })();
+
     /* =========================================
        每個頁面的進場編排（2026-11）
        每一頁列出「依閱讀順序」要浮上來的元素；頁面捲進畫面 35% 時加上
@@ -685,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionIndexCurrent = document.getElementById('section-index-current');
     // 總頁數跟著右側小圓點數量自動計算，新增或移除章節時不用再手動改數字
     const sectionIndexTotal = document.getElementById('section-index-total');
+    const sectionIndexName = document.getElementById('section-index-name');
     if (sectionIndexTotal) sectionIndexTotal.textContent = String(sectionDots.length).padStart(2, '0');
 
     const observerOptions = {
@@ -719,7 +753,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (sectionIndexCurrent) {
                     const dotIndex = Array.from(sectionDots).findIndex(dot => dot.dataset.target === currentId);
                     if (dotIndex !== -1) {
-                        sectionIndexCurrent.textContent = String(dotIndex + 1).padStart(2, '0');
+                        const nextNum = String(dotIndex + 1).padStart(2, '0');
+                        // 電玩感 HUD：換關時數字從下往上翻上來，關卡名稱跟著換
+                        if (sectionIndexCurrent.textContent !== nextNum) {
+                            sectionIndexCurrent.textContent = nextNum;
+                            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                                sectionIndexCurrent.animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }],
+                                    { duration: 380, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+                            }
+                        }
+                        if (sectionIndexName) sectionIndexName.textContent = sectionDots[dotIndex].getAttribute('aria-label') || '';
                     }
                 }
 

@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-party">
+    <link rel="stylesheet" href="css/style.css?v=20261120-game3">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261120-party" defer></script>
+    <script src="js/script.js?v=20261120-game3" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-party" defer></script>
-    <script src="js/pagination.js?v=20261120-party" defer></script>
+    <script src="js/member.js?v=20261120-game3" defer></script>
+    <script src="js/pagination.js?v=20261120-game3" defer></script>
 </head>
 
 <body>
@@ -282,6 +282,8 @@
                 <span class="hero-product-go">看看鳳梨酥 <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></span>
             </a>
         </div>
+        <!-- 電玩感：開場的「PRESS START」，按下去進入產品區 -->
+        <a href="#products" class="hero-start" aria-label="開始，前往產品"><span class="hero-start-text">PRESS START</span></a>
 
     </header>
 
@@ -423,8 +425,9 @@
                     <span class="building-elevation-ground"></span>
                     <button type="button" tabindex="-1" class="building-block is-basement" data-floor="B1"><b>B1</b></button>
                 </div>
-                <div class="building-directory">
-                    <h3 class="building-directory-title">樓層導覽</h3>
+                <div class="building-directory rpg-window">
+                    <h3 class="building-directory-title"><span class="rpg-window-title">SELECT STAGE</span><span class="rpg-window-meta">選擇樓層</span></h3>
+                    <svg class="floor-cursor rpg-cursor" width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1 L11 7 L1 13 Z"/></svg>
                     <ul class="building-floor-list">
                         <li><button type="button" class="building-floor" data-floor="RF" data-zones="空中花園" aria-pressed="false"><b>RF</b><span>空中花園</span></button></li>
                         <li><button type="button" class="building-floor" data-floor="4F" data-zones="辦公室" aria-pressed="false"><b>4F</b><span>辦公室</span></button></li>
@@ -697,9 +700,11 @@
 
     <!-- 左側頁碼標籤：跟右側小圓點對稱、份量一樣輕，顯示目前第幾頁/共幾頁 -->
     <div class="section-index" id="section-index" aria-hidden="true">
+        <span class="section-index-label">STAGE</span>
         <span class="section-index-current" id="section-index-current">01</span>
         <span class="section-index-sep"></span>
         <span class="section-index-total" id="section-index-total">05</span>
+        <span class="section-index-name" id="section-index-name">首頁</span>
     </div>
 
     <!-- 顧客服務條款彈窗 -->
