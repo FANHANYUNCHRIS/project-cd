@@ -563,6 +563,70 @@ document.addEventListener('DOMContentLoaded', () => {
     revealElements.forEach(el => revealObserver.observe(el));
 
     /* =========================================
+       每個頁面的進場編排（2026-11）
+       每一頁列出「依閱讀順序」要浮上來的元素；頁面捲進畫面 35% 時加上
+       .is-inview，CSS 依 --enter-i 一個接一個播。離開畫面就重置，捲回來再播一次。
+       這裡只管進場動畫，導覽列高亮與 LOGO 深淺仍只由 navObserver 決定。
+       ========================================= */
+    (function initSectionEntrances() {
+        const plans = [
+            ['#products', [
+                ['.pastry-gallery', 'enter-scale'],
+                '.pastry-kicker', '.pastry-info h2', '.pastry-description',
+                '.pastry-stats li', '.pastry-purchase', '.pastry-tabs'
+            ]],
+            ['#brand', [
+                '.brand-section-header h2', '.brand-tabs',
+                '.brand-story-copy > *:not(.brand-facts)', '.brand-facts li', ['.brand-emblem', 'enter-scale']
+            ]],
+            ['#brand', [
+                '.brand-panel-head > *', '.brand-cards li'
+            ]],
+            ['#brand', [
+                '.team-avatar-rail', '.team-info-merged', ['.team-portrait', 'enter-scale'],
+                '.team-mobile-card'
+            ]],
+            ['#virtual-building', [
+                '.building-showcase-copy > *',
+                ['.building-elevation-ground', 'enter-line'],
+                ['.building-block.is-basement', 'enter-rise'], ['.building-block.is-ground', 'enter-rise'],
+                ['.building-block[data-floor="2F"]', 'enter-rise'], ['.building-block[data-floor="3F"]', 'enter-rise'],
+                ['.building-block[data-floor="4F"]', 'enter-rise'], ['.building-block.is-roof', 'enter-rise'],
+                ['.building-elevation-mast', 'enter-rise'],
+                '.building-directory-title', '.building-floor-list li', '.building-floor-detail'
+            ]],
+            ['#shop', [
+                '.shop-eyebrow', '.store-intro', '.store-direct', '.store-platforms-title', '.store-platform'
+            ]],
+            ['.site-footer', [
+                '.site-footer-brand', '.site-footer-col', '.site-footer-social', '.site-footer-bottom'
+            ]]
+        ];
+        const scopes = new Set();
+        plans.forEach(([scopeSel, steps]) => {
+            const scope = document.querySelector(scopeSel);
+            if (!scope) return;
+            scopes.add(scope);
+            let i = 0;
+            steps.forEach(step => {
+                const [sel, variant] = Array.isArray(step) ? step : [step, null];
+                scope.querySelectorAll(sel).forEach(el => {
+                    el.classList.add('enter');
+                    if (variant) el.classList.add(variant);
+                    el.style.setProperty('--enter-i', Math.min(i++, 12));
+                });
+            });
+        });
+        const entranceObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.2) entry.target.classList.add('is-inview');
+                else if (!entry.isIntersecting) entry.target.classList.remove('is-inview');
+            });
+        }, { threshold: [0, 0.2] });
+        scopes.forEach(scope => entranceObserver.observe(scope));
+    })();
+
+    /* =========================================
        11. Scrollspy 導覽列滾動自動高亮
        ========================================= */
     const sections = document.querySelectorAll('header[id], section[id]');

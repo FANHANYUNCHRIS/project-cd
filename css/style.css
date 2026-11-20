@@ -6637,3 +6637,49 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .pastry-stats strong { font-size: var(--fs-body); }
     .pastry-subtotal strong { font-size: 30px; }
 }
+
+/* =========================================
+   2026-11 每個頁面的進場編排（js/script.js「每個頁面的進場編排」）
+   - 頁面捲進畫面時，裡面的內容依閱讀順序一個接一個浮上來（間隔 60ms）。
+   - 用 animation 搭配獨立的 translate／scale 屬性，不會蓋掉元件原本的
+     transition 和 hover／按下的 transform。
+   - 分頁（品牌頁籤）從隱藏變顯示時，animation 會自動重播，不用另外寫。
+   - 減少動態效果時只保留很短的淡入，不位移。
+   ========================================= */
+.enter { opacity: 0; }
+.is-inview .enter {
+    animation: enter-up 0.7s var(--ease-out) both;
+    animation-delay: calc(120ms + var(--enter-i, 0) * 60ms);
+}
+.is-inview .enter.enter-scale { animation-name: enter-scale; animation-duration: 0.9s; }
+.is-inview .enter.enter-rise { animation-name: enter-rise; animation-duration: 0.5s; }
+.is-inview .enter.enter-line { animation-name: enter-line; animation-duration: 0.9s; }
+@keyframes enter-up {
+    from { opacity: 0; translate: 0 20px; }
+    to { opacity: 1; translate: 0 0; }
+}
+@keyframes enter-scale {
+    from { opacity: 0; scale: 0.96; }
+    to { opacity: 1; scale: 1; }
+}
+/* 大樓剖面：每一層由下往上「蓋」上去 */
+@keyframes enter-rise {
+    from { opacity: 0; translate: 0 10px; }
+    to { opacity: 1; translate: 0 0; }
+}
+/* 細線：從左畫到右 */
+@keyframes enter-line {
+    from { opacity: 1; scale: 0 1; }
+    to { opacity: 1; scale: 1 1; }
+}
+.enter-line { transform-origin: left center; }
+@media (prefers-reduced-motion: reduce) {
+    .is-inview .enter,
+    .is-inview .enter.enter-scale,
+    .is-inview .enter.enter-rise,
+    .is-inview .enter.enter-line {
+        animation: enter-fade 0.2s linear both;
+        animation-delay: 0s;
+    }
+    @keyframes enter-fade { from { opacity: 0; } to { opacity: 1; } }
+}
