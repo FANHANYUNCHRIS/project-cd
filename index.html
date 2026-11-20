@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-game3">
+    <link rel="stylesheet" href="css/style.css?v=20261121-ui">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261120-game3" defer></script>
+    <script src="js/script.js?v=20261121-ui" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-game3" defer></script>
-    <script src="js/pagination.js?v=20261120-game3" defer></script>
+    <script src="js/member.js?v=20261121-ui" defer></script>
+    <script src="js/pagination.js?v=20261121-ui" defer></script>
 </head>
 
 <body>
@@ -218,6 +218,7 @@
             </div>
         </div>
     </nav>
+    <div class="hud-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
     <!-- 首頁區塊 -->
     <header id="home" class="hero-banner fullscreen-section">
@@ -304,7 +305,7 @@
         </header>
         <div class="brand-story-panel" id="brand-story-panel" role="tabpanel" aria-labelledby="brand-story-tab" tabindex="0">
             <div class="brand-story-copy">
-                <p class="brand-eyebrow">一個人的甜點研究室</p>
+                <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>一個人的甜點研究室</p>
                 <h3>用理論，<br>烤一顆鳳梨酥。</h3>
                 <p class="brand-story-description">Project.CD 由一個人從零開始。沒有祖傳配方，而是把烘焙當成一門研究：讀專業文獻、計算配方比例、記錄溫度與時間，一版一版實驗，直到酥皮與內餡在每一口都達到平衡。</p>
                 <ul class="brand-facts" aria-label="品牌重點">
@@ -320,7 +321,7 @@
         </div>
         <div class="brand-method-panel" id="brand-method-panel" role="tabpanel" aria-labelledby="brand-method-tab" tabindex="0" hidden>
             <div class="brand-panel-head">
-                <p class="brand-eyebrow">研究方法</p>
+                <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>研究方法</p>
                 <h3>工藝與數據，<br class="brand-mobile-break">兩種偏執的平衡。</h3>
             </div>
             <ol class="brand-cards brand-cards-4">
@@ -332,7 +333,7 @@
         </div>
         <div class="brand-material-panel" id="brand-material-panel" role="tabpanel" aria-labelledby="brand-material-tab" tabindex="0" hidden>
             <div class="brand-panel-head">
-                <p class="brand-eyebrow">原物料</p>
+                <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>原物料</p>
                 <h3>理論再好，<br>也要好材料。</h3>
                 <p class="brand-story-description">四樣主要原料都有指定來源，不用來路不明的替代品。</p>
             </div>
@@ -403,7 +404,7 @@
 
     <section id="virtual-building" class="fullscreen-section building-showcase" aria-labelledby="virtual-building-title">
         <div class="building-showcase-copy">
-            <p class="building-showcase-kicker">Project.CD ／ 虛擬空間</p>
+            <p class="building-showcase-kicker"><span class="stage-tag">STAGE 04</span>Project.CD ／ 虛擬空間</p>
             <h2 id="virtual-building-title" class="title-sheen reveal-sheen">虛擬大樓</h2>
             <p>從一樓咖啡廳走到頂樓空中花園，探索 Project.CD 的每一層。點樓層，看看裡面有什麼。</p>
             <ul class="building-status" aria-label="大樓狀態">
@@ -604,7 +605,7 @@
     <div class="shop-footer-screen">
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
-            <p class="shop-eyebrow">官方線上商城</p>
+            <p class="shop-eyebrow"><span class="stage-tag">STAGE 05</span>官方線上商城</p>
             <h2 class="section-title reveal-zoom title-sheen">在哪裡買</h2>
             <p class="store-intro">官網直接訂購最快，也是唯一能指定取貨日期的地方。各平台賣場正在準備中。</p>
             <div class="store-layout">

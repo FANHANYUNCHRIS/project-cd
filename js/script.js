@@ -448,15 +448,19 @@ document.addEventListener('DOMContentLoaded', () => {
             </figure>
             <div class="pastry-info">
                 <div class="pastry-intro">
-                    <p class="pastry-kicker">Project.CD ／ 手工甜點</p>
+                    <p class="pastry-kicker"><span class="stage-tag">STAGE 02</span>Project.CD ／ 手工甜點</p>
                     <h2 class="title-sheen reveal-sheen">${product.name}</h2>
                     <p class="pastry-description">${product.desc}</p>
                 </div>
-                <ul class="pastry-stats" aria-label="產品重點">
-                    <li><strong class="pastry-stat-num">10<small>入</small></strong><span>一盒的數量</span></li>
-                    <li><strong>土鳳梨</strong><span>台灣在地小農</span></li>
-                    <li><strong>法國奶油</strong><span>酥皮的奶香來源</span></li>
-                </ul>
+                <div class="pastry-ability">
+                    <p class="pastry-ability-head"><span class="pastry-ability-title">STATUS</span><span class="pastry-ability-meta">10 入／盒・台灣土鳳梨・法國奶油</span></p>
+                    <ul class="pastry-ability-list" aria-label="口味能力值，滿分 5">
+                        <li><span class="ab-name">甜度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">3<small>/5</small></span></li>
+                        <li><span class="ab-name">酸度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="on" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">4<small>/5</small></span></li>
+                        <li><span class="ab-name">酥度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="on" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">4<small>/5</small></span></li>
+                        <li><span class="ab-name">奶香</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">3<small>/5</small></span></li>
+                    </ul>
+                </div>
                 <div class="pastry-purchase">
                     <div class="pastry-subtotal">
                         <span>小計</span>
@@ -654,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['#products', [
                 ['.pastry-gallery', 'enter-scale'],
                 '.pastry-kicker', '.pastry-info h2', '.pastry-description',
-                '.pastry-stats li', '.pastry-purchase', '.pastry-tabs'
+                '.pastry-ability', '.pastry-purchase', '.pastry-tabs'
             ]],
             ['#brand', [
                 '.brand-section-header h2', '.brand-tabs',

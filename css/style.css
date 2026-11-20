@@ -6288,3 +6288,209 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .building-directory.rpg-window { padding: var(--sp-4); }
     .building-directory.rpg-window .building-floor { padding-left: 28px; }
 }
+
+/* =========================================
+   2026-11-21 電玩介面化（擁有者：導覽列、按鈕、彈窗、版面、產品數值都要，強度「明顯但仍極簡」）
+   - 共通語言：金色實心三角游標、RPG 雙線框（黑線＋縫＋淡金線）、STAGE 標籤、能力值格子。
+   - 只用黑、白、金與 Cormorant；不改操作方式。
+   ========================================= */
+
+/* ---- 1. 導覽列：選中項前面有金色游標 ---- */
+@media (min-width: 1025px) {
+    .navbar .nav-links a .nav-text { position: relative; }
+    .navbar .nav-links a .nav-text::before {
+        content: '';
+        position: absolute;
+        left: -11px;
+        top: 50%;
+        translate: 0 -50%;
+        border-block: 4px solid transparent;
+        border-left: 6px solid var(--gold-soft);
+        opacity: 0;
+        scale: 0.4 1;
+        transition: opacity 0.15s linear, scale 0.22s var(--ease-out);
+    }
+    .navbar .nav-links a.active .nav-text::before { opacity: 1; scale: 1; }
+    .navbar .nav-links a:not(.active):hover .nav-text::before { opacity: 0.6; scale: 1; border-left-color: var(--gold-ink); }
+}
+@media (max-width: 1024px) {
+    /* 手機分頁列：選中的圖示上方一個往下指的金色小三角 */
+    .nav-links a.active::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 3px;
+        left: 50%;
+        translate: -50% 0;
+        border-inline: 4px solid transparent;
+        border-top: 5px solid var(--gold);
+        z-index: 2;
+    }
+}
+
+/* ---- 2. 黑色主要按鈕：RPG 雙線框，按下去會「壓下」一格 ---- */
+:is(.btn-modal-cta, .btn-submit, .account-logout-btn, .building-showcase-action, .hero-product-go) {
+    box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px rgba(216, 192, 145, 0.6);
+    transition: box-shadow 0.2s ease, translate 0.08s linear, background-color 0.2s ease;
+}
+:is(.btn-modal-cta, .btn-submit, .account-logout-btn, .building-showcase-action, .hero-product-go):hover {
+    box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 3px var(--gold-soft);
+}
+:is(.btn-modal-cta, .btn-submit, .account-logout-btn, .building-showcase-action, .hero-product-go, .pastry-buy, .building-floor-enter):active {
+    translate: 0 1px;
+}
+:is(.btn-modal-cta, .btn-submit):disabled { box-shadow: none; }
+
+/* ---- 3. 彈窗：白色 RPG 視窗 ---- */
+.modal-container {
+    border: 0;
+    border-radius: 14px;
+    box-shadow:
+        inset 0 0 0 2px var(--ink),
+        inset 0 0 0 5px var(--white),
+        inset 0 0 0 6px rgba(184, 149, 90, 0.55),
+        0 24px 60px rgba(0, 0, 0, 0.35);
+}
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    border-bottom: 1px solid var(--ink-line);
+    box-shadow: 0 1px 0 0 transparent;
+    position: relative;
+}
+.modal-title::before {
+    content: '';
+    flex: none;
+    border-block: 6px solid transparent;
+    border-left: 9px solid var(--gold);
+    animation: rpg-cursor-bob 0.9s ease-in-out infinite;
+}
+.modal-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+}
+.modal-close { border-radius: 10px; }
+.modal-close:hover { transform: none; background: rgba(22, 22, 26, 0.06); }
+/* 購物車「請先登入」不要框中框：拿掉裡面那張卡的底與陰影 */
+.modal-container .cart-login-gate { background: none; box-shadow: none; border-radius: 0; padding: var(--sp-4) 0 0; }
+@media (min-width: 1025px) {
+    /* 桌機：視窗先展開成一條線再撐開（跟品牌團隊的 RPG 視窗同一招） */
+    .modal-overlay.active .modal-container { animation: modal-window-in 0.42s var(--ease-out) both; }
+    @keyframes modal-window-in {
+        0% { scale: 1 0.03; opacity: 0; }
+        30% { scale: 1 0.03; opacity: 1; }
+        100% { scale: 1 1; opacity: 1; }
+    }
+}
+
+/* ---- 4. 版面：畫面四角的 HUD 取景框＋每頁的 STAGE 標籤 ---- */
+.hud-frame { display: none; }
+@media (min-width: 1025px) {
+    .hud-frame {
+        display: block;
+        position: fixed;
+        inset: 84px 20px 20px;
+        z-index: 900;
+        pointer-events: none;
+    }
+    .hud-frame i {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 0 solid rgba(184, 149, 90, 0.7);
+    }
+    .hud-frame i:nth-child(1) { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+    .hud-frame i:nth-child(2) { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+    .hud-frame i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+    .hud-frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+}
+.stage-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: var(--sp-3);
+    padding: 3px 8px 3px 7px;
+    border-radius: 4px;
+    background: var(--ink);
+    color: var(--gold-soft);
+    font-family: var(--font-serif);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    font-variant-numeric: lining-nums;
+    vertical-align: 1px;
+    white-space: nowrap;
+}
+.stage-tag::before {
+    content: '';
+    border-block: 4px solid transparent;
+    border-left: 6px solid var(--gold);
+}
+
+/* ---- 5. 產品數值：能力值格子 ---- */
+.pastry-ability {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding-block: var(--sp-4);
+    border-block: 1px solid var(--ink-line);
+}
+.pastry-ability-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    margin: 0;
+}
+.pastry-ability-title {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--gold-ink);
+}
+.pastry-ability-meta { font-size: var(--fs-small); color: var(--ink-soft); }
+.pastry-ability-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3) var(--sp-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.pastry-ability-list li { display: flex; align-items: center; gap: var(--sp-3); }
+.ab-name { flex: none; width: 2.6em; font-size: var(--fs-small); font-weight: 700; color: var(--ink); }
+.ab-bar { display: flex; gap: 3px; flex: 1; }
+.ab-bar i {
+    flex: 1;
+    max-width: 28px;
+    height: 10px;
+    border-radius: 2px;
+    background: rgba(22, 22, 26, 0.1);
+}
+.ab-bar i.on { background: var(--gold); }
+.ab-val { flex: none; font-variant-numeric: lining-nums; font-family: var(--font-serif); font-size: 18px; font-weight: 600; line-height: 1; }
+.ab-val small { font-size: 12px; color: var(--ink-soft); margin-left: 1px; }
+/* 進場：格子一格一格亮起來 */
+.pastry-product.is-inview .ab-bar i.on { animation: ab-fill 0.01s steps(1) calc(0.6s + var(--k) * 90ms) both; }
+@keyframes ab-fill { from { background: rgba(22, 22, 26, 0.1); } to { background: var(--gold); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-title::before { animation: none; }
+    .modal-overlay.active .modal-container { animation: none; }
+    .pastry-product.is-inview .ab-bar i.on { animation: none; }
+}
+
+@media (max-width: 1024px) {
+    .pastry-ability { padding-block: var(--sp-3); gap: var(--sp-2); }
+    .pastry-ability-list { gap: var(--sp-2) var(--sp-5); }
+    .pastry-ability-meta { font-size: var(--fs-caption); }
+    .stage-tag { font-size: 11px; padding: 2px 7px 2px 6px; margin-right: var(--sp-2); }
+}
