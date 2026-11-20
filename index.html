@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-type">
+    <link rel="stylesheet" href="css/style.css?v=20261120-party">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261120-type" defer></script>
+    <script src="js/script.js?v=20261120-party" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-type" defer></script>
-    <script src="js/pagination.js?v=20261120-type" defer></script>
+    <script src="js/member.js?v=20261120-party" defer></script>
+    <script src="js/pagination.js?v=20261120-party" defer></script>
 </head>
 
 <body>
@@ -342,87 +342,55 @@
             </ul>
         </div>
         <div id="brand-team-panel" role="tabpanel" aria-labelledby="brand-team-tab" hidden>
-        <div class="team-switcher">
-            <div class="team-avatar-rail">
-                <button class="team-nav-btn" id="team-nav-up" aria-label="上一位成員" type="button">
-                    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
-                </button>
-                <div class="team-avatar-list" id="team-avatar-list"></div>
-                <button class="team-nav-btn" id="team-nav-down" aria-label="下一位成員" type="button">
-                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                </button>
-            </div>
-
-            <div class="team-info-merged">
-                <div class="team-info-header">
-                    <h3 class="team-info-name" id="team-info-name"></h3>
+        <!-- 2026-11 品牌團隊改成日式 RPG 隊伍選單（設計稿：https://claude.ai/artifact/6fsRyndYT1tS7pMxABCPWK ）。
+             桌機與手機共用同一份結構，只靠 CSS 重排：左邊隊伍、中間立繪、右邊狀態、下方對話框。
+             自我介紹放在對話框裡一段一段翻頁（不在框內捲動）。內容由 js/script.js 的 initTeamSwitcher 填入。 -->
+        <div class="party">
+            <div class="party-roster rpg-window">
+                <div class="rpg-window-head">
+                    <span class="rpg-window-title">PARTY</span>
+                    <span class="rpg-window-meta" id="party-count"></span>
                 </div>
-
-                <div class="team-stat-list">
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">工作職位</span>
-                        <span class="team-stat-value" id="team-info-job"></span>
-                    </div>
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">戰鬥職位</span>
-                        <span class="team-stat-value" id="team-info-battle"></span>
-                    </div>
-                    <div class="team-stat-row">
-                        <span class="team-stat-label">專用武器</span>
-                        <span class="team-stat-value" id="team-info-weapon"></span>
-                    </div>
-                </div>
-
-                <div class="team-file-block">
-                    <span class="team-file-tab">角色檔案</span>
-                    <p class="team-info-quote" id="team-info-quote"></p>
-                    <p class="team-info-bio" id="team-info-bio"></p>
+                <div class="party-list" id="team-avatar-list" role="listbox" aria-label="選擇團隊成員" aria-orientation="vertical">
+                    <svg class="party-cursor rpg-cursor" width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1 L11 7 L1 13 Z"/></svg>
                 </div>
             </div>
-
-            <div class="team-portrait" id="team-portrait" role="img" aria-label="">
-                <div class="team-portrait-text" id="team-portrait-text"></div>
+            <div class="party-keys rpg-window" aria-hidden="true">
+                <span>選擇角色</span><kbd>↑ ↓</kbd>
+                <span>下一段</span><kbd>Enter</kbd>
             </div>
 
-            <!-- 手機版專用排版（使用者指定：頭像列→單一合併大卡片，卡片內依序是
-                 姓名+座右銘→立繪→四宮格數據→自我介紹，全部同一張卡片背景），
-                 桌機版維持原本 .team-info-merged 那張合併卡片、.team-portrait
-                 立繪不變。內容跟桌機版是同一份資料，只是拆開重排、各自獨立成
-                 .team-switcher 底下的直接子項，才能用 CSS order 排出這個順序
-                 ——沒有用 display:contents 去拆 .team-info-merged（那個技巧在
-                 Safari 上有名的相容性問題，這次改版已經踩過一次雷），改用
-                 「桌機/手機各自一份對應的元素、CSS 只顯示其中一份」，id 各自
-                 獨立，script.js 的 showMember() 會同時寫入兩份。立繪也比照
-                 辦理另外複製一份（.team-mobile-portrait），因為 .team-portrait
-                 是桌機版 .team-switcher 的直接 flex 子項、order 排版依賴這一點，
-                 搬進手機卡片裡會讓桌機版排版跟著壞掉 -->
-            <div class="team-mobile-card">
-                <div class="team-mobile-namequote">
-                    <h3 class="team-mobile-name" id="team-mobile-name"></h3>
-                    <p class="team-mobile-quote" id="team-mobile-quote"></p>
+            <figure class="party-stage">
+                <span class="party-stage-label" id="party-stage-label"></span>
+                <img class="party-portrait" id="team-portrait" alt="" hidden>
+                <span class="party-portrait-empty" id="team-portrait-empty" hidden>照片準備中</span>
+            </figure>
+
+            <div class="party-status rpg-window">
+                <div class="rpg-window-head">
+                    <span class="rpg-window-title">STATUS</span>
+                    <span class="rpg-window-meta">角色檔案</span>
                 </div>
-
-                <div class="team-mobile-portrait" id="team-mobile-portrait" role="img" aria-label=""></div>
-
-                <div class="team-mobile-stats">
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">工作職位</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-job"></span>
-                    </div>
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">戰鬥職位</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-battle"></span>
-                    </div>
-                    <div class="team-mobile-stat-box">
-                        <span class="team-mobile-stat-label">專用武器</span>
-                        <span class="team-mobile-stat-value" id="team-mobile-weapon"></span>
-                    </div>
+                <div class="party-name">
+                    <h3 id="team-info-name"></h3>
+                    <span id="team-info-job"></span>
                 </div>
-
-                <p class="team-mobile-bio" id="team-mobile-bio"></p>
+                <dl class="party-stats">
+                    <div><dt>戰鬥職位</dt><dd id="team-info-battle"></dd></div>
+                    <div><dt>專用武器</dt><dd id="team-info-weapon"></dd></div>
+                </dl>
             </div>
+
+            <button type="button" class="party-dialog rpg-window" id="party-dialog" aria-describedby="party-dialog-page">
+                <span class="party-dialog-speaker" id="party-dialog-speaker"></span>
+                <span class="party-dialog-text" id="party-dialog-text" aria-hidden="true"></span>
+                <span class="sr-only" id="party-dialog-live" aria-live="polite"></span>
+                <span class="party-dialog-foot">
+                    <span class="party-dialog-page" id="party-dialog-page"></span>
+                    <svg class="party-dialog-next rpg-next" width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M1 1 L13 1 L7 9 Z"/></svg>
+                </span>
+            </button>
         </div>
-
         </div>
 
         <a href="#virtual-building" class="scroll-down-indicator on-light" aria-label="前往虛擬大樓">

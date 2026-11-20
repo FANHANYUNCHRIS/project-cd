@@ -809,7 +809,7 @@ body {
 
 /* 品牌／產品兩個區塊底色是淺灰（body 預設 #EBEBEC），var(--paper) 是給深色
    影片背景用的淺色文字，疊在淺底上幾乎看不見——這裡改用 --ink-soft，跟
-   區塊裡其他次要文字（例如 .team-stat-label）同一階 */
+   區塊裡其他次要文字同一階 */
 .scroll-down-indicator.on-light {
     color: var(--ink-soft);
 }
@@ -841,428 +841,6 @@ body {
     padding-bottom: calc(var(--sp-16) + var(--sp-8));
 }
 
-/* 原本固定 height:640px，不會因為螢幕高矮跟著縮放；但角色檔案文字現在動輒 500 字，
-   內容量早就超過 640px，立繪／頭像欄硬撐在固定 640px 反而比文字短一截，
-   底部對不齊。改用 min-height（保留「不要太矮」的下限）+ 高度交給內容自然撐開，
-   立繪、頭像欄跟文字欄三個都用 align-items:stretch 撐到同一個高度，永遠對齊 */
-.team-switcher {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    /* 用 min() 取「理想高度 640px」跟「這台裝置實際可視高度扣掉區塊上下留白」兩者較小值——
-       瀏覽器工具列高度不同（例如 Safari 比 Chrome 矮）會讓可視高度縮水，固定 640px
-       會讓角色檔案文字被推出畫面外，又因為外層是 scroll-snap 沒辦法捲動補看。
-       扣除量要跟 #brand 的 padding-bottom（96px）對齊，不然這裡跟那邊各自
-       認定的留白對不上，算出來的高度反而會蓋掉 padding-bottom 保留的空間 */
-    height: min(640px, calc(100vh - 88px - 96px));
-    gap: 48px;
-}
-
-/* 撐滿整欄高度（align-self:stretch，跟立繪 .team-portrait 同一招），上下箭頭
-   用 space-between 頂到頂／底，才會跟右欄文字（品牌團隊標籤在最上、角色檔案在最下）
-   的頂部/底部對齊——原本置中會讓左欄整組頭像懸在中間，跟右欄拉滿版的文字對不齊。
-   flex-grow:1（跟立繪 6、合併卡 3 同一組比例＝1:6:3），min-width 頂住 140px 頭像
-   本身的寬度，避免視窗較窄時比例算出來的份額比頭像還小，把圓形頭像擠變形 */
-.team-avatar-rail {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex: 1 1 0%;
-    min-width: 156px;
-}
-
-.team-nav-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--ink-line);
-    background-color: var(--white);
-    color: var(--ink-soft);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-}
-
-.team-nav-btn:hover {
-    border-color: var(--ink);
-    color: var(--ink);
-}
-
-.team-avatar-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* 液態玻璃版本：跟人物卡／商品卡同一套材質配方（半透明白 + blur(30px) +
-   邊角高光 + 不等寬邊框模擬光線折射），有照片的頭像因為 object-fit:cover
-   填滿整個圓框，這層玻璃底色平常看不太到，主要是圓框邊緣的斜切邊框在
-   起作用；沒照片的佔位頭像才是玻璃感真正明顯的地方 */
-.team-avatar-item {
-    position: relative;
-    overflow: hidden;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    padding: 0;
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 2px solid var(--glass-edge-light);
-    border-left: 2px solid var(--glass-edge-mid);
-    border-right: 2px solid var(--glass-edge-dark);
-    border-bottom: 2px solid var(--glass-edge-dark);
-    box-shadow:
-        0 8px 20px -6px rgba(22, 22, 26, 0.28),
-        inset 0 1px 1px var(--glass-edge-light);
-    opacity: 0.55;
-    transition: all 0.3s ease;
-}
-
-/* 邊角高光，跟其他玻璃面板同一招——玻璃本身的反光，疊在圖片/圖示之上 */
-.team-avatar-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* 頭像圓框裁切點往上移到臉部，避免半身照置中裁切時臉被推到框外——
-   z-index 墊在邊角高光下面，照片本身才不會被高光整個蓋住看不清楚 */
-.team-avatar-item img {
-    position: relative;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 15%;
-}
-
-.team-avatar-item:hover {
-    opacity: 0.85;
-}
-
-/* 照片還沒上傳時的通用佔位樣式，取代瀏覽器預設的裂圖示——
-   跟產品圖片的 .img-fallback 是同一套邏輯，圖片準備好上傳後會自動換回真的照片。
-   opacity 蓋回 1，不要疊加在基礎規則的 0.55 之上——底色的透明感已經靠
-   rgba(255,255,255,.42) 自己表達，再疊一層 CSS opacity 會讓玻璃質感
-   雙重稀釋，反而看起來只是模糊的淺灰色 */
-.team-avatar-item.img-fallback {
-    opacity: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.team-avatar-item.img-fallback img {
-    display: none;
-}
-
-.team-avatar-item.img-fallback::after {
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    content: "\f007";
-    color: rgba(22, 22, 26, 0.7);
-    font-size: 44px;
-    position: relative;
-    z-index: 2;
-}
-
-/* 選中的頭像加一圈實色描邊，像選角畫面裡「目前選到誰」的高亮框——
-   原本只靠 opacity + scale 放大，跟未選中的頭像區別不夠明顯。切換時
-   額外播一次放大晃動動畫，每次 class 一加上就會重新觸發，停下來時停在
-   跟原本一樣的 scale(1.08)，不會跟 hover/選中狀態打架。這圈實色框刻意
-   不套玻璃——「目前選到誰」是功能性的強訊號，半透明材質會削弱辨識度，
-   所以維持不透明實色；邊角高光也調淡，避免蓋過選中框本身的存在感 */
-.team-avatar-item.active {
-    opacity: 1;
-    transform: scale(1.08);
-    border: 3px solid var(--ink);
-    box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12);
-    animation: team-avatar-wobble 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.team-avatar-item.active::before {
-    opacity: 0.4;
-}
-
-@keyframes team-avatar-wobble {
-    0% {
-        transform: scale(1) rotate(0deg);
-    }
-    30% {
-        transform: scale(1.18) rotate(-7deg);
-    }
-    55% {
-        transform: scale(1.14) rotate(6deg);
-    }
-    75% {
-        transform: scale(1.1) rotate(-3deg);
-    }
-    100% {
-        transform: scale(1.08) rotate(0deg);
-    }
-}
-
-/* 右欄改成左右兩塊並排：左邊放「事實資料」（姓名＋數據列表），右邊放「要完整讀的文章」
-   （角色檔案）——跟拆文字本身成兩欄不同，簡介還是同一欄從頭讀到尾，不會有跳讀問題 */
-/* 數據卡（姓名＋五欄位）跟角色檔案（引言＋簡介）合併成同一張卡片，
-   直接是 .team-switcher 底下第三個 flex 子項，跟縮圖列、立繪三欄同一層——
-   縮圖列:立繪:此卡＝1:6:3（flex-grow 比例），不再需要 .team-info-panel 這層
-   中介 wrapper 去左右拆兩張卡。內容本身夠長（標題＋數據＋引言＋簡介），
-   靠自己就能撐滿卡片高度，用不到人工撐空白的招數；超出高度時卡片自己捲動 */
-/* 這張卡片的角色，其實是手機版 .team-mobile-card 那張「不透明底盤」——
-   姓名／數據／自介三個小節各自是浮在上面的獨立液態玻璃卡（見下面
-   .team-info-header／.team-stat-row／.team-info-bio），底盤本身不該是
-   玻璃。原本誤把底盤也做成半透明+blur，兩層玻璃疊在一起，跟手機版「不透明
-   托盤＋玻璃卡」的材質語言不一致——改回跟 .team-mobile-card／.product-panel
-   同一套底盤配方：實色 var(--surface-sunken) ＋ 四個灰階光暈，不用 backdrop-filter */
-.team-info-merged {
-    flex: 3 1 0%;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--surface-sunken);
-    /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
-       看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
-    background-image:
-        radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
-        radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
-    border: 1.5px solid rgba(22, 22, 26, 0.3);
-    border-radius: 20px;
-    padding: var(--sp-6) var(--sp-6);
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
-}
-
-.team-info-merged::-webkit-scrollbar {
-    display: none;
-}
-
-/* 跟手機版 .team-mobile-namequote 同一套液態玻璃小卡——原本姓名是裸文字
-   直接貼在 .team-info-merged 卡片背景上，沒有自己的玻璃卡，跟手機版姓名
-   列有獨立玻璃卡不一致 */
-.team-info-header {
-    position: relative;
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 12px;
-    padding: var(--sp-5);
-    margin-bottom: var(--sp-10);
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-/* 姓名字級大、字重粗、用高對比 --ink，不會踩到淺灰內文被高光墊亮變淡的
-   問題，可以放心加邊角高光 */
-.team-info-header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
-}
-
-.team-info-name {
-    position: relative;
-    font-size: var(--fs-h1);
-    font-weight: bold;
-    color: var(--ink);
-}
-
-/* 角色資料改成 iOS「設定」App 那種整體分組列表：一個圓角容器，列與列之間用髮絲級分隔線，
-   不是各自獨立、有間距的卡片。改成單欄（不是 2 欄並排）——2 欄並排時，短內容的格子
-   會被同一列裡較長的鄰居拖著撐高，露出一截用不到的空白；單欄讓每一列高度只跟著
-   自己的內容走。橫向排列（標籤左、內容右）跟會員資料彈窗的 .account-info-row 同一套語言 */
-/* 改成跟手機版 .team-mobile-stats／.team-mobile-stat-box 同一套「並排獨立
-   玻璃小卡」語言（原本是 iOS 設定 App 那種單欄清單＋髮絲分隔線，跟手機版
-   排版不一致）。3 欄一排跟手機版一致，拿掉「戰鬥風格」後剛好 3 張卡 */
-.team-stat-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--sp-3);
-    flex-shrink: 0;
-    margin-bottom: var(--sp-10);
-}
-
-.team-stat-row {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-1);
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 12px;
-    padding: var(--sp-4) var(--sp-3);
-    text-align: left;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-.team-stat-label {
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--ink-soft);
-    white-space: nowrap;
-}
-
-/* 三張卡片內容長短不一（「戰鬥專家」4 字 vs 「咖啡甜點專家」6 字），沒有
-   保留高度的話，字數少的卡片明顯比字數多的矮一截，三張並排看起來不齊——
-   統一保留兩行高度，跟手機版 .team-mobile-stat-value 同一招 */
-.team-stat-value {
-    display: block;
-    font-size: var(--fs-body);
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.3;
-    min-height: calc(1.3em * 2);
-    text-wrap: balance;
-}
-
-/* 角色檔案（標籤＋引言＋簡介）補上跟手機版 .team-mobile-bio 同一套液態
-   玻璃小卡——原本是裸文字直接貼在 .team-info-merged 托盤背景上，跟手機版
-   自介有自己獨立玻璃卡不一致。跟 .faq-terms-section .policy-modal-body p
-   同一個成因，不加邊角高光。padding 從 --sp-5 拉大到 --sp-6：使用者實測
-   反應「// 角色檔案」標籤離卡片邊框太近，20px 對這種小字級的標籤感覺
-   侷促，加大一階留白比較舒服 */
-.team-file-block {
-    position: relative;
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 12px;
-    padding: var(--sp-6);
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-.team-file-tab {
-    display: block;
-    font-size: var(--fs-caption);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--ink-soft);
-    margin-bottom: var(--sp-2);
-}
-
-/* 拿掉左側裝飾粗線（比較像傳統網頁的引用區塊，不是 iOS 原生手法），
-   改靠字級跟字重自己做強調——像 Apple News／書籍 App 的引言排版 */
-.team-info-quote {
-    font-size: var(--fs-lead);
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.5;
-    margin-bottom: var(--sp-4);
-}
-
-.team-info-bio {
-    font-size: var(--fs-caption);
-    color: var(--ink);
-    line-height: 1.6;
-}
-
-/* 人物立繪：用 contain + bottom 而不是 cover，去背立繪才會完整站在畫面裡，不會被裁切。
-   拿掉了原本強制灰階的 filter——設計系統文件「00 設計方向與目標」P03 本來就寫明
-   「未來加入動漫風格人物插畫時，會是全站唯一保留的『色彩時刻』」，現在放的正是這種插畫，
-   不是需要壓成黑白配合全站規則的真人照片，維持原色是文件已經預告過的例外，不是新的偏離 */
-.team-portrait {
-    flex: 6 1 0%;
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.42);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    background-size: contain;
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    transition: opacity 0.4s ease;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-/* 跟手機版立繪同一套液態玻璃邊角高光——這裡是圖片沒有內文，不會踩到
-   .team-info-merged 那種文字被蓋到變淡的問題，可以放心加 */
-.team-portrait::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-    pointer-events: none;
-}
-
-.team-portrait-text {
-    max-width: 520px;
-    width: 100%;
-    text-align: center;
-}
-
-.team-portrait-text:empty {
-    display: none;
-}
-
-/* 立繪還沒上傳時，用通用人形圖示佔位——跟左邊小頭像的 .img-fallback 同一套語言。
-   原本改成顯示姓名文字，但立繪正下方本來就有一張同樣寫著姓名的資訊卡標題，
-   兩個一起看就是同一個名字重複出現兩次，改回圖示更乾淨。
-   圖片準備好上傳後 JS 會自動換回真的立繪，不用再改這裡 */
-.team-portrait.img-fallback {
-    background-color: var(--ink);
-}
-
-.team-portrait.img-fallback::after {
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    content: "\f007";
-    color: var(--white);
-    font-size: 96px;
-}
-
-/* 手機專用合併卡片（見 index.html 註解），桌機版預設收起來，
-   只在下面 ≤1024px 的 media query 裡改成顯示 */
-.team-mobile-card {
-    display: none;
-}
 
 /* =========================================
    8. 聯繫我們彈窗（原本是可捲動到的區塊，現在只有點導覽列聯繫圖示才會彈出）
@@ -4073,10 +3651,6 @@ a.faq-card {
         scroll-snap-align: none;
     }
 
-    .team-switcher {
-        height: auto;
-    }
-
     /* Hero 是品牌視覺印象區塊，手機/平板仍保留滿版沉浸感；其餘區塊改為內容自適應高度 */
     .hero-banner.fullscreen-section {
         min-height: 100vh;
@@ -4248,263 +3822,6 @@ a.faq-card {
        分頁列常駐分頁、聯繫我們收進頁尾，這裡整組收起來，避免入口重複 */
     .nav-utility-group {
         display: none;
-    }
-
-    .team-switcher {
-        flex-direction: column;
-        align-items: stretch;
-        height: auto;
-        max-height: none;
-        gap: var(--sp-6);
-    }
-
-    /* 桌機版 .team-avatar-rail 用 justify-content:space-between 把上下箭頭
-       頂到頂/底對齊右欄文字；手機版箭頭是 display:none，只剩頭像清單一個子項，
-       space-between 對單一子項的效果是貼齊主軸起點（左），頭像才會全部擠在最左邊——
-       這裡要蓋掉，改回置中 */
-    .team-avatar-rail {
-        order: 1;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    .team-nav-btn {
-        display: none;
-    }
-
-    .team-avatar-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .team-avatar-item {
-        width: 84px;
-        height: 84px;
-    }
-
-    /* 使用者指定的手機專用排列順序：頭像列(order:1，見上面 .team-avatar-rail)
-       →單一合併大卡片(order:2)，卡片內依序是姓名+座右銘→立繪→四宮格數據→
-       自我介紹，全部放在同一張卡片背景裡（.team-mobile-card 當底盤），但
-       每個小節各自保留軟膠浮凸的凸起感（跟 .faq-card 同一套雙向陰影語言），
-       不是壓平成只有髮絲分隔線。桌機版 .team-info-merged 那張合併卡片、
-       .team-portrait 立繪都整個隱藏，換成 .team-mobile-card（內容由
-       script.js 的 showMember() 同步寫入，見該檔案改動）。桌機版立繪
-       .team-portrait 直接隱藏（不是搬進卡片裡），因為它是桌機版
-       .team-switcher 的直接 flex 子項、order 排版依賴這一點，搬動會讓
-       桌機版跟著壞掉——改用 .team-mobile-portrait 這個獨立複製的元素 */
-    .team-portrait {
-        display: none;
-    }
-
-    .team-info-merged {
-        display: none;
-    }
-
-    /* 液態玻璃版本：版面（托盤＋姓名列／立繪／三宮格／自介四個區塊的順序、
-       尺寸、間距）跟原本的軟膠浮凸卡片完全一樣，只換掉文字卡片的材質。
-       托盤底色加四個灰階光暈（不是色相）——跟設計系統文件「00 設計方向
-       與目標」P03 對齊：黑白灰是唯一色彩語言，立繪本身才是全站唯一的
-       色彩時刻。光暈明暗對比拉大（亮部 .95、暗部 .16），因為毛玻璃這個
-       材質的可辨識度很吃底下的明暗反差，第一版光暈對比太保守，在實機
-       螢幕亮度下幾乎感覺不到模糊在起作用，才調到這個強度 */
-    .team-mobile-card {
-        order: 2;
-        display: flex;
-        flex-direction: column;
-        gap: var(--sp-4);
-        background-color: var(--surface-sunken);
-        /* 原本還有兩點深色光暈（rgba(22,22,26,.16)／.1），大面積留白區域上
-           看起來像髒污的暈染，不像有意義的光影，拿掉只留兩點白光暈 */
-        background-image:
-            radial-gradient(circle at 12% 5%, rgba(255, 255, 255, 0.95), transparent 42%),
-            radial-gradient(circle at 50% 98%, rgba(255, 255, 255, 0.7), transparent 55%);
-        border: 1.5px solid rgba(22, 22, 26, 0.3);
-        border-radius: 20px;
-        padding: var(--sp-4);
-        box-shadow: 0 12px 28px rgba(22, 22, 26, 0.18);
-    }
-
-    /* 液態玻璃面板共用的「邊角高光」：玻璃本身的反光，不是靠底下托盤透
-       上來的顏色——只靠 backdrop-filter 模糊托盤，實機肉眼幾乎看不出來，
-       這道疊在面板最上層左上角的放射狀柔光才是玻璃感真正明顯起來的關鍵。
-       原本是貫穿整張卡片的對角線性漸層，會掃過 .team-mobile-bio 這種
-       多行 --ink-soft 內文，肉眼會出現「同一段文字左右深淺不一」的錯覺
-       （simultaneous contrast）——改成集中在角落、快速衰減到透明，不再
-       掃過內文區域。半徑用固定 140px，不是百分比：radial-gradient 預設
-       用「到最遠角落」決定範圍，姓名列這種偏寬的區塊最遠角落距離較長，
-       百分比範圍會等比例放大、又掃回文字，固定像素半徑不會隨寬高比跑掉。
-       靠 overflow:hidden 裁到面板自己的圓角範圍內。三宮格／自介這兩個面板
-       不套這道高光——面板矮小、--ink-soft 內文幾乎貼齊左上角，140px 半徑
-       還是會蓋到文字，跟固定像素半徑要解決的「隨寬高比跑掉」是不同問題，
-       這裡靠面板自己的邊框+模糊+陰影撐玻璃感就好（同一個成因見
-       .faq-terms-section .policy-modal-body p 的說明）。姓名列跟立繪維持
-       原本的高光：姓名列的 --ink-soft 座右銘靠右對齊，離高光原點夠遠；
-       立繪是圖片沒有文字，兩者都不會踩到這個問題 */
-    .team-mobile-namequote::before,
-    .team-mobile-portrait::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle 140px at 0% 0%, var(--glass-edge-mid), transparent);
-        pointer-events: none;
-    }
-
-    /* 姓名+座右銘：姓名在左，座右銘在右——跟聯繫我們彈窗的 .contact-title-row
-       （標題+副標並排）同一個排版邏輯，姓名字級大、座右銘字級小，用 baseline
-       對齊兩者的文字基線。液態玻璃材質：半透明白＋模糊＋邊角高光，不加
-       saturate()——托盤光暈本身就是純灰階，沒有色相可以提升，維持全站
-       黑白灰的規則。邊框改成四邊不同深淺（左上亮、右下暗），模擬光從
-       左上照過來、玻璃邊緣因為厚度產生的折射，比四邊同色的細邊框更有
-       玻璃的立體感 */
-    .team-mobile-namequote {
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: var(--sp-3);
-        background-color: rgba(255, 255, 255, 0.42);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid var(--glass-edge-light);
-        border-left: 1px solid var(--glass-edge-mid);
-        border-right: 1px solid var(--glass-edge-dark);
-        border-bottom: 1px solid var(--glass-edge-dark);
-        border-radius: 8px;
-        padding: var(--sp-5);
-        text-align: left;
-        box-shadow:
-            0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px var(--glass-edge-light);
-    }
-
-    .team-mobile-name {
-        font-size: var(--fs-h3);
-        font-weight: bold;
-        color: var(--ink);
-    }
-
-    .team-mobile-quote {
-        font-size: var(--fs-small);
-        font-weight: 700;
-        color: var(--ink-soft);
-        text-align: right;
-    }
-
-    /* 立繪：跟桌機版 .team-portrait 一樣用 background-image 呈現（見
-       script.js 的 loadPortraitInto()），但這是手機卡片內部的獨立元素，
-       不吃桌機版的 flex:6 1 0% 高度分配邏輯，直接寫死高度。跟其他三張卡
-       同一套液態玻璃材質（含邊角高光 ::before、斜切邊框）——backdrop-filter
-       模糊的是這個元素「後面」的托盤光暈，立繪本身是疊在最上層的不透明
-       圖層，不會被模糊到，只有立繪四周原本留白的區域會透出光暈跟高光。
-       overflow:hidden 除了裁圓角，也裁掉 ::before 高光超出邊界的部分 */
-    .team-mobile-portrait {
-        width: 100%;
-        height: 42vh;
-        overflow: hidden;
-        background-color: rgba(255, 255, 255, 0.42);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        background-size: contain;
-        background-position: center bottom;
-        background-repeat: no-repeat;
-        border-top: 1px solid var(--glass-edge-light);
-        border-left: 1px solid var(--glass-edge-mid);
-        border-right: 1px solid var(--glass-edge-dark);
-        border-bottom: 1px solid var(--glass-edge-dark);
-        border-radius: 8px;
-        position: relative;
-        transition: opacity 0.4s ease;
-        box-shadow:
-            0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px var(--glass-edge-light);
-    }
-
-    /* 立繪讀取失敗時才切成深底＋白色圖示佔位，跟桌機版 .team-portrait.img-fallback
-       同一套邏輯——平常（圖片正常載入）維持白底，不是預設就黑底 */
-    .team-mobile-portrait.img-fallback {
-        background-color: var(--ink);
-    }
-
-    .team-mobile-portrait.img-fallback::after {
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-        content: "\f007";
-        color: var(--white);
-        font-size: 64px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* 三個框框（工作職位／戰鬥職位／專用武器）一行三欄並排，跟姓名列／
-       自介同一套液態玻璃材質 */
-    .team-mobile-stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: var(--sp-2);
-    }
-
-    .team-mobile-stat-box {
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        gap: var(--sp-1);
-        background-color: rgba(255, 255, 255, 0.42);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid var(--glass-edge-light);
-        border-left: 1px solid var(--glass-edge-mid);
-        border-right: 1px solid var(--glass-edge-dark);
-        border-bottom: 1px solid var(--glass-edge-dark);
-        border-radius: 8px;
-        padding: var(--sp-3) var(--sp-2);
-        text-align: left;
-        box-shadow:
-            0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px var(--glass-edge-light);
-    }
-
-    .team-mobile-stat-label {
-        font-size: var(--fs-caption);
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        color: var(--ink-soft);
-    }
-
-    .team-mobile-stat-value {
-        font-size: var(--fs-body);
-        font-weight: 700;
-        color: var(--ink);
-        line-height: 1.3;
-        text-wrap: balance;
-    }
-
-    /* 自我介紹跟其他小節一樣維持同一套液態玻璃材質 */
-    .team-mobile-bio {
-        position: relative;
-        overflow: hidden;
-        display: block;
-        font-size: var(--fs-small);
-        color: var(--ink-soft);
-        line-height: 1.6;
-        text-align: left;
-        background-color: rgba(255, 255, 255, 0.42);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border-top: 1px solid var(--glass-edge-light);
-        border-left: 1px solid var(--glass-edge-mid);
-        border-right: 1px solid var(--glass-edge-dark);
-        border-bottom: 1px solid var(--glass-edge-dark);
-        border-radius: 8px;
-        padding: var(--sp-5);
-        box-shadow:
-            0 12px 32px -10px rgba(22, 22, 26, 0.32),
-            inset 0 1px 1px var(--glass-edge-light);
     }
 
     /* 原本 2 欄網格在手機上每張卡片只有半個螢幕寬，說明文字擠得要換好幾行，
@@ -4714,8 +4031,6 @@ a.faq-card {
 .qty-btn:active,
 .nav-icon-btn:active,
 .nav-icon-link:active,
-.team-nav-btn:active,
-.team-avatar-item:active,
 .auth-checkbox-mark:active,
 .auth-tab:active,
 .auth-forgot-link:active,
@@ -4725,12 +4040,6 @@ a.faq-card {
 .faq-card:active {
     transform: scale(0.96);
     transition-duration: 0.08s !important;
-}
-
-/* 這幾個本來就有自己的 transform（位移/縮放），按下去要疊加而不是蓋掉，
-   不然位移效果會在按下瞬間消失，看起來像故障 */
-.team-avatar-item.active:active {
-    transform: scale(1.08) scale(0.97);
 }
 
 .modal-close:active {
@@ -4848,77 +4157,6 @@ a.faq-card {
     background-size: 32px 32px;
     background-blend-mode: soft-light;
 }
-#brand .team-avatar-rail {
-    padding: var(--sp-4);
-    border: 1px solid var(--ink);
-    background: var(--paper);
-    box-shadow: 4px 4px 0 var(--ink-line);
-}
-#brand .team-avatar-item,
-#brand .team-nav-btn {
-    border-radius: 0;
-    border: 1px solid var(--ink-line);
-    box-shadow: none;
-}
-#brand .team-avatar-item::before { border-radius: 0; }
-#brand .team-avatar-item.active {
-    border-color: var(--ink);
-    outline: 2px solid var(--ink);
-    outline-offset: 4px;
-    transform: none;
-    animation: none;
-}
-#brand .team-info-merged,
-#brand .team-mobile-card {
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    border-radius: 0;
-    box-shadow: 4px 4px 0 var(--ink-line);
-}
-#brand :is(.team-info-header, .team-stat-row, .team-file-block, .team-mobile-namequote, .team-mobile-stat-box, .team-mobile-bio) {
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-#brand .team-info-header { padding: 0 0 var(--sp-5); margin-bottom: var(--sp-5); border-bottom: 2px solid var(--ink); }
-#brand .team-info-header::before { display: none; }
-#brand .team-stat-row,
-#brand .team-mobile-stat-box { border-bottom: 1px solid var(--ink-line); padding: var(--sp-3) 0; }
-#brand .team-file-block { padding: var(--sp-5) 0 0; border-top: 1px solid var(--ink); }
-#brand .team-file-tab { font-family: var(--font-serif); letter-spacing: .12em; }
-#brand .team-portrait,
-#brand .team-mobile-portrait {
-    border: 1px solid var(--ink-line);
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background-color: var(--paper);
-}
-#brand .team-portrait::before {
-    inset: 0;
-    width: 40px;
-    height: 40px;
-    background: none;
-    border-top: 2px solid var(--ink);
-    border-left: 2px solid var(--ink);
-}
-#brand .team-portrait.img-fallback::after,
-#brand .team-mobile-portrait.img-fallback::after { color: var(--ink); }
-@media (min-width: 1025px) {
-    #brand .team-switcher { gap: var(--sp-8); }
-    #brand .team-avatar-rail { order: 0; }
-    #brand .team-portrait { order: 1; }
-    #brand .team-info-merged { order: 2; }
-}
-@media (max-width: 1024px) {
-    #brand .team-avatar-rail { min-width: 0; }
-    #brand .team-mobile-namequote { border-bottom: 2px solid var(--ink); }
-    #brand .team-mobile-bio { border-top: 1px solid var(--ink); }
-}
 
 /* 主頁共用留白：所有區塊使用同一組邊界，避免個別版型覆寫。 */
 :root {
@@ -4930,9 +4168,7 @@ a.faq-card {
 #shop.shopping-section {
     padding: var(--page-space-block) var(--page-space-inline);
 }
-#brand .team-switcher {
-    height: min(640px, calc(100svh - var(--page-space-block) * 2));
-}
+
 #shop.shopping-section { justify-content: center; }
 
 @media (max-width: 1024px) {
@@ -4940,30 +4176,7 @@ a.faq-card {
         --page-space-block: 96px;
         --page-space-inline: 24px;
     }
-    #brand .team-switcher { height: auto; }
-}
 
-/* 固定高度角色面板內，頭像依可用高度縮放，避免推出底部箭頭。 */
-@media (min-width: 1025px) {
-    #brand .team-avatar-rail { min-height: 0; gap: var(--sp-4); }
-    #brand .team-nav-btn { flex: 0 0 44px; }
-    #brand .team-avatar-list {
-        flex: 1 1 0;
-        min-height: 0;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-        gap: var(--sp-4);
-    }
-    #brand .team-avatar-item {
-        flex: 0 1 140px;
-        min-height: 0;
-        height: calc((100% - 32px) / 3);
-        width: auto;
-        max-width: 100%;
-        max-height: 140px;
-        aspect-ratio: 1;
-    }
 }
 
 /* 單畫面資訊：依可視高度分頁，保留原始表單與完整文字。 */
@@ -4986,8 +4199,7 @@ a.faq-card {
 .modal-overlay { height: 100dvh; padding: 24px; }
 .modal-overlay .modal-container { max-height: none; overflow: visible; }
 .modal-container .cart-items-list,
-.modal-container .account-history-list,
-#brand .team-info-merged { max-height: none; overflow: visible; }
+.modal-container .account-history-list { max-height: none; overflow: visible; }
 .modal-container .account-history-list { justify-content: flex-start; }
 .modal-container .custom-select-panel { max-height: none; overflow: visible; }
 .modal-container .custom-select-option { min-height: 44px; }
@@ -4996,8 +4208,7 @@ a.faq-card {
 .modal-container .form-grid { gap: var(--sp-3); }
 .modal-container .form-group { margin-bottom: var(--sp-3); }
 .modal-container .faq-grid { gap: var(--sp-3); }
-#brand .team-info-merged { height: auto; align-self: end; }
-#brand .team-switcher > .screen-pages { align-self: end; max-width: 180px; order: 3; }
+
 @media (max-width: 1024px) {
     .modal-overlay .modal-container { padding: var(--sp-5); }
     .modal-container .account-columns { gap: var(--sp-4); }
@@ -5111,13 +4322,6 @@ a.faq-card {
 
 /* 品牌介紹後的虛擬大樓入口，獨立於角色內容分頁。 */
 #brand { flex-direction: column; gap: var(--sp-4); }
-#brand .team-switcher {
-    height: min(640px, calc(100svh - var(--page-space-block) * 2 - 88px));
-}
-
-@media (max-width: 1024px) {
-    #brand .team-switcher { height: auto; }
-}
 
 /* 單款鳳梨酥：介紹、3D 展示與選購資訊。 */
 .pastry-product {
@@ -5260,17 +4464,6 @@ a.faq-card {
     background: var(--white);
 }
 .brand-emblem img { display: block; width: min(50%, 224px); height: auto; filter: brightness(0); }
-#brand .team-avatar-rail { border: 0; background: transparent; box-shadow: none; padding: var(--sp-2); }
-#brand .team-info-merged, #brand .team-mobile-card {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    box-shadow: none;
-}
-#brand .team-info-header, #brand .team-mobile-namequote { border-bottom: 1px solid var(--ink-line); }
-#brand .team-file-block, #brand .team-mobile-bio { border-top-color: var(--ink-line); }
-#brand .team-portrait, #brand .team-mobile-portrait { border: 0; background-color: var(--white); }
-#brand .team-portrait::before { display: none; }
 
 @media (max-width: 1024px) {
     .brand-tabs button { padding-inline: var(--sp-3); }
@@ -5290,11 +4483,7 @@ a.faq-card {
 }
 #brand { display: grid; grid-template-rows: auto minmax(0, 1fr); align-content: stretch; gap: var(--sp-4); }
 #brand > [role="tabpanel"] { align-self: center; min-width: 0; }
-#brand .team-switcher { height: auto; min-height: 0; }
-#brand .team-portrait { min-height: 160px; }
-#brand .team-avatar-item { height: 64px; flex: 0 0 64px; }
-#brand .team-avatar-rail { gap: var(--sp-2); }
-#brand .team-avatar-list { gap: var(--sp-3); }
+
 #brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
 #products.pastry-product { display: flex; align-items: center; }
 .pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
@@ -5306,8 +4495,7 @@ a.faq-card {
 #brand .screen-pages, #products .screen-pages { margin-top: var(--sp-3); }
 @media (max-width: 1024px) {
     #brand, #products.pastry-product { padding-top: var(--sp-6); padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
-    #brand .team-mobile-card { gap: var(--sp-3); }
-    #brand .team-mobile-portrait { height: 120px; flex-basis: 120px; }
+
     .pastry-content { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); }
     .pastry-content > :is(.pastry-intro, .pastry-gallery, .pastry-purchase) { padding: var(--sp-3); }
     .pastry-stage { height: min(24dvh, 200px); }
@@ -6371,8 +5559,7 @@ a.faq-card {
 .logo-text,
 .auth-modal-logo-text,
 .site-footer-logo,
-.hero-title,
-#brand .team-file-tab {
+.hero-title {
     font-family: var(--font-serif);
     font-weight: 600;
     font-variant-numeric: lining-nums;
@@ -6682,4 +5869,267 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
         animation-delay: 0s;
     }
     @keyframes enter-fade { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* =========================================
+   2026-11 品牌團隊：日式 RPG 隊伍選單（設計稿：電玩風格範例）
+   - 視窗 .rpg-window：墨黑底、白色雙線框、最內一圈細金線（三層內陰影）。
+   - 金色三角游標跟著目前角色滑動；對話框台詞一個字一個字打出來，
+     點一下先顯示整句，再點翻下一段（自我介紹分段放這裡，不在框內捲動）。
+   - 桌機：隊伍｜立繪｜狀態，下方按鍵說明＋對話框；手機：隊伍一排在上，
+     立繪、狀態、對話框依序往下。
+   ========================================= */
+.rpg-window {
+    border-radius: 14px;
+    background: var(--ink);
+    color: var(--white);
+    box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 5px var(--ink), inset 0 0 0 6px rgba(216, 192, 145, 0.55), 0 18px 40px -24px rgba(22, 22, 26, 0.7);
+}
+.rpg-window-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+.rpg-window-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--gold-soft);
+}
+.rpg-window-meta { font-size: 12px; color: rgba(255, 255, 255, 0.72); }
+.rpg-cursor { fill: var(--gold-soft); }
+.rpg-next { fill: var(--gold-soft); }
+
+#brand > #brand-team-panel { align-self: stretch; display: flex; min-height: 0; }
+.party {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr) 380px;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: "roster stage status" "keys dialog dialog";
+    gap: var(--sp-5);
+}
+
+/* 隊伍 */
+.party-roster { grid-area: roster; align-self: start; display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-5); }
+.party-roster .rpg-window-head { padding-inline: var(--sp-2); }
+.party-list { --row: 64px; position: relative; display: flex; flex-direction: column; gap: var(--sp-1); }
+.party-cursor {
+    position: absolute;
+    left: var(--sp-2);
+    top: calc((var(--row) - 14px) / 2);
+    transform: translateY(calc(var(--party-i, 0) * (var(--row) + var(--sp-1))));
+    transition: transform 0.22s var(--ease-out);
+    pointer-events: none;
+    z-index: 1;
+}
+.party-member {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--sp-3);
+    min-height: var(--row);
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) 28px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.party-member:hover { background: rgba(255, 255, 255, 0.06); }
+.party-member.is-active { background: rgba(216, 192, 145, 0.14); box-shadow: inset 0 0 0 1px rgba(216, 192, 145, 0.45); }
+.party-member:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+.party-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+}
+.party-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.party-member-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.party-member-text b { font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 17px; font-weight: 900; }
+.party-member-text span { font-size: 12px; color: rgba(255, 255, 255, 0.72); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.party-keys {
+    grid-area: keys;
+    align-self: end;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--sp-1) var(--sp-3);
+    padding: var(--sp-4) var(--sp-5);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+}
+.party-keys kbd { font-family: var(--font-serif); font-size: 16px; font-weight: 600; color: var(--white); }
+
+/* 立繪 */
+.party-stage {
+    grid-area: stage;
+    position: relative;
+    margin: 0;
+    min-height: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 40%, #FBF4E6 0%, var(--surface-sunken) 62%);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.party-stage::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: min(90%, 420px);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(216, 192, 145, 0.5), rgba(216, 192, 145, 0) 62%);
+}
+.party-stage::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    width: min(60%, 260px);
+    height: 28px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(90, 60, 20, 0.28), rgba(90, 60, 20, 0) 70%);
+}
+.party-portrait { position: relative; z-index: 1; height: 96%; max-width: 100%; object-fit: contain; object-position: bottom; }
+.party-portrait-empty { position: relative; z-index: 1; align-self: center; font-size: 14px; color: var(--ink-soft); }
+.party-stage-label {
+    position: absolute;
+    left: var(--sp-5);
+    top: var(--sp-4);
+    z-index: 2;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--gold-ink);
+}
+
+/* 狀態 */
+.party-status { grid-area: status; align-self: start; display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--sp-6) 28px; }
+.party-name { display: flex; flex-direction: column; gap: var(--sp-1); }
+.party-name h3 { margin: 0; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 34px; font-weight: 900; line-height: 1.2; }
+.party-name span { font-size: 14px; color: rgba(255, 255, 255, 0.72); }
+.party-stats { margin: 0; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.party-stats > div { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: baseline; padding: var(--sp-3) 0; box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.14); }
+.party-stats dt { font-size: 13px; color: var(--gold-soft); }
+.party-stats dd { margin: 0; font-size: 15px; font-weight: 700; }
+
+/* 對話框 */
+.party-dialog {
+    grid-area: dialog;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-height: 140px; /* 兩行台詞＋頁碼，翻頁時高度不跳 */
+    padding: 28px var(--sp-8) var(--sp-4);
+    border: 0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.party-dialog:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.party-dialog-speaker {
+    position: absolute;
+    left: var(--sp-6);
+    top: -16px;
+    padding: var(--sp-1) var(--sp-4);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: 15px;
+    font-weight: 900;
+}
+.party-dialog-text {
+    flex: 1;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+}
+.party-dialog.is-typing .party-dialog-text::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 4px;
+    vertical-align: -0.12em;
+    background: var(--gold-soft);
+}
+.party-dialog-foot { display: flex; align-items: center; justify-content: flex-end; gap: var(--sp-3); }
+.party-dialog-page { font-family: var(--font-serif); font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, 0.72); }
+.party-dialog.is-typing .party-dialog-next { visibility: hidden; }
+
+@keyframes rpg-cursor-bob { 0%, 100% { translate: 0 0; } 50% { translate: 4px 0; } }
+@keyframes rpg-next-blink { 0%, 100% { opacity: 1; translate: 0 0; } 50% { opacity: 0.35; translate: 0 3px; } }
+.rpg-cursor { animation: rpg-cursor-bob 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.rpg-next { animation: rpg-next-blink 1s ease-in-out infinite; }
+
+/* 進場：視窗先展開成一條線，再撐到全高 */
+.is-inview .enter.enter-window { animation-name: enter-window; animation-duration: 0.5s; transform-origin: center; }
+@keyframes enter-window {
+    0% { opacity: 0; scale: 1 0.04; }
+    35% { opacity: 1; scale: 1 0.04; }
+    100% { opacity: 1; scale: 1 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rpg-cursor, .rpg-next { animation: none; }
+    .party-cursor { transition: none; }
+}
+
+@media (max-width: 1024px) {
+    .party {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(120px, 1fr) auto auto;
+        grid-template-areas: "roster" "stage" "status" "dialog";
+        gap: var(--sp-3);
+    }
+    .party-keys { display: none; }
+    .party-roster { flex-direction: row; align-items: center; justify-content: space-between; padding: var(--sp-3) var(--sp-4); }
+    .party-roster .rpg-window-head { padding: 0; }
+    .party-roster .rpg-window-meta { display: none; }
+    .party-list { --row: 48px; flex-direction: row; gap: var(--sp-3); padding-top: var(--sp-2); }
+    .party-cursor {
+        left: calc((var(--row) - 12px) / 2);
+        top: -6px;
+        transform: translateX(calc(var(--party-i, 0) * (var(--row) + var(--sp-3)))) rotate(90deg);
+    }
+    .party-member { grid-template-columns: 44px; width: var(--row); min-height: var(--row); padding: 2px; justify-items: center; }
+    .party-member.is-active { background: transparent; box-shadow: none; }
+    .party-member.is-active .party-avatar { box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px var(--gold-soft); }
+    .party-avatar { width: 44px; height: 44px; }
+    .party-member-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .party-stage { border-radius: 16px; }
+    .party-stage-label { left: var(--sp-3); top: var(--sp-3); font-size: 13px; }
+    .party-status { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); padding: var(--sp-4) var(--sp-5); }
+    .party-status .rpg-window-head { display: none; }
+    .party-name { flex-direction: row; align-items: baseline; gap: var(--sp-3); }
+    .party-name h3 { font-size: 22px; }
+    .party-name span { font-size: 12px; }
+    .party-stats { width: 100%; box-shadow: none; }
+    .party-stats > div { grid-template-columns: 72px minmax(0, 1fr); padding: 2px 0; box-shadow: none; }
+    .party-stats dt { font-size: 12px; }
+    .party-stats dd { font-size: 14px; }
+    .party-dialog { min-height: 132px; padding: 22px var(--sp-5) var(--sp-3); margin-top: var(--sp-2); }
+    .party-dialog-speaker { left: var(--sp-4); top: -14px; font-size: 14px; padding: 2px var(--sp-3); }
+    .party-dialog-text { font-size: 16px; }
 }

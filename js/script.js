@@ -243,106 +243,154 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
 
+        /* 2026-11 日式 RPG 隊伍選單：左邊隊伍（金色游標）、立繪、狀態、對話框。
+           台詞與自我介紹放在對話框，一段一段翻頁：打字中點一下先顯示整句，再點翻下一段。 */
         const listEl = document.getElementById('team-avatar-list');
-        const nameEl = document.getElementById('team-info-name');
-        const jobEl = document.getElementById('team-info-job');
-        const battleRoleEl = document.getElementById('team-info-battle');
-        const weaponEl = document.getElementById('team-info-weapon');
-        const quoteEl = document.getElementById('team-info-quote');
-        const bioEl = document.getElementById('team-info-bio');
-        const portraitEl = document.getElementById('team-portrait');
-        const portraitTextEl = document.getElementById('team-portrait-text');
-        const btnUp = document.getElementById('team-nav-up');
-        const btnDown = document.getElementById('team-nav-down');
-
-        // 手機專用排版（見 index.html 的 .team-mobile-* 區塊）跟桌機版是同一份
-        // teamData，只是拆開重排、各自獨立的元素，這裡另外抓一份對應的節點，
-        // 跟桌機版元素一起同步寫入，不需要另外寫一套切換邏輯
-        const mobileNameEl = document.getElementById('team-mobile-name');
-        const mobileQuoteEl = document.getElementById('team-mobile-quote');
-        const mobileJobEl = document.getElementById('team-mobile-job');
-        const mobileBattleRoleEl = document.getElementById('team-mobile-battle');
-        const mobileWeaponEl = document.getElementById('team-mobile-weapon');
-        const mobileBioEl = document.getElementById('team-mobile-bio');
-        const mobilePortraitEl = document.getElementById('team-mobile-portrait');
-
         if (!listEl || teamData.length === 0) return;
+        const byId = id => document.getElementById(id);
+        const party = listEl.closest('.party');
+        const nameEl = byId('team-info-name');
+        const jobEl = byId('team-info-job');
+        const battleEl = byId('team-info-battle');
+        const weaponEl = byId('team-info-weapon');
+        const portraitEl = byId('team-portrait');
+        const emptyEl = byId('team-portrait-empty');
+        const stageLabel = byId('party-stage-label');
+        const dialog = byId('party-dialog');
+        const speakerEl = byId('party-dialog-speaker');
+        const textEl = byId('party-dialog-text');
+        const liveEl = byId('party-dialog-live');
+        const pageEl = byId('party-dialog-page');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const easeOut = 'cubic-bezier(0.16, 1, 0.3, 1)';
+        byId('party-count').textContent = `隊伍 ${teamData.length}／${teamData.length}`;
+        dialog.setAttribute('aria-label', '對話，按一下看下一段');
 
-        let activeIndex = 0;
+        // 自我介紹切成對話框的頁：在標點後斷開，每頁最多約 60 字
+        const toPages = (quote, bio) => {
+            const pages = [quote];
+            let cur = '';
+            bio.split(/(?<=[。！？；，：])/).forEach(part => {
+                if (cur && (cur + part).length > 60) { pages.push(cur); cur = ''; }
+                cur += part;
+            });
+            if (cur) pages.push(cur);
+            return pages;
+        };
 
-        teamData.forEach((member, i) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = `team-avatar-item${i === 0 ? ' active' : ''}`;
-            btn.setAttribute('aria-label', member.name);
-            // alt 特意留空：按鈕本身已經有 aria-label 提供無障礙名稱，圖片只是裝飾用；
-            // 如果 alt 填了名字，圖片讀取失敗時 Chrome 滑鼠移過去會跳出瀏覽器原生的
-            // alt 文字提示框，跟畫面上其他元素的視覺風格不一致，也不是我們想要的提示
-            btn.innerHTML = `<img src="${member.avatar}" alt="" loading="lazy">`;
-            // 照片還沒上傳時，用通用佔位圖示取代瀏覽器預設的裂圖示
-            btn.querySelector('img').addEventListener('error', () => {
-                btn.classList.add('img-fallback');
-            }, { once: true });
-            btn.addEventListener('click', () => showMember(i));
-            listEl.appendChild(btn);
+        let pages = [];
+        let page = 0;
+        let typing = null;
+        let announce = false;
+        const finishTyping = () => {
+            if (typing) clearInterval(typing);
+            typing = null;
+            textEl.textContent = pages[page];
+            dialog.classList.remove('is-typing');
+        };
+        const showPage = n => {
+            page = n;
+            const text = pages[page];
+            pageEl.textContent = `${page + 1}／${pages.length}`;
+            if (announce) liveEl.textContent = text;
+            if (typing) clearInterval(typing);
+            typing = null;
+            if (reduceMotion.matches) { finishTyping(); return; }
+            let i = 0;
+            textEl.textContent = '';
+            dialog.classList.add('is-typing');
+            typing = setInterval(() => {
+                i += 1;
+                textEl.textContent = text.slice(0, i);
+                if (i >= text.length) finishTyping();
+            }, 35);
+        };
+        dialog.addEventListener('click', () => {
+            announce = true;
+            if (typing) finishTyping();
+            else showPage((page + 1) % pages.length);
         });
 
-        const avatarButtons = listEl.querySelectorAll('.team-avatar-item');
+        const rows = teamData.map((member, i) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'party-member';
+            btn.setAttribute('role', 'option');
+            btn.innerHTML = '<span class="party-avatar"><img alt="" loading="lazy"></span><span class="party-member-text"><b></b><span></span></span>';
+            btn.querySelector('b').textContent = member.name;
+            btn.querySelector('.party-member-text span').textContent = member.job;
+            const img = btn.querySelector('img');
+            // 照片還沒上傳時顯示「待補」，不顯示瀏覽器的裂圖示
+            img.addEventListener('error', () => { img.parentElement.textContent = '待補'; }, { once: true });
+            img.src = member.avatar;
+            btn.addEventListener('click', () => showMember(i, true));
+            btn.addEventListener('keydown', event => {
+                const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+                let next = step === undefined ? null : i + step;
+                if (event.key === 'Home') next = 0;
+                if (event.key === 'End') next = teamData.length - 1;
+                if (next === null) return;
+                event.preventDefault();
+                next = (next + teamData.length) % teamData.length;
+                showMember(next, true);
+                rows[next].focus();
+            });
+            listEl.appendChild(btn);
+            return btn;
+        });
 
-        function showMember(index) {
-            activeIndex = (index + teamData.length) % teamData.length;
-            const member = teamData[activeIndex];
-
-            avatarButtons.forEach((btn, i) => btn.classList.toggle('active', i === activeIndex));
-
+        let active = -1;
+        function showMember(index, fromUser) {
+            if (index === active) return;
+            const dir = index > active ? 1 : -1;
+            active = index;
+            const member = teamData[index];
+            rows.forEach((row, i) => {
+                const on = i === index;
+                row.classList.toggle('is-active', on);
+                row.setAttribute('aria-selected', String(on));
+                row.tabIndex = on ? 0 : -1;
+            });
+            party.style.setProperty('--party-i', index);
             nameEl.textContent = member.name;
             jobEl.textContent = member.job;
-            battleRoleEl.textContent = member.battleRole;
+            battleEl.textContent = member.battleRole;
             weaponEl.textContent = member.weapon;
-            quoteEl.textContent = member.quote;
-            bioEl.textContent = member.bio;
+            stageLabel.textContent = `MEMBER ${String(index + 1).padStart(2, '0')}`;
+            speakerEl.textContent = member.name;
+            announce = fromUser;
+            pages = toPages(member.quote, member.bio);
+            showPage(0);
 
-            if (mobileNameEl) mobileNameEl.textContent = member.name;
-            if (mobileQuoteEl) mobileQuoteEl.textContent = member.mobileQuote || member.quote;
-            if (mobileJobEl) mobileJobEl.textContent = member.job;
-            if (mobileBattleRoleEl) mobileBattleRoleEl.textContent = member.battleRole;
-            if (mobileWeaponEl) mobileWeaponEl.textContent = member.weapon;
-            if (mobileBioEl) mobileBioEl.textContent = member.bio;
-
-            loadPortraitInto(portraitEl, member, () => { portraitTextEl.innerHTML = ''; });
-            if (mobilePortraitEl) loadPortraitInto(mobilePortraitEl, member);
+            const animate = fromUser && !reduceMotion.matches;
+            if (animate) {
+                party.querySelectorAll('.party-name, .party-stats > div').forEach((el, k) => {
+                    el.animate([{ opacity: 0, translate: '0 8px' }, { opacity: 1, translate: '0 0' }],
+                        { duration: 360, delay: k * 70, easing: easeOut, fill: 'backwards' });
+                });
+            }
+            // 立繪：先預載，失敗就顯示「照片準備中」
+            const preload = new Image();
+            preload.onload = () => {
+                if (teamData[active] !== member) return;
+                portraitEl.src = member.portrait;
+                portraitEl.alt = `${member.name}立繪`;
+                portraitEl.hidden = false;
+                emptyEl.hidden = true;
+                if (animate) {
+                    portraitEl.animate([{ opacity: 0, translate: `${-24 * dir}px 0` }, { opacity: 1, translate: '0 0' }],
+                        { duration: 420, easing: easeOut });
+                }
+            };
+            preload.onerror = () => {
+                if (teamData[active] !== member) return;
+                portraitEl.hidden = true;
+                emptyEl.hidden = false;
+            };
+            preload.src = member.portrait;
         }
 
-        // 立繪還沒上傳時（圖片路徑 404），用通用佔位樣式取代——background-image
-        // 讀取失敗不會像 <img> 一樣自動觸發瀏覽器裂圖示，要自己用 Image()
-        // 預先載入一次才知道成不成功。桌機版立繪跟手機版複製的立繪
-        // （.team-mobile-portrait）共用這個函式，避免同一段預載邏輯寫兩次
-        function loadPortraitInto(el, member, onSettle) {
-            el.style.opacity = '0';
-            el.setAttribute('aria-label', `${member.name} 立繪`);
-
-            setTimeout(() => {
-                const preload = new Image();
-                preload.onload = () => {
-                    el.classList.remove('img-fallback');
-                    el.style.backgroundImage = `url('${member.portrait}')`;
-                    el.style.opacity = '1';
-                    if (onSettle) onSettle();
-                };
-                preload.onerror = () => {
-                    el.classList.add('img-fallback');
-                    el.style.backgroundImage = 'none';
-                    el.style.opacity = '1';
-                    if (onSettle) onSettle();
-                };
-                preload.src = member.portrait;
-            }, 200);
-        }
-
-        if (btnUp) btnUp.addEventListener('click', () => showMember(activeIndex - 1));
-        if (btnDown) btnDown.addEventListener('click', () => showMember(activeIndex + 1));
-
-        showMember(0);
+        showMember(0, false);
     })();
 
     /* =========================================
@@ -583,8 +631,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 '.brand-panel-head > *', '.brand-cards li'
             ]],
             ['#brand', [
-                '.team-avatar-rail', '.team-info-merged', ['.team-portrait', 'enter-scale'],
-                '.team-mobile-card'
+                ['.party-roster', 'enter-window'], ['.party-keys', 'enter-window'],
+                ['.party-stage', 'enter-scale'], ['.party-status', 'enter-window'], ['.party-dialog', 'enter-window']
             ]],
             ['#virtual-building', [
                 '.building-showcase-copy > *',
