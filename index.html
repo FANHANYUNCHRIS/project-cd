@@ -56,7 +56,7 @@
                 "name": "全台灣都能宅配到嗎？運費怎麼算？",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "目前商品透過蝦皮購物、iOpen Mall、全家好賣+ 等平台販售，實際運費與配送方式請依您下單平台的規定為準；不論透過哪個通路購買，我們都堅持全程低溫配送，確保甜點新鮮送達。"
+                    "text": "目前商品透過蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 等平台販售，實際運費與配送方式請依您下單平台的規定為準；不論透過哪個通路購買，我們都堅持全程低溫配送，確保甜點新鮮送達。"
                 }
             },
             {
@@ -88,7 +88,7 @@
                 "name": "商品有問題可以退換貨嗎？",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "由於商品皆透過蝦皮購物、iOpen Mall、全家好賣+ 等第三方平台販售，退換貨請依照您下單平台的退換貨規定辦理；若收到的商品有品質疑慮（例如嚴重毀損、變質或品項不符），也歡迎直接與我們聯繫，我們會協助您處理。"
+                    "text": "烘焙食品不適用七天鑑賞期。若收到的商品有品質疑慮（例如嚴重毀損、變質或品項不符），請直接與我們聯繫，我們會協助您處理；之後若在蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 等平台下單，則依各平台的退換貨規定辦理。"
                 }
             }
         ]
@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-store">
+    <link rel="stylesheet" href="css/style.css?v=20261120-footer">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261120-store" defer></script>
+    <script src="js/script.js?v=20261120-footer" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-store" defer></script>
-    <script src="js/pagination.js?v=20261120-store" defer></script>
+    <script src="js/member.js?v=20261120-footer" defer></script>
+    <script src="js/pagination.js?v=20261120-footer" defer></script>
 </head>
 
 <body>
@@ -486,7 +486,7 @@
                 <a href="#" class="faq-card policy-link" data-policy="shipping">
                     <div class="faq-card-icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></div>
                     <h3 class="faq-card-title">全台配送與冷藏須知</h3>
-                    <p class="faq-card-desc">商品透過蝦皮購物、iOpen Mall、全家好賣+ 等平台販售並全程低溫配送，點擊查看完整配送須知。</p>
+                    <p class="faq-card-desc">商品透過蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 等平台販售並全程低溫配送，點擊查看完整配送須知。</p>
                 </a>
 
                 <div class="faq-card">
@@ -666,53 +666,47 @@
             </div>
         </section>
 
-        <!-- Footer 頁尾區塊 -->
-        <footer class="footer">
-            <div class="footer-container">
-                <div class="footer-section">
-                    <h3 class="footer-title">Project.CD</h3>
-                    <ul class="footer-links">
-                        <!-- 常見問題／服務條款合併成同一個連結、同一個彈窗（#faq-modal）——
-                             服務條款內容維持完整獨立一塊（不是把兩者文字混在一起），
-                             用 script.js 裡既有的 policyData.terms 動態塞進
-                             #faq-terms-body，內容只維護一份，不會跟 policy-link 那邊
-                             （會員註冊條款打勾、聯繫表單隱私權連結還是用得到）分岔 -->
-                        <li><a href="#" id="footer-link-faq"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> 常見問題與服務條款</a></li>
-                    </ul>
-                    <p><i class="fa-solid fa-location-dot" aria-hidden="true"></i> 台北市內湖區</p>
-                    <p><i class="fa-solid fa-clock" aria-hidden="true"></i> <span class="footer-label-prefix">出貨時間：</span>下訂後 3 天內出貨</p>
-                </div>
+        <!-- 頁尾（2026-11 改版，設計稿：頁尾設計稿）：黑底收尾，接在滿版的商城後面，
+             不撐滿畫面。三欄：品牌資訊／購物說明／追蹤我們，最下面一行版權＋小遊戲。
+             連結沿用既有彈窗：常見問題開 #faq-modal，其他三個用 .policy-link 開條款彈窗 -->
+        <footer class="site-footer">
+            <div class="site-footer-inner">
+                <div class="site-footer-grid">
+                    <div class="site-footer-brand">
+                        <p class="site-footer-logo">Project.CD</p>
+                        <dl class="site-footer-facts">
+                            <div><dt>地點</dt><dd>台北市內湖區</dd></div>
+                            <div><dt>公休</dt><dd>每週一</dd></div>
+                            <div><dt>取貨</dt><dd>可指定，至少 5 天後</dd></div>
+                        </dl>
+                    </div>
 
-                <!-- 手機版單欄斷點（≤600px）改成左右兩欄：左邊 Project.CD 品牌資訊，右邊
-                     更多連結（社群帳號＋音效開關共用同一組 icon 視覺語言，標題不再叫
-                     「關注我們」——音效開關不是社群帳號，用那個標題語意不準確；常見問題
-                     維持左欄文字連結，不併進這裡；聯繫我們／官方信箱兩行已依需求拿掉，
-                     聯繫我們改由導覽列的聯繫圖示提供入口）。兩個 .footer-section 是
-                     .footer-container 的直接子元素，沒有額外包裝 <div>＋display:contents
-                     ——那個做法在 Safari 上有名的相容性問題（清單樣式、連結顏色、grid
-                     定位全部會跑掉） -->
-                <div class="footer-section">
-                    <h3 class="footer-title">更多連結</h3>
-                    <!-- 6顆icon排列（LINE+YouTube+Facebook／Instagram+Game+虛擬大樓），
-                         配合 style.css 手機版 .footer-social 的 max-width 讓 flex-wrap
-                         自動換行 -->
-                    <div class="footer-social">
-                        <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" class="social-line" aria-label="LINE"><i class="fa-brands fa-line" aria-hidden="true"></i></a>
-                        <a href="#" class="social-yt" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-                        <a href="#" class="social-fb" aria-label="Facebook"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
-                        <a href="#" class="social-ig" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                        <!-- 遊戲入口目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
-                        <a href="../project-cd-playground/index.html" class="social-game" aria-label="Game"><i class="fa-solid fa-gamepad" aria-hidden="true"></i></a>
-                        <!-- Project.CD 咖啡大樓 3D 模型，放在 building/ 資料夾（從 Claude 成品搬進來，
-                             GPT 與 Claude 共同編輯這一份）。天氣「預報」讀 building/weather.json，
-                             不會自動更新，預報時段過了就顯示晴天 -->
-                        <a href="#virtual-building" class="social-building" aria-label="虛擬大樓" title="Project.CD 咖啡大樓"><i class="fa-solid fa-building" aria-hidden="true"></i></a>
+                    <nav class="site-footer-col" aria-labelledby="site-footer-help-title">
+                        <h2 class="site-footer-heading" id="site-footer-help-title">購物說明</h2>
+                        <ul class="site-footer-links">
+                            <li><a href="#" id="footer-link-faq">常見問題</a></li>
+                            <li><a href="#" class="policy-link" data-policy="returns">退換貨說明</a></li>
+                            <li><a href="#" class="policy-link" data-policy="terms">服務條款</a></li>
+                            <li><a href="#" class="policy-link" data-policy="privacy">隱私權政策</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="site-footer-col">
+                        <h2 class="site-footer-heading">追蹤我們</h2>
+                        <div class="site-footer-social">
+                            <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" aria-label="LINE"><i class="fa-brands fa-line" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="footer-bottom">
-                <p>&copy; 2026 Project.CD. All rights reserved.</p>
+                <div class="site-footer-bottom">
+                    <p>&copy; 2026 Project.CD</p>
+                    <!-- 遊戲入口目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
+                    <a href="../project-cd-playground/index.html" class="site-footer-pill"><i class="fa-solid fa-gamepad" aria-hidden="true"></i>小遊戲</a>
+                </div>
             </div>
         </footer>
     </div>

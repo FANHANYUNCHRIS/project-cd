@@ -7309,3 +7309,117 @@ a.faq-card {
 @media (prefers-reduced-motion: reduce) {
     .store-direct-action { transition: none; }
 }
+
+/* =========================================
+   2026-11 頁尾改版（設計稿：頁尾設計稿）
+   商城回到跟其他主題一樣的滿版畫面；頁尾是接在後面的一段黑底收尾，
+   不撐滿畫面，捲到底時停在「商城下半部＋頁尾」（scroll-snap-align:end）。
+   頁尾不交給 navObserver 觀察：它永遠在畫面下半部，LOGO 所在的上方
+   仍是白色的商城，不需要切換深淺。舊的 .footer / .footer-* 規則已不再使用。
+   ========================================= */
+.shop-footer-screen { display: block; scroll-snap-align: none; }
+#shop.shopping-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    justify-content: center;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.site-footer {
+    background: var(--ink);
+    color: var(--white);
+    padding: var(--sp-16) var(--page-space-inline) var(--sp-8);
+    scroll-snap-align: end;
+}
+.site-footer-inner {
+    width: 100%;
+    max-width: var(--page-content-max);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-12);
+}
+.site-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--sp-12);
+}
+.site-footer-brand { display: flex; flex-direction: column; gap: var(--sp-5); }
+.site-footer-logo {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+.site-footer-facts { margin: 0; display: flex; flex-direction: column; gap: var(--sp-2); font-size: var(--fs-small); }
+.site-footer-facts div { display: flex; gap: var(--sp-6); }
+.site-footer-facts dt { color: rgba(255, 255, 255, 0.62); min-width: 2.5em; }
+.site-footer-facts dd { margin: 0; color: rgba(255, 255, 255, 0.92); }
+.site-footer-col { display: flex; flex-direction: column; gap: var(--sp-4); }
+.site-footer-heading {
+    margin: 0;
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.62);
+}
+.site-footer-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-1); }
+.site-footer-links a {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+}
+.site-footer-links a:hover { color: var(--white); text-decoration: underline; text-underline-offset: 4px; }
+.site-footer-social { display: flex; gap: var(--sp-2); }
+.site-footer-social a,
+.site-footer-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: 100px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.45s cubic-bezier(.34, 1.56, .64, 1);
+}
+.site-footer-social a { width: 44px; font-size: 18px; }
+.site-footer-pill { gap: var(--sp-2); padding-inline: var(--sp-4); font-size: 13px; }
+.site-footer-social a:hover,
+.site-footer-pill:hover { background: rgba(255, 255, 255, 0.1); color: var(--white); }
+.site-footer-social a:active,
+.site-footer-pill:active { transform: scale(0.96); }
+.site-footer a:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+.site-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-top: var(--sp-6);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.site-footer-bottom p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.62); }
+
+@media (max-width: 1024px) {
+    #shop.shopping-section { min-height: 0; scroll-snap-align: none; }
+    .site-footer {
+        padding: var(--sp-10) var(--sp-4) calc(128px + env(safe-area-inset-bottom, 0px));
+    }
+    .site-footer-inner { gap: var(--sp-8); }
+    .site-footer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
+    .site-footer-brand { gap: var(--sp-3); }
+    .site-footer-logo { font-size: 26px; }
+    .site-footer-facts { flex-direction: row; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); }
+    .site-footer-facts div { gap: var(--sp-2); }
+    .site-footer-facts dt { min-width: 0; }
+    .site-footer-heading { display: none; }
+    .site-footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--sp-4); }
+    .site-footer-links a { min-height: 44px; }
+    .site-footer-bottom { padding-top: var(--sp-5); }
+}
