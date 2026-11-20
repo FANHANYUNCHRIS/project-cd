@@ -782,11 +782,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const policyData = {
         shipping: {
-            title: "購物與冷藏配送須知",
+            title: "取貨與保存須知",
             content: `
-                <p><strong>1. 配送方式：</strong>為確保甜點品質與口感，全品項皆採黑貓宅急便【全程低溫冷藏/冷凍】配送。</p>
-                <p><strong>2. 寄送時間：</strong>完成付款後約 2-4 個工作天內出貨，週日不提供收送貨服務。</p>
-                <p><strong>3. 運費說明：</strong>全館消費滿 NT$ 2,500 即享免運優惠，未達門檻冷凍/冷藏運費為 NT$ 220。</p>
+                <p><strong>1. 取貨方式：</strong>官網訂單一律寄到超商，取貨時付款（超商取貨付款）。</p>
+                <p><strong>2. 取貨日期：</strong>下單時可以指定取貨日期，最早為下單後 5 天；每週一公休，不提供週一取貨。</p>
+                <p><strong>3. 保存方式：</strong>甜點為新鮮手工現做、無添加防腐劑，取貨後請盡快冷藏，並於期限內享用完畢。</p>
             `
         },
         returns: {
