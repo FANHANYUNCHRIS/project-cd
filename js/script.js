@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileQuote: '「數據與匠心」',
                 bio: '武裝神姬對品質近乎苛求：食材只要有一絲落差就直接退回，任何新品上市前，都必須先通過十輪盲測才准放行。她相信真正的浪漫不是天馬行空的靈感，而是把每個微小細節都做到位的紀律，是這間店最後、也最嚴格的把關者。',
                 avatar: 'images/staff01.jpg',
-                portrait: 'images/staff01-nobg.png'
+                portrait: 'images/staff01-nobg.webp'
             },
             {
                 name: '強襲魔女',

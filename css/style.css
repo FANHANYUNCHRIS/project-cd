@@ -113,29 +113,6 @@
    液態玻璃系統：全站共用的核心元件
    ========================================= */
 
-/* 按鈕：唯一容許上色的地方。垂直漸層上亮下深＋頂部高光帶，模擬玻璃管被打光。
-   文字色用 92% 白（非純白），符合玻璃材質文字對比規則 */
-.liquid-glass-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 28px;
-    border-radius: 100px;
-    color: rgba(255, 255, 255, 0.92);
-    font-weight: 700;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    cursor: pointer;
-    border: none;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.liquid-glass-btn:hover {
-    transform: translateY(-2px);
-}
-
 /* 登出是低頻、次要的操作，不該是整個彈窗裡最搶眼的東西——
    拿掉硬撐滿版寬度的設定，改成內容自適應寬度、置中，份量降到跟它的重要性相符。
    原本借用全站液態玻璃膠囊按鈕（.liquid-glass-btn/.lg-btn-black），但那是
@@ -162,17 +139,6 @@
 
 .account-logout-btn:hover {
     background-color: var(--ink-hover);
-}
-
-.lg-btn-black {
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22%),
-        linear-gradient(180deg, #4a4a4e 0%, #202024 48%, #050506 100%);
-    box-shadow:
-        inset 0 1.5px 1px var(--glass-edge-mid),
-        inset 0 -8px 16px -9px rgba(0, 0, 0, 0.7),
-        0 14px 26px -10px rgba(0, 0, 0, 0.45),
-        0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* 先前用 overflow-x:hidden + overscroll-behavior-y:none 修手機版左右
@@ -400,11 +366,6 @@ body {
     border-radius: 100px;
     padding: 4px;
     box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.16);
-}
-
-/* 手機版分頁列專用的滑動泡泡，桌機版膠囊不需要 */
-.nav-tab-indicator-wrap {
-    display: none;
 }
 
 .nav-links a {
@@ -864,93 +825,6 @@ body {
 /* =========================================
    7. 產品區塊 (滿版區塊，內容固定高度置中，左右維持跟品牌/商城一致的標準留白)
    ========================================= */
-/* 一個產品一個滿版畫面，整張商品照片鋪滿螢幕當背景，跟首頁 Hero 同一套
-   全螢幕沉浸式語言（不是裝在卡片裡）。改成 class 選擇器而不是 #products
-   id：js/script.js 的 initProductPanels() 依 productsData 動態產生多個
-   <section>，只有第一個維持 id="products"（給導覽列/章節小圓點定位用，
-   見該函式的註解），其餘的 id 各自不同，版面樣式要套用在全部產品畫面上。
-   cursor:pointer 對應整個 section 可點開商品詳情彈窗（見 initProductPanels
-   的 click 綁定） */
-.product-fullscreen-section {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--paper);
-    cursor: pointer;
-}
-
-/* 深底只在這裡覆寫全站標題預設的 --ink，才看得見疊在商品照上的「產品介紹」 */
-.product-fullscreen-section .section-title {
-    color: var(--paper);
-}
-
-/* 照片本身鋪滿整個 section 當背景層——--ink 是照片載入前／讀取失敗的
-   備用底色，疊一層固定的半透明黑（::before）確保文字在任何照片明暗下
-   都維持可讀對比，同樣做法先前用在已淘汰的首頁背景影片 .hero-video-bg */
-.product-fullscreen-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background-color: var(--ink);
-    background-size: cover;
-    background-position: center;
-}
-
-.product-fullscreen-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-}
-
-/* 照片尚未上傳時的佔位圖示，跟商品彈窗大圖 .gallery-main.img-fallback
-   同一套語言（深底＋白色 fa-image 圖示，取代瀏覽器預設裂圖示）——底色
-   已經是 --ink，只需要再疊上置中的圖示 */
-.product-fullscreen-bg.img-fallback::after {
-    content: "\f03e";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    font-size: 64px;
-    color: var(--white);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.product-fullscreen-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-3);
-}
-
-.product-fullscreen-name {
-    font-size: var(--fs-h1);
-    font-weight: 900;
-    margin: 0;
-}
-
-.product-fullscreen-meta {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-2);
-    font-size: var(--fs-lead);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-.product-fullscreen-qty {
-    color: var(--paper-soft);
-    font-size: var(--fs-body);
-    font-weight: 400;
-}
 
 /* =========================================
    7b. 品牌團隊人物切換器
@@ -1533,12 +1407,6 @@ body {
     height: 8px;
     border-radius: 50%;
     background-color: #006600;
-}
-
-.line-tag {
-    font-size: var(--fs-caption);
-    font-family: 'Inter', monospace;
-    color: var(--ink);
 }
 
 .line-title {
@@ -2338,231 +2206,9 @@ a.faq-card {
     margin-bottom: var(--sp-16);
 }
 
-.shop-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 32px;
-    max-width: 900px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.shop-glass-card {
-    flex: 1;
-    max-width: 260px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 48px 24px;
-    text-decoration: none;
-    color: var(--ink);
-    background-color: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border-top: 1px solid var(--glass-edge-light);
-    border-left: 1px solid var(--glass-edge-mid);
-    border-right: 1px solid var(--glass-edge-dark);
-    border-bottom: 1px solid var(--glass-edge-dark);
-    border-radius: 20px;
-    box-shadow:
-        0 12px 32px -10px rgba(22, 22, 26, 0.32),
-        inset 0 1px 1px var(--glass-edge-light);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-}
-
-.shop-glass-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--brand);
-    box-shadow:
-        0 18px 40px -12px rgba(22, 22, 26, 0.4),
-        inset 0 1px 1px var(--glass-edge-light);
-}
-
-.shop-link-icon {
-    font-size: var(--fs-h2);
-    color: var(--brand);
-    opacity: 0.9;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.shop-glass-card:hover .shop-link-icon {
-    opacity: 1;
-    transform: translateY(-3px) scale(1.08);
-}
-
-.shop-link-name {
-    font-size: var(--fs-lead);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--brand);
-}
-
-.shop-link-arrow {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: var(--fs-caption);
-    letter-spacing: 1px;
-    color: var(--brand);
-    opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.shop-glass-card:hover .shop-link-arrow {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 /* =========================================
    10. Footer 頁尾區塊
    ========================================= */
-/* padding 從 48px/24px 收到 32px/16px，理由同上面 .shopping-section 的
-   註解——矮一點的桌機視窗會把這裡（含版權列）擠出可視範圍。
-   曾經加過 flex-grow:1 想讓深色背景撐滿面板剩餘高度，但拿掉
-   .shop-footer-screen 的 min-height:100vh 之後這裡不會再有「剩餘高度」
-   需要撐，footer 照自己內容的高度顯示就好——維持 flex-shrink:0 純粹是
-   避免這個面板萬一空間不夠時 footer 被壓扁 */
-.footer {
-    flex-shrink: 0;
-    background-color: var(--white);
-    color: var(--ink);
-    padding: 32px 5% 16px;
-    border-top: 1px solid var(--footer-border);
-}
-
-/* 現在只剩兩個區塊（Project.CD 品牌資訊／關注我們的 icon 列，原本「探索更多」
-   已經拆掉併入關注我們）。兩欄都用 max-content——不是 1fr，1fr 會把只有 6 顆
-   icon 的那欄硬拉滿跟品牌資訊欄一樣寬。用 justify-content:space-evenly 讓
-   「容器左邊到第一欄」「兩欄中間」「第二欄到容器右邊」這三段距離完全相等
-   （space-between 只會處理欄位「之間」，兩側會沒有留白；space-evenly 是
-   把左右兩側加進來一起平均分配，才是真正的三段等距）。不能同時保留固定的
-   gap 數值——gap 是欄位間的最小保底距離，會疊加在 space-evenly 算出來的
-   間距之上，導致中間那段比左右兩段多出 gap 的量，三段就不等長了，所以
-   間距完全交給 space-evenly 決定 */
-.footer-container {
-    display: grid;
-    grid-template-columns: max-content max-content;
-    justify-content: space-evenly;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--footer-border);
-}
-
-.footer-section {
-    min-width: 0;
-}
-
-.footer-title {
-    color: var(--ink);
-    font-size: var(--fs-h4);
-    font-weight: bold;
-    margin-bottom: var(--sp-4);
-}
-
-.footer-section p {
-    margin-bottom: var(--sp-2);
-    font-size: var(--fs-small);
-    line-height: 1.6;
-    white-space: nowrap;
-}
-
-/* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
-   寬度都不一樣（問號、定位針、時鐘、信封形狀寬窄互異），左邊沒對齊、後面
-   文字起始點也跟著歪一截——用固定寬度的 inline-flex 方框置中對齊，圖示
-   跟文字才會每一行都從同一個 x 座標開始，這是跟 .footer-social a 一樣的
-   固定尺寸方框對齊手法 */
-.footer-section i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    margin-right: 8px;
-    color: var(--ink-soft);
-}
-
-.footer-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-/* 每個 <li> 各自的間距要跟 .footer-section p 的 margin-bottom 一致，
-   不能只在整個清單外面包一個 margin——那樣清單內部兩行連結會擠在一起，
-   跟下面地址/時間/信箱這幾個 <p> 的間距對不齊，排版看起來忽鬆忽緊 */
-.footer-links li {
-    margin-bottom: var(--sp-2);
-}
-
-.footer-links a {
-    color: var(--ink);
-    text-decoration: none;
-    font-size: var(--fs-small);
-    transition: color 0.2s ease-in-out;
-}
-
-.footer-links a:hover {
-    text-decoration: underline;
-}
-
-/* 電腦版排成 2 欄（目前 6 顆剛好排 3 排，2/2/2），用 grid 而不是
-   flex-wrap+固定容器寬度去湊，欄數不會因為圖示總數變動而跑掉 */
-/* 觸控範圍 44px（iOS HIG 最小觸控目標），間距縮成 --sp-1，
-   圖示中心距維持原本的 48px（32+16 → 44+4），視覺排列不變 */
-.footer-social {
-    display: grid;
-    grid-template-columns: repeat(3, 44px);
-    gap: var(--sp-1);
-}
-
-.footer-social a {
-    color: var(--ink);
-    font-size: 24px;
-    text-decoration: none;
-    /* Font Awesome 圖示不是正方形字符，同樣 font-size 底下每個 icon 實際渲染
-       寬度都不一樣（量過 LINE 32px、YouTube 35px、Instagram 29px…），
-       圖示本身大小看起來就會不一致，用固定的 44×44px 方框置中對齊，
-       每一顆才會是真正一樣大，也達到 iOS HIG 44pt 最小觸控目標 */
-    width: 44px;
-    height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease-in-out;
-}
-
-.footer-social a:hover {
-    transform: translateY(-3px);
-}
-
-.footer-social a.social-line:hover i { color: #00C300; }
-.footer-social a.social-fb:hover i { color: #1877F2; }
-/* 原本用 background-clip:text 把 IG 官方漸層裁進圖示文字裡，這個技巧本身
-   在不同瀏覽器/情境下不夠穩定，使用者反應了兩次顏色顯示不完整，不再修補
-   這個技巧，直接換成 IG 官方單一代表色（#E4405F），穩定不會有裁切不完整
-   的問題 */
-.footer-social a.social-ig:hover i {
-    color: #E4405F;
-}
-.footer-social a.social-yt:hover i { color: #FF0000; }
-
-/* Game/Education 不是外部社群平台，沒有官方品牌色可以照抄，各自配一個跟
-   主題語意相關、彼此可明顯區分的顏色（使用者指定，已回頭同步進設計系統
-   文件的功能色例外章節，見該文件 01b）：Game 紫、Education 金 */
-.footer-social a.social-game:hover i { color: #9b6bf2; }
-.footer-social a.social-edu:hover i { color: #d4af37; }
-/* 3D 咖啡大樓：同樣沒有官方品牌色，配一個跟紫、金可明顯區分的青色 */
-.footer-social a.social-building:hover i { color: #4fb3bf; }
-
-.footer-bottom {
-    text-align: center;
-    padding-top: var(--sp-3);
-    font-size: var(--fs-caption);
-    color: var(--ink);
-}
 
 /* =========================================
    10b. 右側章節導覽小圓點
@@ -2701,22 +2347,6 @@ a.faq-card {
    11. 導覽列音樂/音效控制（原本是右下角浮動圓鈕，改收進導覽列右側工具區，
    跟 account/contact/cart 用同一套 nav-icon-btn 樣式，不用再另外算安全距離）
    ========================================= */
-/* 手機版還在用：漢堡選單裡的音樂/音效展開按鈕，跟桌機版是各自獨立的元件 */
-.btn-circular {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background-color: var(--white);
-    color: var(--ink);
-    border: 1px solid rgba(22, 22, 26, 0.08);
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 1px 2px rgba(22, 22, 26, 0.04), 0 8px 24px -12px rgba(22, 22, 26, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 .nav-left-group {
     display: flex;
@@ -2731,7 +2361,6 @@ a.faq-card {
     background-color: rgba(142, 142, 147, 0.5);
     flex: 0 0 1px;
 }
-
 
 /* =========================================
    12. 彈窗通用 (Modals)
@@ -3016,7 +2645,6 @@ a.faq-card {
     border-color: var(--ink) !important;
     box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.08);
 }
-
 
 .auth-forgot-link {
     display: block;
@@ -3362,43 +2990,6 @@ a.faq-card {
     margin: 0 0 var(--sp-4);
     padding-bottom: var(--sp-3);
     border-bottom: 1px solid var(--ink-line);
-}
-
-.account-profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: var(--sp-5);
-    padding-bottom: var(--sp-5);
-    border-bottom: 1px solid var(--ink-line);
-}
-
-/* 頭像旁邊直接放大名字，填滿原本頭像右側那片空白，也讓姓名不用再獨立佔一張滿版卡片 */
-.account-profile-header-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-}
-
-.account-avatar {
-    position: relative;
-    width: 92px;
-    height: 92px;
-    border-radius: 26px;
-    background-color: var(--ink);
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    box-shadow: 0 6px 16px rgba(22, 22, 26, 0.22);
-}
-
-.account-avatar svg {
-    width: 48px;
-    height: 48px;
 }
 
 /* 仿 iOS 設定頁的清單列：標籤在左、值在右、列與列之間用極淡的分隔線 */
@@ -4137,83 +3728,6 @@ a.faq-card {
     background-color: rgba(29, 29, 31, 0.05);
 }
 
-/* 桌機版改滿版出血圖後縮圖列拿掉了（見 .gallery-thumbs），左右切換箭頭
-   跟手機版共用同一套疊在圖片上的做法，不用再區分斷點各顯示各的 */
-/* 使用者指定拿掉箭頭的深底圓框，只留白色圖示——沒有底托之後，靠
-   drop-shadow（不是純色 text-shadow，才能貼合圖示形狀）維持在淺色
-   照片上的可讀性，不然白色圖示疊到白色/淺色食材照片會整個糊掉 */
-/* 44px＝iOS HIG 最小觸控目標（跟 .qty-btn 同一條規則），原本 36px 漏套用 */
-.gallery-nav-btn {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background-color: transparent;
-    color: var(--white);
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 2;
-}
-
-.gallery-nav-prev { left: var(--sp-3); }
-.gallery-nav-next { right: var(--sp-3); }
-
-/* 底部圓點指示器，跟 iOS 相簿/輪播的 Page Control 同一套語言：目前這張
-   用實心＋加寬的橢圓表示，其餘用半透明小圓點——桌機版滿版出血圖同樣
-   靠這排圓點切換，不再是手機版專屬 */
-/* 疊在圖片內部、貼底置中。使用者指定不要深底托盤，改靠 drop-shadow
-   維持在淺色照片上的可讀性——圓點顏色也改用白色系（見下面
-   .gallery-dot::before），不是疊在白色頁面背景上的深灰點 */
-.gallery-dots {
-    display: flex;
-    position: absolute;
-    bottom: var(--sp-3);
-    left: 50%;
-    transform: translateX(-50%);
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    z-index: 2;
-}
-
-/* 圓點本身視覺上維持 iOS Page Control 的細緻尺寸，但按鈕的實際可點區域
-   用 flex 置中撐大到 44px（iOS HIG 最小觸控目標）——視覺小、熱區大，
-   避免真的做成 6px 的觸控目標 */
-.gallery-dot {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-.gallery-dot::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.75);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    transition: all 0.25s ease;
-}
-
-.gallery-dot.active::before {
-    width: 18px;
-    border-radius: 3px;
-    background-color: var(--white);
-}
-
 .gallery-main img {
     width: 100%;
     height: 100%;
@@ -4221,21 +3735,18 @@ a.faq-card {
 }
 
 /* 產品圖片尚未上傳時的優雅預留樣式 (取代瀏覽器預設裂圖示) */
-.gallery-main.img-fallback,
-.thumb-item.img-fallback {
+.gallery-main.img-fallback {
     background-color: var(--ink);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.gallery-main.img-fallback img,
-.thumb-item.img-fallback img {
+.gallery-main.img-fallback img {
     display: none;
 }
 
-.gallery-main.img-fallback::after,
-.thumb-item.img-fallback::after {
+.gallery-main.img-fallback::after {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     content: "\f03e";
@@ -4245,38 +3756,6 @@ a.faq-card {
 }
 
 .gallery-main.img-fallback::after { font-size: 32px; }
-.thumb-item.img-fallback::after { font-size: 14px; }
-
-/* 縮圖列改用滿版出血圖 + 疊圖箭頭/圓點（.gallery-nav-btn／.gallery-dots）
-   切換，兩種切圖方式並存會互相干擾，縮圖列直接收掉不顯示；script.js
-   還是照常把縮圖塞進 #product-modal-thumbs（沒有壞處，只是這個容器
-   一直是隱藏的），不用連動改 JS */
-.gallery-thumbs {
-    display: none;
-}
-
-.thumb-item {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s ease;
-    opacity: 0.65;
-}
-
-.thumb-item.active,
-.thumb-item:hover {
-    border-color: var(--ink);
-    opacity: 1;
-}
-
-.thumb-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 /* 跟左欄圖片 55/45（見 .product-gallery），容器本身的 padding 拿掉了（見
    .product-modal-box），這裡補上自己的留白：上緣 --sp-16(64px) 對齊關閉鍵
@@ -4601,23 +4080,6 @@ a.faq-card {
     /* Hero 是品牌視覺印象區塊，手機/平板仍保留滿版沉浸感；其餘區塊改為內容自適應高度 */
     .hero-banner.fullscreen-section {
         min-height: 100vh;
-    }
-
-    /* 手機版分頁列是 position:fixed，浮在頁尾內容上方，不是真的把頁面往上推——
-       這裡的 padding-bottom 要蓋過分頁列實際佔用的高度，文字才不會貼著分頁列。
-       分頁列本身離螢幕底部 16px + 藥丸高度約 60px（8px 內距×2 + 44px 圓鈕）
-       ＝76px，原本 80px 只夠貼著蓋過去，幾乎沒有呼吸空間，加上 --sp-6(24px)
-       的緩衝變成 104px */
-    .footer { padding-bottom: 104px; }
-
-    .footer-container {
-        gap: 32px;
-    }
-
-    /* 手機/平板欄位變窄，地址/營業時間/信箱這幾行原本禁止換行是給桌機用的，
-       這裡窄到會整行溢出、疊到右邊欄位文字上面，改回正常換行 */
-    .footer-section p {
-        white-space: normal;
     }
 
     /* 手機/平板模式隱藏導覽列裡桌機專用的分隔線跟章節導覽點 */
@@ -5103,21 +4565,6 @@ a.faq-card {
         padding: 80px 24px 60px;
     }
 
-    .shop-links {
-        flex-direction: column;
-        gap: var(--sp-5);
-    }
-
-    .shop-glass-card {
-        max-width: 100%;
-        width: 100%;
-        padding: var(--sp-8) var(--sp-6);
-    }
-
-    .shop-glass-card:hover {
-        transform: none;
-    }
-
     /* 使用者原本要求手機版商品彈窗完全不能捲動，後來確認改成「允許捲動、
        版面優先」——不用再靠 flex 把所有內容硬塞進 88vh，改回舒服的固定
        比例跟正常字級/間距。這裡補回手機版直向堆疊（圖片在上、文字在下）
@@ -5264,32 +4711,20 @@ a.faq-card {
 .btn-modal-cta-secondary:active,
 .btn-google-signin:active,
 .btn-line-cta:active,
-.btn-circular:active,
 .qty-btn:active,
 .nav-icon-btn:active,
 .nav-icon-link:active,
-.footer-social a:active,
 .team-nav-btn:active,
 .team-avatar-item:active,
-.thumb-item:active,
 .auth-checkbox-mark:active,
 .auth-tab:active,
 .auth-forgot-link:active,
 .policy-link:active,
 .section-dot:active,
 .scroll-down-indicator:active,
-.faq-card:active,
-.shop-glass-card:active {
+.faq-card:active {
     transform: scale(0.96);
     transition-duration: 0.08s !important;
-}
-
-/* 可點的是整個 100vh 滿版畫面，直接整塊 scale(0.96) 會讓畫面邊緣露出
-   後面區塊的顏色，觀感突兀；改成只縮放疊在上面的文字內容，一樣有「按下去了」
-   的觸覺回饋，不影響底下滿版商品照片本身 */
-.product-fullscreen-section:active .product-fullscreen-content {
-    transform: scale(0.96);
-    transition: transform 0.08s;
 }
 
 /* 這幾個本來就有自己的 transform（位移/縮放），按下去要疊加而不是蓋掉，
@@ -5309,170 +4744,6 @@ a.faq-card {
 /* translateY 系列的按鈕壓下去要保留位移，只加縮放會看起來像沒反應 */
 .btn-submit:hover:active {
     transform: translateY(-1px) scale(0.98);
-}
-
-/* 手機（非平板）寬度更窄，改成左右兩欄：左邊 Project.CD 品牌資訊（含常見問題
-   連結），右邊只剩關注我們一個區塊（6顆icon：社群4顆+Game/Education 2顆）。
-   跟桌機版一樣用 justify-content:space-evenly（見上面 .footer-container
-   基本規則的說明），讓容器左邊、兩欄中間、容器右邊三段留白等長，這裡不用
-   額外設 column-gap——設了固定 gap 會疊加在 space-evenly 算出來的間距上，
-   中間那段就會比兩側多出 gap 的量，三段變成不等長 */
-@media (max-width: 600px) {
-    /* align-items 維持 grid 預設的 stretch（不覆寫成 start）：兩欄內容行數
-       不一樣多（左欄6行文字、右欄4排icon），stretch 讓兩個 .footer-section
-       格子本身等高，兩欄底部對齊，不會一長一短；裡面的文字/icon 本身是
-       區塊內容，不會被 stretch 拉伸變形，只有格子外框等高，視覺安全 */
-    .footer-container {
-        text-align: left;
-    }
-
-    /* 左欄地址/時間/信箱這幾行文字一旦斷行會很難看，嚴禁換行；
-       常見問題連結文字也一樣不換行（本來就比地址/時間短，不會是這欄的
-       寬度瓶頸） */
-    .footer-section p,
-    .footer-links a {
-        white-space: nowrap;
-    }
-
-    /* 9 顆 icon 排成每排兩顆（LINE+YouTube／Facebook+Instagram／Game+Education／
-       常見問題+聯繫我們+音效開關，順序見 index.html 的排列），用 flex-wrap
-       讓它每兩顆自動換行——這是圖示排列常見做法，不是文字斷行，跟上面
-       「嚴禁換行」的地址/信箱不是同一回事。圖示現在固定 44px 見方
-       （觸控目標，見 .footer-social a），2 顆(44px)+1個間距(--sp-1=4px)=92px，
-       精確算好，不用再抓餘裕 */
-    /* 手機版改回 flex-wrap（不是電腦版的 3 欄 grid），窄螢幕排不下 3 顆，
-       固定寬度湊出每排 2 顆 */
-    .footer-social {
-        display: flex;
-        flex-wrap: wrap;
-        max-width: 92px;
-        /* column-gap 4px 是上面算好的 92px 寬度的一部分，動了兩顆 icon 會
-           塞不進一排。row-gap 設 0：觸控框已經是 44px，排與排的中心距
-           維持原本的 44px（32+12 → 44+0），右欄總高度不變，兩欄底部照樣對齊 */
-        column-gap: var(--sp-1);
-        row-gap: 0;
-    }
-
-    /* 左欄空間有限，時間/信箱這兩行的文字前綴（「營業時間：」「官方信箱：」）
-       拿掉，圖示本身已經夠表意，只留圖示+實際內容，騰出寬度給右欄 */
-    .footer-label-prefix {
-        display: none;
-    }
-
-    /* 三家商城原本在 1024px 斷點（平板也算進去）就整個改成直排、一次一張
-       滿版卡片；平板寬度夠，直排沒問題，但手機版擠成三張直立卡片要滑很久
-       才看完三家，改成一排三張並排——每張卡片本來就是 icon+文字直排堆疊
-       （.shop-glass-card 的 flex-direction:column），不需要橫向空間，適合
-       縮小塞進一排。連結底下「前往選購」箭頭文字平常靠 hover 才顯示
-       （opacity:0），觸控裝置本來就用不太到 hover，這裡直接收起來，
-       省下的垂直空間讓卡片可以再更緊湊 */
-    /* 三個圓形圖示磚用 flex:1 撐滿容器寬度（見 .shop-glass-card 的 flex:1），
-       中間沒有多餘空間讓 justify-content 分配，真正決定「左邊留白／圖示中間
-       間距／右邊留白」是否一致的是這裡的 gap 要不要跟 .shopping-section 的
-       左右內距（24px＝--sp-6）同一個值——原本 gap 只有 8px，遠比兩側 24px
-       內距窄，看起來三個間距不一樣，改成同樣的 --sp-6 才是真的一致 */
-    .shop-links {
-        flex-direction: row;
-        gap: var(--sp-6);
-    }
-
-    /* 手機版拿掉毛玻璃卡片的底色/邊框/陰影，改成單純的「圓形圖示+文字說明」
-       圖示磚（跟手機主畫面 app icon 的排列邏輯一樣），圓形本身才是視覺重點 */
-    .shop-glass-card {
-        gap: var(--sp-2);
-        padding: 0;
-        background: none;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        border: none;
-        box-shadow: none;
-    }
-
-    .shop-glass-card:hover {
-        box-shadow: none;
-    }
-
-    /* 拿掉圓形/圓角方形徽章的外框跟底色，只留純圖示（之後換成商家真實 LOGO
-       圖檔時就是乾淨的 LOGO 本身，不會多一圈邊框把它框住）。原本 92px 的
-       方框是配合徽章外框留的，拿掉外框後圖示看起來很小（字級只有24px，
-       方框大部分是看不見的空白），改成 --fs-display(48px) 讓圖示本身夠大 */
-    .shop-link-icon {
-        width: 100px;
-        height: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 64px;
-    }
-
-    .shop-link-name {
-        font-size: var(--fs-small);
-        text-align: center;
-    }
-
-    .shop-link-arrow {
-        display: none;
-    }
-}
-
-/* 第一款商品展示預覽 */
-.product-showcase {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr) 1fr;
-    align-items: center;
-    gap: var(--sp-10);
-    padding: 104px 8% 80px;
-    background: var(--surface-sunken);
-    color: var(--ink);
-}
-.product-showcase-eyebrow {
-    margin: 0 0 var(--sp-6);
-    font: 500 var(--fs-caption) 'Inter', sans-serif;
-    letter-spacing: 0.12em;
-    color: var(--ink-soft);
-}
-.product-info-rail { align-self: center; }
-.product-info-tabs { display: flex; border-bottom: 1px solid var(--ink-line); }
-.product-info-tabs button {
-    flex: 1;
-    min-height: 44px;
-    padding: var(--sp-2);
-    border: 0;
-    border-bottom: 2px solid transparent;
-    background: transparent;
-    color: var(--ink-soft);
-    font: inherit;
-    font-size: var(--fs-small);
-    cursor: pointer;
-}
-.product-info-tabs button[aria-selected="true"] { border-bottom-color: var(--ink); color: var(--ink); font-weight: 700; }
-.product-info-panel { min-height: 240px; padding-top: var(--sp-6); font-size: var(--fs-body); line-height: 1.8; }
-.product-info-panel p { margin: 0 0 var(--sp-4); }
-.product-info-panel ul { margin: 0; padding-left: var(--sp-5); }
-.product-info-panel li + li { margin-top: var(--sp-3); }
-.product-info-note { font-size: var(--fs-caption); color: var(--ink-soft); }
-.product-label-table { margin: 0 0 var(--sp-4); }
-.product-label-table div { display: flex; gap: var(--sp-4); padding: var(--sp-2) 0; border-bottom: 1px solid var(--ink-line); }
-.product-label-table dt { flex: 0 0 4em; color: var(--ink-soft); }
-.product-label-table dd { margin: 0; }
-.product-showcase-main { text-align: center; min-width: 0; }
-.product-showcase-photo { width: 100%; height: min(34vh, 320px); display: grid; place-items: center; margin-bottom: var(--sp-6); }
-.product-showcase-photo img { width: 100%; height: 100%; object-fit: contain; }
-.product-showcase-photo img[hidden] { display: none; }
-.product-photo-placeholder { color: var(--ink-soft); font-size: var(--fs-small); }
-.product-showcase-main h2 { margin: 0 0 var(--sp-3); font-size: var(--fs-h1); }
-.product-showcase-summary { max-width: 400px; margin: 0 auto var(--sp-5); font-size: var(--fs-small); line-height: 1.8; color: var(--ink-soft); }
-.product-showcase-price { display: flex; justify-content: center; gap: var(--sp-3); margin: 0 0 var(--sp-6); font-size: var(--fs-body); }
-.product-showcase-price strong { font-size: var(--fs-lead); }
-.product-showcase-cta { min-height: 44px; padding: var(--sp-3) var(--sp-6); border: 0; border-radius: 100px; background: var(--ink); color: var(--paper); font: inherit; cursor: pointer; }
-.product-showcase-cta span { margin-left: var(--sp-4); }
-@media (max-width: 1024px) {
-    .product-showcase { grid-template-columns: 1fr; gap: var(--sp-8); padding: 104px var(--sp-6) 96px; height: auto; min-height: 100svh; }
-    .product-showcase-main { grid-row: 1; }
-    .product-info-rail { width: 100%; max-width: 480px; margin: auto; }
-    .product-info-panel { min-height: 0; }
-    .product-showcase-photo { height: 28svh; }
 }
 
 /* 手機底部分頁：浮起圓鈕與可移動的透明圓弧凹槽。 */
@@ -5520,26 +4791,12 @@ a.faq-card {
         transform: translateY(-28px) !important;
     }
     .nav-links .nav-text { display: none !important; }
-    .mobile-tab-label {
-        position: absolute;
-        top: 48px;
-        left: 50%;
-        transform: translateX(-50%);
-        white-space: nowrap;
-        color: var(--ink);
-        font-size: var(--fs-caption);
-        font-weight: 500;
-        line-height: 1;
-        pointer-events: none;
-    }
-    .mobile-tab-selected .mobile-tab-label { top: 72px; }
+
     .nav-links .cart-badge { background: var(--ink); color: var(--white); }
     .nav-links :is(a, button):focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-    .footer { padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px)); }
+
 }
-@media (min-width: 1025px) {
-    .mobile-tab-label { display: none; }
-}
+
 @media (prefers-reduced-motion: reduce) {
     .nav-links a,
     .nav-links .nav-more-btn { transition: none; }
@@ -5566,8 +4823,7 @@ a.faq-card {
         border-radius: 50%;
     }
     .nav-links .nav-icon-mobile { font-size: 28px; font-weight: 300; }
-    .mobile-tab-label { top: 45px; font-size: 12px; font-weight: 400; }
-    .mobile-tab-selected .mobile-tab-label { top: 83px; }
+
     .nav-links .nav-icon-mobile[hidden] { display: none !important; }
 }
 
@@ -5583,158 +4839,6 @@ a.faq-card {
     .nav-links li:nth-child(2) .mobile-tab-svg,
     .nav-links .nav-cart-tab-wrap .mobile-tab-svg { transform: scale(1.05); }
     .nav-links .nav-account-tab-wrap .mobile-tab-svg { transform: scale(1.1); }
-}
-
-/* 遊戲道具展示：淡網格、瞄準框與三張商品圖切換。 */
-.product-showcase {
-    background-color: var(--surface-sunken);
-    background-image: linear-gradient(var(--ink-line) 1px, transparent 1px), linear-gradient(90deg, var(--ink-line) 1px, transparent 1px);
-    background-size: 64px 64px;
-    background-blend-mode: soft-light;
-}
-.product-info-rail { border: 1px solid var(--ink-line); padding: var(--sp-6); background: var(--surface-sunken); }
-.product-showcase-main > .product-showcase-eyebrow { font-size: var(--fs-caption); }
-.product-showcase-photo {
-    position: relative;
-    margin-bottom: 0;
-    background: radial-gradient(ellipse at center, var(--white), transparent 70%);
-    border: 1px solid var(--ink-line);
-    border-radius: 4px;
-}
-.product-showcase-photo::before,
-.product-showcase-photo::after { content: ''; position: absolute; width: 24px; height: 24px; pointer-events: none; }
-.product-showcase-photo::before { top: -1px; left: -1px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); }
-.product-showcase-photo::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--ink); border-right: 2px solid var(--ink); }
-.product-view-index { position: absolute; left: 16px; top: 12px; font: 500 12px 'Inter',sans-serif; color: var(--ink-soft); }
-.product-photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.product-photo-placeholder[hidden] { display: none; }
-.product-photo-placeholder svg { width: 90%; height: 80%; }
-.product-photo-placeholder small { font-size: 12px; }
-.product-image-dots { display: flex; justify-content: center; margin: var(--sp-2) 0 var(--sp-4); }
-.product-image-dots button { display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; }
-.product-image-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); opacity: .35; }
-.product-image-dots button[aria-pressed="true"] span { opacity: 1; outline: 1px solid var(--ink); outline-offset: 4px; }
-.product-image-dots button:focus-visible { outline: 2px solid var(--ink); border-radius: 4px; }
-.product-showcase-cta { border-radius: 4px; }
-
-/* 商品道具庫：沿用黑白 token 的遊戲裝備選單。 */
-.product-showcase {
-    grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr) minmax(240px, 1fr);
-    gap: var(--sp-8);
-    background-size: 32px 32px;
-}
-.product-showcase .product-showcase-eyebrow {
-    font-family: 'League Spartan', 'Noto Sans TC', sans-serif;
-    font-weight: 700;
-    letter-spacing: .12em;
-    line-height: 1.8;
-}
-.product-info-rail {
-    padding: var(--sp-6);
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink-line);
-}
-.product-info-rail > .product-showcase-eyebrow {
-    padding-bottom: var(--sp-4);
-    border-bottom: 1px solid var(--ink);
-}
-.product-info-tabs { gap: var(--sp-1); border: 0; }
-.product-info-tabs button { border: 1px solid var(--ink-line); font-size: var(--fs-caption); }
-.product-info-tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.product-showcase-main > .product-showcase-eyebrow { display: flex; justify-content: space-between; gap: var(--sp-4); text-align: left; }
-.product-showcase-photo {
-    height: min(48vh, 440px);
-    border-radius: 0;
-    background: radial-gradient(ellipse at center, var(--white) 0%, transparent 72%);
-    border: 1px solid var(--ink-line);
-}
-.product-showcase-photo::before,
-.product-showcase-photo::after { width: 40px; height: 40px; }
-.product-showcase-photo img { padding: var(--sp-8); }
-.product-view-index { font-family: monospace; letter-spacing: .12em; }
-.product-image-dots { gap: var(--sp-2); margin: var(--sp-4) 0 0; counter-reset: item-view; }
-.product-image-dots button {
-    counter-increment: item-view;
-    width: 48px;
-    border: 1px solid var(--ink-line);
-    color: var(--ink-soft);
-    font: 700 var(--fs-small) 'League Spartan', sans-serif;
-}
-.product-image-dots button::before { content: '0' counter(item-view); }
-.product-image-dots span { display: none; }
-.product-image-dots button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.product-loadout { padding-block: var(--sp-6); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink-line); }
-.product-loadout h2 { font-size: var(--fs-h2); margin-bottom: var(--sp-5); line-height: 1.4; }
-.product-loadout .product-showcase-summary { margin: 0 0 var(--sp-6); }
-.product-loadout .product-showcase-price { justify-content: flex-start; align-items: baseline; padding-top: var(--sp-5); border-top: 1px solid var(--ink-line); }
-.product-showcase-cta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    border-radius: 0;
-    min-height: 48px;
-    font-weight: 700;
-    border: 1px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink-line);
-}
-.product-showcase-cta:hover { background: var(--ink-hover); }
-.product-showcase-cta:active { transform: translate(2px, 2px); box-shadow: none; }
-.product-loadout-hint { margin-top: var(--sp-5); color: var(--ink-soft); font-size: var(--fs-caption); line-height: 1.8; }
-@media (max-width: 1200px) and (min-width: 1025px) {
-    .product-showcase { padding-inline: var(--sp-8); gap: var(--sp-5); }
-}
-@media (max-width: 1024px) {
-    .product-showcase { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
-    .product-showcase-main { grid-row: 1; width: 100%; max-width: 480px; margin-inline: auto; }
-    .product-showcase-photo { height: 32svh; min-height: 220px; }
-    .product-loadout { grid-row: 2; width: 100%; max-width: 480px; margin-inline: auto; }
-    .product-info-rail { grid-row: 3; }
-    .product-info-rail > .product-showcase-eyebrow { margin-bottom: var(--sp-4); }
-}
-
-/* 桌機商品三欄共用底部基準，整組仍置於畫面中央。 */
-@media (min-width: 1025px) {
-    .product-showcase {
-        align-content: center;
-        align-items: end;
-    }
-    .product-showcase > .product-info-rail {
-        align-self: end;
-    }
-}
-
-/* 圖片切換改為小黑點，省下的高度交給商品展示框。 */
-.product-image-dots {
-    gap: 0;
-    margin-top: 0;
-}
-.product-image-dots button,
-.product-image-dots button[aria-pressed="true"] {
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-}
-.product-image-dots button::before { content: none; }
-.product-image-dots span {
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--ink);
-    opacity: 1;
-}
-.product-image-dots button[aria-pressed="true"] span {
-    opacity: 1;
-    outline: 1px solid var(--ink);
-    outline-offset: 3px;
-}
-.product-showcase-photo { height: min(calc(48vh + 16px), 456px); }
-@media (max-width: 1024px) {
-    .product-showcase-photo { height: calc(32svh + 16px); }
 }
 
 /* 角色選擇介面，與商品道具庫共用網格、方框與黑白選取狀態。 */
@@ -5823,7 +4927,6 @@ a.faq-card {
 }
 .fullscreen-section,
 #brand,
-.product-showcase,
 #shop.shopping-section {
     padding: var(--page-space-block) var(--page-space-inline);
 }
@@ -5831,7 +4934,7 @@ a.faq-card {
     height: min(640px, calc(100svh - var(--page-space-block) * 2));
 }
 #shop.shopping-section { justify-content: center; }
-.footer { padding-inline: var(--page-space-inline); }
+
 @media (max-width: 1024px) {
     :root {
         --page-space-block: 96px;
@@ -5861,159 +4964,6 @@ a.faq-card {
         max-height: 140px;
         aspect-ratio: 1;
     }
-}
-
-/* 蛋黃酥獨立電競主題，沿用全站共用頁面留白。 */
-.product-esports {
-    --ink: #ebebec;
-    --ink-soft: #b8bcc7;
-    --ink-line: rgba(235, 235, 236, .18);
-    --arena-accent: #c6f36b;
-    color: var(--ink);
-    background-color: #111318;
-    background-image: linear-gradient(rgba(235,235,236,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(235,235,236,.04) 1px, transparent 1px);
-    background-blend-mode: normal;
-}
-.product-esports .product-info-rail {
-    background: #191c23;
-    border-color: var(--ink-line);
-    border-top: 2px solid var(--arena-accent);
-    box-shadow: none;
-}
-.product-esports .product-showcase-eyebrow { color: var(--ink-soft); }
-.product-esports .product-showcase-main > .product-showcase-eyebrow span { color: var(--arena-accent); white-space: nowrap; }
-.product-esports .product-info-tabs button[aria-selected="true"] {
-    color: #111318;
-    background: var(--arena-accent);
-    border-color: var(--arena-accent);
-}
-.product-esports .product-showcase-photo {
-    isolation: isolate;
-    background: radial-gradient(ellipse at 50% 65%, rgba(198,243,107,.12), transparent 65%);
-    border-color: var(--ink-line);
-}
-.product-esports .product-showcase-photo::before,
-.product-esports .product-showcase-photo::after { border-color: var(--arena-accent); }
-.product-esports .product-photo-placeholder,
-.product-esports .product-showcase-photo img { position: relative; z-index: 1; }
-.product-esports .product-showcase-main { position: relative; }
-.product-esports .product-view-index { color: var(--ink-soft); }
-.product-esports .product-loadout {
-    padding: var(--sp-6);
-    background: #191c23;
-    border: 1px solid var(--ink-line);
-    border-top: 2px solid var(--arena-accent);
-}
-.product-esports .product-loadout h2 { font-size: var(--fs-h1); }
-.product-esports .product-showcase-price strong { color: var(--arena-accent); font-size: var(--fs-h2); }
-.product-esports .product-showcase-cta {
-    background: var(--arena-accent);
-    color: #111318;
-    border-color: var(--arena-accent);
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    box-shadow: none;
-}
-.product-esports .product-showcase-cta:hover { background: #d8ff92; }
-.product-esports .product-image-dots { width: max-content; margin-inline: auto; background: var(--paper); }
-.product-esports .product-image-dots span { background: #16161a; }
-.product-esports .product-image-dots button[aria-pressed="true"] span { outline-color: #16161a; }
-.product-esports :is(button, a):focus-visible { outline-color: var(--arena-accent); }
-@media (min-width: 1025px) {
-    .product-esports { grid-template-columns: minmax(240px, 1fr) minmax(0, 1.8fr) minmax(240px, 1fr); }
-}
-
-/* 第三款商品：精品型錄預告。 */
-.product-luxury {
-    --luxury-ink: #30291f;
-    --luxury-line: rgba(48,41,31,.2);
-    display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr);
-    grid-template-rows: auto 1fr auto;
-    gap: var(--sp-8) var(--sp-16);
-    background: #f6f2eb;
-    color: var(--luxury-ink);
-    min-height: 100svh;
-}
-.luxury-heading,
-.luxury-bottom {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    gap: var(--sp-6);
-    font: 500 var(--fs-caption)/1.8 'Inter', 'Noto Sans TC', sans-serif;
-    letter-spacing: .16em;
-}
-.luxury-heading { padding-bottom: var(--sp-5); border-bottom: 1px solid var(--luxury-line); }
-.luxury-bottom { padding-top: var(--sp-5); border-top: 1px solid var(--luxury-line); }
-.luxury-art {
-    position: relative;
-    min-width: 0;
-    min-height: 360px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #eae3d7;
-}
-.luxury-art svg { width: 100%; max-height: 52svh; }
-.luxury-art-caption { margin-top: var(--sp-8); font: italic var(--fs-h3) Georgia, serif; letter-spacing: .08em; }
-.luxury-art-note { padding: var(--sp-4); font-size: var(--fs-caption); color: #62594c; }
-.luxury-copy { align-self: center; padding-block: var(--sp-8); }
-.luxury-kicker { margin-bottom: var(--sp-8); font-size: var(--fs-caption); letter-spacing: .16em; line-height: 1.8; }
-.luxury-copy h2 { font-family: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif; font-size: var(--fs-display); font-weight: 400; letter-spacing: .12em; line-height: 1.5; }
-.luxury-copy h2 span { display: block; font-size: var(--fs-h3); margin-top: var(--sp-2); }
-.luxury-description { margin-top: var(--sp-6); font-size: var(--fs-small); line-height: 1.8; }
-.luxury-details { margin-block: var(--sp-8); font-size: var(--fs-small); }
-.luxury-details div { display: flex; justify-content: space-between; gap: var(--sp-6); padding-block: var(--sp-3); border-bottom: 1px solid var(--luxury-line); }
-.luxury-details dt { color: #62594c; }
-.luxury-details dd { margin: 0; }
-.luxury-link { display: flex; justify-content: space-between; align-items: center; min-height: 48px; padding-block: var(--sp-3); border-bottom: 1px solid var(--luxury-ink); color: inherit; text-decoration: none; font-size: var(--fs-small); letter-spacing: .12em; }
-.luxury-link:hover { background: #eae3d7; }
-.product-luxury :focus-visible { outline-color: var(--luxury-ink); }
-@media (max-width: 1024px) {
-    .product-luxury { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
-    .luxury-art { min-height: 280px; }
-    .luxury-art svg { max-height: 40svh; }
-    .luxury-copy { padding-block: var(--sp-4); }
-    .luxury-copy h2 { font-size: var(--fs-h1); }
-    .luxury-heading, .luxury-bottom { letter-spacing: .08em; flex-wrap: wrap; gap: var(--sp-2); }
-}
-
-/* 第三款商品改為科技實驗室主題。 */
-.product-tech {
-    --luxury-ink: #e6f4ff;
-    --luxury-line: rgba(100,211,255,.25);
-    --tech-accent: #78deff;
-    color: var(--luxury-ink);
-    background-color: #0b1424;
-    background-image: linear-gradient(rgba(100,211,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(100,211,255,.05) 1px, transparent 1px);
-    background-size: 32px 32px;
-}
-.product-tech .luxury-heading,
-.product-tech .luxury-bottom { font-family: monospace, 'Noto Sans TC'; color: var(--tech-accent); }
-.product-tech .luxury-art {
-    overflow: hidden;
-    background: radial-gradient(ellipse at center, #183b56, #101f33 72%);
-    border: 1px solid var(--luxury-line);
-    box-shadow: inset 0 0 48px rgba(120,222,255,.06);
-}
-.product-tech .luxury-art::before,
-.product-tech .luxury-art::after { content: ''; position: absolute; width: 32px; height: 32px; pointer-events: none; }
-.product-tech .luxury-art::before { top: 0; left: 0; border-top: 2px solid var(--tech-accent); border-left: 2px solid var(--tech-accent); }
-.product-tech .luxury-art::after { bottom: 0; right: 0; border-bottom: 2px solid var(--tech-accent); border-right: 2px solid var(--tech-accent); }
-.product-tech .luxury-art-caption { font: 500 var(--fs-small) monospace; color: var(--tech-accent); letter-spacing: .2em; }
-.product-tech .luxury-art svg { filter: drop-shadow(0 16px 24px rgba(0,0,0,.3)); }
-.product-tech .luxury-art-note,
-.product-tech .luxury-details dt { color: #b4c8da; }
-.product-tech .luxury-copy { padding: var(--sp-8); border: 1px solid var(--luxury-line); background: #101f33; }
-.product-tech .luxury-kicker { color: var(--tech-accent); font-family: monospace, 'Noto Sans TC'; }
-.product-tech .luxury-copy h2 { font-family: 'Inter', 'Noto Sans TC', sans-serif; font-weight: 700; letter-spacing: .04em; }
-.product-tech .luxury-copy h2 span { color: #b4c8da; font-weight: 400; }
-.product-tech .luxury-link { padding-inline: var(--sp-4); color: #0b1424; background: var(--tech-accent); border: 1px solid var(--tech-accent); font-weight: 700; }
-.product-tech .luxury-link:hover { background: #b2edff; }
-.product-tech :focus-visible { outline-color: var(--tech-accent); }
-@media (max-width: 1024px) {
-    .product-tech .luxury-copy { padding: var(--sp-6); }
 }
 
 /* 單畫面資訊：依可視高度分頁，保留原始表單與完整文字。 */
@@ -6164,20 +5114,7 @@ a.faq-card {
 #brand .team-switcher {
     height: min(640px, calc(100svh - var(--page-space-block) * 2 - 88px));
 }
-.brand-building-entry { flex: 0 0 auto; text-align: center; }
-.brand-building-entry p { color: var(--ink-soft); font-size: var(--fs-small); }
-.brand-building-entry a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--sp-3);
-    min-height: 44px;
-    padding: var(--sp-2) var(--sp-4);
-    color: var(--ink);
-    font-size: var(--fs-body);
-    text-underline-offset: var(--sp-1);
-}
-.footer-social a.social-building:hover i { color: inherit; }
+
 @media (max-width: 1024px) {
     #brand .team-switcher { height: auto; }
 }
@@ -6231,7 +5168,7 @@ a.faq-card {
 .pineapple-model-stage canvas.is-static { cursor: default; touch-action: auto; }
 
 .pastry-stage { height: min(53svh, 500px); display: grid; place-items: center; }
-.pastry-stage img, .pastry-illustration, .pastry-illustration svg { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.pastry-stage img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
 .pineapple-model-stage canvas {
     display: block;
     width: 100%;
@@ -6334,21 +5271,7 @@ a.faq-card {
 #brand .team-file-block, #brand .team-mobile-bio { border-top-color: var(--ink-line); }
 #brand .team-portrait, #brand .team-mobile-portrait { border: 0; background-color: var(--white); }
 #brand .team-portrait::before { display: none; }
-#brand .brand-building-entry {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-3);
-    border-top: 1px solid var(--ink-line);
-    text-align: left;
-}
-#brand .brand-building-entry a {
-    flex-shrink: 0;
-    padding-inline: 0;
-    font-size: var(--fs-small);
-    text-decoration: none;
-}
-#brand .brand-building-entry a:hover { text-decoration: underline; }
+
 @media (max-width: 1024px) {
     .brand-tabs button { padding-inline: var(--sp-3); }
     .brand-story-panel { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
@@ -6400,11 +5323,7 @@ a.faq-card {
 :root { --page-content-max: none; }
 .pastry-content,
 #brand > .brand-section-header,
-#brand > [role="tabpanel"],
-#brand > .brand-building-entry,
-#shop > .shop-links,
-.footer > .footer-container,
-.footer > .footer-bottom {
+#brand > [role="tabpanel"] {
     width: 100%;
     max-width: var(--page-content-max);
     margin-inline: auto;
@@ -6427,7 +5346,6 @@ a.faq-card {
 
 /* 關閉的彈窗退出排版與背景模糊合成，避免八層全螢幕材質持續參與捲動。 */
 .modal-overlay:not(.active) { display: none; }
-
 
 /* =========================================
    Micro-interactions：輕量操作回饋
@@ -6596,29 +5514,6 @@ a.faq-card {
 /* 商城：三張通路卡原本只有 260px 寬、浮在大片空白中間。
    改成三欄等寬網格、卡片加高，「前往選購」常駐顯示（觸控裝置沒有 hover，原本永遠看不到）。 */
 .shopping-section .section-title { margin-bottom: var(--sp-12); }
-.shop-links {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-6);
-    max-width: 960px;
-}
-.shop-glass-card {
-    max-width: none;
-    min-height: 220px;
-    justify-content: center;
-    gap: var(--sp-3);
-    padding: var(--sp-10) var(--sp-6);
-}
-.shop-link-icon { font-size: var(--fs-h1); margin-bottom: var(--sp-2); }
-.shop-link-arrow {
-    opacity: 0.85;
-    transform: none;
-    font-size: var(--fs-small);
-    letter-spacing: 0.04em;
-}
-.shop-glass-card:hover .shop-link-arrow { opacity: 1; }
-.shop-glass-card:hover .shop-link-arrow i { transform: translateX(3px); }
-.shop-link-arrow i { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 
 @media (max-width: 1024px) {
     .pastry-intro h2,
@@ -6629,16 +5524,11 @@ a.faq-card {
     .pastry-description { margin-top: var(--sp-4); }
     .building-showcase-copy > p:not(.building-showcase-kicker) { margin-block: var(--sp-4) var(--sp-6); }
     .shopping-section .section-title { margin-bottom: var(--sp-6); }
-    /* 手機維持既有定案的「一排三個 app 圖示磚」設計（見上方 1024px 段落說明），
-       這裡只把桌機版新加的卡片高度、內距、圖示字級還原回去 */
-    .shop-links { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-6); }
-    .shop-glass-card { min-height: 0; padding: 0; gap: var(--sp-2); }
-    .shop-link-icon { font-size: 64px; margin-bottom: 0; }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .building-showcase-action,
-    .shop-link-arrow i { transition: none; }
+    .building-showcase-action { transition: none; }
 }
 
 /* =========================================
@@ -7422,4 +6312,25 @@ a.faq-card {
     .site-footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--sp-4); }
     .site-footer-links a { min-height: 44px; }
     .site-footer-bottom { padding-top: var(--sp-5); }
+}
+
+/* =========================================
+   2026-11 技術檢查修正
+   - 產品區、品牌區底部的「往下」箭頭原本只有 14×12，點擊範圍加大到 44×44。
+   - 虛擬大樓的樓層說明原本是「框裡再放一張白卡」，改成用一條分隔線隔開，
+     不再多一層卡片。
+   ========================================= */
+.scroll-down-indicator.on-light {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+}
+.building-floor-detail {
+    padding: var(--sp-5) 0 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 1px 0 var(--ink-line);
+}
+@media (max-width: 1024px) {
+    .building-floor-detail { padding: var(--sp-3) 0 0; }
 }
