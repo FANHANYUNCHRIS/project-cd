@@ -6005,7 +6005,7 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     border-radius: 50%;
     background: radial-gradient(ellipse, rgba(90, 60, 20, 0.28), rgba(90, 60, 20, 0) 70%);
 }
-.party-portrait { position: relative; z-index: 1; height: 96%; max-width: 100%; object-fit: contain; object-position: bottom; }
+.party-portrait { position: relative; z-index: 1; width: auto; height: 96%; max-width: 100%; object-fit: contain; object-position: bottom; }
 .party-portrait-empty { position: relative; z-index: 1; align-self: center; font-size: 14px; color: var(--ink-soft); }
 .party-stage-label {
     position: absolute;
