@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261120-building">
+    <link rel="stylesheet" href="css/style.css?v=20261120-store">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261109-pastry-mirror" defer></script>
-    <script src="js/script.js?v=20261120-building" defer></script>
+    <script src="js/script.js?v=20261120-store" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261120-building" defer></script>
-    <script src="js/pagination.js?v=20261120-building" defer></script>
+    <script src="js/member.js?v=20261120-store" defer></script>
+    <script src="js/pagination.js?v=20261120-store" defer></script>
 </head>
 
 <body>
@@ -626,26 +626,43 @@
     <div class="shop-footer-screen">
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
-            <p class="shop-eyebrow">Project.CD ／ 線上通路</p>
-            <h2 class="section-title reveal-zoom">官方線上商城</h2>
-            <div class="shop-links">
-                <a href="https://shopee.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.1" style="--brand: #EE4D2D;">
-                    <i class="fa-solid fa-bag-shopping shop-link-icon" aria-hidden="true"></i>
-                    <span class="shop-link-name">蝦皮購物</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-                </a>
-
-                <a href="https://mall.iopenmall.tw/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.22" style="--brand: #008163;">
-                    <i class="fa-solid fa-box-open shop-link-icon" aria-hidden="true"></i>
-                    <span class="shop-link-name">iOpen Mall</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-                </a>
-
-                <a href="https://famishop.fami.life/" target="_blank" rel="noopener noreferrer" class="shop-glass-card reveal-zoom" data-reveal-delay="0.34" style="--brand: #0091D4;">
-                    <i class="fa-solid fa-store shop-link-icon" aria-hidden="true"></i>
-                    <span class="shop-link-name">全家好賣+</span>
-                    <span class="shop-link-arrow">前往選購 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-                </a>
+            <p class="shop-eyebrow">官方線上商城</p>
+            <h2 class="section-title reveal-zoom">在哪裡買</h2>
+            <p class="store-intro">官網直接訂購最快，也是唯一能指定取貨日期的地方。各平台賣場正在準備中。</p>
+            <div class="store-layout">
+                <article class="store-direct">
+                    <div class="store-direct-head">
+                        <span class="store-badge">推薦</span>
+                        <h3>官網直接訂購</h3>
+                        <p>登入會員就能下單，現做現出。</p>
+                    </div>
+                    <dl class="store-direct-facts">
+                        <div><dt>取貨日期</dt><dd>可指定，至少 5 天後</dd></div>
+                        <div><dt>取貨方式</dt><dd>超商取貨付款</dd></div>
+                        <div><dt>公休</dt><dd>每週一</dd></div>
+                    </dl>
+                    <a class="store-direct-action" href="#products">前往訂購 <span aria-hidden="true">→</span></a>
+                </article>
+                <div class="store-platforms">
+                    <h3 class="store-platforms-title">其他平台<span class="store-mobile-only">・即將開放</span></h3>
+                    <ul class="store-platform-list">
+                        <li class="store-platform">
+                            <span class="store-platform-icon" aria-hidden="true"><i class="fa-solid fa-bag-shopping"></i></span>
+                            <span class="store-platform-text"><span class="store-platform-name">蝦皮購物</span><span class="store-platform-note">賣場準備中</span></span>
+                            <span class="store-platform-status">即將開放</span>
+                        </li>
+                        <li class="store-platform">
+                            <span class="store-platform-icon" aria-hidden="true"><i class="fa-solid fa-store"></i></span>
+                            <span class="store-platform-text"><span class="store-platform-name">7-ELEVEN<br class="store-mobile-only"> 賣貨便</span><span class="store-platform-note">賣場準備中</span></span>
+                            <span class="store-platform-status">即將開放</span>
+                        </li>
+                        <li class="store-platform">
+                            <span class="store-platform-icon" aria-hidden="true"><i class="fa-solid fa-shop"></i></span>
+                            <span class="store-platform-text"><span class="store-platform-name">全家好賣+</span><span class="store-platform-note">賣場準備中</span></span>
+                            <span class="store-platform-status">即將開放</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </section>
 

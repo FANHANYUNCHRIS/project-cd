@@ -7140,3 +7140,172 @@ a.faq-card {
     .building-floor,
     .building-floor-enter { transition: none; }
 }
+
+/* =========================================
+   2026-11 商城改版（設計稿：官方線上商城設計稿）
+   標題改成「在哪裡買」：官網直接訂購是主角（黑卡），其他平台排在旁邊，
+   賣場還沒開，先標「即將開放」不能點。手機版保留一排三個圖示磚。
+   舊的 .shop-links / .shop-glass-card 規則已不再使用。
+   ========================================= */
+#shop.shopping-section { text-align: left; }
+#shop > .shop-eyebrow,
+#shop > .section-title,
+#shop > .store-intro,
+#shop > .store-layout {
+    width: 100%;
+    max-width: var(--page-content-max);
+    margin-inline: auto;
+}
+#shop > .section-title { margin-bottom: var(--sp-4); }
+.store-intro {
+    margin: 0 auto var(--sp-10);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+}
+.store-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: var(--sp-6);
+}
+.store-direct {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--sp-8);
+    padding: var(--sp-12);
+    border-radius: 20px;
+    background: var(--ink);
+    color: var(--white);
+}
+.store-direct-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-4); }
+.store-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding-inline: var(--sp-3);
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+.store-direct h3 { margin: 0; font-size: 36px; font-weight: 900; line-height: 1.25; color: var(--white); }
+.store-direct-head p { margin: 0; font-size: var(--fs-body); line-height: 1.7; color: rgba(255, 255, 255, 0.82); }
+.store-direct-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-3);
+    margin: 0;
+}
+.store-direct-facts div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--sp-4);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+}
+.store-direct-facts dt { font-size: var(--fs-caption); color: rgba(255, 255, 255, 0.75); }
+.store-direct-facts dd { margin: 0; font-size: 15px; font-weight: 700; }
+.store-direct-action {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: 52px;
+    padding-inline: var(--sp-6);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--ink);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+.store-direct-action:hover { background: var(--surface-sunken); }
+.store-direct-action:active { transform: scale(0.96); transition-duration: 0.08s; }
+
+.store-platforms { display: flex; flex-direction: column; gap: var(--sp-3); }
+.store-platforms-title {
+    margin: 0 0 var(--sp-1);
+    font-size: var(--fs-caption);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+}
+.store-mobile-only { display: none; }
+.store-platform-list { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); margin: 0; padding: 0; list-style: none; }
+.store-platform {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+    min-height: 96px;
+    padding: var(--sp-4) var(--sp-6);
+    border-radius: 20px;
+    background: var(--surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+}
+.store-platform-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--white);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    font-size: 22px;
+    color: var(--ink);
+}
+.store-platform-text { flex: 1; display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.store-platform-name { font-size: 20px; font-weight: 900; }
+.store-platform-note { font-size: var(--fs-small); color: var(--ink-soft); }
+.store-platform-status {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--sp-4);
+    border-radius: 100px;
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+
+@media (max-width: 1024px) {
+    #shop > .section-title { margin-bottom: var(--sp-3); }
+    .store-intro { display: none; }
+    .store-layout { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
+    .store-direct { gap: var(--sp-4); padding: var(--sp-6); }
+    .store-direct-head { flex-direction: row-reverse; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .store-direct h3 { font-size: 24px; }
+    .store-direct-head p { display: none; }
+    .store-direct-facts { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+    .store-direct-facts div { flex-direction: row; justify-content: space-between; gap: var(--sp-3); padding: 0; background: none; }
+    .store-direct-facts dt { font-size: var(--fs-small); }
+    .store-direct-facts dd { font-size: var(--fs-small); }
+    .store-direct-action { align-self: stretch; justify-content: center; }
+    .store-mobile-only { display: inline; }
+    .store-platform-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); }
+    .store-platform {
+        flex-direction: column;
+        gap: var(--sp-2);
+        min-height: 0;
+        padding: 0;
+        background: none;
+        box-shadow: none;
+        text-align: center;
+    }
+    .store-platform-icon { width: 72px; height: 72px; border-radius: 20px; background: var(--surface-sunken); font-size: 28px; }
+    .store-platform-text { align-items: center; }
+    .store-platform-name { font-size: 13px; font-weight: 700; }
+    .store-platform-note { display: none; }
+    .store-platform-status { min-height: 0; padding: 0; box-shadow: none; font-size: var(--fs-caption); font-weight: 400; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .store-direct-action { transition: none; }
+}

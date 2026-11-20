@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p role="tabpanel" id="pastry-panel-ing" aria-labelledby="pastry-tab-ing">${product.ingredients.join('、')}</p>
                         <p role="tabpanel" id="pastry-panel-all" aria-labelledby="pastry-tab-all" hidden>含有<strong>${product.allergens}</strong>，對這些成分過敏者請勿食用。</p>
                         <p role="tabpanel" id="pastry-panel-keep" aria-labelledby="pastry-tab-keep" hidden>${product.notice.join('')}</p>
-                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），至超商取貨付款。也可在 <a href="https://shopee.tw/" target="_blank" rel="noopener">蝦皮購物</a>、<a href="https://myship.7-11.com.tw/Home/Main" target="_blank" rel="noopener">7-ELEVEN 賣貨便</a>、<a href="https://famishop.fami.life/" target="_blank" rel="noopener">全家好賣+</a> 購買。</p>
+                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），至超商取貨付款。蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 賣場即將開放。</p>
                     </div>
                 </div>
             </div>
