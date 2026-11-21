@@ -6540,9 +6540,7 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     height: 6px;
     border-radius: 50%;
     background: var(--gold);
-    animation: pastry-hud-live 1.6s steps(1) infinite;
 }
-@keyframes pastry-hud-live { 0%, 64% { opacity: 1; } 65%, 100% { opacity: 0.25; } }
 .pastry-hud-mode::after { content: '3D VIEW'; }
 .pastry-gallery:has([data-view="2d"][aria-pressed="true"]) .pastry-hud-mode::after { content: '2D VIEW'; }
 .pastry-gallery:has([data-view="2d"][aria-pressed="true"]) .pastry-hud-bl { visibility: hidden; }
@@ -6636,7 +6634,6 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
 .pastry-tablist button[aria-selected="true"]::after { scale: 1 1; }
 
 @media (prefers-reduced-motion: reduce) {
-    .pastry-hud-tr i { animation: none; }
     .pastry-info .pastry-buy:hover::before,
     .pastry-info .pastry-buy:focus-visible::before { animation: none; }
     .pastry-tablist button::after { transition: none; }
