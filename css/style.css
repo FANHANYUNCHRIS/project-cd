@@ -6494,3 +6494,160 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .pastry-ability-meta { font-size: var(--fs-caption); }
     .stage-tag { font-size: 11px; padding: 2px 7px 2px 6px; margin-right: var(--sp-2); }
 }
+
+/* =========================================
+   2026-11-21 產品區：極簡電玩科技風（擁有者指定）
+   - 3D 展示框＝道具檢視視窗：細網格、四角取景框、ITEM 01／3D VIEW／拖曳旋轉 標示。
+   - 購買卡＝黑色 RPG 視窗（雙線框），按鈕前有金色游標。
+   - 資訊頁籤＝遊戲選單：沒有灰底膠囊，選中項前面金色三角＋金色底線。
+   ========================================= */
+
+/* ---- 3D 道具檢視視窗 ---- */
+.pastry-content > .pastry-gallery {
+    border-radius: 14px;
+    background:
+        linear-gradient(rgba(22, 22, 26, 0.045) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(90deg, rgba(22, 22, 26, 0.045) 1px, transparent 1px) 0 0 / 32px 32px,
+        radial-gradient(ellipse at 50% 42%, #FBF4E6 0%, var(--surface-sunken) 62%);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+}
+.pastry-hud {
+    position: absolute;
+    inset: var(--sp-5);
+    z-index: 2;
+    pointer-events: none;
+    font-family: var(--font-serif);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    font-variant-numeric: lining-nums;
+    color: var(--ink);
+}
+.pastry-hud > span { position: absolute; display: inline-flex; align-items: center; gap: var(--sp-2); line-height: 1; }
+.pastry-hud-tl { top: 6px; left: 26px; }
+.pastry-hud-tr { top: 6px; right: 26px; }
+.pastry-hud-bl {
+    bottom: 6px;
+    left: 26px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+}
+.pastry-hud-tr i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pastry-hud-live 1.6s steps(1) infinite;
+}
+@keyframes pastry-hud-live { 0%, 64% { opacity: 1; } 65%, 100% { opacity: 0.25; } }
+.pastry-hud-mode::after { content: '3D VIEW'; }
+.pastry-gallery:has([data-view="2d"][aria-pressed="true"]) .pastry-hud-mode::after { content: '2D VIEW'; }
+.pastry-gallery:has([data-view="2d"][aria-pressed="true"]) .pastry-hud-bl { visibility: hidden; }
+.pastry-hud b {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 0 solid var(--ink);
+}
+.pastry-hud b:nth-of-type(1) { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+.pastry-hud b:nth-of-type(2) { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+.pastry-hud b:nth-of-type(3) { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+.pastry-hud b:nth-of-type(4) { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+
+/* 2D／3D 切換：圓膠囊改成方正的遊戲切換鈕 */
+.pastry-gallery .pastry-view-switch {
+    z-index: 3;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px var(--ink), 0 6px 18px -10px rgba(22, 22, 26, 0.4);
+}
+.pastry-gallery .pastry-view-switch button {
+    border-radius: 7px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant-numeric: lining-nums;
+}
+
+/* ---- 購買卡：黑色 RPG 視窗 ---- */
+.pastry-info .pastry-purchase {
+    border-radius: 14px;
+    box-shadow:
+        inset 0 0 0 2px var(--ink),
+        inset 0 0 0 5px var(--white),
+        inset 0 0 0 6px rgba(216, 192, 145, 0.55),
+        0 16px 36px -22px rgba(22, 22, 26, 0.6);
+    padding: var(--sp-5) var(--sp-5) var(--sp-5) var(--sp-8);
+}
+.pastry-info .pastry-buy { gap: var(--sp-2); border-radius: 8px; }
+.pastry-info .pastry-buy::before {
+    content: '';
+    flex: none;
+    border-block: 5px solid transparent;
+    border-left: 7px solid var(--gold);
+}
+.pastry-info .pastry-buy:hover::before,
+.pastry-info .pastry-buy:focus-visible::before { animation: rpg-cursor-bob 0.9s ease-in-out infinite; }
+.pastry-info .pastry-stepper { border-radius: 8px; }
+
+/* ---- 資訊頁籤：遊戲選單 ---- */
+.pastry-tablist {
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 -1px 0 var(--ink-line);
+}
+.pastry-tablist button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    border-radius: 0;
+    transition: color 0.2s ease;
+}
+.pastry-tablist button::before {
+    content: '';
+    flex: none;
+    border-block: 4px solid transparent;
+    border-left: 6px solid var(--gold);
+    opacity: 0;
+    margin-left: -14px;
+    transition: opacity 0.15s linear;
+}
+.pastry-tablist button::after {
+    content: '';
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 0;
+    height: 2px;
+    background: var(--gold);
+    scale: 0 1;
+    transition: scale 0.3s var(--ease-out);
+}
+.pastry-tablist button:hover { color: var(--ink); }
+.pastry-tablist button[aria-selected="true"] { background: none; box-shadow: none; color: var(--ink); }
+.pastry-tablist button[aria-selected="true"]::before { opacity: 1; }
+.pastry-tablist button[aria-selected="true"]::after { scale: 1 1; }
+
+@media (prefers-reduced-motion: reduce) {
+    .pastry-hud-tr i { animation: none; }
+    .pastry-info .pastry-buy:hover::before,
+    .pastry-info .pastry-buy:focus-visible::before { animation: none; }
+    .pastry-tablist button::after { transition: none; }
+}
+
+@media (max-width: 1024px) {
+    .pastry-hud { inset: var(--sp-3); font-size: 11px; }
+    .pastry-hud b { width: 12px; height: 12px; }
+    .pastry-hud-tl, .pastry-hud-tr { top: 3px; }
+    .pastry-hud-tl { left: 18px; }
+    .pastry-hud-tr { right: 18px; }
+    .pastry-hud > .pastry-hud-bl { display: none; }
+    .pastry-info .pastry-purchase { padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-5); }
+}

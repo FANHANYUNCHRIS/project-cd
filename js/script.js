@@ -441,6 +441,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
                     <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
                 </div>
+                <div class="pastry-hud" aria-hidden="true">
+                    <span class="pastry-hud-tl">ITEM 01</span>
+                    <span class="pastry-hud-tr"><i></i><span class="pastry-hud-mode"></span></span>
+                    <span class="pastry-hud-bl">拖曳旋轉</span>
+                    <b></b><b></b><b></b><b></b>
+                </div>
                 <div class="pastry-view-switch" role="group" aria-label="鳳梨酥展示模式">
                     <button type="button" aria-pressed="false" data-view="2d" disabled>2D</button>
                     <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
@@ -471,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="pastry-qty"><span class="pastry-qty-value">1</span> 盒</span>
                         <button type="button" class="pastry-qty-plus" aria-label="增加一盒">+</button>
                     </div>
-                    <button type="button" class="pastry-buy">加入購物車</button>
+                    <button type="button" class="pastry-buy"><span class="pastry-buy-text">加入購物車</span></button>
                 </div>
                 <div class="pastry-tabs">
                     <div class="pastry-tablist" role="tablist" aria-label="商品資訊">
@@ -506,12 +512,13 @@ document.addEventListener('DOMContentLoaded', () => {
         section.querySelector('.pastry-qty-plus').addEventListener('click', () => setQty(qty + 1));
 
         const buyBtn = section.querySelector('.pastry-buy');
+        const buyText = buyBtn.querySelector('.pastry-buy-text');
         buyBtn.addEventListener('click', () => {
             if (typeof window.addItemToCart !== 'function') return;
             const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty });
             if (!added) return;
-            buyBtn.textContent = '已加入！';
-            setTimeout(() => { buyBtn.textContent = '加入購物車'; }, 1200);
+            buyText.textContent = '已加入！';
+            setTimeout(() => { buyText.textContent = '加入購物車'; }, 1200);
             setQty(1);
         });
 
