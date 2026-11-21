@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261121-brand1">
+    <link rel="stylesheet" href="css/style.css?v=20261121-brand4">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261121-brand1" defer></script>
+    <script src="js/script.js?v=20261121-brand4" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261121-brand1" defer></script>
-    <script src="js/pagination.js?v=20261121-brand1" defer></script>
+    <script src="js/member.js?v=20261121-brand4" defer></script>
+    <script src="js/pagination.js?v=20261121-brand4" defer></script>
 </head>
 
 <body>
@@ -160,9 +160,6 @@
                         <span class="nav-text">品牌</span>
                         <span class="nav-icon-mobile material-symbols-outlined" aria-hidden="true">groups</span>
                     </a>
-                </li>
-                <li class="nav-brand-tab">
-                    <a href="#virtual-building" aria-label="虛擬大樓"><span class="nav-text">虛擬大樓</span></a>
                 </li>
                 <li>
                     <a href="#shop" aria-label="商城">
@@ -292,13 +289,14 @@
          依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
     <div id="products-placeholder"></div>
 
-    <!-- 品牌故事與團隊分頁，共用虛擬大樓入口。 -->
+    <!-- 品牌區（2026-11-21）：故事／人物／大樓三個分頁放在同一頁。 -->
     <section id="brand" class="fullscreen-section" aria-labelledby="brand-title">
         <header class="brand-section-header">
             <h2 id="brand-title" class="title-sheen reveal-sheen">關於 Project.CD</h2>
             <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
-                <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
-                <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">品牌團隊</button>
+                <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">故事</button>
+                <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">人物</button>
+                <button type="button" id="brand-building-tab" role="tab" aria-controls="brand-building-panel" aria-selected="false" tabindex="-1">大樓</button>
             </div>
         </header>
         <div class="brand-story-panel" id="brand-story-panel" role="tabpanel" aria-labelledby="brand-story-tab" tabindex="0">
@@ -375,16 +373,10 @@
         </div>
         </div>
 
-        <a href="#virtual-building" class="scroll-down-indicator on-light" aria-label="前往虛擬大樓">
-            <span>虛擬大樓</span>
-            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-        </a>
-    </section>
-
-    <section id="virtual-building" class="fullscreen-section building-showcase" aria-labelledby="virtual-building-title">
+        <div class="brand-building-panel building-showcase" id="brand-building-panel" role="tabpanel" aria-labelledby="brand-building-tab" tabindex="0" hidden>
         <div class="building-showcase-copy">
-            <p class="building-showcase-kicker"><span class="stage-tag">STAGE 04</span>Project.CD ／ 虛擬空間</p>
-            <h2 id="virtual-building-title" class="title-sheen reveal-sheen">虛擬大樓</h2>
+            <p class="building-showcase-kicker"><span class="stage-tag">STAGE 03</span>Project.CD ／ 虛擬空間</p>
+            <h3 class="building-showcase-title">虛擬大樓</h3>
             <p>從一樓咖啡廳走到頂樓空中花園，探索 Project.CD 的每一層。點樓層，看看裡面有什麼。</p>
             <ul class="building-status" aria-label="大樓狀態">
                 <li id="building-status-open"><span class="building-status-dot" aria-hidden="true"></span><span id="building-status-text">營業時間</span> <span class="building-num">06:00–22:00</span></li>
@@ -427,7 +419,14 @@
             </div>
             <button type="button" class="building-showcase-close" id="building-showcase-close" aria-label="關閉 3D 大樓" hidden>×</button>
         </div>
+        </div>
+
+        <a href="#shop" class="scroll-down-indicator on-light" aria-label="前往商城">
+            <span>商城</span>
+            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </a>
     </section>
+
 
     <!-- 常見問題彈窗：只有點選頁尾「常見問題與服務條款」才會出現，不排在首頁滾動流程裡 -->
     <div id="faq-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="faq-modal-title" aria-hidden="true" inert>
@@ -584,7 +583,7 @@
     <div class="shop-footer-screen">
         <!-- 購物連結區塊 -->
         <section id="shop" class="shopping-section">
-            <p class="shop-eyebrow"><span class="stage-tag">STAGE 05</span>官方線上商城</p>
+            <p class="shop-eyebrow"><span class="stage-tag">STAGE 04</span>官方線上商城</p>
             <h2 class="section-title reveal-zoom title-sheen">在哪裡買</h2>
             <p class="store-intro">官網直接訂購最快，也是唯一能指定取貨日期的地方。各平台賣場正在準備中。</p>
             <div class="store-layout">
@@ -674,7 +673,6 @@
         <a href="#home" class="section-dot" data-target="home" aria-label="首頁"></a>
         <a href="#products" class="section-dot" data-target="products" aria-label="產品"></a>
         <a href="#brand" class="section-dot" data-target="brand" aria-label="品牌"></a>
-        <a href="#virtual-building" class="section-dot" data-target="virtual-building" aria-label="虛擬大樓"></a>
         <a href="#shop" class="section-dot" data-target="shop" aria-label="商城"></a>
     </nav>
 
@@ -683,7 +681,7 @@
         <span class="section-index-label">STAGE</span>
         <span class="section-index-current" id="section-index-current">01</span>
         <span class="section-index-sep"></span>
-        <span class="section-index-total" id="section-index-total">05</span>
+        <span class="section-index-total" id="section-index-total">04</span>
         <span class="section-index-name" id="section-index-name">首頁</span>
     </div>
 

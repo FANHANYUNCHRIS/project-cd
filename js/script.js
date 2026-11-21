@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buildingLaunch = document.getElementById('building-showcase-launch');
     const buildingClose = document.getElementById('building-showcase-close');
-    const buildingSection = document.getElementById('virtual-building');
+    const buildingSection = document.getElementById('brand-building-panel');
     let buildingFrame;
     let buildingOpener = buildingLaunch;
     // 「進入 3D 大樓」與「進入這一層」共用：桌機在展示框裡開，手機（≤1024px）直接開整頁。
@@ -139,11 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
         function placeCursor() {
             const btn = floorButtons.find(b => b.getAttribute('aria-pressed') === 'true');
             if (!cursor || !btn || !btn.offsetParent) return;
-            const box = cursor.parentElement.getBoundingClientRect();
-            const r = btn.getBoundingClientRect();
-            cursor.style.transform = `translate(${r.left - box.left + 10}px, ${r.top - box.top + (r.height - 14) / 2}px)`;
+            // 用 offsetTop 累加（不受進場動畫的位移影響），分頁剛切出來、清單還在動也量得準
+            let x = 0, y = 0, el = btn;
+            while (el && el !== cursor.parentElement) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+            if (el !== cursor.parentElement) return;
+            cursor.style.transform = `translate(${x + 10}px, ${y + (btn.offsetHeight - 14) / 2}px)`;
         }
         window.addEventListener('resize', placeCursor);
+        // 大樓在品牌區的分頁裡，分頁切出來時清單從隱藏變可見，要重新對齊游標
+        if (cursor && 'ResizeObserver' in window) new ResizeObserver(placeCursor).observe(cursor.parentElement);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeCursor);
         floorButtons.forEach(btn => btn.addEventListener('click', () => select(btn.dataset.floor)));
         blocks.forEach(block => block.addEventListener('click', () => select(block.dataset.floor)));
@@ -183,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buildingOpener.focus({ preventScroll: true });
     });
 
-    // 品牌故事、品牌團隊兩個分頁（2026-11-21 擁有者拿掉研究方法與原物料）。
+    // 品牌區三個分頁：故事、人物、大樓（2026-11-21 虛擬大樓併進品牌區）。
     (function initBrandTabs() {
         const tabs = [...document.querySelectorAll('.brand-tabs [role="tab"]')];
         const activate = tab => {
@@ -194,6 +198,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
             });
         };
+        // 舊連結 #virtual-building 還能用：直接打開「大樓」分頁
+        const openBuildingFromHash = () => {
+            if (location.hash !== '#virtual-building') return;
+            const buildingTab = document.getElementById('brand-building-tab');
+            if (buildingTab) activate(buildingTab);
+            document.getElementById('brand').scrollIntoView();
+        };
+        openBuildingFromHash();
+        // 圖片、產品區載入後版面會變高，等全部載完再對準一次
+        window.addEventListener('load', openBuildingFromHash);
+        window.addEventListener('hashchange', openBuildingFromHash);
         tabs.forEach((tab, index) => {
             tab.addEventListener('click', () => activate(tab));
             tab.addEventListener('keydown', event => {
@@ -675,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ['.party-roster', 'enter-window'], ['.party-keys', 'enter-window'],
                 ['.party-stage', 'enter-scale'], ['.party-status', 'enter-window'], ['.party-dialog', 'enter-window']
             ]],
-            ['#virtual-building', [
+            ['#brand', [
                 '.building-showcase-copy > *',
                 ['.building-elevation-ground', 'enter-line'],
                 ['.building-block.is-basement', 'enter-rise'], ['.building-block.is-ground', 'enter-rise'],

@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const controllers = new Map();
     let scheduled = false;
-    const rootSelector = '.modal-overlay > .modal-container, #brand-story-panel, #brand-method-panel, #brand-material-panel, #brand-team-panel, #products .pastry-content';
+    const rootSelector = '.modal-overlay > .modal-container, #brand-story-panel, #brand-team-panel, #brand-building-panel, #products .pastry-content';
     const pendingRoots = new Set();
     const observer = new MutationObserver(records => {
         for (const record of records) {
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function collect(el) {
             if (el === state.nav || el.matches('.modal-close, .sr-only, script, [hidden]') || !el.getClientRects().length || getComputedStyle(el).display === 'none') return;
             const children = [...el.children].filter(child => !child.matches('svg, input[type="hidden"]'));
-            if (children.length && el.getBoundingClientRect().height > Math.max(100, (limit - 100) * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area, .pastry-gallery, .pastry-stage, .pastry-thumbnails, .brand-emblem, .brand-visual, .brand-principles > div')) {
+            if (children.length && el.getBoundingClientRect().height > Math.max(100, (limit - 100) * .48) && !el.matches('.form-group, .auth-checkbox-row, button, a, .form-submit-area, .pastry-gallery, .pastry-stage, .pastry-thumbnails, .brand-emblem, .building-showcase-stage, .brand-visual, .brand-principles > div')) {
                 state.branches.push(el);
                 children.forEach(collect);
             } else state.units.push(el);

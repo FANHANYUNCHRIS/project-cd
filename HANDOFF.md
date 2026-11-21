@@ -10,7 +10,7 @@
 - 桌機版導覽列膠囊加了「黑色反白滑過去」效果（`css/style.css` 的 `.has-slider::after` + `js/script.js` 最後一段）。高亮仍由 navObserver 決定，滑塊只是跟著 `.active` 移動；手機版不受影響；減少動態時直接跳位。
 
 - 產品區改成「單品頁」（依設計稿 https://claude.ai/artifact/VnRwaVbsNKeoGckiz5R8eJ ）：左 3D 展示框，右標題、三張數值卡、直接購買卡（數量＋加入購物車，不再先開彈窗）、資訊頁籤。加入購物車走 `js/member.js` 新的 `window.addItemToCart()`，跟產品彈窗共用。手機版自動分 2 頁：第 1 頁到購買卡，頁籤在第 2 頁。
-- 品牌區改版（依設計稿 https://claude.ai/artifact/BZjFbdJKgEM4qGkg4kNev3 ）：定位「一個人的甜點研究室」，2026-11-21 擁有者要求只留「品牌故事」與「品牌團隊」兩個分頁，研究方法、原物料已拿掉（HTML、JS、CSS 都清乾淨）。
+- 品牌區改版（依設計稿 https://claude.ai/artifact/BZjFbdJKgEM4qGkg4kNev3 ）：定位「一個人的甜點研究室」，2026-11-21 研究方法、原物料已拿掉；同日虛擬大樓也併進品牌區，現在品牌區分頁是「故事／人物／大樓」。首頁主畫面剩 4 個（首頁、產品、品牌、商城），導覽列和右側小圓點的「虛擬大樓」已拿掉，商城的 STAGE 改成 04。舊連結 `#virtual-building` 會自動打開大樓分頁。大樓分頁在手機上內容太高，接上 `js/pagination.js` 自動分成 2 頁。
 - 虛擬大樓區改版（依設計稿 https://claude.ai/artifact/U2eUXTSBxcqKNbxdaymGHX ）：右邊改成大樓剖面圖＋樓層導覽（RF/4F/3F/2F/1F/B1，名稱跟 3D 大樓一致），點樓層會顯示內容，「進入這一層」開 `building/index.html?floor=2F` 這種網址，3D 大樓會直接跳到那層（`building/index.html` 最後加了一行讀網址）。左邊有營業狀態（台灣時間 06:00–22:00）和天氣小標籤（讀 `building/weather.json`，沒有今天的預報就不顯示——目前資料停在 10/31，所以暫時不會出現）。手機版沒有剖面圖，清單排兩欄，「進入」直接開整頁。
 - 商城區改版（依設計稿 https://claude.ai/artifact/6ec4725skHFKmQUAVxWwRn ）：標題改「在哪裡買」，主角是「官網直接訂購」黑卡（按鈕回產品區），旁邊是蝦皮、7-ELEVEN 賣貨便、全家好賣+，都標「即將開放」不能點（擁有者還沒開賣場）。iOpen Mall 已拿掉。產品區「取貨與通路」頁籤也改成「賣場即將開放」。等擁有者給賣場網址再把兩處改成連結。手機版保留一排三個圖示磚。
 - 頁尾改版（依設計稿 https://claude.ai/artifact/Ht2Eo67mW46yBjuUvBxFNh ）：商城回到滿版一頁，頁尾改成接在後面的黑底收尾（`.site-footer`，不撐滿畫面，捲到底停在商城下半部＋頁尾）。三欄：品牌資訊（內湖區／公休週一／取貨至少 5 天後）、購物說明（常見問題、退換貨說明、服務條款、隱私權政策，沿用既有彈窗）、追蹤我們；最下面版權＋小遊戲。虛擬大樓圖示已從頁尾拿掉（選單已有）。網站目前沒有音效開關。

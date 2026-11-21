@@ -4484,7 +4484,7 @@ a.faq-card {
 #brand { display: grid; grid-template-rows: auto minmax(0, 1fr); align-content: stretch; gap: var(--sp-4); }
 #brand > [role="tabpanel"] { align-self: center; min-width: 0; }
 
-#brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
+#brand-team-panel > .screen-pages, .brand-story-panel > .screen-pages, .brand-building-panel > .screen-pages, .pastry-content > .screen-pages { grid-column: 1 / -1; width: 100%; max-width: none; }
 #products.pastry-product { display: flex; align-items: center; }
 .pastry-content { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); align-items: center; gap: var(--sp-5) var(--sp-8); }
 @media (min-width: 1025px) {
@@ -6758,4 +6758,28 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .brand-facts li + li { box-shadow: inset 1px 0 0 var(--ink-line); }
     .brand-facts strong { font-size: 26px; }
     .brand-emblem figcaption { left: calc(var(--sp-3) + 18px); bottom: calc(var(--sp-3) + 3px); font-size: 11px; }
+}
+
+/* =========================================
+   2026-11-21 虛擬大樓併進品牌區，變成第三個分頁「大樓」
+   - 不再是獨立滿版區塊：拿掉自己的最小高度與上下留白，跟故事、人物共用品牌區的頁首與分頁。
+   - 標題改成 h3，跟故事頁大標同一款明體。
+   ========================================= */
+#brand > .brand-building-panel {
+    min-height: 0;
+    padding: 0;
+    background: none;
+}
+.brand-building-panel .building-showcase-title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-display);
+    font-weight: 900;
+    line-height: 1.25;
+    font-variant-numeric: lining-nums;
+    color: var(--ink);
+}
+.brand-building-panel.building-is-open .building-showcase-stage { height: min(72dvh, calc(100dvh - 224px)); }
+@media (max-width: 1024px) {
+    #brand > .brand-building-panel { padding: 0; align-content: start; }
+    .brand-building-panel .building-showcase-title { font-size: var(--fs-h2); }
 }
