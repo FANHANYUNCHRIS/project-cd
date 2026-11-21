@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buildingOpener.focus({ preventScroll: true });
     });
 
-    // 品牌故事、研究方法、原物料、品牌團隊四個分頁。
+    // 品牌故事、品牌團隊兩個分頁（2026-11-21 擁有者拿掉研究方法與原物料）。
     (function initBrandTabs() {
         const tabs = [...document.querySelectorAll('.brand-tabs [role="tab"]')];
         const activate = tab => {
@@ -670,9 +670,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ['#brand', [
                 '.brand-section-header h2', '.brand-tabs',
                 '.brand-story-copy > *:not(.brand-facts)', '.brand-facts li', ['.brand-emblem', 'enter-scale']
-            ]],
-            ['#brand', [
-                '.brand-panel-head > *', '.brand-cards li'
             ]],
             ['#brand', [
                 ['.party-roster', 'enter-window'], ['.party-keys', 'enter-window'],

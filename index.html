@@ -99,11 +99,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261121-item2">
+    <link rel="stylesheet" href="css/style.css?v=20261121-brand1">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261121-item2" defer></script>
+    <script src="js/script.js?v=20261121-brand1" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,8 +113,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261121-item2" defer></script>
-    <script src="js/pagination.js?v=20261121-item2" defer></script>
+    <script src="js/member.js?v=20261121-brand1" defer></script>
+    <script src="js/pagination.js?v=20261121-brand1" defer></script>
 </head>
 
 <body>
@@ -298,8 +298,6 @@
             <h2 id="brand-title" class="title-sheen reveal-sheen">關於 Project.CD</h2>
             <div class="brand-tabs" role="tablist" aria-label="品牌介紹">
                 <button type="button" id="brand-story-tab" role="tab" aria-controls="brand-story-panel" aria-selected="true">品牌故事</button>
-                <button type="button" id="brand-method-tab" role="tab" aria-controls="brand-method-panel" aria-selected="false" tabindex="-1">研究方法</button>
-                <button type="button" id="brand-material-tab" role="tab" aria-controls="brand-material-panel" aria-selected="false" tabindex="-1">原物料</button>
                 <button type="button" id="brand-team-tab" role="tab" aria-controls="brand-team-panel" aria-selected="false" tabindex="-1">品牌團隊</button>
             </div>
         </header>
@@ -308,6 +306,7 @@
                 <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>一個人的甜點研究室</p>
                 <h3>用理論，<br>烤一顆鳳梨酥。</h3>
                 <p class="brand-story-description">Project.CD 由一個人從零開始。沒有祖傳配方，而是把烘焙當成一門研究：讀專業文獻、計算配方比例、記錄溫度與時間，一版一版實驗，直到酥皮與內餡在每一口都達到平衡。</p>
+                <p class="brand-facts-head" aria-hidden="true"><span>PROFILE</span><span>研究室檔案</span></p>
                 <ul class="brand-facts" aria-label="品牌重點">
                     <li><strong>1<small>人</small></strong><span>從研究到出貨</span></li>
                     <li><strong>1<small>樣</small></strong><span>只專心做鳳梨酥</span></li>
@@ -316,33 +315,13 @@
             </div>
             <figure class="brand-emblem">
                 <img src="images/unicorn-logo-white.png" alt="Project.CD 獨角獸標誌" width="512" height="512" loading="lazy">
-                <figcaption><span>EMBLEM</span><span>獨角獸來自品牌團隊的角色世界</span></figcaption>
+                <div class="pastry-hud brand-emblem-hud" aria-hidden="true">
+                    <span class="pastry-hud-tl">EMBLEM</span>
+                    <span class="pastry-hud-tr">UNICORN</span>
+                    <b></b><b></b><b></b><b></b>
+                </div>
+                <figcaption>獨角獸來自品牌團隊的角色世界</figcaption>
             </figure>
-        </div>
-        <div class="brand-method-panel" id="brand-method-panel" role="tabpanel" aria-labelledby="brand-method-tab" tabindex="0" hidden>
-            <div class="brand-panel-head">
-                <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>研究方法</p>
-                <h3>工藝與數據，<br class="brand-mobile-break">兩種偏執的平衡。</h3>
-            </div>
-            <ol class="brand-cards brand-cards-4">
-                <li><span class="brand-card-num">01</span><strong>烘焙科學</strong><p>溫度、時間、水分與梅納反應，決定酥皮的色澤與香氣。</p></li>
-                <li><span class="brand-card-num">02</span><strong>配方比例</strong><p>奶油、糖、麵粉與餡料逐版調整，每一版都留下紀錄。</p></li>
-                <li><span class="brand-card-num">03</span><strong>口感結構</strong><p>酥皮與內餡的厚度、酸甜比例，讓每一口都平衡。</p></li>
-                <li><span class="brand-card-num">04</span><strong>專業文獻</strong><p>從烘焙專書與研究論文出發，再用實際烘烤驗證。</p></li>
-            </ol>
-        </div>
-        <div class="brand-material-panel" id="brand-material-panel" role="tabpanel" aria-labelledby="brand-material-tab" tabindex="0" hidden>
-            <div class="brand-panel-head">
-                <p class="brand-eyebrow"><span class="stage-tag">STAGE 03</span>原物料</p>
-                <h3>理論再好，<br>也要好材料。</h3>
-                <p class="brand-story-description">四樣主要原料都有指定來源，不用來路不明的替代品。</p>
-            </div>
-            <ul class="brand-cards brand-cards-2">
-                <li><span class="brand-card-num">內餡</span><strong>台灣土鳳梨</strong><p>在地小農，慢火熬煮</p></li>
-                <li><span class="brand-card-num">酥皮</span><strong>法國奶油</strong><p>酥皮的奶香來源</p></li>
-                <li><span class="brand-card-num">酥皮</span><strong>指定麵粉</strong><p>固定品牌，不隨意替換</p></li>
-                <li><span class="brand-card-num">甜度</span><strong>指定糖</strong><p>固定種類，穩定甜度</p></li>
-            </ul>
         </div>
         <div id="brand-team-panel" role="tabpanel" aria-labelledby="brand-team-tab" hidden>
         <!-- 2026-11 品牌團隊改成日式 RPG 隊伍選單（設計稿：https://claude.ai/artifact/6fsRyndYT1tS7pMxABCPWK ）。

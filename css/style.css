@@ -4963,8 +4963,7 @@ a.faq-card {
     padding: 0;
     list-style: none;
 }
-.brand-facts li,
-.brand-cards li {
+.brand-facts li {
     display: flex;
     flex-direction: column;
     gap: var(--sp-2);
@@ -4999,20 +4998,6 @@ a.faq-card {
 }
 .brand-emblem figcaption span:first-child { font-family: var(--font-serif); font-weight: 600; font-size: 14px; letter-spacing: 0.16em; }
 
-.brand-method-panel,
-.brand-material-panel { display: grid; align-content: center; gap: var(--sp-10); }
-.brand-method-panel[hidden],
-.brand-material-panel[hidden] { display: none; }
-.brand-material-panel { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: var(--sp-16); }
-.brand-panel-head .brand-story-description { margin-top: var(--sp-4); }
-.brand-cards { display: grid; gap: var(--sp-4); margin: 0; padding: 0; list-style: none; }
-.brand-cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.brand-cards-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.brand-cards li { gap: var(--sp-3); padding: var(--sp-6); border-radius: 20px; }
-.brand-cards-4 li { min-height: 240px; }
-.brand-card-num { font-family: var(--font-serif); font-size: var(--fs-small); font-weight: 600; color: var(--ink-soft); }
-.brand-cards strong { font-size: var(--fs-h3); font-weight: 900; line-height: 1.4; }
-.brand-cards p { margin: 0; font-size: var(--fs-small); line-height: 1.8; color: var(--ink-soft); }
 
 @media (max-width: 1024px) {
     .brand-section-header { flex-direction: column; align-items: stretch; gap: var(--sp-3); }
@@ -5026,13 +5011,6 @@ a.faq-card {
     .brand-facts small, .brand-facts span { font-size: var(--fs-caption); }
     .brand-emblem img { width: min(28%, 88px); }
     .brand-emblem figcaption { left: var(--sp-4); right: var(--sp-4); bottom: var(--sp-3); font-size: var(--fs-caption); }
-    .brand-method-panel, .brand-material-panel { grid-template-columns: minmax(0, 1fr); gap: var(--sp-4); align-content: start; }
-    .brand-cards { gap: var(--sp-2); }
-    .brand-cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .brand-cards li { padding: var(--sp-4); gap: var(--sp-1); }
-    .brand-cards-4 li { min-height: 0; }
-    .brand-cards strong { font-size: var(--fs-lead); }
-    .brand-cards p { font-size: var(--fs-caption); line-height: 1.7; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6647,4 +6625,137 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .pastry-hud-tr { right: 18px; }
     .pastry-hud > .pastry-hud-bl { display: none; }
     .pastry-info .pastry-purchase { padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-5); }
+}
+
+/* =========================================
+   2026-11-21 品牌區：只留「品牌故事」與「品牌團隊」，極簡電玩科技風（擁有者指定）
+   - 分頁＝遊戲選單：跟產品資訊頁籤同一款（金色三角＋金色底線）。
+   - 品牌重點＝PROFILE 檔案列：不用小卡，改成髮絲線分隔的一排數值。
+   - 標誌框＝跟產品 3D 展示框同一款檢視視窗（細網格、四角取景框、HUD 標示）。
+   ========================================= */
+.brand-section-header { box-shadow: inset 0 -1px 0 var(--ink-line); }
+.brand-tabs { gap: var(--sp-6); padding: 0; border-radius: 0; background: none; }
+.brand-tabs button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2);
+    padding: 0 var(--sp-1);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--ink-soft);
+    transition: color 0.2s ease;
+}
+.brand-tabs button::before {
+    content: '';
+    flex: none;
+    border-block: 4px solid transparent;
+    border-left: 6px solid var(--gold);
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+.brand-tabs button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--gold);
+    scale: 0 1;
+    transition: scale 0.3s var(--ease-out);
+}
+.brand-tabs button:hover { color: var(--ink); }
+.brand-tabs button[aria-selected="true"] { background: none; box-shadow: none; color: var(--ink); }
+.brand-tabs button[aria-selected="true"]::before { opacity: 1; }
+.brand-tabs button[aria-selected="true"]::after { scale: 1 1; }
+.brand-tabs button:active { transform: none; translate: 0 1px; }
+
+/* PROFILE 檔案列 */
+.brand-facts-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    margin: var(--sp-8) 0 0;
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--ink);
+}
+.brand-facts-head span:first-child {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--gold-ink);
+}
+.brand-facts-head span:last-child { font-size: var(--fs-small); color: var(--ink-soft); }
+.brand-facts { margin: 0; gap: 0; border-bottom: 1px solid var(--ink-line); }
+.brand-facts li {
+    gap: var(--sp-1);
+    padding: var(--sp-4) var(--sp-5);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.brand-facts li:first-child { padding-left: 0; }
+.brand-facts li + li { box-shadow: inset 1px 0 0 var(--ink-line); }
+.brand-facts strong {
+    padding: 0;
+    border: 0;
+    font-size: 40px;
+    line-height: 1.1;
+    font-variant-numeric: lining-nums;
+    color: var(--ink);
+}
+.brand-facts small { color: var(--gold-ink); }
+
+/* 標誌檢視視窗（沿用產品區 .pastry-hud 的取景框與標示） */
+.brand-emblem {
+    overflow: hidden;
+    border: 0;
+    border-radius: 14px;
+    background:
+        linear-gradient(rgba(22, 22, 26, 0.045) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(90deg, rgba(22, 22, 26, 0.045) 1px, transparent 1px) 0 0 / 32px 32px,
+        radial-gradient(ellipse at 50% 46%, #FBF4E6 0%, var(--surface-sunken) 62%);
+    box-shadow: inset 0 0 0 1px var(--ink-line);
+}
+/* 標誌後面一圈淡金色瞄準環 */
+.brand-emblem::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: min(80%, 320px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(184, 149, 90, 0.45);
+}
+.brand-emblem img { position: relative; }
+.brand-emblem figcaption {
+    display: block;
+    left: calc(var(--sp-5) + 26px);
+    right: auto;
+    bottom: calc(var(--sp-5) + 6px);
+    z-index: 2;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-tabs button::after { transition: none; }
+}
+
+@media (max-width: 1024px) {
+    .brand-tabs { gap: var(--sp-2); }
+    .brand-facts-head { margin-top: var(--sp-4); }
+    .brand-facts-head span:first-child { font-size: 12px; }
+    .brand-facts-head span:last-child { font-size: var(--fs-caption); }
+    .brand-facts li { padding: var(--sp-3); box-shadow: none; }
+    .brand-facts li + li { box-shadow: inset 1px 0 0 var(--ink-line); }
+    .brand-facts strong { font-size: 26px; }
+    .brand-emblem figcaption { left: calc(var(--sp-3) + 18px); bottom: calc(var(--sp-3) + 3px); font-size: 11px; }
 }
