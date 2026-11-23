@@ -5,6 +5,10 @@
 **最後更新**：2026-11-23，Claude
 
 ## 目前狀態
+- **結帳取貨日曆（2026-11-23，擁有者核准設計稿 https://claude.ai/artifact/3g7vrhRXLnXjqJ3W6GAULp ）**：結帳的取貨日期從系統日期框改成自己的月曆。可取貨日＝白色浮起圓鈕，太早或週一＝淡灰點不下去，選中＝黑底金字。可看本月起 3 個月，左右滑也能換月，按「確定」才寫入。
+  - 程式在 `js/member.js` 的 `initPickupPicker`（日期規則沿用 `getMinPickupDate`／`isValidPickupDate`），樣式在 `css/style.css` 最後一段「結帳取貨日曆」。
+  - 測過：預覽手機 390、桌機 1440 打開、選日、確定、換月上限、Esc 只關日曆不關結帳。**沒測**：登入後走完整結帳、真的 iPhone 滑動換月。
+  - 之後可做：會員卡翻面（擁有者說先做日曆，這個還沒開始）。
 - **首頁聖誕改版（2026-11-23，擁有者核准設計稿 https://claude.ai/artifact/Mz1NPmJB4Duk2mnuZaVZrZ ）**：首頁四頁都改成深色滿版卡片。
   - 開場「雪夜」：只留獨角獸、Project.CD、「一個人的甜點研究室」，飄雪＋金色光點（雪不再限 12 月）。舊的產品小名片、PRESS START、聖誕帽、森林拿掉。
   - 產品卡：照片 `images/xmas/product.jpg` 當背景，品名、規格、NT$ 500、「加入購物車」（1 盒）、「商品詳情」（開既有 `#product-modal`，裡面有成分、注意事項、3D 和數量）。產品區舊的 3D 框、能力值、頁籤都拿掉（模板在 `js/script.js` 的 `initProductPanels`）。
