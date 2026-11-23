@@ -724,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         checkoutDateInput.min = toDateKey(getMinPickupDate());
         checkoutDateInput.value = '';
+        pickupPicker.reset();
         checkoutDateError.hidden = true;
         checkoutError.hidden = true;
         btnCheckoutSubmit.disabled = true;
@@ -761,6 +762,126 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    /* 取貨日曆（2026-11-23，設計稿 https://claude.ai/artifact/3g7vrhRXLnXjqJ3W6GAULp ）
+       - 可取貨的日子是白色圓鈕，太早或週一公休的日子變淡、點不下去。
+       - 選好按「確定」才寫進隱藏的 #checkout-pickup-date，並觸發 change，沿用下面原本的檢查。
+       - 只能往後看 3 個月。 */
+    const pickupPicker = (function initPickupPicker() {
+        const trigger = document.getElementById('pickup-trigger');
+        const panel = document.getElementById('pickup-panel');
+        if (!trigger || !panel) return { reset() {} };
+        const display = document.getElementById('pickup-display');
+        const monthLabel = document.getElementById('pickup-month');
+        const grid = document.getElementById('pickup-grid');
+        const prevBtn = document.getElementById('pickup-prev');
+        const nextBtn = document.getElementById('pickup-next');
+        const pickedText = document.getElementById('pickup-picked');
+        const okBtn = document.getElementById('pickup-ok');
+        const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+        const MAX_MONTHS_AHEAD = 3;
+        let view = null;      // 目前顯示的月份（該月 1 號）
+        let draft = '';       // 面板裡點選、還沒按確定的日期
+        const label = key => {
+            const d = new Date(`${key}T00:00:00`);
+            return `${d.getMonth() + 1}/${d.getDate()}（${WEEK[d.getDay()]}）`;
+        };
+        const firstMonth = () => { const m = getMinPickupDate(); return new Date(m.getFullYear(), m.getMonth(), 1); };
+        const lastMonth = () => { const f = firstMonth(); return new Date(f.getFullYear(), f.getMonth() + MAX_MONTHS_AHEAD - 1, 1); };
+
+        function render() {
+            const y = view.getFullYear(), m = view.getMonth();
+            monthLabel.textContent = `${y} 年 ${m + 1} 月`;
+            prevBtn.disabled = view <= firstMonth();
+            nextBtn.disabled = view >= lastMonth();
+            const min = getMinPickupDate();
+            const frag = document.createDocumentFragment();
+            for (let i = 0; i < view.getDay(); i++) frag.appendChild(document.createElement('span'));
+            const days = new Date(y, m + 1, 0).getDate();
+            for (let d = 1; d <= days; d++) {
+                const date = new Date(y, m, d);
+                const key = toDateKey(date);
+                const monday = date.getDay() === 1;
+                const ok = !monday && date >= min;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pickup-day';
+                btn.textContent = d;
+                btn.dataset.date = key;
+                btn.setAttribute('aria-label', `${m + 1}月${d}日（${WEEK[date.getDay()]}）${ok ? '' : (monday ? '，週一公休' : '，太早不能取貨')}`);
+                if (!ok) { btn.disabled = true; btn.classList.add('is-off'); }
+                if (key === draft) { btn.classList.add('is-picked'); btn.setAttribute('aria-pressed', 'true'); }
+                frag.appendChild(btn);
+            }
+            grid.replaceChildren(frag);
+            pickedText.textContent = draft ? `取貨日：${label(draft)}` : '請點一個日期';
+            okBtn.disabled = !draft;
+        }
+
+        function open() {
+            draft = checkoutDateInput.value;
+            const base = draft ? new Date(`${draft}T00:00:00`) : getMinPickupDate();
+            view = new Date(base.getFullYear(), base.getMonth(), 1);
+            render();
+            panel.hidden = false;
+            trigger.setAttribute('aria-expanded', 'true');
+            const focusTarget = grid.querySelector('.is-picked') || grid.querySelector('.pickup-day:not(:disabled)') || nextBtn;
+            focusTarget.focus({ preventScroll: true });
+        }
+        function close(refocus = true) {
+            if (panel.hidden) return;
+            panel.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
+            if (refocus) trigger.focus({ preventScroll: true });
+        }
+
+        trigger.addEventListener('click', () => (panel.hidden ? open() : close()));
+        prevBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); render(); });
+        nextBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); render(); });
+        grid.addEventListener('click', e => {
+            const btn = e.target.closest('.pickup-day');
+            if (!btn || btn.disabled) return;
+            draft = btn.dataset.date;
+            render();
+            const again = grid.querySelector(`[data-date="${draft}"]`);
+            if (again) again.focus({ preventScroll: true });
+        });
+        okBtn.addEventListener('click', () => {
+            if (!draft) return;
+            checkoutDateInput.value = draft;
+            display.textContent = label(draft);
+            trigger.classList.add('has-value');
+            close();
+            checkoutDateInput.dispatchEvent(new Event('change'));
+        });
+        // 左右滑動換月份（手機）
+        let touchX = null;
+        grid.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+        grid.addEventListener('touchend', e => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            touchX = null;
+            if (Math.abs(dx) < 50) return;
+            const btn = dx < 0 ? nextBtn : prevBtn;
+            if (!btn.disabled) btn.click();
+        });
+        // Esc 先關日曆，不要連結帳彈窗一起關
+        panel.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { e.stopPropagation(); close(); }
+        });
+        document.addEventListener('pointerdown', e => {
+            if (!panel.hidden && !panel.contains(e.target) && !trigger.contains(e.target)) close(false);
+        });
+
+        return {
+            reset() {
+                draft = '';
+                display.textContent = '請選擇取貨日';
+                trigger.classList.remove('has-value');
+                close(false);
+            }
+        };
+    })();
 
     checkoutDateInput.addEventListener('change', () => {
         if (isValidPickupDate(checkoutDateInput.value)) {

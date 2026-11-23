@@ -7284,3 +7284,119 @@ html:not(.is-festive) #home .hero-snow { display: block; }
 @media (prefers-reduced-motion: reduce) {
     .xbokeh, .xcard-hero-next, .xcard-hero-copy > * { animation: none; }
 }
+
+/* =========================================
+   2026-11-23 結帳取貨日曆
+   設計稿：https://claude.ai/artifact/3g7vrhRXLnXjqJ3W6GAULp
+   白色浮起圓鈕＝可取貨；淡灰字＝太早或週一公休（點不下去）；
+   選中＝黑底金字＋淡金光圈。面板置中浮在結帳彈窗上，不在框內捲動。
+   ========================================= */
+#pickup-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 30;
+    width: min(380px, calc(100vw - 48px));
+    box-sizing: border-box;
+    padding: 20px 16px 16px;
+    border-radius: 24px;
+    box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(22, 22, 26, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#pickup-panel[hidden] { display: none; }
+#pickup-panel .date-picker-header { margin-bottom: 0; }
+#pickup-panel .date-picker-nav:disabled { opacity: 0.3; cursor: default; box-shadow: none; }
+.pickup-month {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+}
+.pickup-weekdays,
+.pickup-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    justify-items: center;
+}
+.pickup-weekdays span { font-size: 13px; color: var(--ink-soft); }
+.pickup-weekdays .is-off { color: #9a9aa0; }
+.pickup-grid > span { width: 44px; height: 44px; }
+.pickup-day {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(22, 22, 26, 0.1);
+    background: #ffffff;
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(22, 22, 26, 0.12), inset 0 -2px 0 rgba(22, 22, 26, 0.06);
+    font-family: 'Cormorant Garamond', serif;
+    font-variant-numeric: lining-nums;
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.15s var(--ease-out), box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.pickup-day:hover:not(:disabled) { box-shadow: 0 4px 10px rgba(22, 22, 26, 0.16), inset 0 -2px 0 rgba(22, 22, 26, 0.06); }
+.pickup-day:active:not(:disabled) { transform: scale(0.94); }
+.pickup-day:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.pickup-day.is-off {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: #b9b9be;
+    font-weight: 500;
+    font-size: 18px;
+    cursor: default;
+}
+.pickup-day.is-picked {
+    background: var(--ink);
+    color: var(--gold-soft);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184, 149, 90, 0.28), 0 6px 14px -4px rgba(22, 22, 26, 0.45);
+}
+.pickup-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding-top: 4px;
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+.pickup-legend span { display: flex; align-items: center; gap: 6px; }
+.pickup-legend i { width: 12px; height: 12px; border-radius: 50%; }
+.pickup-dot-open { background: #ffffff; box-shadow: 0 1px 3px rgba(22, 22, 26, 0.25), 0 0 0 1px rgba(22, 22, 26, 0.1); }
+.pickup-dot-off { background: #ececee; }
+.pickup-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(22, 22, 26, 0.08);
+}
+.pickup-foot p { margin: 0; font-size: 14px; color: var(--ink); }
+.pickup-ok {
+    height: 44px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 22px;
+    background: var(--ink);
+    color: #ffffff;
+    font: 500 15px 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.15s var(--ease-out);
+}
+.pickup-ok:disabled { opacity: 0.35; cursor: default; }
+.pickup-ok:active:not(:disabled) { transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) {
+    .pickup-day, .pickup-ok { transition: none; }
+}

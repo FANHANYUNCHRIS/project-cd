@@ -108,11 +108,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261123-xmas3">
+    <link rel="stylesheet" href="css/style.css?v=20261123-pickup2">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261123-xmas3" defer></script>
+    <script src="js/script.js?v=20261123-pickup2" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -122,8 +122,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/member.js?v=20261123-xmas3" defer></script>
-    <script src="js/pagination.js?v=20261123-xmas3" defer></script>
+    <script src="js/member.js?v=20261123-pickup2" defer></script>
+    <script src="js/pagination.js?v=20261123-pickup2" defer></script>
 </head>
 
 <body>
@@ -941,8 +941,36 @@
 
             <form id="checkout-form">
                 <div class="form-group">
-                    <label for="checkout-pickup-date">取貨日期 <span class="required-star">*</span></label>
-                    <input type="date" id="checkout-pickup-date" required>
+                    <!-- 2026-11-23 取貨日曆（設計稿 https://claude.ai/artifact/3g7vrhRXLnXjqJ3W6GAULp ）：
+                         取代手機／電腦內建的日期選單。不能選的日子（太早、週一公休）直接變淡點不下去。
+                         選好的日期寫進下面隱藏的 #checkout-pickup-date，js/member.js 原本的檢查照常運作。 -->
+                    <label for="pickup-trigger">取貨日期 <span class="required-star">*</span></label>
+                    <div class="date-picker-wrap pickup-picker">
+                        <button type="button" class="date-picker-trigger" id="pickup-trigger" aria-haspopup="dialog" aria-expanded="false">
+                            <span id="pickup-display">請選擇取貨日</span>
+                            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                        </button>
+                        <input type="hidden" id="checkout-pickup-date">
+                        <div class="date-picker-panel pickup-panel" id="pickup-panel" role="dialog" aria-label="選擇取貨日期" hidden>
+                            <div class="date-picker-header">
+                                <button type="button" class="date-picker-nav" id="pickup-prev" aria-label="上一個月"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                                <span class="pickup-month" id="pickup-month" aria-live="polite"></span>
+                                <button type="button" class="date-picker-nav" id="pickup-next" aria-label="下一個月"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                            </div>
+                            <div class="pickup-weekdays" aria-hidden="true">
+                                <span>日</span><span class="is-off">一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                            </div>
+                            <div class="pickup-grid" id="pickup-grid"></div>
+                            <div class="pickup-legend" aria-hidden="true">
+                                <span><i class="pickup-dot-open"></i>可取貨</span>
+                                <span><i class="pickup-dot-off"></i>太早或週一公休</span>
+                            </div>
+                            <div class="pickup-foot">
+                                <p id="pickup-picked">請點一個日期</p>
+                                <button type="button" class="pickup-ok" id="pickup-ok" disabled>確定</button>
+                            </div>
+                        </div>
+                    </div>
                     <p class="field-hint">須為下單日 5 天後，且不可為週一（公休）</p>
                     <p class="field-error" id="checkout-date-error" hidden>此日期不可選，請重新選擇（最少需 5 天前預訂，且週一公休）</p>
                 </div>
