@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p role="tabpanel" id="pastry-panel-ing" aria-labelledby="pastry-tab-ing">${product.ingredients.join('、')}</p>
                         <p role="tabpanel" id="pastry-panel-all" aria-labelledby="pastry-tab-all" hidden>含有<strong>${product.allergens}</strong>，對這些成分過敏者請勿食用。</p>
                         <p role="tabpanel" id="pastry-panel-keep" aria-labelledby="pastry-tab-keep" hidden>${product.notice.join('')}</p>
-                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），至超商取貨付款。蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 賣場即將開放。</p>
+                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），送出訂單後匯款，確認款項後寄到超商取貨。蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 賣場即將開放。</p>
                     </div>
                 </div>
             </div>
@@ -1063,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', () => {
         shipping: {
             title: "取貨與保存須知",
             content: `
-                <p><strong>1. 取貨方式：</strong>官網訂單一律寄到超商，取貨時付款（超商取貨付款）。</p>
+                <p><strong>1. 付款與取貨：</strong>官網訂單一律採匯款付款；確認款項後寄到超商，出貨前會透過 LINE 提供取貨資訊。</p>
                 <p><strong>2. 取貨日期：</strong>下單時可以指定取貨日期，最早為下單後 5 天；每週一公休，不提供週一取貨。</p>
                 <p><strong>3. 保存方式：</strong>甜點為新鮮手工現做、無添加防腐劑，取貨後請盡快冷藏，並於期限內享用完畢。</p>
             `
