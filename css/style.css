@@ -5425,13 +5425,16 @@ a.faq-card {
 .site-footer-links,
 .site-footer-social {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(max-content, 1fr));
     width: max-content;
     max-width: 100%;
     gap: var(--sp-2);
 }
 .site-footer-links a,
-.site-footer-social a { justify-content: center; }
+.site-footer-social a {
+    justify-content: center;
+    white-space: nowrap;
+}
 .site-footer-links { list-style: none; margin: 0; padding: 0; }
 .site-footer-links a,
 .site-footer-social a,
