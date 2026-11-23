@@ -1535,13 +1535,3 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         navigator.serviceWorker.register('sw.js').catch(() => {});
     });
 }
-
-/* 2026-11-23 擁有者指定：畫面不能縮放。
-   viewport 已設 user-scalable=no，但 iPhone Safari 會忽略它，所以另外擋雙指縮放（gesture 事件，只有 Safari 有）
-   和多指 touchmove；雙擊放大由 CSS 的 touch-action: manipulation 擋。 */
-['gesturestart', 'gesturechange', 'gestureend'].forEach((type) => {
-    document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
-});
-document.addEventListener('touchmove', (e) => {
-    if (e.touches && e.touches.length > 1) e.preventDefault();
-}, { passive: false });

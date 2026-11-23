@@ -156,7 +156,6 @@
 html {
     height: 100%;
     overflow: hidden;
-    touch-action: manipulation; /* 擁有者指定不能縮放：擋雙擊放大，單指捲動照常 */
     background-color: #EBEBEC;
 }
 

@@ -6,7 +6,6 @@
 
 ## 目前狀態
 - **示範登入（只在本機預覽）**：開 `http://localhost:8765/index.html?demo=1` 就是已登入的假會員（皇冠圖示、會員資料、2 筆購買紀錄、購物車 2 盒），不用密碼、不寫進 Firebase，重新整理就還原。程式在 `js/demo-login.js`，正式網站網址不是 localhost，所以完全不會啟動。
-- **畫面不能縮放（擁有者指定）**：`index.html`、`admin.html` 的 viewport 加了 `maximum-scale=1, user-scalable=no`；iPhone 會忽略這個，所以 `js/script.js` 最後另外擋雙指縮放，`html` 加 `touch-action: manipulation` 擋雙擊放大。**沒在真的 iPhone 上測過。**
 - **結帳取貨日曆（2026-11-23，擁有者核准設計稿 https://claude.ai/artifact/3g7vrhRXLnXjqJ3W6GAULp ）**：結帳的取貨日期從系統日期框改成自己的月曆。可取貨日＝白色浮起圓鈕，太早或週一＝淡灰點不下去，選中＝黑底金字。可看本月起 3 個月，左右滑也能換月，按「確定」才寫入。
   - 程式在 `js/member.js` 的 `initPickupPicker`（日期規則沿用 `getMinPickupDate`／`isValidPickupDate`），樣式在 `css/style.css` 最後一段「結帳取貨日曆」。
   - 測過：預覽手機 390、桌機 1440 打開、選日、確定、換月上限、Esc 只關日曆不關結帳。**沒測**：登入後走完整結帳、真的 iPhone 滑動換月。
