@@ -5424,8 +5424,8 @@ a.faq-card {
 }
 .site-footer-links,
 .site-footer-social {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--sp-2);
 }
 .site-footer-links { list-style: none; margin: 0; padding: 0; }
@@ -5436,7 +5436,7 @@ a.faq-card {
     align-items: center;
     gap: var(--sp-2);
     min-height: 44px;
-    padding-inline: var(--sp-2);
+    padding-inline: var(--sp-3);
     border: 1px solid rgb(255 255 255 / 0.2);
     border-radius: var(--sp-3);
     background: rgb(255 255 255 / 0.04);
