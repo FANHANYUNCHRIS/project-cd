@@ -7538,8 +7538,10 @@ body { background-color: var(--x-night); }
 
 #products.xcard, #brand.xcard, #shop.xcard {
     display: block;
+    --card-nav-space: 96px;
     height: auto;
     min-height: 0;
+    padding-block-start: var(--card-nav-space);
     background: transparent;
     overflow: visible;
 }
@@ -7548,8 +7550,8 @@ body { background-color: var(--x-night); }
     z-index: 1;
     box-sizing: border-box;
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: calc(100vh - var(--card-nav-space));
+    min-height: calc(100dvh - var(--card-nav-space));
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     background: linear-gradient(180deg, #ffffff 0%, #f7f6f3 100%);
@@ -7578,7 +7580,7 @@ body { background-color: var(--x-night); }
     align-items: stretch;
     justify-content: center;
     gap: var(--sp-3);
-    padding: 96px var(--sp-12) var(--sp-12);
+    padding: var(--sp-12);
 }
 .xpanel .xcard-copy { width: 100%; gap: var(--sp-3); }
 .xpanel .xcard-body-split .xcard-copy,
@@ -7626,14 +7628,17 @@ body { background-color: var(--x-night); }
 }
 
 @media (max-width: 1024px) {
+    #products.xcard, #brand.xcard, #shop.xcard {
+        --card-nav-space: calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2));
+        padding-block: 0 var(--card-nav-space);
+    }
     .xpanel {
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: minmax(0, 1fr) auto;
     }
     .xpanel .xcard-body {
         padding: var(--sp-4) max(var(--sp-4), env(safe-area-inset-right))
-            calc(96px + env(safe-area-inset-bottom))
-            max(var(--sp-4), env(safe-area-inset-left));
+            var(--sp-4) max(var(--sp-4), env(safe-area-inset-left));
     }
     .xpanel .xcard-title { font-size: 26px; }
     .xpanel .xcard-price strong { font-size: 40px; }
