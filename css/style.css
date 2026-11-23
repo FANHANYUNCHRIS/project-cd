@@ -7503,3 +7503,8 @@ html:not(.is-festive) #home .hero-snow { display: block; }
     .navbar .nav-links a .nav-text,
     .navbar :is(.nav-icon-btn, .nav-icon-link) .nav-icon-svg { transition: none; }
 }
+
+/* 2026-11-23 擁有者指定：滑動時右邊不要出現捲軸（整頁由 body 捲動，html 本身不捲）。
+   只是把捲軸藏起來，滑動、滾輪、鍵盤照常。 */
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
