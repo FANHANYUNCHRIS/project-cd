@@ -7676,58 +7676,40 @@ body { background-color: var(--x-night); }
     .xpanel .xcard-price strong { font-size: 40px; }
 }
 
-/* 品牌重點：中央卡片正面呈現，兩側以透視角度退後。 */
+/* 品牌輪播：照片、介紹與操作一起置於每張滿高卡片。 */
 .brand-carousel {
     display: grid;
-    grid-template-rows: minmax(120px, 1fr) auto;
-    min-height: 184px;
-    padding: var(--sp-2);
-    background: radial-gradient(ellipse at center, var(--ink) 0%, var(--x-night) 76%);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--sp-2);
+    min-height: calc(100vh - var(--card-top) - var(--card-bottom));
+    min-height: calc(100dvh - var(--card-top) - var(--card-bottom));
     color: var(--paper);
 }
 .brand-carousel-cards {
-    position: relative;
-    isolation: isolate;
     display: grid;
-    place-items: center;
-    perspective: 800px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    justify-items: center;
+    perspective: 1100px;
+    isolation: isolate;
+    overflow: clip;
 }
 .brand-carousel-card {
     grid-area: 1 / 1;
-    display: grid;
-    align-content: end;
-    gap: var(--sp-1);
-    width: min(48%, 280px);
-    height: min(90%, 340px);
-    padding: var(--sp-3);
-    border: 1px solid var(--gold);
-    border-radius: var(--sp-3);
-    background-color: var(--ink);
-    background-image: linear-gradient(transparent, rgb(11 13 18 / 0.95)), var(--brand-photo);
-    background-position: center;
-    background-size: cover;
+    width: 84%;
+    min-height: 0;
     transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
 }
-.brand-carousel-brand { --brand-photo: url(../images/xmas/brand.jpg); }
-.brand-carousel-product { --brand-photo: url(../images/xmas/product.jpg); }
-.brand-carousel-shop { --brand-photo: url(../images/xmas/shop.jpg); }
-.brand-carousel-card strong {
-    color: var(--gold-soft);
-    font-size: clamp(24px, 3vw, 40px);
-    line-height: 1.1;
-}
-.brand-carousel-card span { font-size: var(--fs-small); }
-.brand-carousel-card[data-position="center"] { z-index: 1; }
+.brand-carousel-card[data-position="center"] { z-index: 2; }
 .brand-carousel-card[data-position="left"] {
     opacity: 0.55;
-    transform: translateX(-77%) translateZ(-110px) rotateY(36deg);
+    transform: translateX(-23%) translateZ(-100px) rotateY(32deg) scale(0.84);
 }
 .brand-carousel-card[data-position="right"] {
     opacity: 0.55;
-    transform: translateX(77%) translateZ(-110px) rotateY(-36deg);
+    transform: translateX(23%) translateZ(-100px) rotateY(-32deg) scale(0.84);
+}
+@media (max-width: 1024px) {
+    .brand-carousel-card { width: 86%; }
+    .brand-carousel-card .xcard-bg { min-height: 72px; }
 }
 .brand-carousel-controls:not([hidden]) {
     display: flex;

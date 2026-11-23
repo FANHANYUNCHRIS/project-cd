@@ -1552,9 +1552,9 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         cards.forEach((card, index) => {
             const offset = (index - current + cards.length) % cards.length;
             card.dataset.position = positions[offset];
-            card.setAttribute('aria-hidden', String(index !== current));
+            card.inert = index !== current;
         });
-        const label = cards[current].innerText.trim().replace(/\s+/g, ' ');
+        const label = cards[current].querySelector('h2').innerText.trim().replace(/\s+/g, ' ');
         status.textContent = (current + 1) + ' / ' + cards.length;
         status.setAttribute('aria-label', status.textContent + '，' + label);
     }
