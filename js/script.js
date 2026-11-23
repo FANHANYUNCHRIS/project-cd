@@ -1605,3 +1605,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => place(true));
     place(true);
 });
+
+// 2026-11-23「加到主畫面」App：註冊離線小幫手（見 sw.js）
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+}
