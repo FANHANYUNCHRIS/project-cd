@@ -7400,3 +7400,106 @@ html:not(.is-festive) #home .hero-snow { display: block; }
 @media (prefers-reduced-motion: reduce) {
     .pickup-day, .pickup-ok { transition: none; }
 }
+
+/* =========================================
+   2026-11-23 黑色浮空導覽列（擁有者指定）
+   - 導覽列整條改成黑底（仍是不透明固定材質，不做背景偵測），髮絲白邊＋往下的陰影，看起來浮在畫面上。
+   - 被選到的那一格：圖示放大、變香檳金並發出柔和金光；其他格是 62% 白。
+   - 手機版拿掉原本「凹槽＋圓鈕往上跳」的造型（JS 還會寫遮罩變數，但這裡不再使用）。
+   - 選中狀態仍完全由 navObserver（桌機）與既有分頁列程式（手機）決定，這段只管樣式。
+   ========================================= */
+.navbar {
+    --nav-black: #111216;
+    --nav-black-edge: 0 0 0 1px rgba(255, 255, 255, 0.1);
+    --nav-float: 0 16px 36px -12px rgba(0, 0, 0, 0.6), 0 4px 10px -4px rgba(0, 0, 0, 0.35);
+    --nav-idle: rgba(255, 255, 255, 0.62);
+    --nav-glow: drop-shadow(0 0 3px rgba(232, 210, 165, 0.95)) drop-shadow(0 0 10px rgba(216, 192, 145, 0.7));
+}
+
+/* ---- 桌機 ---- */
+@media (min-width: 1025px) {
+    .navbar .nav-links {
+        background: var(--nav-black);
+        box-shadow: var(--nav-black-edge), var(--nav-float);
+    }
+    .navbar .nav-links a {
+        color: var(--nav-idle);
+        transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .navbar .nav-links a:not(.active):hover {
+        background: rgba(255, 255, 255, 0.07);
+        color: rgba(255, 255, 255, 0.92);
+    }
+    .navbar .nav-links a.active {
+        background: rgba(216, 192, 145, 0.14);
+        color: var(--gold-soft);
+    }
+    .navbar .nav-links.has-slider a.active { background: transparent; }
+    .navbar .nav-links.has-slider::after {
+        background: rgba(216, 192, 145, 0.14);
+        box-shadow: inset 0 0 0 1px rgba(216, 192, 145, 0.35), 0 0 18px -4px rgba(216, 192, 145, 0.45);
+    }
+    .navbar .nav-links a .nav-text {
+        display: inline-block;
+        transition: scale 0.35s var(--ease-out), text-shadow 0.25s ease;
+    }
+    .navbar .nav-links a.active .nav-text {
+        scale: 1.12;
+        text-shadow: 0 0 10px rgba(216, 192, 145, 0.75), 0 0 22px rgba(184, 149, 90, 0.45);
+    }
+    .navbar .nav-links a .nav-text::before { border-left-color: var(--gold-soft); }
+
+    .navbar :is(.nav-icon-btn, .nav-icon-link) {
+        background: var(--nav-black);
+        color: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--nav-black-edge), var(--nav-float);
+        transition: color 0.2s ease, box-shadow 0.25s ease;
+    }
+    .navbar :is(.nav-icon-btn, .nav-icon-link) .nav-icon-svg { transition: scale 0.3s var(--ease-out), filter 0.25s ease; }
+    .navbar :is(.nav-icon-btn, .nav-icon-link):is(:hover, :focus-visible) { color: var(--gold-soft); }
+    .navbar :is(.nav-icon-btn, .nav-icon-link):is(:hover, :focus-visible) .nav-icon-svg { scale: 1.12; filter: var(--nav-glow); }
+    .navbar .nav-utility-divider { background: rgba(255, 255, 255, 0.18); }
+    .navbar .cart-badge { background: var(--gold-soft); color: var(--ink); }
+}
+
+/* ---- 手機分頁列 ---- */
+@media (max-width: 1024px) {
+    .navbar .nav-links { filter: none; }
+    .navbar .nav-links::before {
+        -webkit-mask: none;
+        mask: none;
+        background: var(--nav-black);
+        border-radius: 26px;
+        box-shadow: var(--nav-black-edge), var(--nav-float);
+        transition: none;
+    }
+    .navbar .nav-links :is(a, .nav-more-btn),
+    .navbar .nav-links .mobile-tab-selected {
+        background: transparent !important;
+        box-shadow: none;
+        transform: none !important;
+        color: var(--nav-idle);
+    }
+    .navbar .nav-links .mobile-tab-selected {
+        color: var(--gold-soft);
+        background: radial-gradient(circle closest-side, rgba(216, 192, 145, 0.24), rgba(216, 192, 145, 0) 100%) !important;
+    }
+    .navbar .nav-links a.active::after { display: none; }
+    .navbar .nav-links .mobile-tab-svg {
+        transition: scale 0.35s var(--ease-out), filter 0.25s ease, color 0.2s ease;
+    }
+    .navbar .nav-links .mobile-tab-selected .mobile-tab-svg {
+        scale: 1.25;
+        filter: var(--nav-glow);
+    }
+    .navbar .nav-links :is(a, button):active .mobile-tab-svg { scale: 0.88; }
+    .navbar .nav-links .mobile-tab-selected:active .mobile-tab-svg { scale: 1.1; }
+    .navbar .nav-links .cart-badge { background: var(--gold-soft); color: var(--ink); }
+    .navbar .nav-links :is(a, button):focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; border-radius: 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar .nav-links .mobile-tab-svg,
+    .navbar .nav-links a .nav-text,
+    .navbar :is(.nav-icon-btn, .nav-icon-link) .nav-icon-svg { transition: none; }
+}
