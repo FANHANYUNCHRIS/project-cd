@@ -7516,6 +7516,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; heig
    - 卡片高度跟著螢幕高度走，內容一律一張卡放得下，不在卡片裡捲動；照片區會自動縮放補空間。
    ========================================= */
 body { background-color: var(--x-night); }
+/* 全站都是黑底了：LOGO 文字和圖案預設就用淺色（navObserver 的 .on-dark 切換照舊，只是兩種狀態現在一樣亮），
+   隱藏中的舊 STAGE 頁碼也改淺色，免得之後被打開時黑字疊在黑底上。 */
+.navbar .logo-text { color: var(--paper); }
+.navbar .nav-icon { filter: invert(1); }
+.section-index-label { color: var(--gold-soft); }
+.section-index-current { color: var(--paper); }
+.section-index-total { color: rgb(244 241 234 / 0.6); }
+.section-index-name { color: rgb(244 241 234 / 0.78); }
 .hero-snow.is-global {
     position: fixed;
     inset: 0;
