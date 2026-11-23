@@ -5416,56 +5416,62 @@ a.faq-card {
 .site-footer-facts dt,
 .site-footer-bottom p { color: rgb(255 255 255 / 0.68); }
 .site-footer-facts dd { margin: 0; }
-.site-footer-col { container-type: inline-size; }
 .site-footer-heading {
     margin: 0 0 var(--sp-2);
     font-size: var(--fs-small);
     font-weight: 700;
     color: var(--gold-soft);
 }
-.site-footer-links,
+.site-footer-links {
+    width: min(100%, 16rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: var(--sp-3);
+    background: rgb(255 255 255 / 0.04);
+}
+.site-footer-links li + li { border-top: 1px solid rgb(255 255 255 / 0.2); }
 .site-footer-social {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(max-content, 1fr));
-    width: max-content;
-    max-width: 100%;
+    display: flex;
     gap: var(--sp-2);
 }
-/* 兩個單行按鈕加上欄距需要約 256px。 */
-@container (width < 16rem) {
-    .site-footer-links,
-    .site-footer-social { grid-template-columns: minmax(max-content, 1fr); }
-}
-.site-footer-links { list-style: none; margin: 0; padding: 0; }
 .site-footer-links a,
 .site-footer-social a,
 .site-footer-pill {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: var(--sp-2);
     min-height: 44px;
-    padding-inline: var(--sp-3);
-    border: 1px solid rgb(255 255 255 / 0.2);
-    white-space: nowrap;
     border-radius: var(--sp-3);
-    background: rgb(255 255 255 / 0.04);
     color: var(--paper);
     font-size: var(--fs-small);
     text-decoration: none;
+    white-space: nowrap;
+}
+.site-footer-links a { padding-inline: var(--sp-3); }
+.site-footer-social a {
+    justify-content: center;
+    width: 44px;
+    flex: 0 0 44px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    font-size: 22px;
+}
+.site-footer-pill {
+    border: 1px solid rgb(255 255 255 / 0.2);
+    background: rgb(255 255 255 / 0.04);
 }
 .site-footer-links i,
-.site-footer-social i,
 .site-footer-pill i {
     flex: 0 0 1.25em;
     text-align: center;
     color: var(--gold-soft);
 }
 .site-footer-social .fa-line { color: #06c755; }
-.site-footer-social .fa-youtube { color: #ff4545; }
-.site-footer-social .fa-facebook-f { color: #75a9ff; }
-.site-footer-social .fa-instagram { color: #f398bd; }
-.site-footer a:hover { border-color: var(--gold); }
+.site-footer-social .fa-youtube { color: #ff0033; }
+.site-footer-social .fa-facebook-f { color: #0866ff; }
+.site-footer-social .fa-instagram { color: #e4405f; }
+.site-footer a:hover { background: rgb(255 255 255 / 0.08); border-color: var(--gold); }
 .site-footer a:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
 .site-footer-bottom {
     display: flex;
