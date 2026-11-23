@@ -33,7 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'auth/wrong-password': '密碼錯誤',
         'auth/invalid-credential': '帳號或密碼錯誤',
         'auth/email-already-in-use': '此信箱已被註冊',
-        'auth/weak-password': '密碼強度不足，至少需要 6 碼'
+        'auth/weak-password': '密碼強度不足，至少需要 6 碼',
+        'auth/popup-blocked': '登入視窗被擋下來了，請允許彈出視窗後再試一次',
+        'auth/popup-closed-by-user': '登入視窗已關閉，沒有完成登入',
+        'auth/cancelled-popup-request': '登入視窗已關閉，沒有完成登入',
+        'auth/network-request-failed': '網路連線不穩，請再試一次',
+        'auth/operation-not-supported-in-this-environment': '這個瀏覽器不支援 Google 登入，請改用信箱登入',
+        'auth/web-storage-unsupported': '這個瀏覽器不支援 Google 登入，請改用信箱登入'
     };
 
     function authErrorText(err) {
@@ -369,6 +375,21 @@ document.addEventListener('DOMContentLoaded', () => {
         btnGoogleSignin.addEventListener('click', () => {
             const activeError = loginForm.hidden ? signupError : loginError;
             activeError.hidden = true;
+
+            /* 2026-11-23 擁有者回報：iPhone「加到主畫面」的 App 用 Google 登入會跳紅字錯誤。
+               iPhone 主畫面 App 開不了 Google 的登入小視窗（Safari、Android 都正常），
+               LINE／FB／IG 內建瀏覽器則是 Google 自己會擋。這兩種情況先講清楚該怎麼做，不去硬試。 */
+            const ua = navigator.userAgent;
+            const isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+            const isIOSHomeApp = isIOS && (navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches);
+            const isInAppBrowser = /Line\/|FBAN|FBAV|FB_IAB|Instagram/i.test(ua);
+            if (isIOSHomeApp || isInAppBrowser) {
+                activeError.textContent = isIOSHomeApp
+                    ? 'iPhone 主畫面的 App 目前不能用 Google 登入。請改用信箱登入，或用 Safari 打開網站再用 Google 登入。'
+                    : '在 LINE／Facebook／Instagram 裡打開的網頁不能用 Google 登入。請點右上角選單，改用 Safari 或 Chrome 打開。';
+                activeError.hidden = false;
+                return;
+            }
 
             auth.signInWithPopup(googleProvider)
                 .then(result => {
