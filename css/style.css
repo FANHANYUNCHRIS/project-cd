@@ -7536,12 +7536,21 @@ body { background-color: var(--x-night); }
 }
 .shop-footer-screen { background: transparent; }
 
+#home.xcard, #products.xcard, #brand.xcard, #shop.xcard {
+    --card-gutter: var(--sp-4);
+    --card-radius: 28px;
+    --card-nav-space: calc(96px + var(--card-gutter));
+    --card-top: var(--card-nav-space);
+    --card-bottom: var(--card-gutter);
+    --card-left: max(var(--card-gutter), env(safe-area-inset-left));
+    --card-right: max(var(--card-gutter), env(safe-area-inset-right));
+}
+
 #products.xcard, #brand.xcard, #shop.xcard {
     display: block;
-    --card-nav-space: 96px;
     height: auto;
     min-height: 0;
-    padding-block-start: var(--card-nav-space);
+    padding: var(--card-top) var(--card-right) var(--card-bottom) var(--card-left);
     background: transparent;
     overflow: visible;
 }
@@ -7550,10 +7559,12 @@ body { background-color: var(--x-night); }
     z-index: 1;
     box-sizing: border-box;
     width: 100%;
-    min-height: calc(100vh - var(--card-nav-space));
-    min-height: calc(100dvh - var(--card-nav-space));
+    min-height: calc(100vh - var(--card-top) - var(--card-bottom));
+    min-height: calc(100dvh - var(--card-top) - var(--card-bottom));
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    border-radius: var(--card-radius);
+    overflow: clip;
     background: linear-gradient(180deg, #ffffff 0%, #f7f6f3 100%);
     color: var(--ink);
 }
@@ -7627,10 +7638,22 @@ body { background-color: var(--x-night); }
     min-height: 100dvh;
 }
 
+#home.xcard::before {
+    content: "";
+    position: absolute;
+    inset: var(--card-top) var(--card-right) var(--card-bottom) var(--card-left);
+    border: 1px solid rgb(244 241 234 / 0.22);
+    border-radius: var(--card-radius);
+    pointer-events: none;
+}
+
 @media (max-width: 1024px) {
-    #products.xcard, #brand.xcard, #shop.xcard {
+    #home.xcard, #products.xcard, #brand.xcard, #shop.xcard {
+        --card-gutter: var(--sp-3);
+        --card-radius: 26px;
         --card-nav-space: calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2));
-        padding-block: 0 var(--card-nav-space);
+        --card-top: max(var(--card-gutter), env(safe-area-inset-top));
+        --card-bottom: var(--card-nav-space);
     }
     .xpanel {
         grid-template-columns: minmax(0, 1fr);
