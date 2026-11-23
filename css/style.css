@@ -7039,3 +7039,6 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
 @media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
     .navbar .nav-links::before { transition: none; }
 }
+
+/* 2026-11-23 Google 登入暫時隱藏（見 index.html 註解） */
+.auth-divider[hidden], .btn-google-signin[hidden] { display: none !important; }

@@ -35,6 +35,12 @@
 - 完整檢查（2026-11-20）技術面 13/20。還沒處理、要擁有者提供或決定的：產品沒有真實照片（最大扣分）、YouTube／Facebook／Instagram 連結是空的、團隊第 2、3 位沒照片（`team-2.jpg`、`team-3.jpg`）、小遊戲連到本機資料夾、沒有分享預覽圖（og:image）、首頁第一眼看不出賣鳳梨酥。
 - 檢查工具還回報一處灰字對比不足（#a5a5a5），很可能是停用狀態的分頁按鈕（WCAG 不要求停用按鈕對比），沒處理；另有一處文字太貼邊框（品牌團隊卡）也沒處理。
 
+## 等官方信箱：開啟 Google 登入（2026-11-23 做到一半，擁有者決定暫停）
+- 查到的事實：Firebase 原本**根本沒開 Google 登入**，`fanhanyunchris.github.io` 也不在授權網域，所以官網的 Google 按鈕從來沒能用。
+- 已做完並保留：(1) 新建公開 repo `FANHANYUNCHRIS/fanhanyunchris.github.io`（本機 `Documents/GitHub/fanhanyunchris.github.io`），放 Firebase 官方登入輔助檔 `__/auth/`，網址 https://fanhanyunchris.github.io/__/auth/handler 已確認能開；(2) Firebase 授權網域已加 `fanhanyunchris.github.io`；(3) Google Cloud 條款擁有者已同意。
+- 已暫停：Google 供應商開過又**關掉**（支援信箱只能選擁有者私人 Gmail，擁有者不要公開）；官網 Google 按鈕和「或」分隔線加了 `hidden` 藏起來（`index.html`）。
+- 官方信箱申請好之後要做：① 把官方信箱加進 Firebase 專案成員（擁有者操作），② Firebase › Authentication › 登入方式 › 開 Google，公開名稱 Project.CD、支援信箱選官方信箱（Google Cloud › Google Auth Platform › 品牌 也確認沒有私人 Gmail），③ Google Cloud › 用戶端 › Web client (auto created by Google Service)：JavaScript 來源加 `https://fanhanyunchris.github.io`、重新導向 URI 加 `https://fanhanyunchris.github.io/__/auth/handler`，④ `js/firebase-config.js` 的 authDomain 改成 `fanhanyunchris.github.io`，iPhone 主畫面 App 改用 `signInWithRedirect`（`js/member.js` 目前在主畫面 App 直接顯示說明不嘗試），manifest 的 scope 可能要放寬到 `/` 讓 `/__/auth/` 留在 App 裡，⑤ 拿掉 `index.html` 兩個 `hidden`，⑥ 電腦、Safari、iPhone 主畫面 App 各測一次。主畫面 App 這條路沒有實測過，不保證成功。
+
 ## 注意事項
 - 設計規範看 `CLAUDE.md` 和 `AGENTS.md`。
 - 本機預覽：在專案資料夾開伺服器，打開 `http://localhost:8080/index.html`。
