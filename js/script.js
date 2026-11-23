@@ -1535,3 +1535,38 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         navigator.serviceWorker.register('sw.js').catch(() => {});
     });
 }
+
+/* 品牌重點固定由訪客操作，鍵盤左右鍵也可切換。 */
+(function initBrandCarousel() {
+    const carousel = document.querySelector('.brand-carousel');
+    if (!carousel) return;
+
+    const cards = [...carousel.querySelectorAll('.brand-carousel-card')];
+    const controls = carousel.querySelector('.brand-carousel-controls');
+    const status = carousel.querySelector('[role="status"]');
+    const positions = ['center', 'right', 'left'];
+    let current = 0;
+
+    function show(step) {
+        current = (current + step + cards.length) % cards.length;
+        cards.forEach((card, index) => {
+            const offset = (index - current + cards.length) % cards.length;
+            card.dataset.position = positions[offset];
+            card.setAttribute('aria-hidden', String(index !== current));
+        });
+        const label = cards[current].innerText.trim().replace(/\s+/g, ' ');
+        status.textContent = (current + 1) + ' / ' + cards.length;
+        status.setAttribute('aria-label', status.textContent + '，' + label);
+    }
+
+    controls.querySelectorAll('[data-step]').forEach(button => {
+        button.addEventListener('click', () => show(Number(button.dataset.step)));
+    });
+    controls.addEventListener('keydown', event => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        show(event.key === 'ArrowLeft' ? -1 : 1);
+    });
+    controls.hidden = false;
+    show(0);
+})();
