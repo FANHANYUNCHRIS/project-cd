@@ -7676,62 +7676,68 @@ body { background-color: var(--x-night); }
     .xpanel .xcard-price strong { font-size: 40px; }
 }
 
-/* 品牌輪播：照片、介紹與操作一起置於每張滿高卡片。 */
+/* 品牌卡片接受水平拖曳，垂直手勢交給頁面捲動。 */
 .brand-carousel {
+    position: relative;
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: var(--sp-2);
     min-height: calc(100vh - var(--card-top) - var(--card-bottom));
     min-height: calc(100dvh - var(--card-top) - var(--card-bottom));
-    color: var(--paper);
+    touch-action: pan-y pinch-zoom;
 }
 .brand-carousel-cards {
     display: grid;
-    justify-items: center;
     perspective: 1100px;
     isolation: isolate;
     overflow: clip;
 }
 .brand-carousel-card {
     grid-area: 1 / 1;
-    width: 84%;
     min-height: 0;
     transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
 }
 .brand-carousel-card[data-position="center"] { z-index: 2; }
 .brand-carousel-card[data-position="left"] {
-    opacity: 0.55;
-    transform: translateX(-23%) translateZ(-100px) rotateY(32deg) scale(0.84);
+    opacity: 0;
+    transform: translateX(-85%) translateZ(-100px) rotateY(24deg);
 }
 .brand-carousel-card[data-position="right"] {
-    opacity: 0.55;
-    transform: translateX(23%) translateZ(-100px) rotateY(-32deg) scale(0.84);
+    opacity: 0;
+    transform: translateX(85%) translateZ(-100px) rotateY(-24deg);
 }
-@media (max-width: 1024px) {
-    .brand-carousel-card { width: 86%; }
-    .brand-carousel-card .xcard-bg { min-height: 72px; }
+.brand-carousel-pending {
+    grid-template: 1fr / 1fr;
+    place-items: center;
 }
-.brand-carousel-controls:not([hidden]) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--sp-2);
-}
-.brand-carousel-controls button {
+.brand-carousel-pending .xcard-title { color: var(--ink); }
+.brand-carousel-arrow:not([hidden]) {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    display: grid;
+    place-items: center;
     width: 44px;
     height: 44px;
-    border: 1px solid var(--gold);
+    padding: 0;
+    border: 1px solid rgb(244 241 234 / 0.35);
     border-radius: 50%;
-    background: var(--ink);
-    color: var(--gold-soft);
+    background: rgb(11 13 18 / 0.62);
+    color: var(--paper);
+    opacity: 0.65;
+    transform: translateY(-50%);
     cursor: pointer;
 }
-.brand-carousel-controls button:focus-visible {
-    outline: 2px solid var(--paper);
+.brand-carousel-arrow[data-step="-1"] { left: var(--sp-1); }
+.brand-carousel-arrow[data-step="1"] { right: var(--sp-1); }
+.brand-carousel-arrow:is(:hover, :focus-visible) { opacity: 1; }
+.brand-carousel-arrow:focus-visible {
+    outline: 2px solid var(--gold);
     outline-offset: 2px;
 }
-.brand-carousel-controls [role="status"] { font-size: var(--fs-small); }
 
+@media (max-width: 1024px) {
+    .brand-carousel-card .xcard-bg { min-height: 72px; }
+    .brand-carousel-arrow:not([hidden]) { top: var(--sp-3); transform: none; }
+}
 @media (prefers-reduced-motion: reduce) {
     .brand-carousel-card { transition: none; }
 }

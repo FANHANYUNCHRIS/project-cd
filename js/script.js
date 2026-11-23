@@ -1542,10 +1542,11 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
     if (!carousel) return;
 
     const cards = [...carousel.querySelectorAll('.brand-carousel-card')];
-    const controls = carousel.querySelector('.brand-carousel-controls');
+    const arrows = carousel.querySelectorAll('.brand-carousel-arrow');
     const status = carousel.querySelector('[role="status"]');
     const positions = ['center', 'right', 'left'];
     let current = 0;
+    let drag;
 
     function show(step) {
         current = (current + step + cards.length) % cards.length;
@@ -1555,18 +1556,35 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
             card.inert = index !== current;
         });
         const label = cards[current].querySelector('h2').innerText.trim().replace(/\s+/g, ' ');
-        status.textContent = (current + 1) + ' / ' + cards.length;
-        status.setAttribute('aria-label', status.textContent + '，' + label);
+        status.textContent = (current + 1) + ' / ' + cards.length + '，' + label;
     }
 
-    controls.querySelectorAll('[data-step]').forEach(button => {
+    arrows.forEach(button => {
         button.addEventListener('click', () => show(Number(button.dataset.step)));
+        button.hidden = false;
     });
-    controls.addEventListener('keydown', event => {
+    carousel.addEventListener('pointerdown', event => {
+        if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button')) return;
+        if (event.pointerType === 'mouse') event.preventDefault();
+        drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        carousel.setPointerCapture(event.pointerId);
+    });
+    carousel.addEventListener('pointerup', event => {
+        if (drag?.id !== event.pointerId) return;
+        const dx = event.clientX - drag.x;
+        const dy = event.clientY - drag.y;
+        drag = undefined;
+        if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+            show(dx < 0 ? 1 : -1);
+        }
+    });
+    carousel.addEventListener('lostpointercapture', event => {
+        if (drag?.id === event.pointerId) drag = undefined;
+    });
+    carousel.addEventListener('keydown', event => {
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
         event.preventDefault();
         show(event.key === 'ArrowLeft' ? -1 : 1);
     });
-    controls.hidden = false;
     show(0);
 })();
