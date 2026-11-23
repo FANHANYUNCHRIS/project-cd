@@ -7009,3 +7009,33 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
     .receipt-title { margin-top: var(--sp-3); padding-top: var(--sp-3); }
     .receipt-items, .receipt-info { margin-top: var(--sp-3); padding-top: var(--sp-3); }
 }
+
+/* 2026-11-23 手機分頁列卡頓修正（擁有者回報切換很卡）
+   - 底板遮罩改成一張固定的兩倍寬圖（JS 只在寬度改變時畫一次），凹槽用 mask-position 滑動，
+     不再每一格重畫圖片，也不會閃一格空白。四角圓角改由 border-radius 負責。
+   - 關掉 iPhone 點擊時的灰色圓底，改成按下去圖示輕微縮小。 */
+@media (max-width: 1024px) {
+    .navbar .nav-links::before {
+        border-radius: 22px;
+        -webkit-mask: var(--nav-shape) no-repeat;
+        mask: var(--nav-shape) no-repeat;
+        -webkit-mask-size: var(--nav-shape-w, 200%) 76px;
+        mask-size: var(--nav-shape-w, 200%) 76px;
+        -webkit-mask-position: var(--nav-notch-offset, 0px) 0;
+        mask-position: var(--nav-notch-offset, 0px) 0;
+        transition: -webkit-mask-position 0.4s cubic-bezier(0.32, 0.72, 0, 1), mask-position 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .navbar .nav-links.notch-instant::before { transition: none; }
+    .navbar .nav-links :is(a, button) {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+    }
+    .navbar .nav-links .mobile-tab-svg { transition: scale 0.12s ease; }
+    .navbar .nav-links :is(a, button):active .mobile-tab-svg { scale: 0.88; }
+}
+@media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
+    .navbar .nav-links::before { transition: none; }
+}

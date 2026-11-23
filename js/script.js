@@ -1495,18 +1495,32 @@ document.addEventListener('DOMContentLoaded', () => {
         "<circle cx=\"12\" cy=\"8\" r=\"5\" />\n  <path d=\"M20 21a8 8 0 0 0-16 0\" />"
 ];
     let selected = null;
-    let notchAnimation;
     let notchWidth = bar.getBoundingClientRect().width;
-    const drawNotch = percent => {
+    let shapeWidth = 0;
+    /* 2026-11-23 手機分頁列卡頓修正：
+       以前凹槽動畫每一格都重畫一張 SVG 當遮罩，手機每格都要重新解碼圖片，
+       會卡、還會閃一格空白底板。現在只在寬度改變時畫「一張兩倍寬、凹槽在正中間」的底板，
+       切換時只改 --nav-notch-offset，讓 CSS 用 mask-position 滑過去。 */
+    const buildShape = () => {
+        const width = notchWidth;
+        if (!width || width === shapeWidth) return;
+        shapeWidth = width;
+        const w2 = width * 2;
+        const c = width;
+        // 圓鈕半徑 26px，凹槽半徑 34px；同心圓弧維持 8px 間距。四角圓角交給 CSS border-radius。
+        const path = `M0 0 H${c - 46} C${c - 38} 0 ${c - 33.41} 7.63 ${c - 31.95} 11.63 A34 34 0 0 0 ${c + 31.95} 11.63 C${c + 33.41} 7.63 ${c + 38} 0 ${c + 46} 0 H${w2} V76 H0 Z`;
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w2}" height="76" viewBox="0 0 ${w2} 76"><path d="${path}" fill="white"/></svg>`;
+        bar.style.setProperty('--nav-shape', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+        bar.style.setProperty('--nav-shape-w', `${w2}px`);
+    };
+    const drawNotch = (percent, instant = false) => {
         if (window.innerWidth > 1024) return;
         bar.style.setProperty('--nav-notch-x', `${percent}%`);
-        const width = notchWidth;
-        if (!width) return;
-        const center = width * percent / 100;
-        // 圓鈕半徑 26px，凹槽半徑 34px；同心圓弧維持 8px 間距。
-        const path = `M0 22 Q0 0 22 0 H${center - 46} C${center - 38} 0 ${center - 33.41} 7.63 ${center - 31.95} 11.63 A34 34 0 0 0 ${center + 31.95} 11.63 C${center + 33.41} 7.63 ${center + 38} 0 ${center + 46} 0 H${width - 22} Q${width} 0 ${width} 22 V54 Q${width} 76 ${width - 22} 76 H22 Q0 76 0 54 Z`;
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="76" viewBox="0 0 ${width} 76"><path d="${path}" fill="white"/></svg>`;
-        bar.style.setProperty('--nav-shape', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+        buildShape();
+        if (!notchWidth) return;
+        if (instant) bar.classList.add('notch-instant');
+        bar.style.setProperty('--nav-notch-offset', `${notchWidth * percent / 100 - notchWidth}px`);
+        if (instant) requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.remove('notch-instant')));
     };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     tabs.forEach((tab, index) => {
@@ -1527,26 +1541,45 @@ document.addEventListener('DOMContentLoaded', () => {
         selected = tab;
         tabs.forEach(item => item.classList.toggle('mobile-tab-selected', item === tab));
         const index = tabs.indexOf(tab);
-        const target = (index + 0.5) * 20;
-        const start = parseFloat(bar.style.getPropertyValue('--nav-notch-x')) || 10;
-        cancelAnimationFrame(notchAnimation);
-        if (window.innerWidth > 1024) return;
-        if (!animate || reduced.matches) {
-            drawNotch(target);
-            return;
-        }
-        const began = performance.now();
-        const tick = now => {
-            const progress = Math.min((now - began) / 400, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            drawNotch(start + (target - start) * eased);
-            if (progress < 1) notchAnimation = requestAnimationFrame(tick);
-        };
-        notchAnimation = requestAnimationFrame(tick);
+        drawNotch((index + 0.5) * 20, !animate || reduced.matches);
     };
     const activeSection = () => tabs.find(tab => tab.matches('a.active')) || tabs[1];
-    tabs.forEach(tab => tab.addEventListener('click', () => select(tab)));
+    /* 點分頁後頁面會平滑捲過中間的章節，捲動途中不要讓圓鈕一站一站停（之前會跳 首頁→產品→商城），
+       先鎖在點的那一格，捲動停下來後再對回實際所在章節。 */
+    let travelLock = null;
+    let travelTimer;
+    let travelFailsafe;
+    const releaseTravel = () => {
+        if (!travelLock) return;
+        travelLock = null;
+        clearTimeout(travelTimer);
+        clearTimeout(travelFailsafe);
+        window.removeEventListener('scroll', onTravelScroll, true);
+        if (!document.querySelector('#cart-modal.active, #account-modal.active, #auth-modal.active')) select(activeSection());
+    };
+    let travelTarget = null;
+    const onTravelScroll = () => {
+        clearTimeout(travelTimer);
+        // 捲到目標那一頁（scroll-snap 會停在頂端）而且停下來，才解鎖
+        travelTimer = setTimeout(() => {
+            if (!travelTarget || Math.abs(travelTarget.getBoundingClientRect().top) < 4) releaseTravel();
+        }, 160);
+    };
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+        select(tab);
+        const target = tab.matches('a[href^="#"]') && document.querySelector(tab.getAttribute('href'));
+        // 已經在那一頁就不用鎖
+        if (!target || Math.abs(target.getBoundingClientRect().top) < 4) return;
+        travelLock = tab;
+        travelTarget = target;
+        window.addEventListener('scroll', onTravelScroll, true);
+        clearTimeout(travelTimer);
+        clearTimeout(travelFailsafe);
+        // 等捲動真的開始、停下來 160ms 後才解鎖；萬一完全沒捲動，2.5 秒後保底解鎖
+        travelFailsafe = setTimeout(releaseTravel, 2500);
+    }));
     new MutationObserver(records => {
+        if (travelLock) return;
         if (records.some(record => record.oldValue?.split(' ').includes('active') !== record.target.classList.contains('active'))) {
             const tab = activeSection();
             if (tab !== selected) select(tab);
@@ -1563,7 +1596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     select(activeSection(), false);
     new ResizeObserver(() => {
         notchWidth = bar.getBoundingClientRect().width;
-        if (selected) drawNotch((tabs.indexOf(selected) + 0.5) * 20);
+        if (selected) drawNotch((tabs.indexOf(selected) + 0.5) * 20, true);
     }).observe(bar);
 });
 
