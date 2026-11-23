@@ -5416,6 +5416,7 @@ a.faq-card {
 .site-footer-facts dt,
 .site-footer-bottom p { color: rgb(255 255 255 / 0.68); }
 .site-footer-facts dd { margin: 0; }
+.site-footer-col { container-type: inline-size; }
 .site-footer-heading {
     margin: 0 0 var(--sp-2);
     font-size: var(--fs-small);
@@ -5430,10 +5431,10 @@ a.faq-card {
     max-width: 100%;
     gap: var(--sp-2);
 }
-.site-footer-links a,
-.site-footer-social a {
-    justify-content: center;
-    white-space: nowrap;
+/* 兩個單行按鈕加上欄距需要約 256px。 */
+@container (width < 16rem) {
+    .site-footer-links,
+    .site-footer-social { grid-template-columns: minmax(max-content, 1fr); }
 }
 .site-footer-links { list-style: none; margin: 0; padding: 0; }
 .site-footer-links a,
@@ -5441,10 +5442,12 @@ a.faq-card {
 .site-footer-pill {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--sp-2);
     min-height: 44px;
     padding-inline: var(--sp-3);
     border: 1px solid rgb(255 255 255 / 0.2);
+    white-space: nowrap;
     border-radius: var(--sp-3);
     background: rgb(255 255 255 / 0.04);
     color: var(--paper);
@@ -5479,7 +5482,8 @@ a.faq-card {
 @media (max-width: 1024px) {
     #shop.shopping-section { min-height: 0; scroll-snap-align: none; }
     .site-footer {
-        padding: var(--sp-8) var(--sp-4) calc(128px + env(safe-area-inset-bottom, 0px));
+        padding: var(--sp-8) max(var(--sp-4), env(safe-area-inset-right))
+            calc(128px + env(safe-area-inset-bottom)) max(var(--sp-4), env(safe-area-inset-left));
     }
     .site-footer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
 }
