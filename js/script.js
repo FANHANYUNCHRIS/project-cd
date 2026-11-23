@@ -6,7 +6,8 @@ document.documentElement.classList.toggle('is-festive', isFestiveSeason);
 // 首頁雪花只在可見時播放；負延遲讓首次顯示已有自然分布的飄雪。
 document.addEventListener('DOMContentLoaded', () => {
     const snow = document.querySelector('.hero-snow');
-    if (!snow || !isFestiveSeason || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // 2026-11-23 聖誕改版：開場背景就是雪夜，雪花不再只限 12 月
+    if (!snow || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const flakes = document.createDocumentFragment();
     for (let i = 0; i < 48; i++) {
@@ -93,6 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
        操作區（不是純裝飾的頂欄），跟著捲動消失反而讓人點不到，改成不管往上
        往下捲，導覽列都固定顯示，跟桌機版行為一致 */
 
+    // 2026-11-23 聖誕改版後首頁不再內嵌大樓展示（改成直接開 building/index.html），
+    // 這段只在大樓面板還存在時執行
+    if (document.getElementById('brand-building-panel')) {
     const buildingLaunch = document.getElementById('building-showcase-launch');
     const buildingClose = document.getElementById('building-showcase-close');
     const buildingSection = document.getElementById('brand-building-panel');
@@ -186,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buildingClose.hidden = true;
         buildingOpener.focus({ preventScroll: true });
     });
+    }
 
     // 品牌區三個分頁：故事、人物、大樓（2026-11-21 虛擬大樓併進品牌區）。
     (function initBrandTabs() {
@@ -443,139 +448,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const product = productsData['1'];
         const section = document.createElement('section');
         section.id = 'products';
-        section.className = 'fullscreen-section pastry-product';
-        /* 2026-11 改版（設計稿：鳳梨酥產品區）：只有一樣產品，整區當單品頁設計——
-           左邊 3D 展示框當主角，右邊依序是標題、三張數值卡、直接購買卡、資訊頁籤。
-           購買不再先開彈窗；成分／過敏原／保存／取貨用頁籤切換，不靠框內捲動。 */
+        /* 2026-11-23 聖誕改版（設計稿 https://claude.ai/artifact/Mz1NPmJB4Duk2mnuZaVZrZ ）：
+           整頁一張卡，照片當背景，卡上只放品名、規格、價格和兩個按鈕。
+           成分、過敏原、注意事項和 3D 模型都在「商品詳情」彈窗（#product-modal）。 */
+        section.className = 'fullscreen-section xcard xcard-photo dark-section';
+        section.setAttribute('aria-labelledby', 'products-title');
         const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
-        const heroPrice = document.querySelector('[data-hero-price]');
-        if (heroPrice) heroPrice.textContent = product.price;
         section.innerHTML = `
-            <figure class="pastry-gallery">
-                <div class="pastry-stage pineapple-model-stage">
-                    <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
-                    <p class="pastry-image-note" role="status">正在載入 3D 模型</p>
-                </div>
-                <div class="pastry-hud" aria-hidden="true">
-                    <span class="pastry-hud-tl">ITEM 01</span>
-                    <span class="pastry-hud-tr"><i></i><span class="pastry-hud-mode"></span></span>
-                    <span class="pastry-hud-bl">拖曳旋轉</span>
-                    <b></b><b></b><b></b><b></b>
-                </div>
-                <div class="pastry-view-switch" role="group" aria-label="鳳梨酥展示模式">
-                    <button type="button" aria-pressed="false" data-view="2d" disabled>2D</button>
-                    <button type="button" aria-pressed="true" data-view="3d" disabled>3D</button>
-                </div>
-            </figure>
-            <div class="pastry-info">
-                <div class="pastry-intro">
-                    <p class="pastry-kicker"><span class="stage-tag">STAGE 02</span>Project.CD ／ 手工甜點</p>
-                    <h2 class="title-sheen reveal-sheen">${product.name}</h2>
-                    <p class="pastry-description">${product.desc}</p>
-                </div>
-                <div class="pastry-ability">
-                    <p class="pastry-ability-head"><span class="pastry-ability-title">STATUS</span><span class="pastry-ability-meta">10 入／盒・台灣土鳳梨・法國奶油</span></p>
-                    <ul class="pastry-ability-list" aria-label="口味能力值，滿分 5">
-                        <li><span class="ab-name">甜度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">3<small>/5</small></span></li>
-                        <li><span class="ab-name">酸度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="on" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">4<small>/5</small></span></li>
-                        <li><span class="ab-name">酥度</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="on" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">4<small>/5</small></span></li>
-                        <li><span class="ab-name">奶香</span><span class="ab-bar" aria-hidden="true"><i class="on" style="--k:0"></i><i class="on" style="--k:1"></i><i class="on" style="--k:2"></i><i class="" style="--k:3"></i><i class="" style="--k:4"></i></span><span class="ab-val">3<small>/5</small></span></li>
-                    </ul>
-                </div>
-                <div class="pastry-purchase">
-                    <div class="pastry-subtotal">
-                        <span>小計</span>
-                        <strong aria-live="polite">NT$ ${unitPrice.toLocaleString()}</strong>
-                    </div>
-                    <div class="pastry-stepper" role="group" aria-label="數量">
-                        <button type="button" class="pastry-qty-minus" aria-label="減少一盒">−</button>
-                        <span class="pastry-qty"><span class="pastry-qty-value">1</span> 盒</span>
-                        <button type="button" class="pastry-qty-plus" aria-label="增加一盒">+</button>
-                    </div>
-                    <button type="button" class="pastry-buy"><span class="pastry-buy-text">加入購物車</span></button>
-                </div>
-                <div class="pastry-tabs">
-                    <div class="pastry-tablist" role="tablist" aria-label="商品資訊">
-                        <button type="button" role="tab" id="pastry-tab-ing" aria-controls="pastry-panel-ing" aria-selected="true">成分</button>
-                        <button type="button" role="tab" id="pastry-tab-all" aria-controls="pastry-panel-all" aria-selected="false" tabindex="-1">過敏原</button>
-                        <button type="button" role="tab" id="pastry-tab-keep" aria-controls="pastry-panel-keep" aria-selected="false" tabindex="-1">保存</button>
-                        <button type="button" role="tab" id="pastry-tab-ship" aria-controls="pastry-panel-ship" aria-selected="false" tabindex="-1">取貨與通路</button>
-                    </div>
-                    <div class="pastry-panels">
-                        <p role="tabpanel" id="pastry-panel-ing" aria-labelledby="pastry-tab-ing">${product.ingredients.join('、')}</p>
-                        <p role="tabpanel" id="pastry-panel-all" aria-labelledby="pastry-tab-all" hidden>含有<strong>${product.allergens}</strong>，對這些成分過敏者請勿食用。</p>
-                        <p role="tabpanel" id="pastry-panel-keep" aria-labelledby="pastry-tab-keep" hidden>${product.notice.join('')}</p>
-                        <p role="tabpanel" id="pastry-panel-ship" aria-labelledby="pastry-tab-ship" hidden>登入會員線上訂購，可指定取貨日期（至少 5 天後，週一公休），送出訂單後匯款，確認款項後寄到超商取貨。蝦皮購物、7-ELEVEN 賣貨便、全家好賣+ 賣場即將開放。</p>
+            <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
+            <div class="xcard-body">
+                <div class="xcard-copy">
+                    <h2 class="xcard-title" id="products-title">手作土鳳梨酥</h2>
+                    <p class="xcard-text">土鳳梨餡・法國奶油酥皮・10 入／盒</p>
+                    <p class="xcard-price"><span>NT$</span><strong>${unitPrice.toLocaleString()}</strong></p>
+                    <div class="xcard-actions">
+                        <button type="button" class="xbtn xbtn-solid xcard-buy"><span class="xcard-buy-text">加入購物車</span></button>
+                        <button type="button" class="xbtn xbtn-ghost xcard-detail">商品詳情</button>
                     </div>
                 </div>
-            </div>
-            <a href="#brand" class="scroll-down-indicator on-light" aria-label="前往品牌介紹"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a>`;
-        const content = document.createElement('div');
-        content.className = 'pastry-content';
-        [...section.children].filter(child => !child.matches('.scroll-down-indicator')).forEach(child => content.append(child));
-        section.prepend(content);
-        // 數量與小計：上限 20 盒，跟購物車裡的數量各自獨立
-        let qty = 1;
-        const qtyValue = section.querySelector('.pastry-qty-value');
-        const subtotal = section.querySelector('.pastry-subtotal strong');
-        const setQty = next => {
-            qty = Math.min(Math.max(next, 1), 20);
-            qtyValue.textContent = qty;
-            subtotal.textContent = `NT$ ${(unitPrice * qty).toLocaleString()}`;
-        };
-        section.querySelector('.pastry-qty-minus').addEventListener('click', () => setQty(qty - 1));
-        section.querySelector('.pastry-qty-plus').addEventListener('click', () => setQty(qty + 1));
-
-        const buyBtn = section.querySelector('.pastry-buy');
-        const buyText = buyBtn.querySelector('.pastry-buy-text');
-        buyBtn.addEventListener('click', () => {
+            </div>`;
+        const buyText = section.querySelector('.xcard-buy-text');
+        section.querySelector('.xcard-buy').addEventListener('click', () => {
             if (typeof window.addItemToCart !== 'function') return;
-            const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty });
+            const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty: 1 });
             if (!added) return;
             buyText.textContent = '已加入！';
             setTimeout(() => { buyText.textContent = '加入購物車'; }, 1200);
-            setQty(1);
         });
-
-        // 資訊頁籤：WAI-ARIA tabs，左右方向鍵切換
-        const tabs = [...section.querySelectorAll('.pastry-tablist [role="tab"]')];
-        const selectTab = tab => {
-            tabs.forEach(t => {
-                const on = t === tab;
-                t.setAttribute('aria-selected', String(on));
-                t.tabIndex = on ? 0 : -1;
-                section.querySelector(`#${t.getAttribute('aria-controls')}`).hidden = !on;
-            });
-        };
-        tabs.forEach((tab, i) => {
-            tab.addEventListener('click', () => selectTab(tab));
-            tab.addEventListener('keydown', e => {
-                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-                e.preventDefault();
-                const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-                selectTab(next);
-                next.focus();
-            });
-        });
+        section.querySelector('.xcard-detail').addEventListener('click', () => openProductModal('1'));
         placeholder.replaceWith(section);
-
-        const stage = section.querySelector('.pastry-stage');
-        const modelObserver = new IntersectionObserver(async ([entry]) => {
-            if (!entry.isIntersecting) return;
-            modelObserver.disconnect();
-            const setInteractive = await showPineappleModel(stage);
-            if (!setInteractive) return;
-            const viewButtons = section.querySelectorAll('.pastry-view-switch button');
-            viewButtons.forEach(button => {
-                button.disabled = false;
-                button.addEventListener('click', () => {
-                    if (button.getAttribute('aria-pressed') === 'true') return;
-                    setInteractive(button.dataset.view === '3d');
-                    viewButtons.forEach(option => option.setAttribute('aria-pressed', String(option === button)));
-                });
-            });
-        });
-        modelObserver.observe(stage);
     })();
 
     /* =========================================
@@ -771,31 +672,9 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================= */
     (function initSectionEntrances() {
         const plans = [
-            ['#products', [
-                ['.pastry-gallery', 'enter-scale'],
-                '.pastry-kicker', '.pastry-info h2', '.pastry-description',
-                '.pastry-ability', '.pastry-purchase', '.pastry-tabs'
-            ]],
-            ['#brand', [
-                '.brand-section-header h2', '.brand-tabs',
-                '.brand-story-copy > *:not(.brand-facts)', '.brand-facts li', ['.brand-emblem', 'enter-scale']
-            ]],
-            ['#brand', [
-                ['.party-roster', 'enter-window'], ['.party-keys', 'enter-window'],
-                ['.party-stage', 'enter-scale'], ['.party-status', 'enter-window'], ['.party-dialog', 'enter-window']
-            ]],
-            ['#brand', [
-                '.building-showcase-copy > *',
-                ['.building-elevation-ground', 'enter-line'],
-                ['.building-block.is-basement', 'enter-rise'], ['.building-block.is-ground', 'enter-rise'],
-                ['.building-block[data-floor="2F"]', 'enter-rise'], ['.building-block[data-floor="3F"]', 'enter-rise'],
-                ['.building-block[data-floor="4F"]', 'enter-rise'], ['.building-block.is-roof', 'enter-rise'],
-                ['.building-elevation-mast', 'enter-rise'],
-                '.building-directory-title', '.building-floor-list li', '.building-floor-detail'
-            ]],
-            ['#shop', [
-                '.shop-eyebrow', '.store-intro', '.store-direct', '.store-platforms-title', '.store-platform'
-            ]],
+            ['#products', ['.xcard-title', '.xcard-text', '.xcard-price', '.xcard-actions']],
+            ['#brand', ['.xcard-title', '.xcard-text', '.xcard-actions', '.xcard-facts li']],
+            ['#shop', ['.xcard-title', '.xcard-text', '.xcard-list li', '.xcard-actions', '.xcard-note']],
             ['.site-footer', [
                 '.site-footer-brand', '.site-footer-col', '.site-footer-social', '.site-footer-bottom'
             ]]
@@ -1032,6 +911,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 讓 js/member.js（會員登入、購物車、結帳彈窗）可以共用同一套開關/焦點管理邏輯，不用重複寫一份
     window.openModal = openModal;
     window.closeModal = closeModal;
+
+    // 品牌卡的「認識團隊」：打開 RPG 隊伍選單彈窗（2026-11-23 聖誕改版從品牌區搬過來）
+    const teamModal = document.getElementById('team-modal');
+    const teamOpen = document.getElementById('brand-team-open');
+    if (teamModal && teamOpen) {
+        teamOpen.addEventListener('click', () => {
+            openModal(teamModal);
+            window.dispatchEvent(new Event('resize'));
+        });
+        document.getElementById('team-modal-close').addEventListener('click', () => closeModal(teamModal));
+    }
 
     document.querySelectorAll('.modal-overlay').forEach(modal => {
         modal.addEventListener('keydown', (e) => {
