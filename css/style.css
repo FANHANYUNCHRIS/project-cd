@@ -7536,7 +7536,7 @@ body { background-color: var(--x-night); }
 }
 .shop-footer-screen { background: transparent; }
 
-#home.xcard, #products.xcard, #brand.xcard, #shop.xcard {
+#products.xcard, #brand.xcard, #shop.xcard {
     --card-gutter: var(--sp-4);
     --card-radius: 28px;
     --card-nav-space: calc(96px + var(--card-gutter));
@@ -7563,6 +7563,7 @@ body { background-color: var(--x-night); }
     min-height: calc(100dvh - var(--card-top) - var(--card-bottom));
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    border: 2px solid var(--paper);
     border-radius: var(--card-radius);
     overflow: clip;
     background: linear-gradient(180deg, #ffffff 0%, #f7f6f3 100%);
@@ -7638,17 +7639,9 @@ body { background-color: var(--x-night); }
     min-height: 100dvh;
 }
 
-#home.xcard::before {
-    content: "";
-    position: absolute;
-    inset: var(--card-top) var(--card-right) var(--card-bottom) var(--card-left);
-    border: 1px solid rgb(244 241 234 / 0.22);
-    border-radius: var(--card-radius);
-    pointer-events: none;
-}
 
 @media (max-width: 1024px) {
-    #home.xcard, #products.xcard, #brand.xcard, #shop.xcard {
+    #products.xcard, #brand.xcard, #shop.xcard {
         --card-gutter: var(--sp-3);
         --card-radius: 26px;
         --card-nav-space: calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2));
