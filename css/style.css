@@ -5384,100 +5384,97 @@ a.faq-card {
 
 .site-footer {
     background: var(--ink);
-    color: var(--white);
-    padding: var(--sp-16) var(--page-space-inline) var(--sp-8);
+    color: var(--paper);
+    padding: var(--sp-12) var(--page-space-inline) var(--sp-6);
     scroll-snap-align: end;
 }
 .site-footer-inner {
-    width: 100%;
     max-width: var(--page-content-max);
     margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-12);
 }
 .site-footer-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--sp-12);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: var(--sp-8);
 }
-.site-footer-brand { display: flex; flex-direction: column; gap: var(--sp-5); }
 .site-footer-logo {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    margin: 0 0 var(--sp-4);
+    font-size: 40px;
+    line-height: 1;
 }
-.site-footer-facts { margin: 0; display: flex; flex-direction: column; gap: var(--sp-2); font-size: var(--fs-small); }
-.site-footer-facts div { display: flex; gap: var(--sp-6); }
-.site-footer-facts dt { color: rgba(255, 255, 255, 0.62); min-width: 2.5em; }
-.site-footer-facts dd { margin: 0; color: rgba(255, 255, 255, 0.92); }
-.site-footer-col { display: flex; flex-direction: column; gap: var(--sp-4); }
+.site-footer-facts {
+    display: grid;
+    gap: var(--sp-2);
+    margin: 0;
+    font-size: var(--fs-small);
+}
+.site-footer-facts div {
+    display: grid;
+    grid-template-columns: 3em minmax(0, 1fr);
+    gap: var(--sp-2);
+}
+.site-footer-facts dt,
+.site-footer-bottom p { color: rgb(255 255 255 / 0.68); }
+.site-footer-facts dd { margin: 0; }
 .site-footer-heading {
-    margin: 0;
-    font-size: var(--fs-caption);
+    margin: 0 0 var(--sp-2);
+    font-size: var(--fs-small);
     font-weight: 700;
-    letter-spacing: 0.16em;
-    color: rgba(255, 255, 255, 0.62);
+    color: var(--gold-soft);
 }
-.site-footer-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-1); }
-.site-footer-links a {
-    min-height: 32px;
-    display: inline-flex;
-    align-items: center;
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.92);
-    text-decoration: none;
+.site-footer-links,
+.site-footer-social {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-2);
 }
-.site-footer-links a:hover { color: var(--white); text-decoration: underline; text-underline-offset: 4px; }
-.site-footer-social { display: flex; gap: var(--sp-2); }
+.site-footer-links { list-style: none; margin: 0; padding: 0; }
+.site-footer-links a,
 .site-footer-social a,
 .site-footer-pill {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--sp-2);
     min-height: 44px;
-    border-radius: 100px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
-    color: rgba(255, 255, 255, 0.92);
+    padding-inline: var(--sp-2);
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: var(--sp-3);
+    background: rgb(255 255 255 / 0.04);
+    color: var(--paper);
+    font-size: var(--fs-small);
     text-decoration: none;
-    transition: background-color 0.2s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.site-footer-social a { width: 44px; font-size: 18px; }
-.site-footer-pill { gap: var(--sp-2); padding-inline: var(--sp-4); font-size: 13px; }
-.site-footer-social a:hover,
-.site-footer-pill:hover { background: rgba(255, 255, 255, 0.1); color: var(--white); }
-.site-footer-social a:active,
-.site-footer-pill:active { transform: scale(0.96); }
-.site-footer a:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+.site-footer-links i,
+.site-footer-social i,
+.site-footer-pill i {
+    flex: 0 0 1.25em;
+    text-align: center;
+    color: var(--gold-soft);
+}
+.site-footer-social .fa-line { color: #06c755; }
+.site-footer-social .fa-youtube { color: #ff4545; }
+.site-footer-social .fa-facebook-f { color: #75a9ff; }
+.site-footer-social .fa-instagram { color: #f398bd; }
+.site-footer a:hover { border-color: var(--gold); }
+.site-footer a:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
 .site-footer-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--sp-4);
-    padding-top: var(--sp-6);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-4);
+    border-top: 1px solid rgb(255 255 255 / 0.2);
 }
-.site-footer-bottom p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.62); }
+.site-footer-bottom p { margin: 0; font-size: var(--fs-small); }
+.site-footer-pill { padding-inline: var(--sp-4); }
 
 @media (max-width: 1024px) {
     #shop.shopping-section { min-height: 0; scroll-snap-align: none; }
     .site-footer {
-        padding: var(--sp-10) var(--sp-4) calc(128px + env(safe-area-inset-bottom, 0px));
+        padding: var(--sp-8) var(--sp-4) calc(128px + env(safe-area-inset-bottom, 0px));
     }
-    .site-footer-inner { gap: var(--sp-8); }
-    .site-footer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-8); }
-    .site-footer-brand { gap: var(--sp-3); }
-    .site-footer-logo { font-size: 26px; }
-    .site-footer-facts { flex-direction: row; flex-wrap: wrap; gap: var(--sp-1) var(--sp-4); }
-    .site-footer-facts div { gap: var(--sp-2); }
-    .site-footer-facts dt { min-width: 0; }
-    .site-footer-heading { display: none; }
-    .site-footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--sp-4); }
-    .site-footer-links a { min-height: 44px; }
-    .site-footer-bottom { padding-top: var(--sp-5); }
+    .site-footer-grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
 }
 
 /* =========================================
@@ -5510,6 +5507,7 @@ a.faq-card {
    - 動態曲線全面改成不回彈的 --ease-out；主標題出現時有一道金光掃過。
    ========================================= */
 :root {
+    --font-brand: 'League Spartan', 'Noto Sans TC', sans-serif;
     --gold: #B8955A;
     --gold-ink: #8A6A35;
     --gold-soft: #D8C091;
@@ -5533,17 +5531,18 @@ a.faq-card {
     letter-spacing: 0;
 }
 
-/* LOGO 字與英文：Cormorant Garamond */
+/* Project.CD 品牌字樣 */
 .logo-text,
 .auth-modal-logo-text,
 .site-footer-logo,
-.hero-title {
-    font-family: var(--font-serif);
-    font-weight: 600;
+.hero-title,
+.xcard-hero-title {
+    font-family: var(--font-brand);
+    font-weight: 700;
     font-variant-numeric: lining-nums;
 }
 .logo-text { font-size: 22px; letter-spacing: 0.01em; }
-.site-footer-logo { font-size: 34px; letter-spacing: 0.01em; }
+
 
 /* 小標籤：深金 */
 .pastry-kicker,
@@ -7124,8 +7123,8 @@ html:not(.is-festive) #home .hero-snow { display: block; }
 }
 .xcard-hero-title {
     margin: var(--sp-1) 0 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 600;
+    font-family: var(--font-brand);
+    font-weight: 700;
     font-size: clamp(48px, 6.2vw, 92px);
     line-height: 1;
     letter-spacing: 0.02em;
