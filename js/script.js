@@ -669,6 +669,100 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     })();
 
+    /* 送出訂單後：收據從黑色出單機「印」出來（js/member.js 呼叫，取代原本的 alert）。
+       匯款資訊直接讀結帳彈窗裡的同一份文字，不另外寫死。網址加 ?receipt=1 可預覽。 */
+    (function initOrderReceipt() {
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const pad = n => String(n).padStart(2, '0');
+        const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+        let overlay = null;
+        let lastFocus = null;
+        let hideTimer = null;
+
+        function paymentLines() {
+            return [...document.querySelectorAll('.checkout-payment-row')].map(row => {
+                const label = row.querySelector('.checkout-payment-label');
+                const value = row.querySelector('#checkout-payment-account-num') || row.querySelector('.checkout-payment-value');
+                return label && value ? [label.textContent.trim(), value.textContent.trim()] : null;
+            }).filter(Boolean);
+        }
+
+        function close() {
+            if (!overlay) return;
+            overlay.classList.remove('is-open');
+            clearTimeout(hideTimer);
+            hideTimer = setTimeout(() => {
+                if (!overlay.classList.contains('is-open')) overlay.hidden = true;
+            }, 260);
+            document.removeEventListener('keydown', onKey);
+            if (lastFocus) lastFocus.focus();
+        }
+        function onKey(e) { if (e.key === 'Escape') close(); }
+
+        window.showOrderReceipt = ({ items = [], subtotal = 0, pickupDate = '', customerName = '' } = {}) => {
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'receipt-overlay';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'receipt-title');
+                document.body.appendChild(overlay);
+                overlay.addEventListener('click', e => {
+                    if (e.target === overlay || e.target.closest('.receipt-done')) close();
+                });
+            }
+            const now = new Date();
+            const pick = pickupDate ? new Date(pickupDate + 'T00:00:00') : null;
+            const pickText = pick ? `${pick.getFullYear()}.${pad(pick.getMonth() + 1)}.${pad(pick.getDate())}（${WEEK[pick.getDay()]}）` : '—';
+            const no = `CD${now.getFullYear() % 100}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+            const rows = items.map(it => `<li><span>${esc(it.name)} <em>×${esc(it.qty)}</em></span><span>NT$ ${esc(it.price * it.qty)}</span></li>`).join('');
+            const pay = paymentLines().map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
+
+            overlay.innerHTML = `
+                <div class="receipt-stage">
+                    <div class="receipt-printer" aria-hidden="true"><span class="receipt-printer-led"></span><span class="receipt-printer-name">ORDER PRINTER</span></div>
+                    <div class="receipt-clip">
+                        <div class="receipt-paper">
+                            <p class="receipt-brand">PROJECT.CD</p>
+                            <p class="receipt-tagline">一個人的甜點研究室</p>
+                            <h2 class="receipt-title" id="receipt-title">訂單已送出</h2>
+                            <p class="receipt-meta"><span>NO. ${no}</span><span>${now.getFullYear()}.${pad(now.getMonth() + 1)}.${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}</span></p>
+                            <ul class="receipt-items">${rows}</ul>
+                            <p class="receipt-total"><span>小計</span><span>NT$ ${esc(subtotal)}</span></p>
+                            <dl class="receipt-info">
+                                <div><dt>取貨日</dt><dd>${pickText}</dd></div>
+                                ${customerName ? `<div><dt>訂購人</dt><dd>${esc(customerName)}</dd></div>` : ''}
+                                ${pay}
+                            </dl>
+                            <p class="receipt-note">請依上方帳戶完成匯款；確認款項後，出貨前會透過 LINE 提供取貨資訊。</p>
+                            <p class="receipt-thanks">THANK YOU</p>
+                        </div>
+                    </div>
+                    <button type="button" class="receipt-done">完成</button>
+                </div>`;
+
+            lastFocus = document.activeElement;
+            clearTimeout(hideTimer);
+            overlay.classList.remove('is-open');
+            overlay.hidden = false;
+            void overlay.offsetWidth;
+            overlay.classList.add('is-open');
+            overlay.querySelector('.receipt-done').focus({ preventScroll: true });
+            document.addEventListener('keydown', onKey);
+        };
+
+        if (new URLSearchParams(location.search).has('receipt')) {
+            const d = new Date(); d.setDate(d.getDate() + 6);
+            if (d.getDay() === 1) d.setDate(d.getDate() + 1);
+            window.addEventListener('load', () => setTimeout(() => window.showOrderReceipt({
+                items: [{ name: '經典鳳梨酥', qty: 2, price: 360 }, { name: '鳳梨酥禮盒', qty: 1, price: 680 }],
+                subtotal: 1400,
+                pickupDate: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+                customerName: '預覽顧客'
+            }), 600));
+        }
+    })();
+
     /* =========================================
        每個頁面的進場編排（2026-11）
        每一頁列出「依閱讀順序」要浮上來的元素；頁面捲進畫面 35% 時加上

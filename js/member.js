@@ -776,6 +776,13 @@ document.addEventListener('DOMContentLoaded', () => {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        const receiptData = {
+            items: cartItems.map(it => ({ ...it })),
+            subtotal: orderData.subtotal,
+            pickupDate: orderData.pickupDate,
+            customerName: orderData.customerName
+        };
+
         db.collection('orders').add(orderData)
             .then(() => {
                 cartItems = [];
@@ -784,7 +791,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(() => {
                 checkoutForm.reset();
                 closeModal(checkoutModal);
-                alert('訂單已送出！請依彈窗內的帳戶資訊完成匯款，我們確認款項後會於出貨前透過 LINE 提供取貨資訊。');
+                if (typeof window.showOrderReceipt === 'function') {
+                    window.showOrderReceipt(receiptData);
+                } else {
+                    alert('訂單已送出！請依彈窗內的帳戶資訊完成匯款，我們確認款項後會於出貨前透過 LINE 提供取貨資訊。');
+                }
             })
             .catch(err => {
                 checkoutError.textContent = '訂單送出失敗，請稍後再試（' + err.code + '）';
