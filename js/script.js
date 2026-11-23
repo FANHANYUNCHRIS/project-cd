@@ -23,13 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     snow.appendChild(flakes);
 
-    let heroVisible = true;
-    const updateSnow = () => snow.classList.toggle('is-paused', !heroVisible || document.hidden);
-    const observer = new IntersectionObserver(([entry]) => {
-        heroVisible = entry.isIntersecting;
-        updateSnow();
-    });
-    observer.observe(snow.closest('header'));
+    // 2026-11-23 擁有者指定：整個網站背景都是黑色下雪。雪花層搬到 body 最前面、固定在畫面上，
+    // 白色卡片浮在雪上面；只有切到別的分頁（document.hidden）才暫停。
+    snow.classList.add('is-global');
+    document.body.prepend(snow);
+    const updateSnow = () => snow.classList.toggle('is-paused', document.hidden);
     document.addEventListener('visibilitychange', updateSnow);
 });
 
@@ -455,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         section.setAttribute('aria-labelledby', 'products-title');
         const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
         section.innerHTML = `
+            <div class="xpanel">
             <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
             <div class="xcard-body">
                 <div class="xcard-copy">
@@ -466,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" class="xbtn xbtn-ghost xcard-detail">商品詳情</button>
                     </div>
                 </div>
+            </div>
             </div>`;
         const buyText = section.querySelector('.xcard-buy-text');
         section.querySelector('.xcard-buy').addEventListener('click', () => {
