@@ -8413,3 +8413,235 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     #checkout-modal .screen-pages { margin-top: auto; }
     #checkout-modal #checkout-form:not(.screen-page-empty) ~ .screen-pages { margin-top: var(--sp-3); }
 }
+
+/* =========================================
+   商品詳情黑金道具卡（2026-11-24 擁有者要求重新設計）
+   跟會員卡、購物車、結帳同一套：黑底＋白細框＋金細框、品牌列「ITEM」。
+   3D 鳳梨酥放在深色展示台（金色聚光），頁籤改成會員卡那種金色三角游標，
+   價格用金色 Cormorant，主要按鈕金色、次要按鈕金框。手機滿版。
+   ========================================= */
+#product-modal .modal-container.product-modal-box {
+    max-width: 460px;
+    padding: var(--sp-4) var(--sp-5) var(--sp-5);
+    border: 0;
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 60% at 100% 0%, rgb(184 149 90 / 0.22), rgb(184 149 90 / 0) 60%),
+        linear-gradient(160deg, #1b1d23 0%, #0b0d12 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px #0b0d12, inset 0 0 0 6px rgb(216 192 145 / 0.55), 0 18px 40px -24px rgb(22 22 26 / 0.7);
+}
+#product-modal .modal-close { top: var(--sp-4); right: var(--sp-4); color: rgb(255 255 255 / 0.92); z-index: 3; }
+#product-modal .modal-close:hover { background: rgb(255 255 255 / 0.08); }
+#product-modal .product-modal-content { display: flex; flex-direction: column; gap: var(--sp-3); }
+#product-modal .product-detail-body { padding: 0; display: flex; flex-direction: column; flex: 1; }
+
+/* 展示台：深色底、正中央一圈金色聚光、底部一道金色地平線 */
+#product-modal .gallery-main {
+    height: min(34dvh, 280px);
+    border-radius: 14px;
+    background:
+        radial-gradient(60% 55% at 50% 58%, rgb(216 192 145 / 0.28), rgb(216 192 145 / 0) 70%),
+        linear-gradient(180deg, #14161c 0%, #0b0d12 100%);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.22), inset 0 -1px 0 rgb(216 192 145 / 0.5);
+}
+#product-modal .pastry-image-note { color: rgb(255 255 255 / 0.6); }
+#product-modal .pineapple-model-stage canvas:focus-visible { outline-color: var(--gold-soft); }
+
+/* 品名列 */
+#product-modal .product-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    margin: var(--sp-1) 0 0;
+}
+#product-modal #product-modal-title {
+    margin: 0;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.92);
+}
+#product-modal .product-modal-meta .qty {
+    padding: 4px 12px;
+    border: 0;
+    border-radius: 100px;
+    background: transparent;
+    color: var(--gold-soft);
+    font-size: 13px;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55);
+}
+
+/* 頁籤：會員卡同款，選中的是金字＋金色三角 */
+#product-modal .product-modal-info-wrap { margin-top: var(--sp-3); }
+#product-modal .product-modal-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid rgb(216 192 145 / 0.25);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+#product-modal .product-modal-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.55);
+    -webkit-tap-highlight-color: transparent;
+}
+#product-modal .product-modal-tab::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--gold-soft);
+    visibility: hidden;
+}
+#product-modal .product-modal-tab.active { color: var(--gold-soft); background: none; box-shadow: none; }
+#product-modal .product-modal-tab.active::before { visibility: visible; animation: rpg-cursor-bob 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+#product-modal .product-modal-tab:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: -4px; border-radius: 8px; }
+#product-modal .product-modal-tab-panel { padding-top: var(--sp-3); }
+#product-modal .desc { margin: 0; color: rgb(255 255 255 / 0.82); font-size: 16px; line-height: 1.8; }
+#product-modal .ingredient-badge {
+    border: 0;
+    background: rgb(255 255 255 / 0.05);
+    color: rgb(255 255 255 / 0.88);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3);
+}
+#product-modal .ingredient-badge i { color: var(--gold-soft); }
+#product-modal .product-modal-notice-list li { color: rgb(255 255 255 / 0.82); }
+#product-modal .product-modal-notice-list li::marker { color: var(--gold-soft); }
+#product-modal .product-modal-allergen-item strong { color: var(--gold-soft); }
+
+/* 購買區：數量、金色價格、金色主鍵、金框次鍵 */
+#product-modal .product-modal-footer {
+    margin-top: auto;
+    padding-top: var(--sp-4);
+    border-top: 1px solid rgb(216 192 145 / 0.3);
+    display: grid;
+    gap: var(--sp-3);
+}
+#product-modal .product-purchase-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+#product-modal .qty-stepper {
+    gap: var(--sp-3);
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    color: rgb(255 255 255 / 0.92);
+    font-variant-numeric: tabular-nums;
+}
+#product-modal .qty-btn {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+}
+#product-modal .qty-btn:hover { background: rgb(216 192 145 / 0.2); }
+#product-modal .price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--gold-soft);
+    font-variant-numeric: lining-nums tabular-nums;
+}
+#product-modal .btn-modal-cta {
+    width: 100%;
+    min-height: 52px;
+    margin: 0;
+    border: 0;
+    border-radius: 100px;
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #0b0d12;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: none;
+}
+#product-modal .btn-modal-cta-secondary {
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+    border: 0;
+    border-radius: 100px;
+    background: transparent;
+    color: var(--gold-soft);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6);
+}
+#product-modal .btn-modal-cta-secondary:hover { background: rgb(216 192 145 / 0.1); }
+#product-modal .cart-add-note { margin: 0; text-align: center; font-size: 13px; color: rgb(255 255 255 / 0.65); }
+#product-modal .screen-pages { color: rgb(255 255 255 / 0.7); }
+#product-modal .screen-pages button {
+    border: 0;
+    border-radius: 100px;
+    background: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+    #product-modal .product-modal-tab.active::before { animation: none; }
+}
+
+@media (max-width: 1024px) {
+    #product-modal.modal-overlay {
+        align-items: flex-start;
+        padding:
+            max(var(--sp-3), env(safe-area-inset-top))
+            max(var(--sp-3), env(safe-area-inset-right))
+            calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2))
+            max(var(--sp-3), env(safe-area-inset-left));
+    }
+    #product-modal .modal-container.product-modal-box {
+        max-width: none;
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        border-radius: 26px;
+        transform: none;
+    }
+    #product-modal .product-modal-content { flex: 1; }
+}
+/* 商品卡：展示台不吃剩餘高度；兩顆按鈕並排，讓整張卡一個畫面放得下 */
+#product-modal .product-gallery { flex: none; }
+#product-modal .product-modal-footer { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+#product-modal .product-purchase-row,
+#product-modal .cart-add-note { grid-column: 1 / -1; }
+#product-modal .btn-modal-cta-secondary { width: auto; min-height: 52px; padding: 0 var(--sp-5); }
+@media (max-width: 1024px) {
+    #product-modal .gallery-main { height: min(30dvh, 240px); }
+}
+#product-modal .product-modal-notice-list { gap: var(--sp-2); }
+#product-modal .product-modal-notice-list li { font-size: 15px; line-height: 1.65; }
+@media (max-width: 1024px) {
+    #product-modal .gallery-main { height: min(26dvh, 210px); }
+}
+@media (max-width: 1024px) {
+    #product-modal .gallery-main { height: min(24dvh, 200px); }
+}
+#product-modal .product-modal-tab:not(.active):hover { color: rgb(255 255 255 / 0.8); background: none; }
