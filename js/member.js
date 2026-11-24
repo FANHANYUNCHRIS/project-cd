@@ -430,6 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 crown.removeAttribute('hidden');
             });
             navAccountBtns.forEach(btn => btn.setAttribute('aria-label', '會員專區'));
+            // 2026-11-24 擁有者：每次都要重新登入。請瀏覽器把本站資料（含登入狀態）列為「不要自動清掉」，
+            // iPhone 主畫面 App 與 Chrome 都支援；不支援的瀏覽器就略過，不影響登入。
+            if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
             db.collection('users').doc(user.uid).get().then(doc => {
                 const name = (doc.exists && doc.data().displayName) || user.email;
                 navAccountBtns.forEach(btn => { btn.title = name + '（點擊登出）'; });
