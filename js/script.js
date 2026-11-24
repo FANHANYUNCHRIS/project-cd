@@ -477,6 +477,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         section.querySelector('.xcard-detail').addEventListener('click', () => openProductModal('1'));
         placeholder.replaceWith(section);
+
+        /* 桌機滑鼠移到產品照上，淡金光跟著游標走（CSS 在 style.css「知識庫靈感三項」）。
+           只在有滑鼠的裝置綁定；用 rAF 節流，一個畫面最多寫一次。 */
+        const photo = section.querySelector('.xcard-bg-product');
+        if (photo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            let glowFrame = 0;
+            photo.addEventListener('pointermove', e => {
+                if (glowFrame) return;
+                glowFrame = requestAnimationFrame(() => {
+                    const r = photo.getBoundingClientRect();
+                    photo.style.setProperty('--gx', `${e.clientX - r.left}px`);
+                    photo.style.setProperty('--gy', `${e.clientY - r.top}px`);
+                    glowFrame = 0;
+                });
+            });
+        }
     })();
 
     /* =========================================
