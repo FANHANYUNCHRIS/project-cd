@@ -35,6 +35,7 @@
 - 官方信箱申請好之後要做：① 把官方信箱加進 Firebase 專案成員（擁有者操作），② Firebase › Authentication › 登入方式 › 開 Google，公開名稱 Project.CD、支援信箱選官方信箱（Google Cloud › Google Auth Platform › 品牌 也確認沒有私人 Gmail），③ Google Cloud › 用戶端 › Web client (auto created by Google Service)：JavaScript 來源加 `https://fanhanyunchris.github.io`、重新導向 URI 加 `https://fanhanyunchris.github.io/__/auth/handler`，④ `js/firebase-config.js` 的 authDomain 改成 `fanhanyunchris.github.io`，iPhone 主畫面 App 改用 `signInWithRedirect`（`js/member.js` 目前在主畫面 App 直接顯示說明不嘗試），manifest 的 scope 可能要放寬到 `/` 讓 `/__/auth/` 留在 App 裡，⑤ 拿掉 `index.html` 兩個 `hidden`，⑥ 電腦、Safari、iPhone 主畫面 App 各測一次。主畫面 App 這條路沒有實測過，不保證成功。
 
 ## 注意事項
+- **擁有者決定（2026-11-24）：現在以手機版為主**，設計、調整、驗證都先看手機（390 寬）；電腦版之後會另外設計自己的款式，現在只要確保不壞掉。
 - 設計規範看 `CLAUDE.md` 和 `AGENTS.md`。
 - 本機預覽：在專案資料夾開伺服器（Claude 用的是 8765 埠），打開 `http://localhost:8765/index.html`。改 CSS／JS 後要把 `index.html` 裡的 `?v=` 版本號換掉，不然會看到舊檔。
 - `.impeccable/` 資料夾是設計工具的暫存，不要 commit。
