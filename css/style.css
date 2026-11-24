@@ -7741,3 +7741,7 @@ body { background-color: var(--x-night); }
 @media (prefers-reduced-motion: reduce) {
     .brand-carousel-card { transition: none; }
 }
+
+/* 2026-11-24 頁尾蓋住雪花：雪花層固定在畫面上（z-index 0），白卡片有定位所以在雪上面，
+   頁尾原本沒定位，雪花會落在頁尾文字上。讓頁尾也浮在雪上。 */
+.site-footer { position: relative; z-index: 1; }
