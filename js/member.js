@@ -266,7 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         /* 道具欄：一筆訂單一列（日期、品項、小計），卡片內一頁最多 3 筆，
            超過用下方上下頁切換，卡片本身不捲動 */
-        const perPage = 3;
+        // 手機滿版卡片空間大，一頁放 5 筆；桌機小卡放 3 筆
+        const perPage = window.matchMedia('(max-width: 1024px)').matches ? 5 : 3;
         const pages = Math.ceil(monthOrders.length / perPage);
         historyItemPage = Math.min(historyItemPage, pages - 1);
         if (pager) {

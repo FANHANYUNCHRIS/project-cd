@@ -8017,3 +8017,86 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 /* 滑動切換時不要選取到文字（手機長按也不會跳出選取） */
 .game-card-inner { -webkit-user-select: none; user-select: none; }
 .game-card .account-history-empty[hidden] { display: none; }
+
+/* 會員卡上方品牌列與卡內登出鍵（桌機、手機共用） */
+.game-card-brand {
+    margin: 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-right: 48px;
+    font-family: var(--font-brand);
+    font-size: 17px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.92);
+}
+.game-card-brand span { font-size: 11px; letter-spacing: 0.24em; color: rgb(216 192 145 / 0.7); }
+.game-card .account-logout-btn {
+    justify-self: center;
+    min-width: 120px;
+    min-height: 44px;
+    margin: 0;
+    border-radius: 100px;
+    background: transparent;
+    color: var(--gold-soft);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6);
+}
+#account-modal .modal-close { color: rgb(255 255 255 / 0.92); z-index: 2; }
+.modal-container.account-modal-box { padding-top: var(--sp-6); }
+#account-modal .modal-close { top: calc(var(--sp-6) + var(--sp-4)); right: calc(40px + var(--sp-4)); }
+
+/* =========================================
+   手機：點會員後整個畫面就是這張卡（擁有者指定 2026-11-24）
+   跟首頁滿版卡片同一組邊距：上、左、右留 12px（或安全區），
+   下方讓出底部分頁列。白色彈窗外框拿掉，卡片本身就是畫面。
+   ========================================= */
+@media (max-width: 1024px) {
+    #account-modal.modal-overlay {
+        --gc-gutter: var(--sp-3);
+        align-items: stretch;
+        padding:
+            max(var(--gc-gutter), env(safe-area-inset-top))
+            max(var(--gc-gutter), env(safe-area-inset-right))
+            calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2))
+            max(var(--gc-gutter), env(safe-area-inset-left));
+    }
+    #account-modal .modal-container.account-modal-box {
+        max-width: none;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        background: transparent;
+        border: 0;
+        border-radius: 26px;
+        box-shadow: none;
+    }
+    #account-modal .modal-close { top: var(--sp-4); right: var(--sp-4); }
+    #account-modal .game-card {
+        flex: 1;
+        min-height: 0;
+        grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+        gap: var(--sp-3);
+        padding: var(--sp-4) var(--sp-5) var(--sp-5);
+        border-radius: 26px;
+    }
+    #account-modal .game-card-stage { min-height: 0; }
+    #account-modal .game-card-inner { height: 100%; }
+    #account-modal .game-face { gap: var(--sp-4); }
+
+    /* 畫面變大，內容跟著放大、拉開 */
+    #account-modal .game-hero { gap: var(--sp-5); padding: var(--sp-2) 0; }
+    #account-modal .game-avatar { width: 84px; height: 84px; border-radius: 16px; }
+    #account-modal .game-avatar img { width: 56px; height: 56px; }
+    #account-modal .game-hero-name { font-size: 28px; }
+    #account-modal .game-hero-class { font-size: 15px; }
+    #account-modal .game-stats > div { min-height: 56px; }
+    #account-modal .game-stats dt { font-size: 14px; }
+    #account-modal .game-stats dd { font-size: 16px; }
+    #account-modal #game-face-1 { justify-content: center; gap: var(--sp-6); }
+    #account-modal .game-level-icon { width: 56px; height: 56px; }
+    #account-modal .game-level-tier { font-size: 38px; }
+    #account-modal .game-exp-track { height: 12px; }
+}
