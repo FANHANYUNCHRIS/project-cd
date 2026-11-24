@@ -108,11 +108,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261124-kb1">
+    <link rel="stylesheet" href="css/style.css?v=20261124-card1">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
     <script src="js/pineapple-model.js?v=20261120-gold2" defer></script>
-    <script src="js/script.js?v=20261124-kb1" defer></script>
+    <script src="js/script.js?v=20261124-card1" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -122,9 +122,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261124-kb1" defer></script>
-    <script src="js/member.js?v=20261124-kb1" defer></script>
-    <script src="js/pagination.js?v=20261124-kb1" defer></script>
+    <script src="js/demo-login.js?v=20261124-card1" defer></script>
+    <script src="js/member.js?v=20261124-card1" defer></script>
+    <script src="js/pagination.js?v=20261124-card1" defer></script>
 </head>
 
 <body>
@@ -839,20 +839,35 @@
                      還沒加進來） -->
                 <div class="account-column">
                     <p class="account-column-title">會員權益</p>
-                    <div class="account-hud-list">
-                        <div class="account-hud-card">
-                            <svg class="account-hud-icon" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L26 8 V15 C26 22 21 27 16 29 C11 27 6 22 6 15 V8 Z"/></svg>
-                            <span class="account-hud-num" id="account-info-tier">—</span>
-                            <span class="account-hud-label">會員等級</span>
-                            <div class="account-tier-progress">
-                                <div class="account-tier-progress-track">
-                                    <div class="account-tier-progress-fill" id="account-tier-progress-fill"></div>
-                                </div>
-                                <p class="account-tier-progress-text" id="account-tier-progress-text">—</p>
-                            </div>
-                            <p class="account-tier-spend">累積金額 <strong id="account-info-spend">—</strong></p>
-                        </div>
-                    </div>
+                    <!-- 會員卡（2026-11-24，知識庫「點卡片翻面」靈感）：正面是黑金卡面，
+                         點一下翻到背面看升級進度和累積金額。翻面狀態用 aria-pressed，
+                         不加 class，避免觸發 pagination.js 重新分頁。 -->
+                    <button type="button" class="member-card" id="member-card" aria-pressed="false" aria-label="會員卡，點一下翻面看升級進度">
+                        <span class="member-card-inner">
+                            <span class="member-card-face member-card-front">
+                                <span class="member-card-top">
+                                    <span class="member-card-brand">Project.CD</span>
+                                    <img class="member-card-logo" src="images/unicorn-logo-white.png" alt="" width="28" height="28">
+                                </span>
+                                <span class="member-card-tier" id="account-info-tier">—</span>
+                                <span class="member-card-bottom">
+                                    <span class="member-card-name" id="member-card-name">—</span>
+                                    <span class="member-card-since">SINCE <span id="member-card-since">—</span></span>
+                                </span>
+                            </span>
+                            <span class="member-card-face member-card-back">
+                                <span class="member-card-back-title">升級進度</span>
+                                <span class="account-tier-progress">
+                                    <span class="account-tier-progress-track">
+                                        <span class="account-tier-progress-fill" id="account-tier-progress-fill"></span>
+                                    </span>
+                                    <span class="account-tier-progress-text" id="account-tier-progress-text">—</span>
+                                </span>
+                                <span class="account-tier-spend">累積金額 <strong id="account-info-spend">—</strong></span>
+                            </span>
+                        </span>
+                    </button>
+                    <p class="member-card-hint">點卡片翻面</p>
                 </div>
 
                 <!-- 右欄：購買紀錄，每筆記錄含編號／品項／數量／金額／購買時間，並可切換單月查詢 -->

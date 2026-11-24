@@ -77,6 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountInfoSpend = document.getElementById('account-info-spend');
     const accountTierProgressFill = document.getElementById('account-tier-progress-fill');
     const accountTierProgressText = document.getElementById('account-tier-progress-text');
+
+    // 會員卡點一下翻面；用 aria-pressed 記狀態（CSS 依它旋轉），讀螢幕軟體也知道現在是哪一面
+    const memberCard = document.getElementById('member-card');
+    if (memberCard) {
+        memberCard.addEventListener('click', () => {
+            const flipped = memberCard.getAttribute('aria-pressed') === 'true';
+            memberCard.setAttribute('aria-pressed', String(!flipped));
+            memberCard.setAttribute('aria-label', flipped ? '會員卡，點一下翻面看升級進度' : '會員卡背面，點一下翻回正面');
+        });
+    }
     const btnAccountLogout = document.getElementById('btn-account-logout');
     const historyMonthPrev = document.getElementById('history-month-prev');
     const historyMonthNext = document.getElementById('history-month-next');
@@ -156,6 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const points = data.points || 0;
             const spend = data.completedSpend || 0;
             if (accountInfoTier) accountInfoTier.textContent = getMemberTier(points);
+            const cardName = document.getElementById('member-card-name');
+            const cardSince = document.getElementById('member-card-since');
+            if (cardName) cardName.textContent = data.displayName || '—';
+            if (cardSince) cardSince.textContent = formatDateSlash(data.createdAt);
             if (accountInfoSpend) accountInfoSpend.textContent = 'NT$ ' + spend.toLocaleString();
             if (accountTierProgressFill && accountTierProgressText) {
                 const progress = getTierProgress(spend);
