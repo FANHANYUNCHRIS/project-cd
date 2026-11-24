@@ -80,48 +80,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* 會員遊戲卡三面切換（資訊／累積／購買）。
        點上方頁籤、在卡片上左右滑動、或在頁籤上按左右鍵都能切換。
-       切換動作：卡片沿 Y 軸轉到側面 → 換內容 → 從另一側轉回來。
+       切換時卡片不旋轉，只有內容淡入。
        用 hidden 屬性換面（pagination.js 會重新量，但卡片高度固定，不會多出分頁）。 */
     const gameCardInner = document.getElementById('game-card-inner');
     const gameTabs = [...document.querySelectorAll('.game-card-tab')];
     const gameFaces = [0, 1, 2].map(i => document.getElementById('game-face-' + i));
     let gameFace = 0;
-    let gameBusy = false;
     function showGameFace(next, dir) {
-        if (!gameCardInner || next === gameFace || next < 0 || next > 2 || gameBusy) return;
+        if (!gameCardInner || next === gameFace || next < 0 || next > 2) return;
         const sign = dir || (next > gameFace ? 1 : -1);
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const swap = () => {
-            gameFaces[gameFace].hidden = true;
-            gameFaces[next].hidden = false;
-            gameTabs.forEach((tab, i) => {
-                tab.setAttribute('aria-selected', String(i === next));
-                tab.tabIndex = i === next ? 0 : -1;
-            });
-            gameFace = next;
-        };
-        if (reduce || !gameCardInner.animate) { swap(); return; }
-        gameBusy = true;
-        const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
-        const flipEl = document.getElementById('game-card') || gameCardInner;
-        // 保險：動畫若被暫停（例如切到背景）超過 1.2 秒，直接換面，卡片不會卡住
-        const safety = setTimeout(() => {
-            if (!gameBusy) return;
-            flipEl.getAnimations().forEach(a => a.cancel());
-            if (gameFace !== next) swap();
-            gameBusy = false;
-        }, 1200);
-        flipEl.animate([{ transform: 'perspective(1200px) rotateY(0deg)' }, { transform: `perspective(1200px) rotateY(${-90 * sign}deg)` }],
-            { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.then(() => {
-            swap();
-            flipEl.getAnimations().forEach(a => a.cancel());
-            return flipEl.animate([{ transform: `perspective(1200px) rotateY(${90 * sign}deg)` }, { transform: 'perspective(1200px) rotateY(0deg)' }],
-                { duration: 360, easing: ease, fill: 'forwards' }).finished;
-        }).then(() => {
-            clearTimeout(safety);
-            flipEl.getAnimations().forEach(a => a.cancel());
-            gameBusy = false;
-        }).catch(() => {});
+        gameFaces[gameFace].hidden = true;
+        gameFaces[next].hidden = false;
+        gameTabs.forEach((tab, i) => {
+            tab.setAttribute('aria-selected', String(i === next));
+            tab.tabIndex = i === next ? 0 : -1;
+        });
+        gameFace = next;
+        // 卡片本身不動（擁有者指定不要旋轉），只有內容從滑動方向輕輕淡入
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !gameFaces[next].animate) return;
+        gameFaces[next].animate(
+            [{ opacity: 0, transform: `translateX(${12 * sign}px)` }, { opacity: 1, transform: 'translateX(0)' }],
+            { duration: 220, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+        );
     }
     gameTabs.forEach((tab, i) => {
         tab.addEventListener('click', () => showGameFace(i));
