@@ -78,15 +78,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountTierProgressFill = document.getElementById('account-tier-progress-fill');
     const accountTierProgressText = document.getElementById('account-tier-progress-text');
 
-    // 會員卡點一下翻面；用 aria-pressed 記狀態（CSS 依它旋轉），讀螢幕軟體也知道現在是哪一面
-    const memberCard = document.getElementById('member-card');
-    if (memberCard) {
-        memberCard.addEventListener('click', () => {
-            const flipped = memberCard.getAttribute('aria-pressed') === 'true';
-            memberCard.setAttribute('aria-pressed', String(!flipped));
-            memberCard.setAttribute('aria-label', flipped ? '會員卡，點一下翻面看升級進度' : '會員卡背面，點一下翻回正面');
-        });
+    /* 會員遊戲卡三面切換（資訊／累積／購買）。
+       點上方頁籤、在卡片上左右滑動、或在頁籤上按左右鍵都能切換。
+       切換動作：卡片沿 Y 軸轉到側面 → 換內容 → 從另一側轉回來。
+       用 hidden 屬性換面（pagination.js 會重新量，但卡片高度固定，不會多出分頁）。 */
+    const gameCardInner = document.getElementById('game-card-inner');
+    const gameTabs = [...document.querySelectorAll('.game-card-tab')];
+    const gameFaces = [0, 1, 2].map(i => document.getElementById('game-face-' + i));
+    let gameFace = 0;
+    let gameBusy = false;
+    function showGameFace(next, dir) {
+        if (!gameCardInner || next === gameFace || next < 0 || next > 2 || gameBusy) return;
+        const sign = dir || (next > gameFace ? 1 : -1);
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const swap = () => {
+            gameFaces[gameFace].hidden = true;
+            gameFaces[next].hidden = false;
+            gameTabs.forEach((tab, i) => {
+                tab.setAttribute('aria-selected', String(i === next));
+                tab.tabIndex = i === next ? 0 : -1;
+            });
+            gameFace = next;
+        };
+        if (reduce || !gameCardInner.animate) { swap(); return; }
+        gameBusy = true;
+        const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+        const flipEl = document.getElementById('game-card') || gameCardInner;
+        // 保險：動畫若被暫停（例如切到背景）超過 1.2 秒，直接換面，卡片不會卡住
+        const safety = setTimeout(() => {
+            if (!gameBusy) return;
+            flipEl.getAnimations().forEach(a => a.cancel());
+            if (gameFace !== next) swap();
+            gameBusy = false;
+        }, 1200);
+        flipEl.animate([{ transform: 'perspective(1200px) rotateY(0deg)' }, { transform: `perspective(1200px) rotateY(${-90 * sign}deg)` }],
+            { duration: 180, easing: 'ease-in', fill: 'forwards' }).finished.then(() => {
+            swap();
+            flipEl.getAnimations().forEach(a => a.cancel());
+            return flipEl.animate([{ transform: `perspective(1200px) rotateY(${90 * sign}deg)` }, { transform: 'perspective(1200px) rotateY(0deg)' }],
+                { duration: 360, easing: ease, fill: 'forwards' }).finished;
+        }).then(() => {
+            clearTimeout(safety);
+            flipEl.getAnimations().forEach(a => a.cancel());
+            gameBusy = false;
+        }).catch(() => {});
     }
+    gameTabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => showGameFace(i));
+        tab.addEventListener('keydown', e => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+            e.preventDefault();
+            const next = (gameFace + (e.key === 'ArrowRight' ? 1 : 2)) % 3;
+            showGameFace(next, e.key === 'ArrowRight' ? 1 : -1);
+            gameTabs[next].focus();
+        });
+    });
+    if (gameCardInner) {
+        let sx = 0, sy = 0, tracking = false;
+        gameCardInner.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; tracking = true; });
+        gameCardInner.addEventListener('pointerup', e => {
+            if (!tracking) return;
+            tracking = false;
+            const dx = e.clientX - sx, dy = e.clientY - sy;
+            if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+            showGameFace(gameFace + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+        });
+        gameCardInner.addEventListener('pointercancel', () => { tracking = false; });
+    }
+    // 每次打開會員資料都從第一面開始
+    window.resetGameCard = () => {
+        if (!gameCardInner) return;
+        gameFaces.forEach((f, i) => { f.hidden = i !== 0; });
+        gameTabs.forEach((tab, i) => { tab.setAttribute('aria-selected', String(i === 0)); tab.tabIndex = i === 0 ? 0 : -1; });
+        gameFace = 0;
+    };
     const btnAccountLogout = document.getElementById('btn-account-logout');
     const historyMonthPrev = document.getElementById('history-month-prev');
     const historyMonthNext = document.getElementById('history-month-next');
@@ -166,10 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const points = data.points || 0;
             const spend = data.completedSpend || 0;
             if (accountInfoTier) accountInfoTier.textContent = getMemberTier(points);
-            const cardName = document.getElementById('member-card-name');
-            const cardSince = document.getElementById('member-card-since');
-            if (cardName) cardName.textContent = data.displayName || '—';
-            if (cardSince) cardSince.textContent = formatDateSlash(data.createdAt);
+            const heroClass = document.getElementById('game-hero-class');
+            if (heroClass) heroClass.textContent = getMemberTier(points);
             if (accountInfoSpend) accountInfoSpend.textContent = 'NT$ ' + spend.toLocaleString();
             if (accountTierProgressFill && accountTierProgressText) {
                 const progress = getTierProgress(spend);
@@ -192,35 +255,58 @@ document.addEventListener('DOMContentLoaded', () => {
             return d && d.getFullYear() === y && d.getMonth() === m;
         });
 
+        const pager = document.getElementById('game-items-pager');
+        const pageLabel = document.getElementById('game-items-page');
         if (monthOrders.length === 0) {
             accountHistoryEmpty.hidden = false;
+            if (pager) pager.hidden = true;
             return;
         }
         accountHistoryEmpty.hidden = true;
 
-        monthOrders.forEach(order => {
+        /* 道具欄：一筆訂單一列（日期、品項、小計），卡片內一頁最多 3 筆，
+           超過用下方上下頁切換，卡片本身不捲動 */
+        const perPage = 3;
+        const pages = Math.ceil(monthOrders.length / perPage);
+        historyItemPage = Math.min(historyItemPage, pages - 1);
+        if (pager) {
+            pager.hidden = pages <= 1;
+            pageLabel.textContent = `${historyItemPage + 1} / ${pages}`;
+            document.getElementById('game-items-prev').disabled = historyItemPage === 0;
+            document.getElementById('game-items-next').disabled = historyItemPage >= pages - 1;
+        }
+
+        monthOrders.slice(historyItemPage * perPage, historyItemPage * perPage + perPage).forEach(order => {
             const d = order.createdAt.toDate();
-            const datetime = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-            const itemsHtml = (order.items || []).map(it =>
-                `<li><span>${it.name} x${it.qty}</span><span>NT$${it.price * it.qty}</span></li>`
-            ).join('');
+            const date = `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+            const items = (order.items || []).map(it => `${it.name} ×${it.qty}`).join('、') || '—';
 
             const div = document.createElement('div');
-            div.className = 'account-history-item';
-            div.innerHTML = `
-                <div class="account-history-item-head">
-                    <span class="account-history-order-no">#${order.id.slice(0, 8).toUpperCase()}</span>
-                    <span class="account-history-datetime">${datetime}</span>
-                </div>
-                <ul class="account-history-item-list">${itemsHtml}</ul>
-                <div class="account-history-item-total">
-                    <span>小計</span>
-                    <span>NT$${order.subtotal}</span>
-                </div>
-            `;
+            div.className = 'account-history-item game-item';
+            const icon = document.createElement('span');
+            icon.className = 'game-item-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            const body = document.createElement('span');
+            body.className = 'game-item-body';
+            const name = document.createElement('span');
+            name.className = 'game-item-name';
+            name.textContent = items;
+            const meta = document.createElement('span');
+            meta.className = 'game-item-meta';
+            meta.textContent = `${date}・#${order.id.slice(0, 6).toUpperCase()}`;
+            body.append(name, meta);
+            const price = document.createElement('span');
+            price.className = 'game-item-price';
+            price.textContent = `NT$${Number(order.subtotal || 0).toLocaleString()}`;
+            div.append(icon, body, price);
             accountHistoryList.insertBefore(div, accountHistoryEmpty);
         });
     }
+    let historyItemPage = 0;
+    const gameItemsPrev = document.getElementById('game-items-prev');
+    const gameItemsNext = document.getElementById('game-items-next');
+    if (gameItemsPrev) gameItemsPrev.addEventListener('click', () => { historyItemPage = Math.max(0, historyItemPage - 1); renderHistoryMonth(); });
+    if (gameItemsNext) gameItemsNext.addEventListener('click', () => { historyItemPage += 1; renderHistoryMonth(); });
 
     function loadAccountHistory(uid) {
         // 只用單一 where 相等條件查詢（不加 orderBy），避免需要額外建立 Firestore 複合索引；
@@ -235,22 +321,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     return bt - at;
                 });
             historyViewDate = new Date();
+            historyItemPage = 0;
+            const count = document.getElementById('game-order-count');
+            if (count) count.textContent = completedOrders.length + ' 筆';
             renderHistoryMonth();
         });
     }
 
     historyMonthPrev.addEventListener('click', () => {
         historyViewDate = new Date(historyViewDate.getFullYear(), historyViewDate.getMonth() - 1, 1);
+        historyItemPage = 0;
         renderHistoryMonth();
     });
 
     historyMonthNext.addEventListener('click', () => {
         historyViewDate = new Date(historyViewDate.getFullYear(), historyViewDate.getMonth() + 1, 1);
+        historyItemPage = 0;
         renderHistoryMonth();
     });
 
     function openAccountModal() {
         if (!currentUser) return;
+        if (window.resetGameCard) window.resetGameCard();
         renderAccountProfile(currentUser.uid);
         loadAccountHistory(currentUser.uid);
         openModal(accountModal);

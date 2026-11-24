@@ -7862,94 +7862,6 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     #shop.is-inview .xcard-bg-shop::after { animation: none; }
 }
 
-/* =========================================
-   會員卡翻面（2026-11-24）
-   黑底香檳金卡面，比例同信用卡 1.586:1。點一下沿 Y 軸翻到背面。
-   兩面疊在同一格 grid，翻面不改變高度（不會讓分頁重算）。
-   ========================================= */
-.member-card {
-    display: block;
-    width: 100%;
-    max-width: 340px;
-    margin: 0 auto;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-    perspective: 900px;
-    -webkit-tap-highlight-color: transparent;
-}
-.member-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 16px; }
-.member-card-inner {
-    display: grid;
-    aspect-ratio: 1.586;
-    transform-style: preserve-3d;
-    transition: transform 0.6s var(--ease-out);
-}
-.member-card[aria-pressed="true"] .member-card-inner { transform: rotateY(180deg); }
-.member-card:active .member-card-inner { scale: 0.98; }
-.member-card-face {
-    grid-area: 1 / 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: var(--sp-4) var(--sp-5);
-    border-radius: 14px;
-    background:
-        radial-gradient(120% 90% at 100% 0%, rgb(184 149 90 / 0.28), rgb(184 149 90 / 0) 55%),
-        linear-gradient(150deg, #1b1d23 0%, #0b0d12 100%);
-    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35), 0 12px 28px -14px rgb(0 0 0 / 0.6);
-    color: rgb(255 255 255 / 0.92);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    overflow: hidden;
-}
-.member-card-back { transform: rotateY(180deg); justify-content: center; gap: var(--sp-3); }
-.member-card-top { display: flex; align-items: center; justify-content: space-between; }
-.member-card-brand { font-family: var(--font-brand); font-weight: 700; font-size: 17px; letter-spacing: 0.02em; }
-.member-card-logo { width: 28px; height: 28px; opacity: 0.9; }
-.member-card-tier {
-    font-family: 'Noto Serif TC', serif;
-    font-weight: 700;
-    font-size: 26px;
-    line-height: 1.2;
-    color: var(--gold-soft);
-}
-.member-card-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-3); }
-.member-card-name { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.member-card-since {
-    flex: none;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    color: rgb(255 255 255 / 0.6);
-    font-variant-numeric: lining-nums tabular-nums;
-}
-.member-card-back-title { font-size: var(--fs-caption); font-weight: 700; color: var(--gold-soft); }
-.member-card .account-tier-progress { display: block; margin: 0; }
-.member-card .account-tier-progress-track { display: block; background: rgb(255 255 255 / 0.16); }
-.member-card .account-tier-progress-fill { display: block; background: var(--gold-soft); }
-.member-card .account-tier-progress-text { display: block; color: rgb(255 255 255 / 0.72); }
-.member-card .account-tier-spend {
-    display: block;
-    margin: 0;
-    padding-top: var(--sp-3);
-    border-top: 1px solid rgb(255 255 255 / 0.14);
-    color: rgb(255 255 255 / 0.72);
-}
-.member-card .account-tier-spend strong { color: rgb(255 255 255 / 0.92); }
-.member-card-hint {
-    margin: var(--sp-2) 0 0;
-    text-align: center;
-    font-size: var(--fs-caption);
-    color: var(--ink-soft);
-}
-@media (prefers-reduced-motion: reduce) {
-    .member-card-inner { transition: none; }
-}
-
 /* 手機（沒有滑鼠）版的產品照金光：捲進畫面時一道金光掃過，和禮盒卡同一個動作 */
 @media (hover: none), (pointer: coarse) {
     .xpanel .xcard-bg-product { overflow: hidden; }
@@ -7967,15 +7879,141 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 @media (prefers-reduced-motion: reduce) {
     #products.is-inview .xcard-bg-product::after { animation: none; }
 }
-/* 卡片寬度不固定（手機約 250px、桌機欄位約 200px），字級和內距跟著卡片寬度縮放 */
-.member-card { container-type: inline-size; }
-.member-card-face { padding: clamp(12px, 6cqi, 20px) clamp(14px, 7cqi, 20px); }
-.member-card-brand { font-size: clamp(13px, 6cqi, 17px); }
-.member-card-logo { width: clamp(20px, 10cqi, 28px); height: auto; }
-.member-card-tier { font-size: clamp(18px, 10cqi, 26px); }
-.member-card-name { font-size: clamp(12px, 5.5cqi, 15px); }
-.member-card-since { font-size: clamp(10px, 4.6cqi, 13px); }
-.member-card-back { gap: clamp(6px, 4cqi, 12px); }
-.member-card .account-tier-progress-text,
-.member-card .account-tier-spend { font-size: clamp(11px, 5cqi, 13px); }
-.member-card .account-tier-spend { padding-top: clamp(6px, 4cqi, 12px); }
+
+/* =========================================
+   會員遊戲卡（2026-11-24 擁有者指定）
+   RPG 角色卡：黑底＋白細框＋金細框（沿用 .rpg-window 的框），
+   上方三個頁籤（資訊／累積／購買），選中的頁籤有金色三角游標。
+   卡片內容區高度固定，三面切換不改變高度，也不需要內部捲動。
+   ========================================= */
+.modal-container.account-modal-box { max-width: 460px; }
+.game-card {
+    display: grid;
+    gap: var(--sp-3);
+    padding: var(--sp-4);
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 70% at 100% 0%, rgb(184 149 90 / 0.22), rgb(184 149 90 / 0) 60%),
+        linear-gradient(160deg, #1b1d23 0%, #0b0d12 100%);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px #0b0d12, inset 0 0 0 6px rgb(216 192 145 / 0.55), 0 18px 40px -24px rgb(22 22 26 / 0.7);
+}
+.game-card-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid rgb(216 192 145 / 0.25);
+}
+.game-card-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.55);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.game-card-tab[aria-selected="true"] { color: var(--gold-soft); }
+.game-card-tab:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: -4px; border-radius: 8px; }
+.game-card-cursor { width: 8px; height: 10px; fill: var(--gold-soft); visibility: hidden; }
+.game-card-tab[aria-selected="true"] .game-card-cursor { visibility: visible; animation: rpg-cursor-bob 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+
+.game-card-stage { perspective: 1000px; }
+.game-card-inner { height: 336px; transform-style: preserve-3d; touch-action: pan-y; }
+.game-face { height: 100%; display: flex; flex-direction: column; gap: var(--sp-3); }
+.game-face[hidden] { display: none; }
+.game-face-tag {
+    margin: 0;
+    font-family: var(--font-brand);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    color: rgb(216 192 145 / 0.7);
+}
+
+/* 第一面：角色 */
+.game-hero { display: flex; align-items: center; gap: var(--sp-4); }
+.game-avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: radial-gradient(circle at 50% 40%, rgb(216 192 145 / 0.3), rgb(11 13 18 / 0) 70%), #0b0d12;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6);
+}
+.game-avatar img { width: 40px; height: 40px; }
+.game-hero-text { display: grid; gap: 2px; min-width: 0; }
+.game-hero-name { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-hero-class { font-size: 14px; color: var(--gold-soft); }
+.game-stats { margin: 0; display: grid; }
+.game-stats > div {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    min-height: 44px;
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+}
+.game-stats dt { font-size: 13px; color: rgb(255 255 255 / 0.55); }
+.game-stats dd { margin: 0; font-size: 15px; font-weight: 500; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+
+/* 第二面：等級與經驗值 */
+.game-level { display: grid; justify-items: center; gap: var(--sp-2); padding: var(--sp-2) 0; }
+.game-level-icon { width: 40px; height: 40px; color: var(--gold-soft); }
+.game-level-tier { font-family: 'Noto Serif TC', serif; font-size: 30px; font-weight: 700; color: var(--gold-soft); line-height: 1.2; }
+.game-exp { display: grid; gap: var(--sp-2); }
+.game-exp-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+.game-exp-head > span:first-child { font-family: var(--font-brand); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; color: var(--gold-soft); }
+.game-card .account-tier-progress-text { margin: 0; font-size: 13px; color: rgb(255 255 255 / 0.72); }
+.game-exp-track { height: 10px; border-radius: 100px; background: rgb(255 255 255 / 0.12); overflow: hidden; box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.25); }
+.game-card .account-tier-progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
+
+/* 第三面：道具欄 */
+.game-card .account-history-month-nav { margin: 0; }
+.game-card .history-month-btn { color: rgb(255 255 255 / 0.9); }
+.game-card .history-month-btn:hover { background-color: rgb(255 255 255 / 0.08); }
+.game-card .history-month-btn:disabled { color: rgb(255 255 255 / 0.25); cursor: default; background: none; }
+.game-card .history-month-label { color: rgb(255 255 255 / 0.92); }
+.game-card .account-history-list { flex: 1; max-height: none; overflow: visible; justify-content: flex-start; gap: var(--sp-2); }
+.game-card .account-history-empty { flex: 1; }
+.game-card .account-empty-icon { color: rgb(255 255 255 / 0.3); }
+.game-card .account-empty-text { color: rgb(255 255 255 / 0.6); }
+.game-item.account-history-item {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: 10px;
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.18);
+}
+.game-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: url(../images/xmas/product.jpg) 55% 50% / 260% auto no-repeat, #0b0d12;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.5);
+}
+.game-item-body { display: grid; gap: 2px; min-width: 0; }
+.game-item-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-item-meta { font-size: 12px; color: rgb(255 255 255 / 0.55); font-variant-numeric: tabular-nums; }
+.game-item-price { font-size: 14px; font-weight: 700; color: var(--gold-soft); font-variant-numeric: tabular-nums; }
+.game-items-pager { display: flex; align-items: center; justify-content: center; gap: var(--sp-2); font-size: 13px; color: rgb(255 255 255 / 0.7); }
+.game-items-pager[hidden] { display: none; }
+.game-card-hint { margin: 0; text-align: center; font-size: 12px; color: rgb(255 255 255 / 0.45); }
+@media (prefers-reduced-motion: reduce) {
+    .game-card-tab[aria-selected="true"] .game-card-cursor { animation: none; }
+}
+/* 右上角關閉鍵（44px，離邊 20px）不能蓋到頁籤：卡片上方留出關閉鍵的高度 */
+.modal-container.account-modal-box { padding-top: 72px; }
+/* 滑動切換時不要選取到文字（手機長按也不會跳出選取） */
+.game-card-inner { -webkit-user-select: none; user-select: none; }
+.game-card .account-history-empty[hidden] { display: none; }
