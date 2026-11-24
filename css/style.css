@@ -8995,7 +8995,11 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .shop-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--gold-soft); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .shop-price { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; font-variant-numeric: lining-nums; color: var(--gold-soft); white-space: nowrap; }
 .shop-price small { margin-right: 2px; font-size: 12px; }
-.shop-slot.is-locked { opacity: 0.6; background: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); }
+.shop-slot.is-locked { background: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14); }
+/* 上鎖格子不用整列半透明（字會太淡、看不清），只把字色調暗一階 */
+.shop-slot.is-locked h3 { color: rgb(255 255 255 / 0.72); }
+.shop-slot.is-locked p,
+.shop-slot.is-locked .shop-soon { color: rgb(255 255 255 / 0.6); }
 .shop-slot.is-locked .shop-ico { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2); }
 .shop-slot.is-locked .shop-ico svg { stroke: rgb(255 255 255 / 0.5); }
 .shop-soon { font-size: 12px; color: rgb(255 255 255 / 0.5); white-space: nowrap; }
