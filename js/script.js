@@ -453,14 +453,22 @@ document.addEventListener('DOMContentLoaded', () => {
         section.setAttribute('aria-labelledby', 'products-title');
         const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
         section.innerHTML = `
-            <div class="xpanel">
+            <div class="xpanel xpanel-rpg">
             <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
+            <div class="rpg-card-head" aria-hidden="true">
+                <p class="rpg-card-rank"><b>SSR</b><span>★★★★★</span></p>
+                <span class="rpg-card-no">No.001</span>
+            </div>
             <div class="xcard-body">
                 <div class="xcard-copy">
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>產品<span class="xcard-eyebrow-en" lang="en">PRODUCT</span></p>
                     <h2 class="xcard-title" id="products-title">手作土鳳梨酥</h2>
-                    <p class="xcard-text">土鳳梨餡・法國奶油酥皮・10 入／盒</p>
-                    <p class="xcard-price"><span>NT$</span><strong>${unitPrice.toLocaleString()}</strong></p>
+                    <p class="xcard-text">土鳳梨餡・法國奶油酥皮</p>
+                    <dl class="rpg-card-stats xcard-price">
+                        <div><dt>價格</dt><dd class="rpg-card-num"><small>NT$</small>${unitPrice.toLocaleString()}</dd></div>
+                        <div><dt>數量</dt><dd>10 入／盒</dd></div>
+                        <div><dt>取貨</dt><dd>5 天後</dd></div>
+                    </dl>
                     <div class="xcard-actions">
                         <button type="button" class="xbtn xbtn-solid xcard-buy"><span class="xcard-buy-text">加入購物車</span></button>
                         <button type="button" class="xbtn xbtn-ghost xcard-detail">商品詳情</button>

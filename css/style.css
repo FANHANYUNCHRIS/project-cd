@@ -8687,3 +8687,116 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     color: var(--ink-soft);
 }
 .xpanel .xcard-eyebrow + .xcard-title { margin-top: calc(var(--sp-1) * -1); }
+
+/* =========================================
+   產品卡＝遊戲角色卡（2026-11-25 擁有者從提案 B 選定，卡片本身不傾斜、不晃動）
+   照片滿版、左上稀有度與星等、右上編號、下方能力格、金色按鈕。
+   框跟會員卡同一套（白細框＋金細框），畫在最上層的 ::after。
+   進場時沿用原本那一道金光掃過（.xcard-bg-product::after）。
+   ========================================= */
+.xpanel.xpanel-rpg {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 0;
+    background: var(--x-night);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.9), 0 0 40px -12px rgb(216 192 145 / 0.35);
+}
+.xpanel-rpg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgb(11 13 18 / 0.75) 0%, rgb(11 13 18 / 0) 24%, rgb(11 13 18 / 0) 40%, rgb(11 13 18 / 0.86) 62%, var(--x-night) 100%);
+}
+.xpanel-rpg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px var(--x-night), inset 0 0 0 6px rgb(216 192 145 / 0.7);
+}
+.xpanel-rpg .xcard-bg {
+    position: absolute;
+    inset: 0;
+    background-color: var(--x-night);
+}
+.xpanel-rpg .xcard-bg-product { background-size: cover; background-position: 42% 50%; }
+.xpanel-rpg .rpg-card-head,
+.xpanel-rpg .xcard-body { position: relative; z-index: 2; }
+
+.rpg-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--sp-5) var(--sp-5) 0;
+}
+.rpg-card-rank { display: grid; justify-items: start; gap: var(--sp-1); margin: 0; }
+.rpg-card-rank b {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 0.9;
+    font-variant-numeric: lining-nums;
+    background: linear-gradient(180deg, #fff6dc, var(--gold-soft) 45%, var(--gold) 60%, #f3e3bd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.6));
+}
+.rpg-card-rank span { color: var(--gold-soft); font-size: 13px; letter-spacing: 2px; text-shadow: 0 1px 2px rgb(0 0 0 / 0.8); }
+.rpg-card-no {
+    padding: var(--sp-1) 10px;
+    border-radius: 100px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+    color: rgb(255 255 255 / 0.92);
+    background: rgb(11 13 18 / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.5);
+}
+
+.xpanel-rpg .xcard-body { inset: auto; justify-content: flex-end; padding: var(--sp-5); }
+.xpanel-rpg .xcard-copy { width: min(560px, 100%); }
+.xpanel-rpg .xcard-eyebrow { color: rgb(255 255 255 / 0.92); }
+.xpanel-rpg .xcard-eyebrow::before { border-left-color: var(--gold-soft); }
+.xpanel-rpg .xcard-eyebrow-no { color: var(--gold-soft); }
+.xpanel-rpg .xcard-eyebrow-en { color: rgb(255 255 255 / 0.6); border-left-color: rgb(255 255 255 / 0.25); }
+.xpanel-rpg .xcard-title { color: rgb(255 255 255 / 0.95); font-size: 30px; font-weight: 900; text-shadow: 0 2px 12px rgb(0 0 0 / 0.7); }
+.xpanel-rpg .xcard-text { color: rgb(255 255 255 / 0.7); }
+
+.rpg-card-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-2);
+    margin: 0;
+}
+.rpg-card-stats div {
+    padding: var(--sp-2) var(--sp-1);
+    border-radius: 10px;
+    text-align: center;
+    background: rgb(255 255 255 / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.25);
+}
+.rpg-card-stats dt { font-size: 11px; letter-spacing: 0.12em; color: rgb(255 255 255 / 0.5); }
+.rpg-card-stats dd { margin: 2px 0 0; font-size: 15px; line-height: 26px; font-weight: 700; color: rgb(255 255 255 / 0.92); }
+.rpg-card-stats dd.rpg-card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    line-height: 26px;
+    font-variant-numeric: lining-nums tabular-nums;
+    color: var(--gold-soft);
+}
+.rpg-card-stats dd.rpg-card-num small { font-size: 13px; margin-right: 2px; }
+
+.xpanel-rpg .xbtn-solid { background: linear-gradient(180deg, var(--gold-soft), var(--gold)); color: var(--x-night); font-weight: 700; }
+.xpanel-rpg .xbtn-solid:hover { background: linear-gradient(180deg, #e6d3aa, var(--gold-soft)); }
+.xpanel-rpg .xbtn-ghost { background: transparent; color: var(--gold-soft); border: 1px solid rgb(216 192 145 / 0.6); }
+.xpanel-rpg .xbtn-ghost:hover { background: rgb(216 192 145 / 0.1); border-color: var(--gold-soft); }
+.xpanel-rpg .xbtn:focus-visible { outline-color: var(--gold-soft); }
