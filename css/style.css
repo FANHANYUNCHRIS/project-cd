@@ -8252,3 +8252,164 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 #cart-modal #btn-go-checkout { margin: 0; }
 #cart-modal .cart-login-gate { border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 #cart-modal .cart-login-gate::before { content: none; }
+
+/* =========================================
+   結帳黑金遊戲卡（2026-11-24 擁有者同意）
+   跟會員卡、購物車同一套：黑底＋白細框＋金細框、品牌列、金色標題。
+   手機滿版；內容放不下時照常由 pagination.js 分頁（卡片用 min-height
+   撐滿，不鎖死高度，分頁才量得到真實高度）。取貨日曆也改成深色。
+   ========================================= */
+#checkout-modal .modal-container.checkout-modal-box {
+    max-width: 460px;
+    padding: var(--sp-4) var(--sp-5) var(--sp-5);
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 60% at 100% 0%, rgb(184 149 90 / 0.22), rgb(184 149 90 / 0) 60%),
+        linear-gradient(160deg, #1b1d23 0%, #0b0d12 100%);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px #0b0d12, inset 0 0 0 6px rgb(216 192 145 / 0.55), 0 18px 40px -24px rgb(22 22 26 / 0.7);
+}
+#checkout-modal .modal-close { top: var(--sp-4); right: var(--sp-4); color: rgb(255 255 255 / 0.92); z-index: 2; }
+#checkout-modal .modal-close:hover { background: rgb(255 255 255 / 0.08); }
+#checkout-modal .modal-title {
+    margin: var(--sp-2) 0 var(--sp-4);
+    padding-bottom: var(--sp-3);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    color: rgb(255 255 255 / 0.92);
+    border-bottom-color: rgb(216 192 145 / 0.25);
+}
+#checkout-modal .modal-title::before { border-left-color: var(--gold-soft); }
+#checkout-modal .modal-title::after { background: var(--gold-soft); }
+
+/* 訂單摘要、匯款資訊：道具欄式的深色小格 */
+#checkout-modal .checkout-order-summary,
+#checkout-modal .checkout-payment-card {
+    margin-bottom: var(--sp-4);
+    border: 0;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.05);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.18);
+    color: rgb(255 255 255 / 0.92);
+}
+#checkout-modal .checkout-order-summary::before { content: none; }
+#checkout-modal .checkout-order-summary .summary-line { font-variant-numeric: tabular-nums; }
+#checkout-modal .checkout-order-summary .summary-total { border-top-color: rgb(216 192 145 / 0.35); color: var(--gold-soft); }
+#checkout-modal .checkout-payment-title { color: var(--gold-soft); }
+#checkout-modal .checkout-payment-label { color: rgb(255 255 255 / 0.6); }
+#checkout-modal .checkout-payment-value { color: rgb(255 255 255 / 0.92); }
+#checkout-modal .checkout-copy-btn { width: 44px; height: 44px; margin: -6px -10px -6px 0; color: rgb(216 192 145 / 0.8); }
+#checkout-modal .checkout-copy-btn:hover { color: var(--gold-soft); }
+#checkout-modal .checkout-payment-note { color: rgb(255 255 255 / 0.62); }
+
+/* 表單 */
+#checkout-modal .form-group label { color: rgb(255 255 255 / 0.92); }
+#checkout-modal .required-star { color: var(--gold-soft); }
+#checkout-modal .field-hint { color: rgb(255 255 255 / 0.62); }
+#checkout-modal .field-error { color: #ff8a80; }
+#checkout-modal .form-group input,
+#checkout-modal .form-group textarea,
+#checkout-modal .date-picker-trigger {
+    background-color: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(216 192 145 / 0.3);
+    color: rgb(255 255 255 / 0.92);
+}
+#checkout-modal .form-group input::placeholder,
+#checkout-modal .form-group textarea::placeholder,
+#checkout-modal .date-picker-trigger:not(.has-value) span { color: rgb(255 255 255 / 0.45); }
+#checkout-modal .date-picker-trigger.has-value span { color: rgb(255 255 255 / 0.92); }
+#checkout-modal .date-picker-trigger .fa-calendar { color: var(--gold-soft); }
+#checkout-modal .form-group input:focus,
+#checkout-modal .form-group textarea:focus,
+#checkout-modal .date-picker-trigger:focus-visible,
+#checkout-modal .date-picker-trigger[aria-expanded="true"] {
+    border-color: var(--gold-soft) !important;
+    background-color: rgb(255 255 255 / 0.08);
+    box-shadow: 0 0 0 3px rgb(216 192 145 / 0.18);
+}
+#checkout-modal #btn-checkout-submit {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 100px;
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #0b0d12;
+    font-weight: 700;
+    box-shadow: none;
+}
+#checkout-modal .form-submit-area { align-items: stretch; }
+#checkout-modal .form-note { color: rgb(255 255 255 / 0.62); }
+
+/* 分頁鍵改深色 */
+#checkout-modal .screen-pages { color: rgb(255 255 255 / 0.7); }
+#checkout-modal .screen-pages button {
+    border: 0;
+    border-radius: 100px;
+    background: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+}
+
+/* 取貨日曆：深色面板，可選日＝深色圓鈕金細框，選中＝金底黑字 */
+#checkout-modal #pickup-panel {
+    background: linear-gradient(160deg, #1b1d23 0%, #0b0d12 100%);
+    border: 0;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45), 0 24px 60px -16px rgb(0 0 0 / 0.7);
+}
+#checkout-modal #pickup-panel .date-picker-nav {
+    background: rgb(255 255 255 / 0.08);
+    border: 0;
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+}
+#checkout-modal .pickup-month { color: rgb(255 255 255 / 0.92); }
+#checkout-modal .pickup-weekdays span { color: rgb(255 255 255 / 0.6); }
+#checkout-modal .pickup-weekdays .is-off { color: rgb(255 255 255 / 0.3); }
+#checkout-modal .pickup-day {
+    background: rgb(255 255 255 / 0.08);
+    border-color: rgb(216 192 145 / 0.35);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: none;
+}
+#checkout-modal .pickup-day:hover:not(:disabled) { background: rgb(216 192 145 / 0.2); box-shadow: none; }
+#checkout-modal .pickup-day.is-off { background: transparent; border-color: transparent; color: rgb(255 255 255 / 0.25); }
+#checkout-modal .pickup-day.is-picked {
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    border-color: var(--gold-soft);
+    color: #0b0d12;
+    box-shadow: 0 0 0 3px rgb(216 192 145 / 0.25);
+}
+#checkout-modal .pickup-legend { color: rgb(255 255 255 / 0.6); }
+#checkout-modal .pickup-dot-open { background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6); }
+#checkout-modal .pickup-dot-off { background: rgb(255 255 255 / 0.15); box-shadow: none; }
+#checkout-modal .pickup-foot { border-top-color: rgb(216 192 145 / 0.25); }
+#checkout-modal .pickup-foot p { color: rgb(255 255 255 / 0.92); }
+#checkout-modal .pickup-ok { background: linear-gradient(180deg, var(--gold-soft), var(--gold)); color: #0b0d12; font-weight: 700; }
+
+@media (max-width: 1024px) {
+    #checkout-modal.modal-overlay {
+        align-items: flex-start;
+        padding:
+            max(var(--sp-3), env(safe-area-inset-top))
+            max(var(--sp-3), env(safe-area-inset-right))
+            calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2))
+            max(var(--sp-3), env(safe-area-inset-left));
+    }
+    #checkout-modal .modal-container.checkout-modal-box {
+        max-width: none;
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        border-radius: 26px;
+        transform: none;
+    }
+    /* 送出鍵、分頁鍵固定在卡片底部 */
+    #checkout-modal #checkout-form { flex: 1; display: flex; flex-direction: column; }
+    #checkout-modal .form-submit-area { margin-top: auto; }
+    #checkout-modal .screen-pages { margin-top: auto; }
+    #checkout-modal #checkout-form:not(.screen-page-empty) ~ .screen-pages { margin-top: var(--sp-3); }
+}

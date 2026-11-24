@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         // Measure real layout, including padding, grid gaps, headings and controls.
-        if (root.getBoundingClientRect().height <= limit) {
+        if (root.offsetHeight <= limit) {
             state.pages = [state.units];
             state.page = 0;
             return;
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let page = [];
         for (const unit of state.units) {
             show([...page, unit]);
-            if (page.length && root.getBoundingClientRect().height > limit) {
+            if (page.length && root.offsetHeight > limit) {
                 state.pages.push(page);
                 page = [unit];
             } else page.push(unit);

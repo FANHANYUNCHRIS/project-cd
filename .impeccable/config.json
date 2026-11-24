@@ -1,0 +1,32 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-17T07:28:05.090Z",
+        "reason": "Design system 01 lists LINE #00C300 as a sanctioned third-party brand color; the hover shadow is a 4px-offset LINE button lift, not a decorative glow"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-11-17T07:30:56.982Z",
+        "reason": "Project design system (claude.ai artifact 16b3fa05, section 02) mandates Inter for numbers/Latin alongside Noto Sans TC"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-24T04:59:16.130Z",
+        "reason": "2026-11-24 reviewed at 390px: cart-login-gate/xpanel/site-footer-links are false positives (no own frame, 12px text inset, or intentional full-bleed photo)"
+      }
+    ]
+  }
+}
