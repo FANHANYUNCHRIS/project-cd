@@ -8645,3 +8645,45 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     #product-modal .gallery-main { height: min(24dvh, 200px); }
 }
 #product-modal .product-modal-tab:not(.active):hover { color: rgb(255 255 255 / 0.8); background: none; }
+
+/* =========================================
+   首頁卡片的分區標籤（2026-11-24 擁有者覺得卡片標題看不出是哪一區）
+   標題上方一行「01 產品 PRODUCT」，名稱跟底部導覽列一致，
+   編號像遊戲的關卡序號。金色只用在編號和小三角。
+   ========================================= */
+.xcard-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin: 0;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+}
+.xcard-eyebrow::before {
+    content: '';
+    flex: none;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--gold);
+}
+.xcard-eyebrow-no {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+    color: var(--gold-ink, var(--gold));
+}
+.xcard-eyebrow-en {
+    padding-left: var(--sp-2);
+    border-left: 1px solid var(--ink-line);
+    font-family: var(--font-brand);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+}
+.xpanel .xcard-eyebrow + .xcard-title { margin-top: calc(var(--sp-1) * -1); }

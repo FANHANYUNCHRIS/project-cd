@@ -457,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
             <div class="xcard-body">
                 <div class="xcard-copy">
+                    <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>產品<span class="xcard-eyebrow-en" lang="en">PRODUCT</span></p>
                     <h2 class="xcard-title" id="products-title">手作土鳳梨酥</h2>
                     <p class="xcard-text">土鳳梨餡・法國奶油酥皮・10 入／盒</p>
                     <p class="xcard-price"><span>NT$</span><strong>${unitPrice.toLocaleString()}</strong></p>
