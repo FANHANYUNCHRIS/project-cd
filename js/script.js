@@ -1470,6 +1470,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
     new MutationObserver(records => {
         if (travelLock) return;
+        if (document.querySelector('#cart-modal.active, #account-modal.active, #auth-modal.active')) return;
         if (records.some(record => record.oldValue?.split(' ').includes('active') !== record.target.classList.contains('active'))) {
             const tab = activeSection();
             if (tab !== selected) select(tab);
@@ -1483,6 +1484,20 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (!document.querySelector('#cart-modal.active, #account-modal.active, #auth-modal.active')) select(activeSection());
         }).observe(modal, { attributes: true, attributeFilter: ['class'] });
     });
+    /* 2026-11-24 面板開著時導覽列仍露在上面、點得到：點任何一格先關掉目前的購物車／會員／登入面板，
+       避免兩個面板疊在一起；再點一次同一格（例如購物車開著又點購物車）就只是關掉。 */
+    bar.addEventListener('click', event => {
+        const tab = tabs.find(item => item.contains(event.target));
+        if (!tab) return;
+        const open = [...document.querySelectorAll('#cart-modal.active, #account-modal.active, #auth-modal.active')];
+        if (!open.length) return;
+        const sameTab = open.some(modal => (modal.id === 'cart-modal' ? tabs[3] : tabs[4]) === tab);
+        open.forEach(modal => window.closeModal(modal));
+        if (sameTab) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
     select(activeSection(), false);
     new ResizeObserver(() => {
         notchWidth = bar.getBoundingClientRect().width;

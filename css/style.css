@@ -7745,3 +7745,17 @@ body { background-color: var(--x-night); }
 /* 2026-11-24 頁尾蓋住雪花：雪花層固定在畫面上（z-index 0），白卡片有定位所以在雪上面，
    頁尾原本沒定位，雪花會落在頁尾文字上。讓頁尾也浮在雪上。 */
 .site-footer { position: relative; z-index: 1; }
+
+/* 2026-11-24 手機：購物車／會員／登入面板不要蓋住底部導覽列。
+   面板底下留出導覽列的高度（76px）＋間距，導覽列本身升到面板遮罩之上，
+   一直看得到、點得到，跟 iOS 分頁列在彈出面板時仍保留的做法一致。 */
+@media (max-width: 1024px) {
+    #cart-modal.active,
+    #account-modal.active,
+    #auth-modal.active {
+        padding-bottom: calc(max(16px, env(safe-area-inset-bottom, 16px)) + 76px + var(--sp-3));
+    }
+    body:has(#cart-modal.active, #account-modal.active, #auth-modal.active) #main-navbar {
+        z-index: 2060;
+    }
+}

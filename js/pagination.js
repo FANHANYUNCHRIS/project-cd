@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
         state.nav.hidden = true;
         const viewport = window.visualViewport?.height || window.innerHeight;
         let limit = Math.max(180, viewport - 48);
+        // 彈窗：用遮罩實際的上下留白算（手機版購物車／會員面板底下要留位置給導覽列）
+        const overlay = root.parentElement?.matches('.modal-overlay') ? root.parentElement : null;
+        if (overlay) {
+            const style = getComputedStyle(overlay);
+            limit = Math.max(180, viewport - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom));
+        }
         if (section) {
             const style = getComputedStyle(section);
             limit = section.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
