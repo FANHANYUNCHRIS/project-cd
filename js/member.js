@@ -659,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             li.className = 'cart-line-item';
             li.innerHTML = `
+                <span class="cart-line-thumb" aria-hidden="true"></span>
                 <div class="cart-line-info">
                     <div class="cart-line-name">${item.name}</div>
                     <div class="cart-line-price">NT$ ${item.price} × ${item.qty}</div>
@@ -668,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${item.qty}</span>
                     <button type="button" class="qty-btn cart-qty-plus" aria-label="增加數量">&plus;</button>
                 </div>
-                <button type="button" class="cart-line-remove" aria-label="移除"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="cart-line-remove" aria-label="移除"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
             `;
             li.querySelector('.cart-qty-minus').addEventListener('click', () => {
                 if (item.qty > 1) { item.qty -= 1; } else { cartItems.splice(index, 1); }

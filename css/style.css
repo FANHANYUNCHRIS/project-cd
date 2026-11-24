@@ -8100,3 +8100,155 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     #account-modal .game-level-tier { font-size: 38px; }
     #account-modal .game-exp-track { height: 12px; }
 }
+
+/* =========================================
+   購物車黑金遊戲卡（2026-11-24 擁有者指定）
+   跟會員卡同一套：黑底＋白細框＋金細框、上方品牌列、金色三角標題。
+   手機滿版（上左右 12px，下方讓出底部分頁列），桌機維持置中小卡。
+   ========================================= */
+#cart-modal .modal-container.cart-modal-box {
+    max-width: 460px;
+    padding: var(--sp-4) var(--sp-5) var(--sp-5);
+    border-radius: 16px;
+    background:
+        radial-gradient(120% 60% at 100% 0%, rgb(184 149 90 / 0.22), rgb(184 149 90 / 0) 60%),
+        linear-gradient(160deg, #1b1d23 0%, #0b0d12 100%);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px #0b0d12, inset 0 0 0 6px rgb(216 192 145 / 0.55), 0 18px 40px -24px rgb(22 22 26 / 0.7);
+}
+#cart-modal .modal-close { top: var(--sp-4); right: var(--sp-4); color: rgb(255 255 255 / 0.92); }
+#cart-modal .modal-close:hover { background: rgb(255 255 255 / 0.08); }
+#cart-modal .modal-title {
+    margin: var(--sp-2) 0 0;
+    padding-bottom: var(--sp-3);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    color: rgb(255 255 255 / 0.92);
+    border-bottom-color: rgb(216 192 145 / 0.25);
+}
+#cart-modal .modal-title::before { border-left-color: var(--gold-soft); }
+#cart-modal .modal-title::after { background: var(--gold-soft); }
+
+/* 商品列：像道具欄的一格 */
+#cart-modal .cart-items-list { display: grid; gap: var(--sp-2); margin: var(--sp-4) 0 0; padding: 0; list-style: none; }
+#cart-modal .cart-line-item {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    grid-template-areas: "thumb info remove" "thumb stepper stepper";
+    align-items: center;
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-2);
+    padding: var(--sp-3);
+    border: 0;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.18);
+}
+#cart-modal .cart-line-thumb {
+    grid-area: thumb;
+    align-self: start;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: url(../images/xmas/product.jpg) 55% 50% / 260% auto no-repeat, #0b0d12;
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.5);
+}
+#cart-modal .cart-line-info { grid-area: info; }
+#cart-modal .cart-line-name { color: rgb(255 255 255 / 0.92); font-size: 16px; }
+#cart-modal .cart-line-price { color: rgb(255 255 255 / 0.6); font-size: 13px; font-variant-numeric: tabular-nums; }
+#cart-modal .cart-line-remove {
+    grid-area: remove;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: rgb(255 255 255 / 0.5);
+    font-size: 16px;
+}
+#cart-modal .cart-line-remove:hover { color: var(--gold-soft); }
+#cart-modal .qty-stepper {
+    grid-area: stepper;
+    justify-self: start;
+    gap: var(--sp-3);
+    padding: 0;
+    border: 0;
+    color: rgb(255 255 255 / 0.92);
+    font-variant-numeric: tabular-nums;
+}
+#cart-modal .qty-btn {
+    width: 44px;
+    height: 44px;
+    background: rgb(255 255 255 / 0.08);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+}
+#cart-modal .qty-btn:hover { background: rgb(216 192 145 / 0.2); color: #fff; }
+
+/* 小計與結帳 */
+#cart-modal .cart-summary {
+    margin: 0;
+    padding: var(--sp-4) 0;
+    border-top: 1px solid rgb(216 192 145 / 0.35);
+    color: rgb(255 255 255 / 0.92);
+    font-variant-numeric: tabular-nums;
+}
+#cart-modal #cart-subtotal { font-size: 22px; color: var(--gold-soft); }
+#cart-modal #btn-go-checkout {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 100px;
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #0b0d12;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+/* 空的、未登入 */
+#cart-modal .cart-empty .account-empty-icon { color: rgb(255 255 255 / 0.3); }
+#cart-modal .cart-empty .account-empty-text { color: rgb(255 255 255 / 0.65); }
+#cart-modal .btn-modal-cta-secondary { color: var(--gold-soft); border-color: rgb(216 192 145 / 0.6); background: transparent; }
+#cart-modal .cart-login-gate-title { color: rgb(255 255 255 / 0.92); }
+#cart-modal .cart-login-gate-desc { color: rgb(255 255 255 / 0.65); }
+#cart-modal #cart-login-gate-cta {
+    min-height: 52px;
+    border-radius: 100px;
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    color: #0b0d12;
+    box-shadow: none;
+}
+
+@media (max-width: 1024px) {
+    #cart-modal.modal-overlay {
+        align-items: stretch;
+        padding:
+            max(var(--sp-3), env(safe-area-inset-top))
+            max(var(--sp-3), env(safe-area-inset-right))
+            calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-2))
+            max(var(--sp-3), env(safe-area-inset-left));
+    }
+    #cart-modal .modal-container.cart-modal-box {
+        max-width: none;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        border-radius: 26px;
+        transform: none;
+    }
+    #cart-modal #cart-body,
+    #cart-modal .cart-login-gate { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    #cart-modal #cart-body[hidden],
+    #cart-modal .cart-login-gate[hidden] { display: none; }
+    #cart-modal .cart-login-gate { justify-content: center; }
+    #cart-modal .cart-items-list { flex: none; }
+    #cart-modal .cart-empty { flex: 1; justify-content: center; }
+    #cart-modal .cart-empty[hidden] { display: none; }
+    /* 小計和結帳鍵固定在卡片底部 */
+    #cart-modal .cart-summary { margin-top: auto; }
+    #cart-modal .cart-empty:not([hidden]) ~ .cart-summary { margin-top: 0; }
+}
+#cart-modal #btn-go-checkout { margin: 0; }
+#cart-modal .cart-login-gate { border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#cart-modal .cart-login-gate::before { content: none; }
