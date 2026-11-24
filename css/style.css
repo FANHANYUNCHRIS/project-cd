@@ -8797,3 +8797,223 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .xpanel-rpg .xbtn-ghost { background: transparent; color: var(--gold-soft); border: 1px solid rgb(216 192 145 / 0.6); }
 .xpanel-rpg .xbtn-ghost:hover { background: rgb(216 192 145 / 0.1); border-color: var(--gold-soft); }
 .xpanel-rpg .xbtn:focus-visible { outline-color: var(--gold-soft); }
+
+/* =========================================
+   品牌卡＝劇情對話卡、商城卡＝道具商店卡（2026-11-25 擁有者同意提案）
+   跟產品卡同一個黑底＋白細框＋金細框。卡片本身不動。
+   手機：上面照片（填滿剩下的高度），下面內容；桌機：照片在左、內容在右（沿用 .xpanel 的兩欄）。
+   ========================================= */
+.xpanel.xpanel-story,
+.xpanel.xpanel-shop {
+    border: 0;
+    background: var(--x-night);
+    color: rgb(255 255 255 / 0.92);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.9), 0 0 40px -12px rgb(216 192 145 / 0.3);
+}
+.xpanel-story::after,
+.xpanel-shop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px var(--x-night), inset 0 0 0 6px rgb(216 192 145 / 0.7);
+}
+:is(.xpanel-story, .xpanel-shop) .xcard-eyebrow { color: rgb(255 255 255 / 0.92); }
+:is(.xpanel-story, .xpanel-shop) .xcard-eyebrow::before { border-left-color: var(--gold-soft); }
+:is(.xpanel-story, .xpanel-shop) .xcard-eyebrow-no { color: var(--gold-soft); }
+:is(.xpanel-story, .xpanel-shop) .xcard-eyebrow-en { color: rgb(255 255 255 / 0.6); border-left-color: rgb(255 255 255 / 0.25); }
+:is(.xpanel-story, .xpanel-shop) .xcard-title { color: rgb(255 255 255 / 0.95); font-weight: 900; }
+:is(.xpanel-story, .xpanel-shop) .xcard-text { color: rgb(255 255 255 / 0.7); }
+
+/* ---------- 品牌：劇情對話卡 ---------- */
+.story-scene {
+    position: relative;
+    min-height: 0;
+    background: url(../images/xmas/brand.jpg) 50% 15% / cover no-repeat, var(--x-night);
+}
+.story-scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(11 13 18 / 0.85) 0%, rgb(11 13 18 / 0.4) 18%, rgb(11 13 18 / 0) 34%, rgb(11 13 18 / 0) 70%, var(--x-night) 100%);
+}
+.story-chapter {
+    position: absolute;
+    z-index: 2;
+    top: var(--sp-5);
+    left: var(--sp-5);
+    right: var(--sp-5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-3);
+}
+.story-chapter-no {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    font-variant-numeric: lining-nums;
+    color: var(--gold-soft);
+}
+.xpanel-story .xcard-body { justify-content: flex-end; gap: var(--sp-4); }
+.story-dialog {
+    position: relative;
+    padding: var(--sp-6) var(--sp-4) var(--sp-5);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #15171d, var(--x-night));
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.85), inset 0 0 0 4px var(--x-night), inset 0 0 0 5px rgb(216 192 145 / 0.55);
+}
+.story-speaker {
+    position: absolute;
+    top: -13px;
+    left: 14px;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--x-night);
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+}
+.xpanel-story .story-dialog .xcard-title { margin: 0 0 var(--sp-2); font-size: 22px; line-height: 1.35; }
+.xpanel-story .story-dialog .xcard-text { margin: 0; font-size: 14px; line-height: 1.8; }
+.story-next {
+    position: absolute;
+    right: 14px;
+    bottom: 6px;
+    font-size: 11px;
+    color: var(--gold-soft);
+    animation: story-next-blink 1.1s steps(2, start) infinite;
+}
+@keyframes story-next-blink { to { visibility: hidden; } }
+.story-party { display: flex; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.story-party li {
+    flex: 1;
+    padding: 6px var(--sp-1);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: rgb(255 255 255 / 0.68);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3);
+}
+.story-party b { display: block; font-family: 'Noto Serif TC', serif; font-size: 18px; line-height: 1.3; color: var(--gold-soft); }
+.xpanel-story .story-choices { display: grid; gap: 6px; margin: 0; }
+.story-choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 var(--sp-4);
+    border: 0;
+    border-radius: 10px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.92);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    background: rgb(255 255 255 / 0.04);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3);
+    -webkit-tap-highlight-color: transparent;
+}
+.story-choice::before {
+    content: "";
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--gold-soft);
+    visibility: hidden;
+}
+.story-choice span { margin-left: auto; font-family: 'Noto Sans TC', sans-serif; font-size: 12px; font-weight: 400; color: rgb(255 255 255 / 0.45); }
+/* 金色游標：停在第一個選項；滑鼠移到／鍵盤選到哪個，游標就跟過去 */
+.story-choice.is-on,
+.story-choice:is(:hover, :focus-visible) { color: var(--gold-soft); background: rgb(216 192 145 / 0.1); box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6); }
+.story-choices:has(.story-choice:is(:hover, :focus-visible)) .story-choice.is-on:not(:hover, :focus-visible) { color: rgb(255 255 255 / 0.92); background: rgb(255 255 255 / 0.04); box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3); }
+.story-choice.is-on::before,
+.story-choice:is(:hover, :focus-visible)::before { visibility: visible; animation: rpg-cursor-bob 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.story-choices:has(.story-choice:is(:hover, :focus-visible)) .story-choice.is-on:not(:hover, :focus-visible)::before { visibility: hidden; }
+.story-choice:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+
+/* ---------- 商城：道具商店卡 ---------- */
+.shop-sign {
+    position: relative;
+    min-height: 0;
+    background: url(../images/xmas/shop.jpg) 48% 42% / cover no-repeat, var(--x-night);
+}
+.shop-sign::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(11 13 18 / 0.6) 0%, rgb(11 13 18 / 0) 30%, rgb(11 13 18 / 0) 65%, var(--x-night) 100%);
+}
+.shop-board {
+    position: absolute;
+    z-index: 2;
+    top: var(--sp-5);
+    left: 50%;
+    translate: -50% 0;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 6px 18px var(--sp-2);
+    border-radius: 8px;
+    background: rgb(11 13 18 / 0.75);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.6);
+}
+.shop-board b { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-style: italic; line-height: 1; letter-spacing: 0.2em; color: var(--gold-soft); }
+.shop-board span { font-family: 'Noto Serif TC', serif; font-size: 12px; font-weight: 700; letter-spacing: 0.3em; color: rgb(255 255 255 / 0.92); }
+.xpanel-shop .xcard-body { justify-content: flex-end; }
+.shop-inv { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.shop-slot {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);
+    border-radius: 10px;
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3);
+}
+.shop-slot.is-on { background: rgb(216 192 145 / 0.1); box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.65); }
+.shop-slot h3 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; color: rgb(255 255 255 / 0.92); }
+.shop-slot p { margin: 1px 0 0; font-size: 12px; color: rgb(255 255 255 / 0.5); }
+.shop-ico {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: rgb(11 13 18 / 0.8);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45);
+}
+.shop-ico-photo { background: url(../images/xmas/product.jpg) 58% 48% / 280% auto, var(--x-night); }
+.shop-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--gold-soft); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.shop-price { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; font-variant-numeric: lining-nums; color: var(--gold-soft); white-space: nowrap; }
+.shop-price small { margin-right: 2px; font-size: 12px; }
+.shop-slot.is-locked { opacity: 0.6; background: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12); }
+.shop-slot.is-locked .shop-ico { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2); }
+.shop-slot.is-locked .shop-ico svg { stroke: rgb(255 255 255 / 0.5); }
+.shop-soon { font-size: 12px; color: rgb(255 255 255 / 0.5); white-space: nowrap; }
+.shop-rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.shop-rules div { padding: 7px var(--sp-1); border-radius: 8px; text-align: center; box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.3); }
+.shop-rules dt { font-size: 11px; color: rgb(255 255 255 / 0.5); }
+.shop-rules dd { margin: 1px 0 0; font-size: 13px; font-weight: 700; color: rgb(255 255 255 / 0.92); }
+.xpanel-shop .xbtn-solid { background: linear-gradient(180deg, var(--gold-soft), var(--gold)); color: var(--x-night); font-weight: 700; }
+.xpanel-shop .xbtn-solid:hover { background: linear-gradient(180deg, #e6d3aa, var(--gold-soft)); }
+.xpanel-shop .xbtn:focus-visible { outline-color: var(--gold-soft); }
+
+@media (max-width: 1024px) {
+    /* 手機的左右切換箭頭在卡片左上、右上角，章節列放在箭頭下面 */
+    .xpanel-story .story-chapter { top: calc(var(--sp-3) + 44px + var(--sp-2)); left: var(--sp-4); right: var(--sp-4); }
+    .xpanel-shop .xcard-copy { gap: var(--sp-3); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .story-next,
+    .story-choice.is-on::before,
+    .story-choice:is(:hover, :focus-visible)::before { animation: none; }
+}

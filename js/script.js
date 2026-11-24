@@ -698,8 +698,8 @@ document.addEventListener('DOMContentLoaded', () => {
     (function initSectionEntrances() {
         const plans = [
             ['#products', ['.xcard-title', '.xcard-text', '.xcard-price', '.xcard-actions']],
-            ['#brand', ['.xcard-title', '.xcard-text', '.xcard-actions', '.xcard-facts li']],
-            ['#shop', ['.xcard-title', '.xcard-text', '.xcard-list li', '.xcard-actions', '.xcard-note']],
+            ['#brand', ['.xcard-title', '.xcard-text', '.story-party li', '.xcard-actions']],
+            ['#shop', ['.xcard-title', '.xcard-text', '.shop-slot', '.shop-rules', '.xcard-actions']],
             ['.site-footer', [
                 '.site-footer-brand', '.site-footer-col', '.site-footer-social', '.site-footer-bottom'
             ]]
