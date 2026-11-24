@@ -44,6 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function update(root) {
         if (!root.getClientRects().length) return;
+        // 2026-11-24 正在輸入時（手機鍵盤彈出、可用高度變一半）不要重新分頁，
+        // 不然登入表單會被拆成「信箱一頁、密碼一頁」，打字中還要按下一頁。鍵盤收起後再照常分頁。
+        const active = document.activeElement;
+        if (controllers.has(root) && root.contains(active)
+            && active.matches('input:not([type="checkbox"]):not([type="radio"]), textarea, select')) return;
         const section = root.closest('#brand, #products');
         let state = controllers.get(root);
         if (!state) {

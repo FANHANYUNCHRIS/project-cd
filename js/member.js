@@ -270,6 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 信箱欄按鍵盤的「下一個」直接跳到密碼欄，不要提早送出
+    document.getElementById('login-email').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' || e.isComposing) return;
+        e.preventDefault();
+        document.getElementById('login-password').focus();
+    });
+
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         loginError.hidden = true;

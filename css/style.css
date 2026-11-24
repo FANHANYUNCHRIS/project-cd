@@ -7779,3 +7779,17 @@ body { background-color: var(--x-night); }
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
+
+/* 2026-11-24 手機登入卡頓／不好用修正
+   1. 彈窗打開時雪花停下來：背後的全螢幕模糊不用每一格重算，iPhone 才不會卡。
+   2. 輸入框字級 16px：小於 16px 時 iPhone 點進去會把整頁放大，打完還要自己縮回來。
+      高度至少 44px（iOS 觸控目標）。 */
+body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; }
+@media (max-width: 1024px) {
+    .modal-overlay input:not([type="checkbox"]):not([type="radio"]),
+    .modal-overlay select,
+    .modal-overlay textarea {
+        font-size: 16px;
+        min-height: 44px;
+    }
+}
