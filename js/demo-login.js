@@ -1,14 +1,14 @@
 /* =========================================
-   示範登入（只在本機預覽有效，正式網站完全不會啟動）
-   用法：本機開 http://localhost:8765/index.html?demo=1
-   不用帳號密碼，直接看到「已登入」的畫面：皇冠圖示、會員資料、購物車、結帳。
-   資料全部是假的、只存在這個分頁的記憶體裡，不會寫進 Firebase；重新整理就還原。
+   示範登入：網址後面加 ?demo=1 才會啟動（本機和正式網站都可以）
+   用法：https://fanhanyunchris.github.io/project-cd/?demo=1
+   不用帳號密碼，直接看到「已登入」的畫面：會員資料、購物車、結帳。
+   資料全部是假的、只存在這個分頁的記憶體裡，不會寫進 Firebase，也不會成立真的訂單；
+   重新整理就還原。一般訪客的網址沒有 ?demo=1，完全不受影響。
+   畫面上方會有「示範模式」標籤，點它就回到一般網站。
    做法：把 firebase.auth() / firebase.firestore() 換成假的版本，member.js 不用改。
    ========================================= */
 (function () {
-    var host = location.hostname;
-    var isLocal = host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
-    if (!isLocal || new URLSearchParams(location.search).get('demo') !== '1') return;
+    if (new URLSearchParams(location.search).get('demo') !== '1') return;
     if (typeof firebase === 'undefined') return;
 
     function ts(date) {
@@ -142,5 +142,16 @@
     firebase.firestore = patchedFirestore;
 
     window.__projectCdDemo = { store: store, auth: fakeAuth };
+
+    // 畫面上方的「示範模式」標籤，提醒這是假資料；點一下離開示範模式
+    function addBadge() {
+        var badge = document.createElement('a');
+        badge.className = 'demo-badge';
+        badge.href = location.pathname;
+        badge.textContent = '示範模式・假資料｜點此離開';
+        document.body.appendChild(badge);
+    }
+    if (document.body) addBadge();
+    else document.addEventListener('DOMContentLoaded', addBadge);
     console.info('[示範登入] 已用假帳號登入，資料不會寫進 Firebase。');
 })();

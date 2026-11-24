@@ -7759,3 +7759,23 @@ body { background-color: var(--x-night); }
         z-index: 2060;
     }
 }
+
+/* 2026-11-24 示範登入標籤（網址加 ?demo=1 才出現，見 js/demo-login.js） */
+.demo-badge {
+    position: fixed;
+    top: max(var(--sp-2), env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3200;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 var(--sp-4);
+    border-radius: 16px;
+    background: var(--gold);
+    color: var(--ink);
+    font: 500 13px 'Noto Sans TC', sans-serif;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
