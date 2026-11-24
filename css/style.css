@@ -8743,11 +8743,8 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     font-weight: 700;
     line-height: 0.9;
     font-variant-numeric: lining-nums;
-    background: linear-gradient(180deg, #fff6dc, var(--gold-soft) 45%, var(--gold) 60%, #f3e3bd);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.6));
+    color: var(--gold-soft);
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.6);
 }
 .rpg-card-rank span { color: var(--gold-soft); font-size: 13px; letter-spacing: 2px; text-shadow: 0 1px 2px rgb(0 0 0 / 0.8); }
 .rpg-card-no {
