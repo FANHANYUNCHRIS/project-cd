@@ -7806,7 +7806,7 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     font-style: italic;
     font-weight: 500;
     font-size: clamp(15px, 1.3vw, 19px);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     color: var(--gold-soft);
     opacity: 0.6;
 }
