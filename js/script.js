@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>產品<span class="xcard-eyebrow-en" lang="en">PRODUCT</span></p>
                     <h2 class="xcard-title" id="products-title">土鳳梨酥</h2>
                     <dl class="rpg-card-stats xcard-price">
-                        <div><dt>價格</dt><dd class="rpg-card-num"><small>NT$</small>${unitPrice.toLocaleString()}</dd></div>
+                        <div><dt>價格</dt><dd class="rpg-card-num"><small>NT$</small><span class="pcard-total" aria-live="polite">${unitPrice.toLocaleString()}</span></dd></div>
                         <div><dt>數量</dt><dd>10 入／盒</dd></div>
                         <div><dt>取貨</dt><dd>5 天後</dd></div>
                     </dl>
@@ -541,11 +541,15 @@ document.addEventListener('DOMContentLoaded', () => {
         /* 正面：數量＋/− 和加入購物車 */
         let buyQty = 1;
         const qtyValue = section.querySelector('.pcard-qty-value');
+        const totalEl = section.querySelector('.pcard-total');
+        // 價格格子顯示「單價 × 盒數」的總價，數量一變就跟著變（2026-11-25 擁有者要求）
+        function setBuyQty(n) {
+            buyQty = Math.max(1, Math.min(99, n));
+            qtyValue.textContent = buyQty;
+            totalEl.textContent = (unitPrice * buyQty).toLocaleString();
+        }
         section.querySelectorAll('.pcard-qty-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                buyQty = Math.max(1, Math.min(99, buyQty + Number(btn.dataset.step)));
-                qtyValue.textContent = buyQty;
-            });
+            btn.addEventListener('click', () => setBuyQty(buyQty + Number(btn.dataset.step)));
         });
         const buyText = section.querySelector('.xcard-buy-text');
         section.querySelector('.xcard-buy').addEventListener('click', () => {
@@ -553,8 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty: buyQty });
             if (!added) return;
             buyText.textContent = '已加入！';
-            buyQty = 1;
-            qtyValue.textContent = buyQty;
+            setBuyQty(1);
             setTimeout(() => { buyText.textContent = '加入購物車'; }, 1200);
         });
 
