@@ -9565,3 +9565,61 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .bcard-tower span.is-lit b { color: var(--x-night); }
 /* 正面多了「點卡片看介紹」，內容整體往上推一點 */
 .bcard .pcard-flip-hint { margin-top: calc(var(--sp-1) * -1); }
+
+/* =========================================
+   品牌區三張卡改成「海報」（2026-11-25 擁有者：跟產品卡太像會混在一起）
+   - 跟產品卡的差別：不要編號、不要三格數值、不要白金雙框；
+     改成照片鋪滿、直寫大標題疊在照片右側、只留一條細金線框。
+   ========================================= */
+.bcard-flip .xpanel-rpg::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+.bcard .rpg-card-head,
+.bcard .rpg-card-stats { display: none; }
+.bcard.xpanel-rpg::before {
+    background: linear-gradient(180deg, rgb(11 13 18 / 0) 0%, rgb(11 13 18 / 0) 56%, rgb(11 13 18 / 0.8) 74%, var(--x-night) 96%);
+}
+.bcard.xpanel-rpg { justify-content: flex-end; }
+.bcard .xcard-body { position: static; }
+.bcard .xcard-copy { position: static; }
+.bcard .xcard-copy > :not(.xcard-title) { position: relative; z-index: 2; }
+.bcard.xpanel-rpg .xcard-title {
+    position: absolute;
+    z-index: 2;
+    top: var(--sp-8);
+    right: var(--sp-5);
+    max-height: 58%;
+    margin: 0;
+    writing-mode: vertical-rl;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: 0.08em;
+    text-wrap: wrap;
+    color: #fff;
+    text-shadow: 0 2px 18px rgb(0 0 0 / 0.85), 0 0 2px rgb(0 0 0 / 0.6);
+}
+/* 標題旁一條金線，像海報的落款 */
+.bcard.xpanel-rpg .xcard-title::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: -12px;
+    width: 1px;
+    height: 64px;
+    background: linear-gradient(180deg, var(--gold-soft), rgb(216 192 145 / 0));
+}
+.bcard .xcard-eyebrow { letter-spacing: 0.24em; }
+.bcard .xcard-text { max-width: 30em; }
+/* 照片讓出右邊給直寫標題 */
+.bcard .xcard-bg-brand { background-position: 30% 30%; }
+.xpanel-rpg.bcard .xcard-bg-team {
+    background:
+        url(../images/staff01-nobg.webp) 22% 10% / auto 64% no-repeat,
+        radial-gradient(44% 32% at 34% 32%, rgb(216 192 145 / 0.3), rgb(216 192 145 / 0) 70%),
+        var(--x-night);
+}
+.xpanel-rpg.bcard .xcard-bg-building { justify-content: flex-start; padding: 72px 84px 0 var(--sp-5); }
+.bcard .bcard-floors li { padding: 14px var(--sp-1); font-size: 14px; white-space: nowrap; gap: var(--sp-3); }
+@media (min-width: 1025px) {
+    .bcard.xpanel-rpg .xcard-title { top: var(--sp-12); right: var(--sp-12); max-height: 72%; font-size: 48px; }
+}
