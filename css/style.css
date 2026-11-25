@@ -9529,3 +9529,39 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 #brand .brand-carousel-arrow[data-step="-1"] { left: 0; }
 #brand .brand-carousel-arrow[data-step="1"] { right: 0; }
 .bcard .xcard-title { text-wrap: balance; }
+
+/* 品牌三張卡的背面（2026-11-25 擁有者：加翻面）。翻面、膠囊、四列內容都沿用產品卡的 .pcard 樣式，這裡只補展示區。 */
+.bcard-stage { overflow: hidden; }
+.bcard-logo { width: auto; height: 62%; max-height: 150px; filter: drop-shadow(0 0 24px rgb(216 192 145 / 0.45)); }
+.bcard-portrait { position: absolute; left: 50%; bottom: 0; translate: -50% 0; height: 100%; width: auto; max-width: none; object-fit: contain; }
+.bcard-portrait.is-photo { height: 100%; width: 100%; object-fit: cover; }
+.bcard-portrait-empty { color: rgb(255 255 255 / 0.6); font-size: 14px; letter-spacing: 0.1em; }
+.bcard-tower {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: min(60%, 180px);
+    margin-bottom: var(--sp-5);
+}
+.bcard-tower span {
+    display: flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 var(--sp-2);
+    border-radius: 3px;
+    background: rgb(255 255 255 / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.25);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.bcard-tower span[data-floor="RF"] { width: 78%; margin-inline: auto; }
+.bcard-tower b {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1;
+    font-variant-numeric: lining-nums;
+    color: rgb(255 255 255 / 0.55);
+}
+.bcard-tower span.is-lit { background: linear-gradient(180deg, var(--gold-soft), var(--gold)); box-shadow: 0 0 16px rgb(216 192 145 / 0.45); }
+.bcard-tower span.is-lit b { color: var(--x-night); }
+/* 正面多了「點卡片看介紹」，內容整體往上推一點 */
+.bcard .pcard-flip-hint { margin-top: calc(var(--sp-1) * -1); }

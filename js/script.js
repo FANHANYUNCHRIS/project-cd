@@ -1902,7 +1902,186 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
 }
 window.initCardCarousel = initCardCarousel;
 
+/* 品牌區三張卡加翻面（2026-11-25 擁有者：跟產品卡一樣可以翻到背面）。
+   正面寫在 index.html；這裡把每張正面包成 .pcard（跟產品卡同一套翻面樣式），再補上背面：
+   上面一塊展示區、中間四列內容、下面三個膠囊切換，點背面任何地方翻回正面（膠囊除外）。 */
+function initBrandFlipCards(carousel) {
+    const ico = {
+        book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M9 8h7M9 11.5h5"/>',
+        flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.5 15h9"/>',
+        thermo: '<path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>',
+        star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+        flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+        cup: '<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3v2M12 3v2"/>',
+        cake: '<path d="M4 20h16v-7H4z"/><path d="M4 15c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0M12 13V9M12 6.5v.01"/>',
+        feather: '<path d="M20 4c-8 0-14 6-14 14v2M6 18c4 0 10-2 12-8M9 14h6"/>',
+        drop: '<path d="M12 3c3.5 4.5 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 2.5-6.5 6-11z"/>',
+        gem: '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l3 6 3-6M12 9v12"/>',
+        shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+        user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        sword: '<path d="M14.5 4H20v5.5L9 20.5 3.5 15z"/><path d="M5 13l6 6M3 21l2-2"/>',
+        car: '<path d="M3 16v-4l2-5h14l2 5v4z"/><circle cx="7.5" cy="16.5" r="1.8"/><circle cx="16.5" cy="16.5" r="1.8"/>',
+        quote: '<path d="M7 11H4V7h4v4l-2 5M17 11h-3V7h4v4l-2 5"/>',
+        shop: '<path d="M4 9h16l-1 11H5z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/>',
+        table: '<path d="M3 10h18M6 10v9M18 10v9M8 6h8"/>',
+        oven: '<rect x="3" y="4" width="18" height="16" rx="2"/><rect x="6" y="9" width="12" height="8" rx="1"/><path d="M7 6.5h.01M10 6.5h.01"/>',
+        bean: '<ellipse cx="12" cy="12" rx="6" ry="8" transform="rotate(30 12 12)"/><path d="M9 6c3 3 3 9 6 12"/>',
+        people: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M15 20a4.5 4.5 0 0 1 6-4"/>',
+        clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        desk: '<path d="M3 9h18M5 9v11M19 9v11M5 14h6"/><rect x="8" y="3" width="8" height="6" rx="1"/>',
+        sofa: '<path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><path d="M2 12a2 2 0 0 1 4 0v2h12v-2a2 2 0 0 1 4 0v6H2zM5 18v2M19 18v2"/>',
+        flower: '<circle cx="12" cy="9" r="2.5"/><path d="M12 4.5v2M12 11.5V21M12 16c-2-2-5-2-6-1M12 18c2-2 5-2 6-1"/>',
+        tree: '<path d="M12 3l5 7h-3l4 6H6l4-6H7z"/><path d="M12 16v5"/>',
+        lantern: '<path d="M12 3v2M8 5h8M7 8c0-2 10-2 10 0v8c0 2-10 2-10 0zM12 19v2M7 12h10"/>',
+        rain: '<path d="M7 15a5 5 0 1 1 1-9.9A6 6 0 0 1 19 9a4 4 0 0 1-1 7.9"/><path d="M9 18l-1 3M13 18l-1 3M17 18l-1 3"/>'
+    };
+    const row = ([k, title, text, gold]) => `<li${gold ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg></i><b>${title}</b><span>${text}</span></li>`;
+    const flipIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>';
+
+    const portraits = ['images/staff01-nobg.webp', 'images/team-2.jpg', 'images/team-3.jpg'];
+    const towerFloors = ['RF', '4F', '3F', '2F', '1F'];
+    const towerLit = [['1F', '2F'], ['3F', '4F'], ['RF']];
+    const backs = {
+        brand: {
+            name: '品牌', label: '品牌介紹',
+            stage: '<img class="bcard-logo" src="images/unicorn-logo-white.png" alt="" width="512" height="512" decoding="async">',
+            tip: 'Project.CD',
+            tabs: [
+                ['品牌故事', [['book', '沒有祖傳配方', '從零開始，自己研究'], ['flask', '讀專業文獻', '先弄懂酥皮和內餡的道理'], ['thermo', '記溫度與時間', '每一爐都算比例、做紀錄'], ['star', '一版一版實驗', '直到每一口都平衡', true]]],
+                ['名字由來', [['flag', 'Project', '計畫：把甜點當研究來做'], ['cup', 'C＝Coffee', '咖啡'], ['cake', 'D＝Dessert', '甜點'], ['star', '一個人的甜點研究室', '品牌的一句話', true]]],
+                ['獨角獸', [['feather', '自由與想像力', '不被傳統配方綁住'], ['drop', '純潔', '用單純的好食材'], ['gem', '稀有', '做出別處吃不到的味道'], ['shield', '守護', '把關每一顆的品質', true]]]
+            ]
+        },
+        team: {
+            name: '角色', label: '角色介紹',
+            stage: '<img class="bcard-portrait" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async"><span class="bcard-portrait-empty" hidden>照片準備中</span>',
+            tip: '',
+            tabs: [
+                ['武裝神姬', [['user', '咖啡甜點專家', '工作職位'], ['shield', '戰鬥專家', '戰鬥職位'], ['sword', '武士刀×狙擊槍', '專用武器'], ['quote', '座右銘', '「用數據與匠心，重新定義這間店存在的意義。」', true]]],
+                ['強襲魔女', [['user', '代理店長×最強雜工', '工作職位'], ['shield', '移動基地', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「溫度差一度，風味就不再是那個風味。」', true]]],
+                ['貓貓', [['user', '招財貓', '工作職位'], ['shield', '偵查', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「每一次失敗的配方，都是下一次成功的線索。」', true]]]
+            ],
+            onSelect(card, i) {
+                const img = card.querySelector('.bcard-portrait');
+                const empty = card.querySelector('.bcard-portrait-empty');
+                img.hidden = false;
+                empty.hidden = true;
+                img.onerror = () => { img.hidden = true; empty.hidden = false; };
+                img.src = portraits[i];
+                img.classList.toggle('is-photo', i !== 0);
+            }
+        },
+        building: {
+            name: '建築', label: '大樓介紹',
+            stage: `<div class="bcard-tower">${towerFloors.map(f => `<span data-floor="${f}"><b>${f}</b></span>`).join('')}</div>`,
+            tip: '亮起來的是這頁說的樓層',
+            tabs: [
+                ['1F・2F', [['shop', '1F 結帳區', '收銀台和甜點玻璃櫃'], ['table', '1F 用餐區', '兩人座和兩張長桌'], ['oven', '2F 甜點製作區', '鳳梨酥、蛋黃酥在這裡做'], ['bean', '2F 咖啡烘豆區', '兩台滾筒烘豆機和杯測桌', true]]],
+                ['3F・4F', [['people', '3F 甜點咖啡教室', '一班 20 人，一人一張桌'], ['clock', '3F 上課時間', '09:00–17:00、19:00–22:00'], ['desk', '4F 辦公室', '五人開放式辦公室'], ['sofa', '4F 休息區', '茶水間和沙發', true]]],
+                ['RF', [['flower', '空中花園', '員工休息區，有花台和水景'], ['tree', '聖誕布置', '12 月整個月'], ['lantern', '過年布置', '過年前兩週到元宵'], ['rain', '下雨時', '花園裡的人會離開', true]]]
+            ],
+            onSelect(card, i) {
+                card.querySelectorAll('.bcard-tower span').forEach(s => s.classList.toggle('is-lit', towerLit[i].includes(s.dataset.floor)));
+            }
+        }
+    };
+
+    carousel.querySelectorAll('article.bcard').forEach(front => {
+        const key = Object.keys(backs).find(k => front.classList.contains('bcard-' + k));
+        const d = backs[key];
+        const id = 'bcard-' + key;
+
+        // 正面原本就是一張換卡用的卡片：把「換卡」的身分（位置、inert）移到外層 .pcard
+        const card = document.createElement('div');
+        card.className = 'pcard brand-carousel-card bcard-flip';
+        card.dataset.position = front.dataset.position;
+        card.inert = front.inert;
+        front.classList.remove('brand-carousel-card');
+        front.removeAttribute('data-position');
+        front.inert = false;
+        front.classList.add('pcard-face', 'pcard-front');
+        const inner = document.createElement('div');
+        inner.className = 'pcard-inner';
+        front.replaceWith(card);
+        card.append(inner);
+        inner.append(front);
+        front.querySelector('.xcard-copy').insertAdjacentHTML('beforeend', `<button type="button" class="pcard-flip-hint pcard-to-back">點卡片看介紹${flipIcon}</button>`);
+
+        inner.insertAdjacentHTML('beforeend', `
+            <div class="xpanel pcard-face pcard-back bcard-back-${key}" inert>
+                <div class="pcard-back-head">
+                    <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>${d.name}<span class="xcard-eyebrow-en">介紹</span></p>
+                </div>
+                <div class="pcard-view">
+                    <div class="pcard-stage bcard-stage">${d.stage}${d.tip ? `<span class="pcard-stage-tip" aria-hidden="true">${d.tip}</span>` : ''}</div>
+                </div>
+                <div class="pcard-lower">
+                    ${d.tabs.map(([, rows], i) => `<section class="pcard-sheet${i === 0 ? ' is-active' : ''}" role="tabpanel" id="${id}-sheet-${i}" aria-labelledby="${id}-pill-${i}"${i === 0 ? '' : ' aria-hidden="true"'}><ul class="pcard-rows">${rows.map(row).join('')}</ul></section>`).join('')}
+                </div>
+                <div class="pcard-pills" role="tablist" aria-label="${d.label}">
+                    ${d.tabs.map(([name], i) => `<button type="button" class="pcard-pill" role="tab" id="${id}-pill-${i}" aria-controls="${id}-sheet-${i}" aria-selected="${i === 0}"${i === 0 ? '' : ' tabindex="-1"'}>${name}</button>`).join('')}
+                </div>
+                <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面${flipIcon}</button>
+            </div>`);
+
+        const back = inner.lastElementChild;
+        function setFlipped(flipped, moveFocus) {
+            if (!flipped && card.classList.contains('is-settled')) {
+                inner.style.transition = 'none';
+                card.classList.remove('is-settled');
+                void inner.offsetWidth;
+                inner.style.transition = '';
+                void inner.offsetWidth;
+            }
+            card.classList.toggle('is-flipped', flipped);
+            front.inert = flipped;
+            back.inert = !flipped;
+            if (moveFocus) (flipped ? back.querySelector('.pcard-to-front') : front.querySelector('.pcard-to-back')).focus({ preventScroll: true });
+        }
+        inner.addEventListener('transitionend', e => {
+            if (e.target === inner && e.propertyName === 'transform' && card.classList.contains('is-flipped')) card.classList.add('is-settled');
+        });
+        front.addEventListener('click', e => {
+            if (e.target.closest('button, a') && !e.target.closest('.pcard-to-back')) return;
+            setFlipped(true, e.detail === 0);
+        });
+        back.addEventListener('click', e => {
+            if (e.target.closest('.pcard-pills')) return;
+            setFlipped(false, e.detail === 0);
+        });
+
+        const pills = [...back.querySelectorAll('.pcard-pill')];
+        function selectPill(i) {
+            pills.forEach((p, n) => {
+                const on = n === i;
+                p.setAttribute('aria-selected', String(on));
+                p.tabIndex = on ? 0 : -1;
+                const panel = back.querySelector('#' + p.getAttribute('aria-controls'));
+                panel.classList.toggle('is-active', on);
+                panel.setAttribute('aria-hidden', String(!on));
+            });
+            d.onSelect?.(back, i);
+        }
+        pills.forEach((pill, i) => {
+            pill.addEventListener('click', () => selectPill(i));
+            pill.addEventListener('keydown', e => {
+                const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+                if (!step) return;
+                e.preventDefault();
+                e.stopPropagation();
+                const next = (i + step + pills.length) % pills.length;
+                selectPill(next);
+                pills[next].focus();
+            });
+        });
+        d.onSelect?.(back, 0);
+    });
+}
+
 (function initBrandCarousel() {
     const carousel = document.querySelector('.brand-carousel:not(.product-carousel)');
-    if (carousel) initCardCarousel(carousel);
+    if (!carousel) return;
+    initBrandFlipCards(carousel);
+    // 跟產品卡一樣不鎖定指標（會吃掉翻面點擊），從按鈕上開始滑也能換卡
+    initCardCarousel(carousel, { ignore: 'input', capture: false });
 })();
