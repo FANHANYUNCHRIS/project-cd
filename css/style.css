@@ -9437,3 +9437,36 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 /* 沒有下一張的那一邊，三角收起來（產品卡只有兩張、不繞回） */
 .brand-carousel-arrow.is-end:not([hidden]) { opacity: 0; }
 .brand-carousel-arrow:not([hidden]) { transition: opacity 0.3s ease; }
+
+/* =========================================
+   卡片縮小、浮在背景上（2026-11-25 擁有者：滿版像只是一圈邊框，要縮小一點、有明顯陰影浮起來）
+   - 四周多留一點夜空，卡片變成一張「放在」背景上的卡。
+   - 陰影＝下方一大片深色落影＋貼邊一圈淡金光，黑底上也看得出浮起。
+   - 換卡的外框會裁切（避免左右卡露出來），所以外框往外擴一圈、內部補回同樣的距離，陰影才不會被切掉。
+   ========================================= */
+#products.xcard, #brand.xcard, #shop.xcard {
+    --card-gutter: var(--sp-8);
+    --card-float: var(--sp-6);
+}
+@media (max-width: 1024px) {
+    #products.xcard, #brand.xcard, #shop.xcard {
+        --card-gutter: var(--sp-8);
+        --card-top: max(var(--sp-12), calc(env(safe-area-inset-top) + var(--sp-6)));
+        --card-nav-space: calc(76px + max(var(--sp-4), env(safe-area-inset-bottom)) + var(--sp-8));
+    }
+}
+.xpanel,
+.xpanel.xpanel-rpg,
+.xpanel.xpanel-shop,
+.xpanel.xpanel-story {
+    box-shadow:
+        0 2px 6px rgb(0 0 0 / 0.6),
+        0 28px 56px -10px rgb(0 0 0 / 0.95),
+        0 0 0 1px rgb(216 192 145 / 0.22),
+        0 0 28px 2px rgb(216 192 145 / 0.28),
+        0 18px 60px 6px rgb(216 192 145 / 0.16);
+}
+.brand-carousel-cards {
+    margin: calc(var(--card-float) * -1);
+    padding: var(--card-float);
+}
