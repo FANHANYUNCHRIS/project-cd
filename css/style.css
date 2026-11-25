@@ -9470,3 +9470,62 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     margin: calc(var(--card-float) * -1);
     padding: var(--card-float);
 }
+
+/* =========================================
+   品牌區三張卡：品牌／角色／建築（2026-11-25 擁有者：照產品卡的黑金卡做）
+   - 版型直接用產品卡的 .xpanel-rpg：照片鋪滿、下方漸層壓暗、文字＋三格數值＋金色按鈕。
+   - 角色卡：去背立繪放在上半部，後面一圈淡金光。
+   - 建築卡：沒有照片，用「選擇關卡」式的樓層清單當畫面。
+   ========================================= */
+.bcard .xcard-copy { display: flex; flex-direction: column; gap: var(--sp-3); }
+.bcard .xcard-text { margin: 0; font-size: 15px; line-height: 1.7; }
+.bcard .xcard-actions { margin-top: var(--sp-1); }
+.bcard .xbtn { flex: 1 1 auto; height: 48px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.xpanel-rpg .xcard-bg-brand { background-image: url(../images/xmas/brand.jpg); background-size: cover; background-position: 50% 30%; }
+.xpanel-rpg .xcard-bg-team {
+    background:
+        url(../images/staff01-nobg.webp) 50% 12% / auto 62% no-repeat,
+        radial-gradient(46% 34% at 50% 34%, rgb(216 192 145 / 0.32), rgb(216 192 145 / 0) 70%),
+        var(--x-night);
+}
+.xpanel-rpg .xcard-bg-building {
+    display: flex;
+    justify-content: center;
+    padding: 72px var(--sp-6) 0;
+    background:
+        radial-gradient(60% 40% at 50% 28%, rgb(216 192 145 / 0.18), rgb(216 192 145 / 0) 70%),
+        var(--x-night);
+}
+.bcard-floors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: min(100%, 300px);
+    display: flex;
+    flex-direction: column;
+}
+.bcard-floors li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-4);
+    padding: 10px var(--sp-2);
+    border-bottom: 1px solid rgb(216 192 145 / 0.22);
+    color: rgb(255 255 255 / 0.78);
+    font-size: 15px;
+}
+.bcard-floors li:first-child { border-top: 1px solid rgb(216 192 145 / 0.22); }
+.bcard-floors b {
+    width: 2.2em;
+    flex: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: lining-nums;
+    color: var(--gold-soft);
+}
+/* 品牌卡的換卡三角也放到左右邊緣正中間，跟產品卡一樣（原本在上角會蓋到 No. 編號） */
+#brand .brand-carousel-arrow:not([hidden]) { top: 50%; transform: translateY(-50%); width: 44px; height: 88px; }
+#brand .brand-carousel-arrow[data-step="-1"] { left: 0; }
+#brand .brand-carousel-arrow[data-step="1"] { right: 0; }
+.bcard .xcard-title { text-wrap: balance; }

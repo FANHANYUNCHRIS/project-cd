@@ -108,11 +108,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261125-dark2">
+    <link rel="stylesheet" href="css/style.css?v=20261125-bcard1">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261125-dark2" defer></script>
-    <script src="js/script.js?v=20261125-dark2" defer></script>
+    <script src="js/pineapple-model.js?v=20261125-bcard1" defer></script>
+    <script src="js/script.js?v=20261125-bcard1" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -122,9 +122,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261125-dark2" defer></script>
-    <script src="js/member.js?v=20261125-dark2" defer></script>
-    <script src="js/pagination.js?v=20261125-dark2" defer></script>
+    <script src="js/demo-login.js?v=20261125-bcard1" defer></script>
+    <script src="js/member.js?v=20261125-bcard1" defer></script>
+    <script src="js/pagination.js?v=20261125-bcard1" defer></script>
 </head>
 
 <body>
@@ -261,37 +261,68 @@
     <section id="brand" class="fullscreen-section xcard xcard-photo dark-section" aria-label="品牌介紹">
         <div class="brand-carousel" role="group" aria-label="品牌卡片">
             <div class="brand-carousel-cards">
-                <!-- 品牌卡＝劇情對話卡（2026-11-25 擁有者同意）：上面劇情畫面，下面 RPG 對話框，按鈕做成選項 -->
-                <article class="xpanel xpanel-story brand-carousel-card" data-position="center">
-                    <div class="story-scene">
-                        <div class="story-chapter">
-                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>品牌<span class="xcard-eyebrow-en" lang="en">BRAND</span></p>
-                            <span class="story-chapter-no" lang="en" aria-hidden="true">CHAPTER 1</span>
-                        </div>
-                    </div>
+                <!-- 品牌區三張卡（2026-11-25 擁有者：品牌、角色、建築，照產品卡的黑金卡做） -->
+                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-brand" data-position="center">
+                    <div class="xcard-bg xcard-bg-brand" aria-hidden="true"></div>
+                    <div class="rpg-card-head" aria-hidden="true"><span class="rpg-card-no">No.001</span></div>
                     <div class="xcard-body">
-                        <div class="story-dialog">
-                            <span class="story-speaker" aria-hidden="true">Project.CD</span>
+                        <div class="xcard-copy">
+                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>品牌<span class="xcard-eyebrow-en" lang="en">BRAND</span></p>
                             <h2 id="brand-title" class="xcard-title">用理論，烤一顆鳳梨酥。</h2>
-                            <p class="xcard-text">沒有祖傳配方。我讀專業文獻、計算配方比例、記錄溫度與時間，一版一版實驗，直到酥皮與內餡在每一口都達到平衡。</p>
-                            <span class="story-next" aria-hidden="true">▼</span>
-                        </div>
-                        <ul class="story-party" aria-label="品牌小檔案">
-                            <li><b>1 人</b>隊伍</li>
-                            <li><b>從零</b>沒有祖傳配方</li>
-                            <li><b>包辦</b>研究到出貨</li>
-                        </ul>
-                        <div class="xcard-actions story-choices">
-                            <button type="button" class="story-choice is-on" id="brand-team-open">認識團隊<span>隊伍選單</span></button>
-                            <a class="story-choice" href="building/index.html">逛虛擬大樓<span>3D 空間</span></a>
+                            <p class="xcard-text">沒有祖傳配方。讀文獻、算比例、記溫度與時間，一版一版實驗，直到酥皮與內餡每一口都平衡。</p>
+                            <dl class="rpg-card-stats">
+                                <div><dt>隊伍</dt><dd class="rpg-card-num">1<small>人</small></dd></div>
+                                <div><dt>配方</dt><dd>從零研究</dd></div>
+                                <div><dt>出貨</dt><dd>自己包辦</dd></div>
+                            </dl>
                         </div>
                     </div>
                 </article>
-                <article class="xpanel brand-carousel-card brand-carousel-pending" data-position="right" inert>
-                    <h2 class="xcard-title">準備中</h2>
+                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-team" data-position="right" inert>
+                    <div class="xcard-bg xcard-bg-team" aria-hidden="true"></div>
+                    <div class="rpg-card-head" aria-hidden="true"><span class="rpg-card-no">No.002</span></div>
+                    <div class="xcard-body">
+                        <div class="xcard-copy">
+                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>角色<span class="xcard-eyebrow-en" lang="en">TEAM</span></p>
+                            <h2 class="xcard-title">三人小隊</h2>
+                            <p class="xcard-text">甜點專家、代理店長、招財貓，各有各的本事。</p>
+                            <dl class="rpg-card-stats">
+                                <div><dt>隊員</dt><dd class="rpg-card-num">3<small>人</small></dd></div>
+                                <div><dt>把關</dt><dd>武裝神姬</dd></div>
+                                <div><dt>招財</dt><dd>貓貓</dd></div>
+                            </dl>
+                            <div class="xcard-actions">
+                                <button type="button" class="xbtn xbtn-solid" id="brand-team-open">認識團隊</button>
+                            </div>
+                        </div>
+                    </div>
                 </article>
-                <article class="xpanel brand-carousel-card brand-carousel-pending" data-position="left" inert>
-                    <h2 class="xcard-title">準備中</h2>
+                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-building" data-position="left" inert>
+                    <div class="xcard-bg xcard-bg-building" aria-hidden="true">
+                        <ol class="bcard-floors">
+                            <li><b>RF</b>空中花園</li>
+                            <li><b>4F</b>辦公室</li>
+                            <li><b>3F</b>甜點咖啡教室</li>
+                            <li><b>2F</b>甜點製作・咖啡烘豆</li>
+                            <li><b>1F</b>咖啡甜點</li>
+                        </ol>
+                    </div>
+                    <div class="rpg-card-head" aria-hidden="true"><span class="rpg-card-no">No.003</span></div>
+                    <div class="xcard-body">
+                        <div class="xcard-copy">
+                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>建築<span class="xcard-eyebrow-en" lang="en">BUILDING</span></p>
+                            <h2 class="xcard-title">咖啡大樓</h2>
+                            <p class="xcard-text">一棟可以自己轉動、一層一層逛的 3D 咖啡大樓。</p>
+                            <dl class="rpg-card-stats">
+                                <div><dt>樓層</dt><dd class="rpg-card-num">5<small>層</small></dd></div>
+                                <div><dt>頂樓</dt><dd>空中花園</dd></div>
+                                <div><dt>玩法</dt><dd>拖曳轉動</dd></div>
+                            </dl>
+                            <div class="xcard-actions">
+                                <a class="xbtn xbtn-solid" href="building/index.html">逛虛擬大樓</a>
+                            </div>
+                        </div>
+                    </div>
                 </article>
             </div>
             <button class="brand-carousel-arrow" type="button" data-step="-1" aria-label="上一張品牌卡片" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
