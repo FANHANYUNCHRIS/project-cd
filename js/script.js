@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const productsData = {
         '1': {
-            name: "鳳梨酥",
+            name: "土鳳梨酥",
             price: "NT$ 500",
             qty: "10入/盒",
             desc: "嚴選台灣在地小農土鳳梨，慢火熬煮酸甜鳳梨餡，搭配法國奶油酥皮，入口散發濃郁奶香與自然果酸層次。",
@@ -452,39 +452,162 @@ document.addEventListener('DOMContentLoaded', () => {
         section.className = 'fullscreen-section xcard xcard-photo dark-section';
         section.setAttribute('aria-labelledby', 'products-title');
         const unitPrice = parseInt(product.price.replace(/[^\d]/g, ''), 10) || 0;
+        /* 2026-11-25 擁有者指定：卡片正面負責「買」（名稱、三格資訊、數量＋/−、加入購物車），
+           點卡片翻到背面看介紹（上半 3D 鳳梨酥、下半三個分頁）。不再開 #product-modal。 */
+        const ingredientIconSvg = {
+            '土鳳梨餡': '<path d="M12 9c-3.3 0-5 2.6-5 6s1.7 6 5 6 5-2.6 5-6-1.7-6-5-6z"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/><path d="M12 9V4M12 6c-1.5-1.8-3.2-2.3-4.5-2M12 6c1.5-1.8 3.2-2.3 4.5-2"/>',
+            '法國奶油': '<path d="M4 15l3-6h12l-3 6z"/><path d="M4 15v3h12v-3M16 18l3-3V9"/>',
+            '中筋麵粉': '<path d="M12 21V8"/><path d="M12 12c-2.2 0-3.5-1.3-3.5-3.5 2.2 0 3.5 1.3 3.5 3.5zM12 12c2.2 0 3.5-1.3 3.5-3.5-2.2 0-3.5 1.3-3.5 3.5zM12 16.5c-2.2 0-3.5-1.3-3.5-3.5 2.2 0 3.5 1.3 3.5 3.5zM12 16.5c2.2 0 3.5-1.3 3.5-3.5-2.2 0-3.5 1.3-3.5 3.5zM12 8c-1.2-1.2-1.2-3 0-4.5 1.2 1.5 1.2 3.3 0 4.5z"/>',
+            '雞蛋': '<path d="M12 3c-3.5 0-6 5.2-6 9.5S8.7 21 12 21s6-4.2 6-8.5S15.5 3 12 3z"/>',
+            '細砂糖': '<path d="M4 12h7v7H4zM13 12h7v7h-7zM8.5 5h7v7h-7z"/>',
+            '鹽': '<path d="M8 9h8l-1 12H9z"/><path d="M8 9c0-3 1.8-5 4-5s4 2 4 5"/><path d="M11 6.5h.01M13 6.5h.01M12 5.5h.01"/>'
+        };
+        const ingredientsHtml = product.ingredients.map(name => `
+                            <li><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg[name] || '<circle cx="12" cy="12" r="7"/>'}</svg><span>${name}</span></li>`).join('');
         section.innerHTML = `
-            <div class="xpanel xpanel-rpg">
+            <div class="pcard">
+            <div class="pcard-inner">
+            <div class="xpanel xpanel-rpg pcard-face pcard-front">
             <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
             <div class="rpg-card-head" aria-hidden="true">
-                <p class="rpg-card-rank"><b>SSR</b><span>★★★★★</span></p>
                 <span class="rpg-card-no">No.001</span>
             </div>
             <div class="xcard-body">
                 <div class="xcard-copy">
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>產品<span class="xcard-eyebrow-en" lang="en">PRODUCT</span></p>
-                    <h2 class="xcard-title" id="products-title">手作土鳳梨酥</h2>
-                    <p class="xcard-text">土鳳梨餡・法國奶油酥皮</p>
+                    <h2 class="xcard-title" id="products-title">土鳳梨酥</h2>
                     <dl class="rpg-card-stats xcard-price">
                         <div><dt>價格</dt><dd class="rpg-card-num"><small>NT$</small>${unitPrice.toLocaleString()}</dd></div>
                         <div><dt>數量</dt><dd>10 入／盒</dd></div>
                         <div><dt>取貨</dt><dd>5 天後</dd></div>
                     </dl>
-                    <div class="xcard-actions">
+                    <div class="xcard-actions pcard-buy-row">
+                        <div class="pcard-qty" role="group" aria-label="購買盒數">
+                            <button type="button" class="pcard-qty-btn" data-step="-1" aria-label="少一盒">&minus;</button>
+                            <output class="pcard-qty-value" aria-live="polite">1</output>
+                            <button type="button" class="pcard-qty-btn" data-step="1" aria-label="多一盒">&plus;</button>
+                        </div>
                         <button type="button" class="xbtn xbtn-solid xcard-buy"><span class="xcard-buy-text">加入購物車</span></button>
-                        <button type="button" class="xbtn xbtn-ghost xcard-detail">商品詳情</button>
+                    </div>
+                    <button type="button" class="pcard-flip-hint pcard-to-back">點卡片看介紹<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
+                </div>
+            </div>
+            </div>
+            <div class="xpanel pcard-face pcard-back" inert>
+                <div class="pcard-back-head">
+                    <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>土鳳梨酥<span class="xcard-eyebrow-en">介紹</span></p>
+                    <button type="button" class="pcard-to-front" aria-label="翻回卡片正面"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>正面</button>
+                </div>
+                <div class="pcard-stage pineapple-model-stage">
+                    <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
+                    <p class="pastry-image-note" role="status">翻過來就會載入 3D 模型</p>
+                    <span class="pcard-stage-tip" aria-hidden="true">用手指拖曳，轉轉看</span>
+                </div>
+                <div class="pcard-info">
+                    <div class="pcard-tabs" role="tablist" aria-label="產品資訊">
+                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-intro" aria-controls="pcard-panel-intro" aria-selected="true">產品介紹</button>
+                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-ing" aria-controls="pcard-panel-ing" aria-selected="false" tabindex="-1">產品成分</button>
+                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-note" aria-controls="pcard-panel-note" aria-selected="false" tabindex="-1">注意事項</button>
+                    </div>
+                    <div class="pcard-panels">
+                        <div class="pcard-panel is-active" role="tabpanel" id="pcard-panel-intro" aria-labelledby="pcard-tab-intro">
+                            <p class="pcard-lead">酸，是土鳳梨的本色。</p>
+                            <p class="pcard-copy">選台灣在地小農的土鳳梨，慢火熬成看得見纖維的果餡，不把酸味煮掉。外面包一層法國奶油酥皮，咬下去先是奶香，接著才是果酸。</p>
+                            <ul class="pcard-points">
+                                <li>在地小農土鳳梨</li>
+                                <li>慢火熬煮果餡</li>
+                                <li>法國奶油酥皮</li>
+                            </ul>
+                        </div>
+                        <div class="pcard-panel" role="tabpanel" id="pcard-panel-ing" aria-labelledby="pcard-tab-ing" aria-hidden="true">
+                            <ul class="pcard-ingredients">${ingredientsHtml}
+                            </ul>
+                            <p class="pcard-allergen">過敏原：蛋、奶、麩質</p>
+                        </div>
+                        <div class="pcard-panel" role="tabpanel" id="pcard-panel-note" aria-labelledby="pcard-tab-note" aria-hidden="true">
+                            <ul class="pcard-notes">
+                                <li><b>會過敏的人先看這裡</b>裡面有蛋、奶油和麵粉（麩質）。對其中任何一樣過敏，這盒就先別吃。</li>
+                                <li><b>沒加防腐劑</b>收到請直接放冰箱，在期限內吃完，不要放在常溫等它慢慢吃。</li>
+                                <li><b>冰過的酥皮會比較硬</b>從冰箱拿出來放一下，回到室溫再吃，奶香比較出得來。</li>
+                                <li><b>每顆長得不太一樣</b>全部手工包、手工烤，大小和烤色會有一點差別，不是瑕疵。</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
+            </div>
             </div>`;
+
+        /* 正面：數量＋/− 和加入購物車 */
+        let buyQty = 1;
+        const qtyValue = section.querySelector('.pcard-qty-value');
+        section.querySelectorAll('.pcard-qty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                buyQty = Math.max(1, Math.min(99, buyQty + Number(btn.dataset.step)));
+                qtyValue.textContent = buyQty;
+            });
+        });
         const buyText = section.querySelector('.xcard-buy-text');
         section.querySelector('.xcard-buy').addEventListener('click', () => {
             if (typeof window.addItemToCart !== 'function') return;
-            const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty: 1 });
+            const added = window.addItemToCart({ productId: '1', name: product.name, price: unitPrice, qty: buyQty });
             if (!added) return;
             buyText.textContent = '已加入！';
+            buyQty = 1;
+            qtyValue.textContent = buyQty;
             setTimeout(() => { buyText.textContent = '加入購物車'; }, 1200);
         });
-        section.querySelector('.xcard-detail').addEventListener('click', () => openProductModal('1'));
+
+        /* 翻面：正面點按鈕以外的地方翻到背面；背面用「正面」鍵或點空白處翻回來。
+           3D 模型第一次翻到背面才載入，看不到的那一面設成 inert（點不到、讀屏軟體也跳過）。 */
+        const pcard = section.querySelector('.pcard');
+        const front = section.querySelector('.pcard-front');
+        const back = section.querySelector('.pcard-back');
+        let modelRequested = false;
+        function setFlipped(flipped, moveFocus) {
+            pcard.classList.toggle('is-flipped', flipped);
+            front.inert = flipped;
+            back.inert = !flipped;
+            if (flipped && !modelRequested) {
+                modelRequested = true;
+                section.querySelector('.pcard-stage .pastry-image-note').textContent = '正在載入 3D 模型';
+                showPineappleModel(section.querySelector('.pcard-stage'));
+            }
+            if (moveFocus) (flipped ? back.querySelector('.pcard-to-front') : front.querySelector('.pcard-to-back')).focus({ preventScroll: true });
+        }
+        const interactive = 'button, a, input, output, canvas, [role="tab"], [role="tabpanel"], .pcard-qty';
+        front.addEventListener('click', e => {
+            if (e.target.closest(interactive) && !e.target.closest('.pcard-to-back')) return;
+            setFlipped(true, e.detail === 0);
+        });
+        back.addEventListener('click', e => {
+            if (e.target.closest(interactive) && !e.target.closest('.pcard-to-front')) return;
+            setFlipped(false, e.detail === 0);
+        });
+
+        /* 背面三個分頁：方向鍵可左右切換（WAI-ARIA 分頁慣例） */
+        const tabs = [...section.querySelectorAll('.pcard-tab')];
+        function selectTab(tab) {
+            tabs.forEach(t => {
+                const on = t === tab;
+                t.setAttribute('aria-selected', String(on));
+                t.tabIndex = on ? 0 : -1;
+                const panel = section.querySelector('#' + t.getAttribute('aria-controls'));
+                panel.classList.toggle('is-active', on);
+                panel.setAttribute('aria-hidden', String(!on));
+            });
+        }
+        tabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => selectTab(tab));
+            tab.addEventListener('keydown', e => {
+                const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+                if (!step) return;
+                e.preventDefault();
+                const next = tabs[(i + step + tabs.length) % tabs.length];
+                selectTab(next);
+                next.focus();
+            });
+        });
         placeholder.replaceWith(section);
 
         /* 桌機滑鼠移到產品照上，淡金光跟著游標走（CSS 在 style.css「知識庫靈感三項」）。
