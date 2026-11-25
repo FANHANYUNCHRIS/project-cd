@@ -9095,9 +9095,8 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .pcard-back .xcard-eyebrow-no { color: var(--gold-soft); }
 .pcard-back .xcard-eyebrow-en { color: rgb(255 255 255 / 0.6); border-left-color: rgb(255 255 255 / 0.25); }
 
-/* 背面（2026-11-25 第三版，擁有者指定）：上半 3D 鳳梨酥、下半三個徽章。
-   點其中一個徽章，三個徽章消失，下半換成那一項的資訊；按「返回」回到徽章。
-   上下兩半各佔一半（flex-basis 0）；資訊比較多、下半放不下時，下半會自己長高、上半讓出空間。 */
+/* 背面（2026-11-25 第四版，擁有者指定）：上 3D 鳳梨酥、中間內容、下方三個長方形膠囊切換（一開始是產品介紹），點背面任何地方翻回正面。
+   3D 展示台吃掉剩下的高度；內容區高度固定為最高那一頁。 */
 .pcard-view {
     position: relative;
     flex: 1 1 0;
@@ -9115,8 +9114,8 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
         linear-gradient(180deg, #14161c 0%, var(--x-night) 100%);
     box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.22), inset 0 -1px 0 rgb(216 192 145 / 0.5);
 }
-/* 上下滑＝捲動頁面，左右滑＝轉鳳梨酥（2026-11-25 擁有者：背面滑不上去） */
-.pcard-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
+/* 手指在 3D 上上下左右都拿來轉鳳梨酥（2026-11-25 擁有者要 360 度）；要捲動頁面請從卡片其他地方滑 */
+.pcard-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
 .pcard-stage canvas:focus-visible { outline-color: var(--gold-soft); }
 .pcard-stage .pastry-image-note { margin: 0; color: rgb(255 255 255 / 0.6); }
 .pcard-stage-tip {
@@ -9131,47 +9130,46 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     white-space: nowrap;
 }
 
-/* 下半：徽章和資訊輪流出現在同一塊 */
+/* 內容區（2026-11-25 第四版）：三頁疊在同一格，高度取最高那頁，切換時版面不跳；一開始顯示「產品介紹」 */
 .pcard-lower {
-    flex: 1 1 0;
+    flex: none;
     display: grid;
     border-radius: 14px;
     background: rgb(255 255 255 / 0.03);
     box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.18);
 }
-.pcard-sheet { align-self: start; padding: var(--sp-2) var(--sp-4) var(--sp-4); }
-.pcard-sheet:not([hidden]),
-.pcard-badges:not([hidden]) { animation: pcard-swap-in 0.28s cubic-bezier(0.23, 1, 0.32, 1) both; }
+.pcard-sheet { grid-area: 1 / 1; align-self: start; padding: var(--sp-4); visibility: hidden; }
+.pcard-sheet.is-active { visibility: visible; animation: pcard-swap-in 0.28s cubic-bezier(0.23, 1, 0.32, 1) both; }
 @keyframes pcard-swap-in {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.pcard-sheet-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-2);
-    margin-bottom: var(--sp-2);
-}
-.pcard-sheet-title { margin: 0; font: 900 18px/1.4 'Noto Serif TC', serif; color: var(--gold-soft); }
-.pcard-sheet-close {
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
+.pcard-sheet-title { margin: 0 0 var(--sp-2); font: 900 18px/1.4 'Noto Serif TC', serif; color: var(--gold-soft); }
+
+/* 三個長方形膠囊：放在卡片下方，選中＝金底黑字 */
+.pcard-pills { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+.pcard-pill {
     min-height: 44px;
-    margin-right: calc(var(--sp-2) * -1);
     padding: 0 var(--sp-2);
     border: 0;
     border-radius: 100px;
-    background: none;
-    color: rgb(255 255 255 / 0.7);
-    font: 500 13px 'Noto Sans TC', sans-serif;
+    background: rgb(11 13 18 / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45);
+    color: rgb(255 255 255 / 0.78);
+    font: 700 14px 'Noto Sans TC', sans-serif;
+    letter-spacing: 0.04em;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
-.pcard-sheet-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.pcard-sheet-close:hover { color: var(--gold-soft); }
-.pcard-sheet-close:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: -4px; }
+.pcard-pill:active { transform: scale(0.97); }
+.pcard-pill:not([aria-selected="true"]):hover { color: var(--gold-soft); }
+.pcard-pill[aria-selected="true"] {
+    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+    box-shadow: none;
+    color: #0b0d12;
+}
+.pcard-pill:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
 
 /* 介紹、注意：一列＝圖示＋標題＋一句內文，列與列之間一條細線 */
 .pcard-rows { display: grid; margin: 0; padding: 0; list-style: none; }
@@ -9232,46 +9230,10 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45);
 }
 
-/* 下半的三個徽章：置中排一列，點了就換成資訊 */
-.pcard-badges { align-self: center; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); padding: var(--sp-4) var(--sp-2); }
-.pcard-badges[hidden] { display: none; }
-.pcard-badge {
-    display: grid;
-    justify-items: center;
-    gap: 6px;
-    padding: 2px 0 0;
-    border: 0;
-    background: none;
-    color: rgb(255 255 255 / 0.72);
-    font: 700 13px 'Noto Sans TC', sans-serif;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-.pcard-badge i {
-    width: 64px;
-    height: 64px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: linear-gradient(170deg, #1d1f26 0%, #0b0d12 100%);
-    box-shadow: inset 0 0 0 1.5px rgb(216 192 145 / 0.6), inset 0 0 0 4px #0b0d12, inset 0 0 0 5px rgb(216 192 145 / 0.25);
-    transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.2s ease;
-}
-.pcard-badge svg { width: 28px; height: 28px; fill: none; stroke: var(--gold-soft); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.pcard-badge:active i { transform: scale(0.94); }
-.pcard-badge[aria-expanded="true"] { color: var(--gold-soft); }
-.pcard-badge[aria-expanded="true"] i {
-    background: linear-gradient(180deg, var(--gold-soft), var(--gold));
-    box-shadow: 0 0 0 1.5px rgb(243 227 189 / 0.8), 0 0 18px -2px rgb(216 192 145 / 0.6);
-}
-.pcard-badge[aria-expanded="true"] svg { stroke: #0b0d12; }
-.pcard-badge:focus-visible { outline: none; }
-.pcard-badge:focus-visible i { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
     .pcard-inner { transition: none; }
-    .pcard-sheet:not([hidden]), .pcard-badges:not([hidden]) { animation: none; }
+    .pcard-sheet.is-active { animation: none; }
 }
 
 /* =========================================

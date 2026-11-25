@@ -336,6 +336,8 @@ THE SOFTWARE.
         resize();
         new ResizeObserver(resize).observe(stage);
 
+        const worldUp = new Vector3(0, 1, 0);
+        const worldRight = new Vector3(1, 0, 0);
         let interactive = true;
         let pointerId;
         let lastX;
@@ -349,9 +351,9 @@ THE SOFTWARE.
         });
         canvas.addEventListener('pointermove', event => {
             if (event.pointerId !== pointerId) return;
-            cake.rotation.y += (event.clientX - lastX) * 0.009 * horizontalDirection;
-            // 手指只轉左右；上下滑交給頁面捲動（產品卡背面 CSS 設 touch-action: pan-y）
-            if (event.pointerType !== 'touch') cake.rotation.x += (event.clientY - lastY) * 0.009;
+            // 繞「畫面」的軸轉（左右拖＝繞垂直軸、上下拖＝繞水平軸），轉到哪個角度手感都一樣，可以 360 度翻（2026-11-25 擁有者）
+            cake.rotateOnWorldAxis(worldUp, (event.clientX - lastX) * 0.009 * horizontalDirection);
+            cake.rotateOnWorldAxis(worldRight, (event.clientY - lastY) * 0.009);
             lastX = event.clientX;
             lastY = event.clientY;
             requestRender();
@@ -364,8 +366,8 @@ THE SOFTWARE.
             const direction = arrows[event.key];
             if (!interactive || !direction) return;
             event.preventDefault();
-            cake.rotation.x += direction[0];
-            cake.rotation.y += direction[1] * horizontalDirection;
+            cake.rotateOnWorldAxis(worldRight, direction[0]);
+            cake.rotateOnWorldAxis(worldUp, direction[1] * horizontalDirection);
             render();
         });
 

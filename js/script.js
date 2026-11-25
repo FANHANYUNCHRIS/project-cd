@@ -475,7 +475,6 @@ document.addEventListener('DOMContentLoaded', () => {
             info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8h.01"/>'
         };
         const row = (key, title, text, warn) => `<li${warn ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon[key] || ingredientIconSvg[key]}</svg></i><b>${title}</b><span>${text}</span></li>`;
-        const closeBtn = '<button type="button" class="pcard-sheet-close" aria-label="回到三個徽章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回</button>';
         section.innerHTML = `
             <div class="brand-carousel product-carousel" role="group" aria-label="產品卡片">
             <div class="brand-carousel-cards">
@@ -519,27 +518,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="pcard-lower">
-                    <div class="pcard-badges" aria-label="產品資訊">
-                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-intro" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.book}</svg></i>產品介紹</button>
-                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-ing" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg['中筋麵粉']}</svg></i>產品成分</button>
-                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-note" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.info}</svg></i>注意事項</button>
-                    </div>
-                    <section class="pcard-sheet" id="pcard-sheet-intro" aria-labelledby="pcard-sheet-intro-title" hidden>
-                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-intro-title">酸，是土鳳梨的本色</h3>${closeBtn}</div>
+                    <section class="pcard-sheet is-active" role="tabpanel" id="pcard-sheet-intro" aria-labelledby="pcard-pill-intro">
+                        <h3 class="pcard-sheet-title">酸，是土鳳梨的本色</h3>
                         <ul class="pcard-rows">
                             ${row('土鳳梨餡', '在地土鳳梨', '台灣小農種植，酸甜分明')}
                             ${row('pot', '慢火熬餡', '保留果肉纖維，不把酸煮掉')}
                             ${row('法國奶油', '法國奶油酥皮', '先是奶香，再來果酸')}
                         </ul>
                     </section>
-                    <section class="pcard-sheet" id="pcard-sheet-ing" aria-labelledby="pcard-sheet-ing-title" hidden>
-                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-ing-title">產品成分</h3>${closeBtn}</div>
+                    <section class="pcard-sheet" role="tabpanel" id="pcard-sheet-ing" aria-labelledby="pcard-pill-ing" aria-hidden="true">
                         <ul class="pcard-ingredients">${ingredientsHtml}
                         </ul>
                         <p class="pcard-allergen"><b><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon.warn}</svg>過敏原</b><em>蛋</em><em>奶</em><em>麩質</em></p>
                     </section>
-                    <section class="pcard-sheet" id="pcard-sheet-note" aria-labelledby="pcard-sheet-note-title" hidden>
-                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-note-title">注意事項</h3>${closeBtn}</div>
+                    <section class="pcard-sheet" role="tabpanel" id="pcard-sheet-note" aria-labelledby="pcard-pill-note" aria-hidden="true">
                         <ul class="pcard-rows">
                             ${row('warn', '過敏注意', '含蛋、奶、麩質，過敏者請勿食用', true)}
                             ${row('cold', '收到請冷藏', '無防腐劑，請於期限內吃完')}
@@ -547,6 +539,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${row('hand', '手工製作', '大小、烤色略有不同，不是瑕疵')}
                         </ul>
                     </section>
+                </div>
+                <div class="pcard-pills" role="tablist" aria-label="產品資訊">
+                    <button type="button" class="pcard-pill" role="tab" id="pcard-pill-intro" aria-controls="pcard-sheet-intro" aria-selected="true">產品介紹</button>
+                    <button type="button" class="pcard-pill" role="tab" id="pcard-pill-ing" aria-controls="pcard-sheet-ing" aria-selected="false" tabindex="-1">產品成分</button>
+                    <button type="button" class="pcard-pill" role="tab" id="pcard-pill-note" aria-controls="pcard-sheet-note" aria-selected="false" tabindex="-1">注意事項</button>
                 </div>
                 <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
             </div>
@@ -624,36 +621,46 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (moveFocus) (flipped ? back.querySelector('.pcard-to-front') : front.querySelector('.pcard-to-back')).focus({ preventScroll: true });
         }
-        const interactive = 'button, a, input, output, canvas, .pcard-qty, .pcard-sheet, .pcard-lower';
+        const interactive = 'button, a, input, output, canvas, .pcard-qty';
         front.addEventListener('click', e => {
             if (e.target.closest(interactive) && !e.target.closest('.pcard-to-back')) return;
             setFlipped(true, e.detail === 0);
         });
+        /* 背面：點哪裡都翻回正面（2026-11-25 擁有者），只有三個膠囊例外；
+           3D 鳳梨酥輕點也會翻，但拖曳轉動（手指移動超過 8px）不算 */
+        let backDown = null;
+        back.addEventListener('pointerdown', e => { backDown = { x: e.clientX, y: e.clientY }; });
         back.addEventListener('click', e => {
-            if (e.target.closest(interactive) && !e.target.closest('.pcard-to-front')) return;
+            const moved = backDown && Math.hypot(e.clientX - backDown.x, e.clientY - backDown.y) > 8;
+            backDown = null;
+            if (e.detail !== 0 && moved) return;
+            if (e.target.closest('.pcard-pills')) return;
+            if (e.target.closest('canvas') && e.detail === 0) return; // 鍵盤在 3D 上按 Enter 不翻
             setFlipped(false, e.detail === 0);
         });
 
-        /* 背面下半：平常是三個徽章；點了其中一個，徽章消失、換成那一項的資訊，按「返回」回到徽章 */
-        const badgeRow = section.querySelector('.pcard-badges');
-        const badges = [...section.querySelectorAll('.pcard-badge')];
-        function openSheet(badge) {
-            badges.forEach(b => {
-                const on = b === badge;
-                b.setAttribute('aria-expanded', String(on));
-                section.querySelector('#' + b.getAttribute('aria-controls')).hidden = !on;
+        /* 背面三個膠囊＝分頁：一開始顯示「產品介紹」，點膠囊切換內容；方向鍵可左右切換 */
+        const pills = [...section.querySelectorAll('.pcard-pill')];
+        function selectPill(pill) {
+            pills.forEach(p => {
+                const on = p === pill;
+                p.setAttribute('aria-selected', String(on));
+                p.tabIndex = on ? 0 : -1;
+                const panel = section.querySelector('#' + p.getAttribute('aria-controls'));
+                panel.classList.toggle('is-active', on);
+                panel.setAttribute('aria-hidden', String(!on));
             });
-            badgeRow.hidden = !!badge;
-            if (badge) section.querySelector('#' + badge.getAttribute('aria-controls') + ' .pcard-sheet-close').focus({ preventScroll: true });
         }
-        badges.forEach(badge => {
-            badge.addEventListener('click', () => openSheet(badge));
-        });
-        section.querySelectorAll('.pcard-sheet-close').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const badge = badges.find(b => b.getAttribute('aria-expanded') === 'true');
-                openSheet(null);
-                if (badge) badge.focus({ preventScroll: true });
+        pills.forEach((pill, i) => {
+            pill.addEventListener('click', () => selectPill(pill));
+            pill.addEventListener('keydown', e => {
+                const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+                if (!step) return;
+                e.preventDefault();
+                e.stopPropagation(); // 不要讓外層的換卡也收到
+                const next = pills[(i + step + pills.length) % pills.length];
+                selectPill(next);
+                next.focus();
             });
         });
         placeholder.replaceWith(section);
