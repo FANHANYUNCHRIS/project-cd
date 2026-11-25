@@ -288,6 +288,16 @@ THE SOFTWARE.
         function render() {
             renderer.render(scene, camera);
         }
+        // 拖曳時手機一秒會送上百次移動，合併成每個畫面最多畫一次，不然會卡（2026-11-25）
+        let renderQueued = false;
+        function requestRender() {
+            if (renderQueued) return;
+            renderQueued = true;
+            requestAnimationFrame(() => {
+                renderQueued = false;
+                render();
+            });
+        }
 
         function resize() {
             // 用版面尺寸，不用 getBoundingClientRect：卡片翻面途中有 3D 旋轉，量到的寬度會被壓縮
@@ -344,7 +354,7 @@ THE SOFTWARE.
             if (event.pointerType !== 'touch') cake.rotation.x += (event.clientY - lastY) * 0.009;
             lastX = event.clientX;
             lastY = event.clientY;
-            render();
+            requestRender();
         });
         canvas.addEventListener('lostpointercapture', event => {
             if (event.pointerId === pointerId) pointerId = undefined;

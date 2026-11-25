@@ -475,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
             info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8h.01"/>'
         };
         const row = (key, title, text, warn) => `<li${warn ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon[key] || ingredientIconSvg[key]}</svg></i><b>${title}</b><span>${text}</span></li>`;
-        const closeBtn = '<button type="button" class="pcard-sheet-close" aria-label="收起"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+        const closeBtn = '<button type="button" class="pcard-sheet-close" aria-label="回到三個徽章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回</button>';
         section.innerHTML = `
             <div class="pcard">
             <div class="pcard-inner">
@@ -515,6 +515,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="pastry-image-note" role="status">翻過來就會載入 3D 模型</p>
                         <span class="pcard-stage-tip" aria-hidden="true">用手指拖曳，轉轉看</span>
                     </div>
+                </div>
+                <div class="pcard-lower">
+                    <div class="pcard-badges" aria-label="產品資訊">
+                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-intro" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.book}</svg></i>產品介紹</button>
+                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-ing" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg['中筋麵粉']}</svg></i>產品成分</button>
+                        <button type="button" class="pcard-badge" aria-controls="pcard-sheet-note" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.info}</svg></i>注意事項</button>
+                    </div>
                     <section class="pcard-sheet" id="pcard-sheet-intro" aria-labelledby="pcard-sheet-intro-title" hidden>
                         <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-intro-title">酸，是土鳳梨的本色</h3>${closeBtn}</div>
                         <ul class="pcard-rows">
@@ -538,11 +545,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${row('hand', '手工製作', '大小、烤色略有不同，不是瑕疵')}
                         </ul>
                     </section>
-                </div>
-                <div class="pcard-badges" aria-label="產品資訊">
-                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-intro" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.book}</svg></i>產品介紹</button>
-                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-ing" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg['中筋麵粉']}</svg></i>產品成分</button>
-                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-note" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.info}</svg></i>注意事項</button>
                 </div>
                 <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
             </div>
@@ -580,8 +582,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const pcard = section.querySelector('.pcard');
         const front = section.querySelector('.pcard-front');
         const back = section.querySelector('.pcard-back');
+        const inner = section.querySelector('.pcard-inner');
         let modelRequested = false;
+        /* 翻到背面停好之後，拿掉整張卡的 3D 旋轉（is-settled）。WebGL 畫布放在 3D 旋轉的圖層裡，
+           手機每畫一格都要重新合成，拖鳳梨酥會很卡（2026-11-25 擁有者回報）。翻回正面前再裝回去。 */
+        inner.addEventListener('transitionend', e => {
+            if (e.target === inner && e.propertyName === 'transform' && pcard.classList.contains('is-flipped')) {
+                pcard.classList.add('is-settled');
+            }
+        });
         function setFlipped(flipped, moveFocus) {
+            if (!flipped && pcard.classList.contains('is-settled')) {
+                inner.style.transition = 'none';
+                pcard.classList.remove('is-settled');
+                void inner.offsetWidth;
+                inner.style.transition = '';
+                void inner.offsetWidth;
+            }
             pcard.classList.toggle('is-flipped', flipped);
             front.inert = flipped;
             back.inert = !flipped;
@@ -592,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (moveFocus) (flipped ? back.querySelector('.pcard-to-front') : front.querySelector('.pcard-to-back')).focus({ preventScroll: true });
         }
-        const interactive = 'button, a, input, output, canvas, .pcard-qty, .pcard-sheet, .pcard-badges';
+        const interactive = 'button, a, input, output, canvas, .pcard-qty, .pcard-sheet, .pcard-lower';
         front.addEventListener('click', e => {
             if (e.target.closest(interactive) && !e.target.closest('.pcard-to-back')) return;
             setFlipped(true, e.detail === 0);
@@ -602,8 +619,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setFlipped(false, e.detail === 0);
         });
 
-        /* 背面三個徽章：點了才升起對應的資訊卡，再點一次（或按 ×）收起；同時只開一張 */
-        const view = section.querySelector('.pcard-view');
+        /* 背面下半：平常是三個徽章；點了其中一個，徽章消失、換成那一項的資訊，按「返回」回到徽章 */
+        const badgeRow = section.querySelector('.pcard-badges');
         const badges = [...section.querySelectorAll('.pcard-badge')];
         function openSheet(badge) {
             badges.forEach(b => {
@@ -611,10 +628,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 b.setAttribute('aria-expanded', String(on));
                 section.querySelector('#' + b.getAttribute('aria-controls')).hidden = !on;
             });
-            view.classList.toggle('has-sheet', !!badge);
+            badgeRow.hidden = !!badge;
+            if (badge) section.querySelector('#' + badge.getAttribute('aria-controls') + ' .pcard-sheet-close').focus({ preventScroll: true });
         }
         badges.forEach(badge => {
-            badge.addEventListener('click', () => openSheet(badge.getAttribute('aria-expanded') === 'true' ? null : badge));
+            badge.addEventListener('click', () => openSheet(badge));
         });
         section.querySelectorAll('.pcard-sheet-close').forEach(btn => {
             btn.addEventListener('click', () => {
