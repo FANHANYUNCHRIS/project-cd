@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         placeholder.replaceWith(section);
-        initCardCarousel(section.querySelector(".product-carousel"), { ignore: "a, button, canvas, output, .pcard-qty", capture: false, loop: false });
+        initCardCarousel(section.querySelector(".product-carousel"), { ignore: "canvas, .pcard-qty", capture: false, loop: false });
 
         /* 桌機滑鼠移到產品照上，淡金光跟著游標走（CSS 在 style.css「知識庫靈感三項」）。
            只在有滑鼠的裝置綁定；用 rAF 節流，一個畫面最多寫一次。 */
@@ -1773,7 +1773,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
    ignore：從這些元素開始的手勢不算換卡（例如產品卡背面的 3D 鳳梨酥要拿來轉）。
    loop：滑到最後一張要不要繞回第一張（產品卡只有兩張，不繞）。
    手指（2026-11-25 擁有者：大拇指很難滑到第二張）：用觸控事件判斷，手指一動先看方向，
-   偏左右（容許大拇指的弧線）就鎖定成換卡、擋住頁面上下捲動，卡片跟著手指走，放開時滑超過 36px 就換卡。
+   偏左右（容許大拇指的弧線）就鎖定成換卡、擋住頁面上下捲動，卡片跟著手指走，放開時滑超過 28px（或快速一撥）就換卡。
    滑鼠：拖曳超過 48px 換卡。產品卡不鎖定指標（會把「點卡片翻面」的點擊吃掉），改成滑過之後擋掉下一次點擊。 */
 function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop = true } = {}) {
     const cards = [...carousel.querySelectorAll('.brand-carousel-card')];
@@ -1799,11 +1799,13 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
         status.textContent = (current + 1) + ' / ' + cards.length + '，' + label;
     }
 
-    // 箭頭只是提示「旁邊還有卡」，不能按；換卡一律左右滑（2026-11-25 擁有者）。鍵盤仍可用左右方向鍵。
+    // 箭頭點了就換卡（2026-11-25 擁有者：點左箭頭要換卡，不是翻面）；左右滑也能換。
     arrows.forEach(arrow => {
         arrow.hidden = false;
-        arrow.tabIndex = -1;
-        arrow.setAttribute('aria-hidden', 'true');
+        arrow.addEventListener('click', event => {
+            event.stopPropagation();
+            show(Number(arrow.dataset.step));
+        });
     });
 
     let swallowClick = false;
@@ -1834,7 +1836,7 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
     carousel.addEventListener('touchstart', event => {
         if (event.touches.length !== 1 || event.target.closest(ignore)) { touch = null; return; }
         const p = event.touches[0];
-        touch = { x: p.clientX, y: p.clientY, lock: null, dx: 0 };
+        touch = { x: p.clientX, y: p.clientY, lock: null, dx: 0, t: performance.now() };
     }, { passive: true });
     carousel.addEventListener('touchmove', event => {
         if (!touch) return;
@@ -1842,8 +1844,8 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
         const dx = p.clientX - touch.x;
         const dy = p.clientY - touch.y;
         if (!touch.lock) {
-            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-            touch.lock = Math.abs(dx) > Math.abs(dy) * 0.7 ? 'x' : 'y';
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            touch.lock = Math.abs(dx) > Math.abs(dy) * 0.5 ? 'x' : 'y';
             if (touch.lock === 'x') cards[current].style.transition = 'none';
         }
         if (touch.lock !== 'x') return;
@@ -1853,12 +1855,13 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
     }, { passive: false });
     carousel.addEventListener('touchend', () => {
         if (!touch) return;
-        const { lock, dx } = touch;
+        const { lock, dx, t } = touch;
+        const fast = Math.abs(dx) >= 16 && Math.abs(dx) / (performance.now() - t) > 0.3; // 快速一撥也算
         touch = null;
         if (lock !== 'x') return;
         release();
         swallowNextClick();
-        if (Math.abs(dx) >= 36) show(dx < 0 ? 1 : -1);
+        if (Math.abs(dx) >= 28 || fast) show(dx < 0 ? 1 : -1);
     });
     carousel.addEventListener('touchcancel', () => {
         if (touch?.lock === 'x') release();

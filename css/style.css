@@ -9426,8 +9426,11 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 @media (prefers-reduced-motion: reduce) {
     .brand-carousel-arrow::before { animation: none; }
 }
-/* 箭頭只當提示，點不到（手指點在上面等於點卡片，左右滑照樣換卡） */
-.brand-carousel-arrow:not([hidden]) { pointer-events: none; cursor: default; }
+/* 箭頭點了換卡（2026-11-25 擁有者改回可以點） */
+.brand-carousel-arrow:not([hidden]) { cursor: pointer; }
+.brand-carousel-arrow.is-end:not([hidden]) { pointer-events: none; }
+/* 產品卡的箭頭點擊範圍加高，大拇指好按 */
+.product-carousel .brand-carousel-arrow:not([hidden]) { width: 44px; height: 88px; }
 
 /* 背面內容區跟著當下那一頁的高度走，不留空白；多出來或少掉的高度由上面的 3D 展示台吸收（2026-11-25 擁有者：排版不要多餘空白） */
 .pcard-sheet:not(.is-active) { display: none; }
