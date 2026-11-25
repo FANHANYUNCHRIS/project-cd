@@ -9470,3 +9470,43 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     margin: calc(var(--card-float) * -1);
     padding: var(--card-float);
 }
+
+/* =========================================
+   白底試做（2026-11-25 擁有者：背景改白色、卡片維持黑色、陰影要隱隱淡淡的，不要銳利）
+   - 整頁背景、開場改成暖白；卡片本身不動（黑金）。
+   - 雪花改成淡灰金，白底上才看得到一點點。
+   - 卡片陰影換成又大又散的淡灰影，取代上一版的金色光暈。
+   ========================================= */
+:root { --page-white: #fbfaf7; }
+body,
+html { background-color: var(--page-white); }
+.shop-footer-screen,
+#home.xcard {
+    background:
+        radial-gradient(46% 40% at 50% 45%, rgb(216 192 145 / 0.22) 0%, rgb(216 192 145 / 0.06) 55%, rgb(251 250 247 / 0) 75%),
+        var(--page-white);
+}
+.shop-footer-screen { background: var(--page-white); }
+.hero-snow.is-global .hero-snowflake,
+#home .hero-snowflake {
+    background: rgb(184 160 120 / 0.55);
+    box-shadow: none;
+}
+.xcard-hero-logo { filter: invert(1) drop-shadow(0 6px 18px rgb(0 0 0 / 0.12)); }
+.xcard-hero-title { color: var(--ink); }
+.xcard-hero-tagline { color: var(--gold); }
+.xcard-hero-script { color: var(--gold); }
+.xcard-hero-next { color: rgb(22 22 26 / 0.45); }
+.xcard-hero-next:hover { color: var(--ink); }
+.navbar .logo-text,
+.navbar.on-dark .logo-text { color: var(--ink); }
+
+.xpanel,
+.xpanel.xpanel-rpg,
+.xpanel.xpanel-shop,
+.xpanel.xpanel-story {
+    box-shadow:
+        0 1px 2px rgb(22 22 26 / 0.06),
+        0 12px 28px -6px rgb(22 22 26 / 0.12),
+        0 32px 72px -12px rgb(22 22 26 / 0.18);
+}
