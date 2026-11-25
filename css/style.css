@@ -9494,8 +9494,9 @@ html { background-color: var(--page-white); }
 }
 .xcard-hero-logo { filter: invert(1) drop-shadow(0 6px 18px rgb(0 0 0 / 0.12)); }
 .xcard-hero-title { color: var(--ink); }
-.xcard-hero-tagline { color: var(--gold); }
-.xcard-hero-script { color: var(--gold); }
+/* 白底上淺金字對比不夠，改用深金（約 5:1） */
+.xcard-hero-tagline { color: var(--gold-ink); }
+.xcard-hero-copy > .xcard-hero-script { color: var(--gold-ink); animation-name: enter-up; }
 .xcard-hero-next { color: rgb(22 22 26 / 0.45); }
 .xcard-hero-next:hover { color: var(--ink); }
 .navbar .logo-text,
