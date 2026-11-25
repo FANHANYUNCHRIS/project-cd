@@ -705,24 +705,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     revealElements.forEach(el => revealObserver.observe(el));
 
-    /* 電玩感「獲得道具」：加入購物車成功時，畫面上方跳出 RPG 小視窗（js/member.js 呼叫） */
+    /* 電玩感「獲得道具」：加入購物車成功時，畫面正中間跳出道具卡（js/member.js 呼叫）。
+       2026-11-25 擁有者覺得原本上方那條太硬，改成置中的黑金小卡：商品照圓章＋金色光暈＋一圈金色星點，
+       彈出來停約 1.8 秒自己收掉，不擋操作（pointer-events: none）。 */
     (function initItemGet() {
         let box = null;
         let hideTimer = null;
         window.showItemGet = (name, qty) => {
             if (!box) {
                 box = document.createElement('div');
-                box.className = 'item-get rpg-window';
+                box.className = 'item-get';
                 box.setAttribute('role', 'status');
-                box.innerHTML = '<span class="item-get-icon" aria-hidden="true"><span></span></span><span class="item-get-text"><span class="item-get-label">獲得了</span><b></b></span>';
+                box.innerHTML = `
+                    <div class="item-get-card">
+                        <span class="item-get-glow" aria-hidden="true"></span>
+                        <span class="item-get-sparks" aria-hidden="true">${'<i></i>'.repeat(8)}</span>
+                        <span class="item-get-art" aria-hidden="true"></span>
+                        <span class="item-get-label">獲得道具</span>
+                        <b class="item-get-name"></b>
+                        <span class="item-get-qty"></span>
+                    </div>`;
                 document.body.appendChild(box);
             }
-            box.querySelector('b').textContent = `${name} ×${qty}`;
-            box.classList.remove('is-shown');
+            box.querySelector('.item-get-name').textContent = name;
+            box.querySelector('.item-get-qty').textContent = `×${qty} 盒・已放進購物車`;
+            box.classList.remove('is-shown', 'is-leaving');
             void box.offsetWidth;
             box.classList.add('is-shown');
             clearTimeout(hideTimer);
-            hideTimer = setTimeout(() => box.classList.remove('is-shown'), 2400);
+            hideTimer = setTimeout(() => {
+                box.classList.add('is-leaving');
+                hideTimer = setTimeout(() => box.classList.remove('is-shown', 'is-leaving'), 300);
+            }, 1800);
         };
     })();
 

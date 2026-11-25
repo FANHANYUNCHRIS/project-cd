@@ -6229,56 +6229,13 @@ html:not(.is-festive) .hero-santa-hat { display: none; }
 .building-directory.rpg-window .building-floor-enter { background: var(--white); color: var(--ink); box-shadow: inset 0 0 0 1px var(--gold); }
 .building-directory.rpg-window .building-floor-enter:hover { background: #FBF4E6; }
 
-/* 加入購物車：獲得道具 */
-.item-get {
-    position: fixed;
-    left: 50%;
-    top: 96px;
-    z-index: 3000;
-    translate: -50% 0;
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    padding: var(--sp-4) var(--sp-6) var(--sp-4) var(--sp-4);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-.item-get.is-shown { visibility: visible; animation: item-get-in 0.45s var(--ease-out) both; }
-.item-get:not(.is-shown) { transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-@keyframes item-get-in {
-    0% { opacity: 0; scale: 1 0.06; }
-    35% { opacity: 1; scale: 1 0.06; }
-    100% { opacity: 1; scale: 1 1; }
-}
-.item-get-icon {
-    width: 52px;
-    height: 44px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.08);
-    display: grid;
-    place-items: center;
-}
-.item-get-icon span {
-    width: 38px;
-    height: 25px;
-    border-radius: 6px;
-    background: linear-gradient(170deg, #E9C27A 0%, #D29A47 55%, #B97B32 100%);
-    box-shadow: inset 0 2px 1px rgba(255, 240, 205, 0.7), inset 0 -3px 4px rgba(120, 70, 20, 0.35);
-}
-.item-get-text { display: flex; flex-direction: column; gap: 2px; }
-.item-get-label { font-size: 12px; letter-spacing: 0.16em; color: var(--gold-soft); }
-.item-get-text b { font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 18px; font-weight: 900; }
-
 @media (prefers-reduced-motion: reduce) {
     .hero-start-text { animation: none; }
     .floor-cursor { transition: none; }
-    .item-get.is-shown { animation: none; opacity: 1; }
 }
 
 @media (max-width: 1024px) {
     .hero-start { display: none; }
-    .item-get { top: auto; bottom: calc(104px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 32px); }
     .building-directory.rpg-window { padding: var(--sp-4); }
     .building-directory.rpg-window .building-floor { padding-left: 28px; }
 }
@@ -9259,3 +9216,156 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
    :where() 讓這條的權重是 0，個別元件另外設的（3D 模型的 none、品牌輪播的 pan-y）照樣優先。
    ========================================= */
 :where(*) { touch-action: manipulation; }
+
+/* =========================================
+   加入購物車：獲得道具（2026-11-25 擁有者要求放畫面正中間、不要那麼硬）
+   置中黑金小卡，跟會員卡同一套框。進場：輕輕彈出（略過頭再回來），
+   商品照圓章周圍一圈金色光暈、八顆金色星點往外散一次。停 1.8 秒後淡出縮小。
+   整個不擋操作（pointer-events: none）。
+   ========================================= */
+.item-get {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    padding: var(--sp-4);
+    pointer-events: none;
+    visibility: hidden;
+}
+.item-get.is-shown { visibility: visible; }
+/* 背後一圈很淡的暗角，讓視線集中到中間，不會整片變黑 */
+.item-get::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgb(11 13 18 / 0.45) 0%, rgb(11 13 18 / 0) 60%);
+    opacity: 0;
+}
+.item-get.is-shown::before { animation: item-get-fade 0.3s ease-out both; }
+.item-get.is-leaving::before { animation: item-get-fade 0.3s ease-in reverse both; }
+
+.item-get-card {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    width: min(240px, 100%);
+    padding: var(--sp-8) var(--sp-6) var(--sp-6);
+    border-radius: 24px;
+    background:
+        radial-gradient(90% 60% at 50% 0%, rgb(216 192 145 / 0.22), rgb(216 192 145 / 0) 70%),
+        linear-gradient(170deg, #1d1f26 0%, #0b0d12 100%);
+    color: rgb(255 255 255 / 0.92);
+    text-align: center;
+    box-shadow:
+        inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px #0b0d12, inset 0 0 0 6px rgb(216 192 145 / 0.7),
+        0 24px 60px -16px rgb(0 0 0 / 0.75), 0 0 60px -10px rgb(216 192 145 / 0.45);
+    opacity: 0;
+}
+.item-get.is-shown .item-get-card { animation: item-get-pop 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+.item-get.is-leaving .item-get-card { animation: item-get-out 0.28s cubic-bezier(0.4, 0, 1, 1) both; }
+
+/* 商品照圓章 */
+.item-get-art {
+    position: relative;
+    z-index: 1;
+    width: 84px;
+    height: 84px;
+    margin-bottom: var(--sp-3);
+    border-radius: 50%;
+    background: url(../images/xmas/product.jpg) 56% 46% / 300% auto no-repeat, #0b0d12;
+    box-shadow: 0 0 0 2px var(--gold-soft), 0 0 0 5px #0b0d12, 0 0 0 6px rgb(216 192 145 / 0.5);
+}
+.item-get-glow {
+    position: absolute;
+    top: calc(var(--sp-8) - 28px);
+    left: 50%;
+    width: 140px;
+    height: 140px;
+    margin-left: -70px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(243 227 189 / 0.55) 0%, rgb(216 192 145 / 0.18) 40%, rgb(216 192 145 / 0) 70%);
+    opacity: 0;
+}
+.item-get.is-shown .item-get-glow { animation: item-get-glow 1.2s ease-out 0.1s both; }
+
+/* 八顆星點：從圓章中心往外散開再消失 */
+.item-get-sparks {
+    position: absolute;
+    top: calc(var(--sp-8) + 42px);
+    left: 50%;
+    width: 0;
+    height: 0;
+}
+.item-get-sparks i {
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-hi, #f3e3bd);
+    box-shadow: 0 0 6px rgb(243 227 189 / 0.9);
+    opacity: 0;
+}
+.item-get-sparks i:nth-child(1) { --a: 0deg; }
+.item-get-sparks i:nth-child(2) { --a: 45deg; }
+.item-get-sparks i:nth-child(3) { --a: 90deg; }
+.item-get-sparks i:nth-child(4) { --a: 135deg; }
+.item-get-sparks i:nth-child(5) { --a: 180deg; }
+.item-get-sparks i:nth-child(6) { --a: 225deg; }
+.item-get-sparks i:nth-child(7) { --a: 270deg; }
+.item-get-sparks i:nth-child(8) { --a: 315deg; }
+.item-get-sparks i:nth-child(even) { width: 4px; height: 4px; left: -2px; top: -2px; }
+.item-get.is-shown .item-get-sparks i { animation: item-get-spark 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.18s both; }
+
+.item-get-label {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--gold-soft);
+}
+.item-get-label::before,
+.item-get-label::after { content: ""; width: 18px; height: 1px; background: rgb(216 192 145 / 0.6); }
+.item-get-name {
+    position: relative;
+    z-index: 1;
+    font-family: 'Noto Serif TC', 'Songti TC', serif;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.4;
+}
+.item-get-qty { position: relative; z-index: 1; font-size: 13px; color: rgb(255 255 255 / 0.68); }
+
+@keyframes item-get-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes item-get-pop {
+    from { opacity: 0; transform: translateY(12px) scale(0.86); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes item-get-out {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.94); }
+}
+@keyframes item-get-glow {
+    0% { opacity: 0; transform: scale(0.6); }
+    40% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.55; transform: scale(1); }
+}
+@keyframes item-get-spark {
+    0% { opacity: 0; transform: rotate(var(--a)) translateX(10px); }
+    25% { opacity: 1; }
+    100% { opacity: 0; transform: rotate(var(--a)) translateX(64px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .item-get.is-shown .item-get-card,
+    .item-get.is-leaving .item-get-card { animation: item-get-fade 0.2s linear both; }
+    .item-get.is-leaving .item-get-card { animation-direction: reverse; }
+    .item-get.is-shown .item-get-glow { animation: none; opacity: 0.55; }
+    .item-get.is-shown .item-get-sparks i { animation: none; }
+}
