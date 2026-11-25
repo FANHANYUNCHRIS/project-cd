@@ -9252,3 +9252,10 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     .pcard-inner { transition: none; }
     .pcard-tab[aria-selected="true"]::before { animation: none; }
 }
+
+/* =========================================
+   關掉「點兩下放大」（2026-11-25 擁有者：常不小心放大、畫面跑掉）
+   manipulation＝可以捲動、可以兩指放大，只是點兩下不會放大。
+   :where() 讓這條的權重是 0，個別元件另外設的（3D 模型的 none、品牌輪播的 pan-y）照樣優先。
+   ========================================= */
+:where(*) { touch-action: manipulation; }
