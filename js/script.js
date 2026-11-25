@@ -1905,6 +1905,37 @@ window.initCardCarousel = initCardCarousel;
 /* 品牌區三張卡加翻面（2026-11-25 擁有者：跟產品卡一樣可以翻到背面）。
    正面寫在 index.html；這裡把每張正面包成 .pcard（跟產品卡同一套翻面樣式），再補上背面：
    上面一塊展示區、中間四列內容、下面三個膠囊切換，點背面任何地方翻回正面（膠囊除外）。 */
+/* 品牌區正面的切換鈕（2026-11-25 擁有者：品牌卡兩個標誌可切換、人物卡切換三位角色） */
+function initBcardSwitch(carousel) {
+    carousel.querySelectorAll('.bcard-switch').forEach(card => {
+        const btns = [...card.querySelectorAll('.bcard-seg button')];
+        const panes = [...card.querySelectorAll('[data-pane]')];
+        const img = card.querySelector('.bcard-person-img');
+        const empty = card.querySelector('.bcard-person-empty');
+        if (img) img.onerror = () => { img.hidden = true; if (empty) empty.hidden = false; };
+        const select = (i, focus) => {
+            btns.forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+            panes.forEach(p => { p.hidden = Number(p.dataset.pane) !== i; });
+            if (img && btns[i].dataset.img) {
+                img.hidden = false;
+                if (empty) empty.hidden = true;
+                img.src = btns[i].dataset.img;
+                img.classList.toggle('is-photo', i !== 0);
+            }
+            if (focus) btns[i].focus();
+        };
+        btns.forEach((b, i) => {
+            b.addEventListener('click', () => select(i));
+            b.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                e.preventDefault();
+                e.stopPropagation();
+                select((i + (e.key === 'ArrowRight' ? 1 : -1) + btns.length) % btns.length, true);
+            });
+        });
+    });
+}
+
 function initBrandFlipCards(carousel) {
     const ico = {
         book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M9 8h7M9 11.5h5"/>',
@@ -2081,6 +2112,7 @@ function initBrandFlipCards(carousel) {
 (function initBrandCarousel() {
     const carousel = document.querySelector('.brand-carousel:not(.product-carousel)');
     if (!carousel) return;
+    initBcardSwitch(carousel);
     initBrandFlipCards(carousel);
     // 跟產品卡一樣不鎖定指標（會吃掉翻面點擊），從按鈕上開始滑也能換卡
     initCardCarousel(carousel, { ignore: 'input', capture: false });
