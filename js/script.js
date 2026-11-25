@@ -508,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="xpanel pcard-face pcard-back" inert>
                 <div class="pcard-back-head">
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>土鳳梨酥<span class="xcard-eyebrow-en">介紹</span></p>
-                    <button type="button" class="pcard-to-front" aria-label="翻回卡片正面"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>正面</button>
                 </div>
                 <div class="pcard-view">
                     <div class="pcard-stage pineapple-model-stage">
@@ -545,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" class="pcard-badge" aria-controls="pcard-sheet-ing" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg['中筋麵粉']}</svg></i>產品成分</button>
                     <button type="button" class="pcard-badge" aria-controls="pcard-sheet-note" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.info}</svg></i>注意事項</button>
                 </div>
+                <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
             </div>
             </div>
             </div>`;

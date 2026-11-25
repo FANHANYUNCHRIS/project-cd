@@ -340,7 +340,8 @@ THE SOFTWARE.
         canvas.addEventListener('pointermove', event => {
             if (event.pointerId !== pointerId) return;
             cake.rotation.y += (event.clientX - lastX) * 0.009 * horizontalDirection;
-            cake.rotation.x += (event.clientY - lastY) * 0.009;
+            // 手指只轉左右；上下滑交給頁面捲動（產品卡背面 CSS 設 touch-action: pan-y）
+            if (event.pointerType !== 'touch') cake.rotation.x += (event.clientY - lastY) * 0.009;
             lastX = event.clientX;
             lastY = event.clientY;
             render();
