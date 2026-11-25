@@ -9784,3 +9784,21 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 @media (min-width: 1025px) {
     .shop-note { text-align: left; }
 }
+
+/* =========================================
+   卡片字級統一（2026-11-25 擁有者：照手機標準處理標題大小）
+   對照 iOS 字級：大標題 Large Title 34、區名 Headline 17、英文小標 Caption 12。
+   產品、品牌、人物、建築、商城的卡片標題全部同一個大小（直寫、橫寫都一樣）。
+   電腦版大標題 40。
+   ========================================= */
+:is(#products, #brand, #shop) .xpanel .xcard-eyebrow { font-size: 17px; }
+:is(#products, #brand, #shop) .xpanel .xcard-eyebrow-no { font-size: 20px; }
+:is(#products, #brand, #shop) .xpanel .xcard-eyebrow-en { font-size: 12px; }
+:is(#products, #brand, #shop) .xpanel.xpanel .xcard-title,
+#brand .bcard.xpanel-rpg .xcard-title { font-size: 34px; line-height: 1.2; }
+@media (min-width: 1025px) {
+    :is(#products, #brand, #shop) .xpanel.xpanel .xcard-title,
+    #brand .bcard.xpanel-rpg .xcard-title { font-size: 40px; }
+}
+/* 品牌卡標題變兩行後，重點列距收一點，整張卡維持一樣高 */
+@media (max-width: 1024px) { .bcard-points li { padding: 7px 0; } .bcard-switch .bcard-stage-top { padding-top: var(--sp-6); gap: var(--sp-4); } }
