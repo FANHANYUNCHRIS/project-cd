@@ -462,10 +462,10 @@ document.addEventListener('DOMContentLoaded', () => {
             '細砂糖': '<path d="M4 12h7v7H4zM13 12h7v7h-7zM8.5 5h7v7h-7z"/>',
             '鹽': '<path d="M8 9h8l-1 12H9z"/><path d="M8 9c0-3 1.8-5 4-5s4 2 4 5"/><path d="M11 6.5h.01M13 6.5h.01M12 5.5h.01"/>'
         };
-        const ingredientsHtml = product.ingredients.map(name => `
-                            <li><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg[name] || '<circle cx="12" cy="12" r="7"/>'}</svg><span>${name}</span></li>`).join('');
         // 背面用的線條圖示（跟成分圖示同一套筆觸）
+        // 2026-11-25 擁有者：三頁都照「注意事項」的排版＝四列「圖示＋標題＋一句話」，第一列金色強調
         const icon = {
+            box: '<path d="M3.5 8L12 4l8.5 4v8L12 20l-8.5-4z"/><path d="M3.5 8L12 12l8.5-4M12 12v8"/>',
             pot: '<path d="M4 11h16v2.5A6.5 6.5 0 0 1 13.5 20h-3A6.5 6.5 0 0 1 4 13.5z"/><path d="M2.5 11h19M9.5 3.5c-1 1.4 1 2.6 0 4.5M14 3.5c-1 1.4 1 2.6 0 4.5"/>',
             warn: '<path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2h.01"/>',
             cold: '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5"/>',
@@ -519,17 +519,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="pcard-lower">
                     <section class="pcard-sheet is-active" role="tabpanel" id="pcard-sheet-intro" aria-labelledby="pcard-pill-intro">
-                        <h3 class="pcard-sheet-title">酸，是土鳳梨的本色</h3>
                         <ul class="pcard-rows">
-                            ${row('土鳳梨餡', '在地土鳳梨', '台灣小農種植，酸甜分明')}
+                            ${row('土鳳梨餡', '在地土鳳梨', '台灣小農種植，酸甜分明', true)}
                             ${row('pot', '慢火熬餡', '保留果肉纖維，不把酸煮掉')}
                             ${row('法國奶油', '法國奶油酥皮', '先是奶香，再來果酸')}
+                            ${row('box', '現做現寄', '接單現做，新鮮寄出')}
                         </ul>
                     </section>
                     <section class="pcard-sheet" role="tabpanel" id="pcard-sheet-ing" aria-labelledby="pcard-pill-ing" aria-hidden="true">
-                        <ul class="pcard-ingredients">${ingredientsHtml}
+                        <ul class="pcard-rows">
+                            ${row('土鳳梨餡', '內餡', '台灣土鳳梨')}
+                            ${row('法國奶油', '酥皮', '法國奶油、中筋麵粉、雞蛋')}
+                            ${row('細砂糖', '調味', '細砂糖、鹽')}
+                            ${row('warn', '過敏原', '蛋、奶、麩質', true)}
                         </ul>
-                        <p class="pcard-allergen"><b><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon.warn}</svg>過敏原</b><em>蛋</em><em>奶</em><em>麩質</em></p>
                     </section>
                     <section class="pcard-sheet" role="tabpanel" id="pcard-sheet-note" aria-labelledby="pcard-pill-note" aria-hidden="true">
                         <ul class="pcard-rows">

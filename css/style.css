@@ -9144,7 +9144,6 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.pcard-sheet-title { margin: 0 0 var(--sp-2); font: 900 18px/1.4 'Noto Serif TC', serif; color: var(--gold-soft); }
 
 /* 三個長方形膠囊：放在卡片下方，選中＝金底黑字 */
 .pcard-pills { flex: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
@@ -9197,38 +9196,6 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .pcard-rows .is-warn i { background: rgb(216 192 145 / 0.16); }
 .pcard-rows .is-warn b { color: var(--gold-soft); }
 .pcard-sheet svg.pcard-ico { width: 20px; height: 20px; fill: none; stroke: var(--gold-soft); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-
-/* 成分：六格圖示＋過敏原一列 */
-.pcard-ingredients { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
-.pcard-ingredients li {
-    display: grid;
-    justify-items: center;
-    gap: 4px;
-    padding: 10px var(--sp-1) var(--sp-2);
-    border-radius: 10px;
-    background: rgb(255 255 255 / 0.05);
-    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.22);
-    font-size: 13px;
-    color: rgb(255 255 255 / 0.9);
-}
-.pcard-ingredients svg { width: 26px; height: 26px; fill: none; stroke: var(--gold-soft); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-.pcard-allergen {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-2);
-    margin: var(--sp-3) 0 0;
-    padding-top: var(--sp-3);
-    border-top: 1px solid rgb(216 192 145 / 0.16);
-}
-.pcard-allergen b { font: 700 14px 'Noto Serif TC', serif; color: var(--gold-soft); margin-right: auto; display: inline-flex; align-items: center; gap: 6px; }
-.pcard-allergen em {
-    font-style: normal;
-    font-size: 13px;
-    padding: 3px 12px;
-    border-radius: 100px;
-    color: rgb(255 255 255 / 0.92);
-    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45);
-}
 
 
 @media (prefers-reduced-motion: reduce) {
