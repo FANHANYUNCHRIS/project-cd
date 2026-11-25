@@ -556,10 +556,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="rpg-card-no">No.002</span>
                 <h2 class="xcard-title">準備中</h2>
             </article>
-            <article class="xpanel brand-carousel-card product-pending" data-position="left" inert>
-                <span class="rpg-card-no">No.003</span>
-                <h2 class="xcard-title">準備中</h2>
-            </article>
             </div>
             <button class="brand-carousel-arrow" type="button" data-step="-1" aria-label="上一張產品卡片" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
             <button class="brand-carousel-arrow" type="button" data-step="1" aria-label="下一張產品卡片" hidden><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
@@ -667,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         placeholder.replaceWith(section);
-        initCardCarousel(section.querySelector(".product-carousel"), { ignore: "a, button, canvas, output, .pcard-qty", capture: false });
+        initCardCarousel(section.querySelector(".product-carousel"), { ignore: "a, button, canvas, output, .pcard-qty", capture: false, loop: false });
 
         /* 桌機滑鼠移到產品照上，淡金光跟著游標走（CSS 在 style.css「知識庫靈感三項」）。
            只在有滑鼠的裝置綁定；用 rAF 節流，一個畫面最多寫一次。 */
@@ -1773,24 +1769,32 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 }
 
 /* 品牌重點固定由訪客操作，鍵盤左右鍵也可切換。 */
-/* 卡片左右滑換下一張：品牌卡、產品卡共用（2026-11-25 產品卡也加，第二、三張「準備中」）。
+/* 卡片左右滑換下一張：品牌卡、產品卡共用。
    ignore：從這些元素開始的手勢不算換卡（例如產品卡背面的 3D 鳳梨酥要拿來轉）。
-   產品卡不鎖定指標（setPointerCapture 會把「點卡片翻面」的點擊吃掉），改成滑過之後擋掉下一次點擊。 */
-function initCardCarousel(carousel, { ignore = 'a, button', capture = true } = {}) {
+   loop：滑到最後一張要不要繞回第一張（產品卡只有兩張，不繞）。
+   手指（2026-11-25 擁有者：大拇指很難滑到第二張）：用觸控事件判斷，手指一動先看方向，
+   偏左右（容許大拇指的弧線）就鎖定成換卡、擋住頁面上下捲動，卡片跟著手指走，放開時滑超過 36px 就換卡。
+   滑鼠：拖曳超過 48px 換卡。產品卡不鎖定指標（會把「點卡片翻面」的點擊吃掉），改成滑過之後擋掉下一次點擊。 */
+function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop = true } = {}) {
     const cards = [...carousel.querySelectorAll('.brand-carousel-card')];
     const arrows = carousel.querySelectorAll('.brand-carousel-arrow');
     const status = carousel.querySelector('[role="status"]');
-    const positions = ['center', 'right', 'left'];
     let current = 0;
     let drag;
 
+    function canMove(step) {
+        return loop || (current + step >= 0 && current + step < cards.length);
+    }
     function show(step) {
+        if (!canMove(step)) return;
         current = (current + step + cards.length) % cards.length;
         cards.forEach((card, index) => {
-            const offset = (index - current + cards.length) % cards.length;
-            card.dataset.position = positions[offset];
+            let offset = index - current;
+            if (loop) offset = (offset + cards.length) % cards.length === cards.length - 1 && cards.length > 2 ? -1 : (offset + cards.length) % cards.length;
+            card.dataset.position = offset === 0 ? 'center' : offset < 0 ? 'left' : 'right';
             card.inert = index !== current;
         });
+        arrows.forEach(arrow => arrow.classList.toggle('is-end', !canMove(Number(arrow.dataset.step))));
         const label = cards[current].querySelector('h2').innerText.trim().replace(/\s+/g, ' ');
         status.textContent = (current + 1) + ' / ' + cards.length + '，' + label;
     }
@@ -1801,8 +1805,69 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true } = {
         arrow.tabIndex = -1;
         arrow.setAttribute('aria-hidden', 'true');
     });
+
     let swallowClick = false;
+    function swallowNextClick() {
+        swallowClick = true;
+        setTimeout(() => { swallowClick = false; }, 400);
+    }
+    carousel.addEventListener('click', event => {
+        if (!swallowClick) return;
+        swallowClick = false;
+        event.stopPropagation();
+        event.preventDefault();
+    }, true);
+
+    /* 手指 */
+    let touch = null;
+    function follow(dx) {
+        const card = cards[current];
+        const step = dx < 0 ? 1 : -1;
+        // 到底了只給一點點回彈感
+        card.style.translate = `${canMove(step) ? dx * 0.5 : dx * 0.12}px 0`;
+    }
+    function release() {
+        const card = cards[current];
+        card.style.transition = '';
+        card.style.translate = '';
+    }
+    carousel.addEventListener('touchstart', event => {
+        if (event.touches.length !== 1 || event.target.closest(ignore)) { touch = null; return; }
+        const p = event.touches[0];
+        touch = { x: p.clientX, y: p.clientY, lock: null, dx: 0 };
+    }, { passive: true });
+    carousel.addEventListener('touchmove', event => {
+        if (!touch) return;
+        const p = event.touches[0];
+        const dx = p.clientX - touch.x;
+        const dy = p.clientY - touch.y;
+        if (!touch.lock) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+            touch.lock = Math.abs(dx) > Math.abs(dy) * 0.7 ? 'x' : 'y';
+            if (touch.lock === 'x') cards[current].style.transition = 'none';
+        }
+        if (touch.lock !== 'x') return;
+        if (event.cancelable) event.preventDefault();
+        touch.dx = dx;
+        follow(dx);
+    }, { passive: false });
+    carousel.addEventListener('touchend', () => {
+        if (!touch) return;
+        const { lock, dx } = touch;
+        touch = null;
+        if (lock !== 'x') return;
+        release();
+        swallowNextClick();
+        if (Math.abs(dx) >= 36) show(dx < 0 ? 1 : -1);
+    });
+    carousel.addEventListener('touchcancel', () => {
+        if (touch?.lock === 'x') release();
+        touch = null;
+    });
+
+    /* 滑鼠（觸控交給上面） */
     carousel.addEventListener('pointerdown', event => {
+        if (event.pointerType === 'touch') return;
         if (!event.isPrimary || event.button !== 0 || event.target.closest(ignore)) return;
         if (event.pointerType === 'mouse') event.preventDefault();
         drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
@@ -1814,17 +1879,10 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true } = {
         const dy = event.clientY - drag.y;
         drag = undefined;
         if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
-            swallowClick = true;
-            setTimeout(() => { swallowClick = false; }, 0);
+            swallowNextClick();
             show(dx < 0 ? 1 : -1);
         }
     });
-    carousel.addEventListener('click', event => {
-        if (!swallowClick) return;
-        swallowClick = false;
-        event.stopPropagation();
-        event.preventDefault();
-    }, true);
     carousel.addEventListener('pointercancel', event => {
         if (drag?.id === event.pointerId) drag = undefined;
     });

@@ -7650,7 +7650,7 @@ body { background-color: var(--x-night); }
 .brand-carousel-card {
     grid-area: 1 / 1;
     min-height: 0;
-    transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out);
+    transition: transform 0.55s var(--ease-out), opacity 0.55s var(--ease-out), translate 0.3s var(--ease-out);
 }
 .brand-carousel-card[data-position="center"] { z-index: 2; }
 .brand-carousel-card[data-position="left"] {
@@ -9431,3 +9431,6 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 
 /* 背面內容區跟著當下那一頁的高度走，不留空白；多出來或少掉的高度由上面的 3D 展示台吸收（2026-11-25 擁有者：排版不要多餘空白） */
 .pcard-sheet:not(.is-active) { display: none; }
+/* 沒有下一張的那一邊，三角收起來（產品卡只有兩張、不繞回） */
+.brand-carousel-arrow.is-end:not([hidden]) { opacity: 0; }
+.brand-carousel-arrow:not([hidden]) { transition: opacity 0.3s ease; }
