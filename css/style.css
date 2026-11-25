@@ -9002,6 +9002,9 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .xpanel-rpg .rpg-card-head { justify-content: flex-end; }
 
 /* 正面：數量＋/− 和加入購物車同一列 */
+/* 價格數字包在 span 裡（給數量連動用），要擋掉通用的 .xpanel .xcard-price span 深色小字 */
+.xpanel-rpg .xcard-price .pcard-total { color: inherit; font-size: inherit; }
+.xpanel-rpg .pcard-count { white-space: nowrap; font-size: min(15px, 3.85vw); }
 .pcard-buy-row { display: flex; align-items: center; gap: var(--sp-3); }
 .pcard-qty {
     flex: none;
