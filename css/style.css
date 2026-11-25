@@ -9423,3 +9423,39 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .product-carousel .brand-carousel-arrow:not([hidden]) { top: 34%; transform: translateY(-50%); }
 .product-pending { position: relative; grid-template: 1fr / 1fr; place-items: center; }
 .product-pending .rpg-card-no { position: absolute; top: var(--sp-5); right: var(--sp-5); }
+
+/* =========================================
+   換卡箭頭＝遊戲金色三角游標（2026-11-25 擁有者：原本的圓鈕太醜，要淡淡的、像遊戲提示）
+   沒有底色和外框，只有一個小金三角加一點光暈，慢慢往外點兩下，提醒「旁邊還有卡」。
+   觸控範圍仍是 44×44。產品卡放在卡片正中間左右邊緣；品牌卡位置不變，只換樣子。
+   ========================================= */
+.brand-carousel-arrow:not([hidden]) {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    opacity: 1;
+}
+.brand-carousel-arrow i { display: none; }
+.brand-carousel-arrow::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    filter: drop-shadow(0 0 1px rgb(11 13 18 / 0.9)) drop-shadow(0 0 6px rgb(216 192 145 / 0.8));
+    animation: card-arrow-nudge 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+.brand-carousel-arrow[data-step="1"]::before { border-left: 13px solid var(--gold-soft); --nudge: 4px; }
+.brand-carousel-arrow[data-step="-1"]::before { border-right: 13px solid var(--gold-soft); --nudge: -4px; }
+@keyframes card-arrow-nudge {
+    0%, 60%, 100% { translate: 0 0; opacity: 0.75; }
+    30% { translate: var(--nudge) 0; opacity: 1; }
+}
+.brand-carousel-arrow:is(:hover, :focus-visible) { opacity: 1; }
+.brand-carousel-arrow:focus-visible { outline-offset: -6px; border-radius: 10px; }
+.product-carousel .brand-carousel-arrow:not([hidden]) { top: 50%; transform: translateY(-50%); }
+.product-carousel .brand-carousel-arrow[data-step="-1"] { left: 0; }
+.product-carousel .brand-carousel-arrow[data-step="1"] { right: 0; }
+@media (prefers-reduced-motion: reduce) {
+    .brand-carousel-arrow::before { animation: none; }
+}
