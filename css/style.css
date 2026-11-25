@@ -9433,3 +9433,31 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     .item-get.is-shown .item-get-glow { animation: none; opacity: 0.55; }
     .item-get.is-shown .item-get-sparks i { animation: none; }
 }
+
+/* =========================================
+   產品卡左右滑（2026-11-25 擁有者指定）：沿用品牌卡的 .brand-carousel，
+   第二、三張是黑金「準備中」卡（No.002／No.003）。箭頭放在照片中段，不擋右上角 No.001。
+   ========================================= */
+.product-pending {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--sp-3);
+    border: 0;
+    background:
+        radial-gradient(70% 50% at 50% 40%, rgb(216 192 145 / 0.16), rgb(216 192 145 / 0) 70%),
+        linear-gradient(170deg, #1b1d23 0%, var(--x-night) 100%);
+    color: rgb(255 255 255 / 0.92);
+}
+.product-pending::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.9), inset 0 0 0 5px var(--x-night), inset 0 0 0 6px rgb(216 192 145 / 0.7);
+}
+.product-pending .xcard-title { margin: 0; color: var(--gold-soft); }
+.product-carousel .brand-carousel-arrow:not([hidden]) { top: 34%; transform: translateY(-50%); }
+.product-pending { position: relative; grid-template: 1fr / 1fr; place-items: center; }
+.product-pending .rpg-card-no { position: absolute; top: var(--sp-5); right: var(--sp-5); }

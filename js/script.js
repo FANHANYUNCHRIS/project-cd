@@ -477,7 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = (key, title, text, warn) => `<li${warn ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon[key] || ingredientIconSvg[key]}</svg></i><b>${title}</b><span>${text}</span></li>`;
         const closeBtn = '<button type="button" class="pcard-sheet-close" aria-label="回到三個徽章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回</button>';
         section.innerHTML = `
-            <div class="pcard">
+            <div class="brand-carousel product-carousel" role="group" aria-label="產品卡片">
+            <div class="brand-carousel-cards">
+            <div class="pcard brand-carousel-card" data-position="center">
             <div class="pcard-inner">
             <div class="xpanel xpanel-rpg pcard-face pcard-front">
             <div class="xcard-bg xcard-bg-product" aria-hidden="true"></div>
@@ -549,6 +551,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
             </div>
             </div>
+            </div>
+            <article class="xpanel brand-carousel-card product-pending" data-position="right" inert>
+                <span class="rpg-card-no">No.002</span>
+                <h2 class="xcard-title">準備中</h2>
+            </article>
+            <article class="xpanel brand-carousel-card product-pending" data-position="left" inert>
+                <span class="rpg-card-no">No.003</span>
+                <h2 class="xcard-title">準備中</h2>
+            </article>
+            </div>
+            <button class="brand-carousel-arrow" type="button" data-step="-1" aria-label="上一張產品卡片" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+            <button class="brand-carousel-arrow" type="button" data-step="1" aria-label="下一張產品卡片" hidden><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            <span class="sr-only" role="status" aria-atomic="true"></span>
             </div>`;
 
         /* 正面：數量＋/− 和加入購物車 */
@@ -642,6 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         placeholder.replaceWith(section);
+        initCardCarousel(section.querySelector(".product-carousel"), { ignore: "a, button, canvas, output, .pcard-qty", capture: false });
 
         /* 桌機滑鼠移到產品照上，淡金光跟著游標走（CSS 在 style.css「知識庫靈感三項」）。
            只在有滑鼠的裝置綁定；用 rAF 節流，一個畫面最多寫一次。 */
@@ -1747,10 +1763,10 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 }
 
 /* 品牌重點固定由訪客操作，鍵盤左右鍵也可切換。 */
-(function initBrandCarousel() {
-    const carousel = document.querySelector('.brand-carousel');
-    if (!carousel) return;
-
+/* 卡片左右滑換下一張：品牌卡、產品卡共用（2026-11-25 產品卡也加，第二、三張「準備中」）。
+   ignore：從這些元素開始的手勢不算換卡（例如產品卡背面的 3D 鳳梨酥要拿來轉）。
+   產品卡不鎖定指標（setPointerCapture 會把「點卡片翻面」的點擊吃掉），改成滑過之後擋掉下一次點擊。 */
+function initCardCarousel(carousel, { ignore = 'a, button', capture = true } = {}) {
     const cards = [...carousel.querySelectorAll('.brand-carousel-card')];
     const arrows = carousel.querySelectorAll('.brand-carousel-arrow');
     const status = carousel.querySelector('[role="status"]');
@@ -1773,11 +1789,12 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         button.addEventListener('click', () => show(Number(button.dataset.step)));
         button.hidden = false;
     });
+    let swallowClick = false;
     carousel.addEventListener('pointerdown', event => {
-        if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button')) return;
+        if (!event.isPrimary || event.button !== 0 || event.target.closest(ignore)) return;
         if (event.pointerType === 'mouse') event.preventDefault();
         drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
-        carousel.setPointerCapture(event.pointerId);
+        if (capture) carousel.setPointerCapture(event.pointerId);
     });
     carousel.addEventListener('pointerup', event => {
         if (drag?.id !== event.pointerId) return;
@@ -1785,16 +1802,34 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
         const dy = event.clientY - drag.y;
         drag = undefined;
         if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+            swallowClick = true;
+            setTimeout(() => { swallowClick = false; }, 0);
             show(dx < 0 ? 1 : -1);
         }
+    });
+    carousel.addEventListener('click', event => {
+        if (!swallowClick) return;
+        swallowClick = false;
+        event.stopPropagation();
+        event.preventDefault();
+    }, true);
+    carousel.addEventListener('pointercancel', event => {
+        if (drag?.id === event.pointerId) drag = undefined;
     });
     carousel.addEventListener('lostpointercapture', event => {
         if (drag?.id === event.pointerId) drag = undefined;
     });
     carousel.addEventListener('keydown', event => {
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        if (event.target.closest('canvas')) return; // 3D 鳳梨酥的方向鍵是拿來轉的
         event.preventDefault();
         show(event.key === 'ArrowLeft' ? -1 : 1);
     });
     show(0);
+}
+window.initCardCarousel = initCardCarousel;
+
+(function initBrandCarousel() {
+    const carousel = document.querySelector('.brand-carousel:not(.product-carousel)');
+    if (carousel) initCardCarousel(carousel);
 })();
