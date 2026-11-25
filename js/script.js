@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h2 class="xcard-title" id="products-title">土鳳梨酥</h2>
                     <dl class="rpg-card-stats xcard-price">
                         <div><dt>價格</dt><dd class="rpg-card-num"><small>NT$</small><span class="pcard-total" aria-live="polite">${unitPrice.toLocaleString()}</span></dd></div>
-                        <div><dt>數量</dt><dd>10 入／盒</dd></div>
+                        <div><dt class="pcard-count-label">數量</dt><dd class="pcard-count" aria-live="polite">10 入／盒</dd></div>
                         <div><dt>取貨</dt><dd>5 天後</dd></div>
                     </dl>
                     <div class="xcard-actions pcard-buy-row">
@@ -542,11 +542,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyQty = 1;
         const qtyValue = section.querySelector('.pcard-qty-value');
         const totalEl = section.querySelector('.pcard-total');
+        const countEl = section.querySelector('.pcard-count');
+        const countLabel = section.querySelector('.pcard-count-label');
         // 價格格子顯示「單價 × 盒數」的總價，數量一變就跟著變（2026-11-25 擁有者要求）
         function setBuyQty(n) {
             buyQty = Math.max(1, Math.min(99, n));
             qtyValue.textContent = buyQty;
             totalEl.textContent = (unitPrice * buyQty).toLocaleString();
+            // 數量格子也跟著變：1 盒顯示「10 入／盒」，2 盒以上顯示總顆數，標籤寫幾盒
+            countLabel.textContent = buyQty === 1 ? '數量' : `數量・${buyQty} 盒`;
+            countEl.textContent = buyQty === 1 ? '10 入／盒' : `${10 * buyQty} 入`;
         }
         section.querySelectorAll('.pcard-qty-btn').forEach(btn => {
             btn.addEventListener('click', () => setBuyQty(buyQty + Number(btn.dataset.step)));
