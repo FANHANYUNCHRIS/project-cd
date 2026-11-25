@@ -1792,9 +1792,11 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true } = {
         status.textContent = (current + 1) + ' / ' + cards.length + '，' + label;
     }
 
-    arrows.forEach(button => {
-        button.addEventListener('click', () => show(Number(button.dataset.step)));
-        button.hidden = false;
+    // 箭頭只是提示「旁邊還有卡」，不能按；換卡一律左右滑（2026-11-25 擁有者）。鍵盤仍可用左右方向鍵。
+    arrows.forEach(arrow => {
+        arrow.hidden = false;
+        arrow.tabIndex = -1;
+        arrow.setAttribute('aria-hidden', 'true');
     });
     let swallowClick = false;
     carousel.addEventListener('pointerdown', event => {

@@ -7685,7 +7685,7 @@ body { background-color: var(--x-night); }
 }
 .brand-carousel-arrow[data-step="-1"] { left: var(--sp-1); }
 .brand-carousel-arrow[data-step="1"] { right: var(--sp-1); }
-.brand-carousel-arrow:is(:hover, :focus-visible) { opacity: 1; }
+
 .brand-carousel-arrow:focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
@@ -9451,7 +9451,7 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
     0%, 60%, 100% { translate: 0 0; opacity: 0.75; }
     30% { translate: var(--nudge) 0; opacity: 1; }
 }
-.brand-carousel-arrow:is(:hover, :focus-visible) { opacity: 1; }
+
 .brand-carousel-arrow:focus-visible { outline-offset: -6px; border-radius: 10px; }
 .product-carousel .brand-carousel-arrow:not([hidden]) { top: 50%; transform: translateY(-50%); }
 .product-carousel .brand-carousel-arrow[data-step="-1"] { left: 0; }
@@ -9459,3 +9459,8 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 @media (prefers-reduced-motion: reduce) {
     .brand-carousel-arrow::before { animation: none; }
 }
+/* 箭頭只當提示，點不到（手指點在上面等於點卡片，左右滑照樣換卡） */
+.brand-carousel-arrow:not([hidden]) { pointer-events: none; cursor: default; }
+
+/* 背面內容區跟著當下那一頁的高度走，不留空白；多出來或少掉的高度由上面的 3D 展示台吸收（2026-11-25 擁有者：排版不要多餘空白） */
+.pcard-sheet:not(.is-active) { display: none; }
