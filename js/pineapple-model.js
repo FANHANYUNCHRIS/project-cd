@@ -276,7 +276,8 @@ THE SOFTWARE.
             Math.max(-modelBounds.min.y, modelBounds.max.y),
             Math.max(-modelBounds.min.z, modelBounds.max.z)
         ).multiply(cake.scale).length();
-        const isShowcase = stage.classList.contains('pastry-stage');
+        // 產品卡背面也用展示視角（3/4 俯角），看得到上表面，不會像被壓扁的一塊磚
+        const isShowcase = stage.classList.contains('pastry-stage') || stage.classList.contains('pcard-stage');
         const horizontalDirection = isShowcase ? -1 : 1;
         const initialRotation = new THREE.Euler(0.14, isShowcase ? -Math.PI / 4 : -0.55, -0.045);
         cake.rotation.copy(initialRotation);
@@ -289,7 +290,9 @@ THE SOFTWARE.
         }
 
         function resize() {
-            const { width, height } = stage.getBoundingClientRect();
+            // 用版面尺寸，不用 getBoundingClientRect：卡片翻面途中有 3D 旋轉，量到的寬度會被壓縮
+            const width = stage.clientWidth;
+            const height = stage.clientHeight;
             if (!width || !height) return;
             renderer.setSize(width, height, false);
             camera.aspect = width / height;

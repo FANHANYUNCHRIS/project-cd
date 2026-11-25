@@ -464,6 +464,18 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const ingredientsHtml = product.ingredients.map(name => `
                             <li><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg[name] || '<circle cx="12" cy="12" r="7"/>'}</svg><span>${name}</span></li>`).join('');
+        // 背面用的線條圖示（跟成分圖示同一套筆觸）
+        const icon = {
+            pot: '<path d="M4 11h16v2.5A6.5 6.5 0 0 1 13.5 20h-3A6.5 6.5 0 0 1 4 13.5z"/><path d="M2.5 11h19M9.5 3.5c-1 1.4 1 2.6 0 4.5M14 3.5c-1 1.4 1 2.6 0 4.5"/>',
+            warn: '<path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2h.01"/>',
+            cold: '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5"/>',
+            sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+            hand: '<path d="M8 13V6a1.5 1.5 0 0 1 3 0v5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v8c0 4-2.5 7-6.5 7-3 0-4.5-1.5-6-4l-1.5-2.7a1.5 1.5 0 0 1 2.6-1.5L8 15"/>',
+            book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M9 8h7M9 11.5h5"/>',
+            info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8h.01"/>'
+        };
+        const row = (key, title, text, warn) => `<li${warn ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon[key] || ingredientIconSvg[key]}</svg></i><b>${title}</b><span>${text}</span></li>`;
+        const closeBtn = '<button type="button" class="pcard-sheet-close" aria-label="收起"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
         section.innerHTML = `
             <div class="pcard">
             <div class="pcard-inner">
@@ -498,41 +510,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">01</span>土鳳梨酥<span class="xcard-eyebrow-en">介紹</span></p>
                     <button type="button" class="pcard-to-front" aria-label="翻回卡片正面"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>正面</button>
                 </div>
-                <div class="pcard-stage pineapple-model-stage">
-                    <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
-                    <p class="pastry-image-note" role="status">翻過來就會載入 3D 模型</p>
-                    <span class="pcard-stage-tip" aria-hidden="true">用手指拖曳，轉轉看</span>
+                <div class="pcard-view">
+                    <div class="pcard-stage pineapple-model-stage">
+                        <canvas tabindex="0" aria-label="鳳梨酥 3D 模型，可拖曳或使用方向鍵旋轉" hidden></canvas>
+                        <p class="pastry-image-note" role="status">翻過來就會載入 3D 模型</p>
+                        <span class="pcard-stage-tip" aria-hidden="true">用手指拖曳，轉轉看</span>
+                    </div>
+                    <section class="pcard-sheet" id="pcard-sheet-intro" aria-labelledby="pcard-sheet-intro-title" hidden>
+                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-intro-title">酸，是土鳳梨的本色</h3>${closeBtn}</div>
+                        <ul class="pcard-rows">
+                            ${row('土鳳梨餡', '在地土鳳梨', '台灣小農種植，酸甜分明')}
+                            ${row('pot', '慢火熬餡', '保留果肉纖維，不把酸煮掉')}
+                            ${row('法國奶油', '法國奶油酥皮', '先是奶香，再來果酸')}
+                        </ul>
+                    </section>
+                    <section class="pcard-sheet" id="pcard-sheet-ing" aria-labelledby="pcard-sheet-ing-title" hidden>
+                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-ing-title">產品成分</h3>${closeBtn}</div>
+                        <ul class="pcard-ingredients">${ingredientsHtml}
+                        </ul>
+                        <p class="pcard-allergen"><b><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${icon.warn}</svg>過敏原</b><em>蛋</em><em>奶</em><em>麩質</em></p>
+                    </section>
+                    <section class="pcard-sheet" id="pcard-sheet-note" aria-labelledby="pcard-sheet-note-title" hidden>
+                        <div class="pcard-sheet-head"><h3 class="pcard-sheet-title" id="pcard-sheet-note-title">注意事項</h3>${closeBtn}</div>
+                        <ul class="pcard-rows">
+                            ${row('warn', '過敏注意', '含蛋、奶、麩質，過敏者請勿食用', true)}
+                            ${row('cold', '收到請冷藏', '無防腐劑，請於期限內吃完')}
+                            ${row('sun', '回溫再吃', '冰過酥皮較硬，室溫放一下更香')}
+                            ${row('hand', '手工製作', '大小、烤色略有不同，不是瑕疵')}
+                        </ul>
+                    </section>
                 </div>
-                <div class="pcard-info">
-                    <div class="pcard-tabs" role="tablist" aria-label="產品資訊">
-                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-intro" aria-controls="pcard-panel-intro" aria-selected="true">產品介紹</button>
-                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-ing" aria-controls="pcard-panel-ing" aria-selected="false" tabindex="-1">產品成分</button>
-                        <button type="button" class="pcard-tab" role="tab" id="pcard-tab-note" aria-controls="pcard-panel-note" aria-selected="false" tabindex="-1">注意事項</button>
-                    </div>
-                    <div class="pcard-panels">
-                        <div class="pcard-panel is-active" role="tabpanel" id="pcard-panel-intro" aria-labelledby="pcard-tab-intro">
-                            <p class="pcard-lead">酸，是土鳳梨的本色。</p>
-                            <p class="pcard-copy">選台灣在地小農的土鳳梨，慢火熬成看得見纖維的果餡，不把酸味煮掉。外面包一層法國奶油酥皮，咬下去先是奶香，接著才是果酸。</p>
-                            <ul class="pcard-points">
-                                <li>在地小農土鳳梨</li>
-                                <li>慢火熬煮果餡</li>
-                                <li>法國奶油酥皮</li>
-                            </ul>
-                        </div>
-                        <div class="pcard-panel" role="tabpanel" id="pcard-panel-ing" aria-labelledby="pcard-tab-ing" aria-hidden="true">
-                            <ul class="pcard-ingredients">${ingredientsHtml}
-                            </ul>
-                            <p class="pcard-allergen">過敏原：蛋、奶、麩質</p>
-                        </div>
-                        <div class="pcard-panel" role="tabpanel" id="pcard-panel-note" aria-labelledby="pcard-tab-note" aria-hidden="true">
-                            <ul class="pcard-notes">
-                                <li><b>會過敏的人先看這裡</b>裡面有蛋、奶油和麵粉（麩質）。對其中任何一樣過敏，這盒就先別吃。</li>
-                                <li><b>沒加防腐劑</b>收到請直接放冰箱，在期限內吃完，不要放在常溫等它慢慢吃。</li>
-                                <li><b>冰過的酥皮會比較硬</b>從冰箱拿出來放一下，回到室溫再吃，奶香比較出得來。</li>
-                                <li><b>每顆長得不太一樣</b>全部手工包、手工烤，大小和烤色會有一點差別，不是瑕疵。</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="pcard-badges" aria-label="產品資訊">
+                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-intro" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.book}</svg></i>產品介紹</button>
+                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-ing" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${ingredientIconSvg['中筋麵粉']}</svg></i>產品成分</button>
+                    <button type="button" class="pcard-badge" aria-controls="pcard-sheet-note" aria-expanded="false"><i><svg viewBox="0 0 24 24" aria-hidden="true">${icon.info}</svg></i>注意事項</button>
                 </div>
             </div>
             </div>
@@ -583,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (moveFocus) (flipped ? back.querySelector('.pcard-to-front') : front.querySelector('.pcard-to-back')).focus({ preventScroll: true });
         }
-        const interactive = 'button, a, input, output, canvas, [role="tab"], [role="tabpanel"], .pcard-qty';
+        const interactive = 'button, a, input, output, canvas, .pcard-qty, .pcard-sheet, .pcard-badges';
         front.addEventListener('click', e => {
             if (e.target.closest(interactive) && !e.target.closest('.pcard-to-back')) return;
             setFlipped(true, e.detail === 0);
@@ -593,27 +604,25 @@ document.addEventListener('DOMContentLoaded', () => {
             setFlipped(false, e.detail === 0);
         });
 
-        /* 背面三個分頁：方向鍵可左右切換（WAI-ARIA 分頁慣例） */
-        const tabs = [...section.querySelectorAll('.pcard-tab')];
-        function selectTab(tab) {
-            tabs.forEach(t => {
-                const on = t === tab;
-                t.setAttribute('aria-selected', String(on));
-                t.tabIndex = on ? 0 : -1;
-                const panel = section.querySelector('#' + t.getAttribute('aria-controls'));
-                panel.classList.toggle('is-active', on);
-                panel.setAttribute('aria-hidden', String(!on));
+        /* 背面三個徽章：點了才升起對應的資訊卡，再點一次（或按 ×）收起；同時只開一張 */
+        const view = section.querySelector('.pcard-view');
+        const badges = [...section.querySelectorAll('.pcard-badge')];
+        function openSheet(badge) {
+            badges.forEach(b => {
+                const on = b === badge;
+                b.setAttribute('aria-expanded', String(on));
+                section.querySelector('#' + b.getAttribute('aria-controls')).hidden = !on;
             });
+            view.classList.toggle('has-sheet', !!badge);
         }
-        tabs.forEach((tab, i) => {
-            tab.addEventListener('click', () => selectTab(tab));
-            tab.addEventListener('keydown', e => {
-                const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-                if (!step) return;
-                e.preventDefault();
-                const next = tabs[(i + step + tabs.length) % tabs.length];
-                selectTab(next);
-                next.focus();
+        badges.forEach(badge => {
+            badge.addEventListener('click', () => openSheet(badge.getAttribute('aria-expanded') === 'true' ? null : badge));
+        });
+        section.querySelectorAll('.pcard-sheet-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const badge = badges.find(b => b.getAttribute('aria-expanded') === 'true');
+                openSheet(null);
+                if (badge) badge.focus({ preventScroll: true });
             });
         });
         placeholder.replaceWith(section);
