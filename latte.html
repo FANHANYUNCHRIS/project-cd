@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>試試拉花｜CD 鳳梨酥</title>
+<meta name="description" content="在咖啡上用手指倒奶，拉出你自己的愛心或葉子。">
+<meta name="theme-color" content="#111113">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111113;
+    --panel: #1b1b1e;
+    --line: rgba(255, 255, 255, 0.12);
+    --paper: #ebebec;
+    --paper-soft: rgba(255, 255, 255, 0.7);
+    --gold: #B8955A;
+    --gold-soft: #D8C091;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: "Noto Sans TC", system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  .page {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+  }
+  .back {
+    color: var(--paper-soft);
+    text-decoration: none;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 44px;
+  }
+  .back:hover { color: var(--paper); }
+  .eyebrow {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 34px;
+    line-height: 1.2;
+    margin: 8px 0 6px;
+    letter-spacing: 0.02em;
+  }
+  .hint {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--paper-soft);
+  }
+  .stage {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: 16px 0;
+  }
+  canvas {
+    display: block;
+    touch-action: none;
+    cursor: crosshair;
+    border-radius: 50%;
+  }
+  .controls { display: grid; gap: 12px; }
+  .row { display: flex; align-items: center; gap: 12px; }
+  .label { font-size: 14px; color: var(--paper-soft); white-space: nowrap; }
+  .seg {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 3px;
+  }
+  .seg button {
+    font: inherit;
+    font-size: 15px;
+    color: var(--paper-soft);
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    min-height: 40px;
+    cursor: pointer;
+    transition: background-color 160ms ease-out, color 160ms ease-out;
+  }
+  .seg button[aria-pressed="true"] { background: var(--gold); color: #16161a; font-weight: 700; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .btn {
+    font: inherit;
+    font-size: 15px;
+    min-height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--paper);
+    cursor: pointer;
+    transition: transform 120ms ease-out, background-color 160ms ease-out;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: var(--paper); color: #16161a; border-color: transparent; font-weight: 700; }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .btn:focus-visible, .seg button:focus-visible, .back:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+  @media (hover: hover) {
+    .btn:hover { background: #26262a; }
+    .btn.primary:hover { background: #fff; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .seg button { transition: none; }
+    .btn:active { transform: none; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <a class="back" href="./">‹ 回首頁</a>
+    <span class="eyebrow">Latte Art</span>
+  </header>
+
+  <h1>試試拉花</h1>
+  <p class="hint">手指按住咖啡就是倒奶。先停在中間讓奶泡長大，再往下一劃，就是愛心。</p>
+
+  <div class="stage" id="stage">
+    <canvas id="cup" aria-label="咖啡杯，按住拖曳來倒奶" role="img"></canvas>
+  </div>
+
+  <div class="controls">
+    <div class="row">
+      <span class="label">倒奶量</span>
+      <div class="seg" role="group" aria-label="倒奶量">
+        <button type="button" data-flow="0.6" aria-pressed="false">細</button>
+        <button type="button" data-flow="1" aria-pressed="true">中</button>
+        <button type="button" data-flow="1.5" aria-pressed="false">粗</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" id="reset">重來</button>
+      <button type="button" class="btn" id="demo">看示範</button>
+      <button type="button" class="btn primary" id="save">存成圖片</button>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  // 手感數值：往外推、速度衰減、劃過去帶動、每次倒的奶量
+  const P = { push: 0.13, damp: 0.9, drag: 0.27, dep: 0.09 };
+  const N = 180;                 // 模擬格數（越大越細，越吃效能）
+  const size = N * N;
+  let u = new Float32Array(size), v = new Float32Array(size);
+  let u2 = new Float32Array(size), v2 = new Float32Array(size);
+  let m = new Float32Array(size), m2 = new Float32Array(size);
+  const crema = new Float32Array(size * 3);
+  const inside = new Uint8Array(size);
+  const C = (N - 1) / 2, R = N / 2 - 1;
+
+  // 咖啡底色：中間亮、邊緣深，加一點顆粒
+  function buildCrema() {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const i = y * N + x;
+      const d = Math.hypot(x - C, y - C) / R;
+      inside[i] = d <= 1 ? 1 : 0;
+      const t = Math.min(1, d);
+      const n = (rnd() - 0.5) * 0.12 + Math.sin(x * 0.31 + y * 0.17) * 0.02;
+      const k = 1 - t * t * 0.45 + n;
+      crema[i * 3]     = 150 * k;
+      crema[i * 3 + 1] = 88 * k;
+      crema[i * 3 + 2] = 44 * k;
+    }
+  }
+  buildCrema();
+
+  function sample(f, x, y) {
+    if (x < 0) x = 0; else if (x > N - 1.001) x = N - 1.001;
+    if (y < 0) y = 0; else if (y > N - 1.001) y = N - 1.001;
+    const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i = y0 * N + x0;
+    return (f[i] * (1 - fx) + f[i + 1] * fx) * (1 - fy) + (f[i + N] * (1 - fx) + f[i + N + 1] * fx) * fy;
+  }
+
+  // 倒奶：在某一點加奶泡，並往外推、跟著手移動的方向帶
+  function pour(px, py, mx, my, flow) {
+    const r = 2.5 + 4 * flow;
+    const rp = r * 3.2;               // 往外推的範圍比奶泡大，奶泡才會一圈圈長大
+    const reach = Math.ceil(rp * 2.2);
+    const x0 = Math.max(0, (px - reach) | 0), x1 = Math.min(N - 1, (px + reach) | 0);
+    const y0 = Math.max(0, (py - reach) | 0), y1 = Math.min(N - 1, (py + reach) | 0);
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const i = y * N + x;
+      if (!inside[i]) continue;
+      const dx = x - px, dy = y - py, d = Math.hypot(dx, dy) + 1e-4;
+      const w = Math.exp(-(d * d) / (r * r));
+      const wp = Math.exp(-(d * d) / (rp * rp));
+      if (wp < 0.01) continue;
+      m[i] = Math.min(1.2, m[i] + w * P.dep * flow);
+      const push = wp * Math.min(1, d / r) * P.push * flow;
+      u[i] += (dx / d) * push;
+      v[i] += (dy / d) * push;
+    }
+    // 手移動時，把附近的奶泡一起往前帶（拉花「劃過去」的效果）
+    const sp = Math.hypot(mx, my);
+    if (sp > 0.05) {
+      const rd = r * 2.2, reach2 = Math.ceil(rd * 2);
+      const a0 = Math.max(0, (px - reach2) | 0), a1 = Math.min(N - 1, (px + reach2) | 0);
+      const b0 = Math.max(0, (py - reach2) | 0), b1 = Math.min(N - 1, (py + reach2) | 0);
+      for (let y = b0; y <= b1; y++) for (let x = a0; x <= a1; x++) {
+        const i = y * N + x;
+        if (!inside[i]) continue;
+        const dx = x - px, dy = y - py;
+        const w = Math.exp(-(dx * dx + dy * dy) / (rd * rd));
+        u[i] += mx * w * P.drag;
+        v[i] += my * w * P.drag;
+      }
+    }
+  }
+
+  function step() {
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const i = y * N + x;
+      if (!inside[i]) { u2[i] = v2[i] = m2[i] = 0; continue; }
+      const bx = x - u[i], by = y - v[i];
+      u2[i] = sample(u, bx, by) * P.damp;
+      v2[i] = sample(v, bx, by) * P.damp;
+      m2[i] = sample(m, bx, by);
+    }
+    [u, u2] = [u2, u]; [v, v2] = [v2, v]; [m, m2] = [m2, m];
+    // 一點點暈開，讓邊緣柔一點
+    for (let y = 1; y < N - 1; y++) for (let x = 1; x < N - 1; x++) {
+      const i = y * N + x;
+      m2[i] = m[i] * 0.92 + (m[i - 1] + m[i + 1] + m[i - N] + m[i + N]) * 0.02;
+    }
+    [m, m2] = [m2, m];
+  }
+
+  // 畫面
+  const canvas = document.getElementById('cup');
+  const ctx = canvas.getContext('2d');
+  const sim = document.createElement('canvas');
+  sim.width = sim.height = N;
+  const sctx = sim.getContext('2d');
+  const img = sctx.createImageData(N, N);
+  let px = 0, dpr = 1, rimW = 0, liquid = 0;
+
+  function layout() {
+    const stage = document.getElementById('stage');
+    const avail = Math.min(stage.clientWidth, stage.clientHeight - 32, 520);
+    px = Math.max(220, Math.floor(avail));
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.style.width = canvas.style.height = px + 'px';
+    canvas.width = canvas.height = Math.round(px * dpr);
+    rimW = px * 0.09;
+    liquid = px / 2 - rimW;
+  }
+
+  function render() {
+    const d = img.data;
+    for (let i = 0; i < size; i++) {
+      const t = Math.min(1, Math.max(0, (m[i] - 0.18) * 2.4));
+      const s = t * t * (3 - 2 * t);
+      const j = i * 4;
+      d[j]     = crema[i * 3]     + (246 - crema[i * 3]) * s;
+      d[j + 1] = crema[i * 3 + 1] + (238 - crema[i * 3 + 1]) * s;
+      d[j + 2] = crema[i * 3 + 2] + (226 - crema[i * 3 + 2]) * s;
+      d[j + 3] = 255;
+    }
+    sctx.putImageData(img, 0, 0);
+
+    const W = canvas.width, c = W / 2, s = dpr;
+    ctx.clearRect(0, 0, W, W);
+    // 杯緣
+    const rim = ctx.createRadialGradient(c * 0.8, c * 0.7, c * 0.2, c, c, c);
+    rim.addColorStop(0, '#ffffff');
+    rim.addColorStop(0.85, '#e9e6e1');
+    rim.addColorStop(1, '#c9c4bc');
+    ctx.fillStyle = rim;
+    ctx.beginPath(); ctx.arc(c, c, c, 0, Math.PI * 2); ctx.fill();
+    // 咖啡
+    ctx.save();
+    ctx.beginPath(); ctx.arc(c, c, liquid * s, 0, Math.PI * 2); ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(sim, c - liquid * s, c - liquid * s, liquid * 2 * s, liquid * 2 * s);
+    // 內緣陰影
+    const sh = ctx.createRadialGradient(c, c, liquid * s * 0.82, c, c, liquid * s);
+    sh.addColorStop(0, 'rgba(0,0,0,0)');
+    sh.addColorStop(1, 'rgba(40,20,8,0.45)');
+    ctx.fillStyle = sh;
+    ctx.fillRect(0, 0, W, W);
+    ctx.restore();
+  }
+
+  // 操作
+  let flowBase = 1;
+  let pointer = null; // {x,y,lx,ly,p}
+  function toGrid(e) {
+    const r = canvas.getBoundingClientRect();
+    const cx = e.clientX - r.left - px / 2, cy = e.clientY - r.top - px / 2;
+    return { x: C + (cx / liquid) * (N / 2), y: C + (cy / liquid) * (N / 2) };
+  }
+  function pressure(e) {
+    return e.pointerType === 'pen' && e.pressure > 0 ? 0.4 + e.pressure * 1.2 : 1;
+  }
+  canvas.addEventListener('pointerdown', e => {
+    if (demoTimer) return;
+    canvas.setPointerCapture(e.pointerId);
+    const g = toGrid(e);
+    pointer = { x: g.x, y: g.y, lx: g.x, ly: g.y, p: pressure(e) };
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!pointer) return;
+    const g = toGrid(e);
+    pointer.x = g.x; pointer.y = g.y; pointer.p = pressure(e);
+  });
+  const end = () => { pointer = null; };
+  canvas.addEventListener('pointerup', end);
+  canvas.addEventListener('pointercancel', end);
+
+  function applyPointer(p) {
+    const dx = p.x - p.lx, dy = p.y - p.ly;
+    const dist = Math.hypot(dx, dy);
+    const steps = Math.max(1, Math.ceil(dist / 2));
+    const flow = flowBase * p.p;
+    for (let k = 1; k <= steps; k++) {
+      const t = k / steps;
+      pour(p.lx + dx * t, p.ly + dy * t, dx / steps * 0.9, dy / steps * 0.9, flow / steps * (steps > 1 ? 1.4 : 1));
+    }
+    p.lx = p.x; p.ly = p.y;
+  }
+
+  // 示範：在中間偏上倒一會兒，讓奶泡長大，再往下拉過去 = 愛心
+  let demoTimer = null;
+  function runDemo() {
+    clearAll();
+    const btn = document.getElementById('demo');
+    btn.disabled = true;
+    const p = { x: C, y: C - 8, lx: C, ly: C - 8, p: 1 };
+    pointer = null;
+    demoTimer = { p, f: 0 };
+    btn.textContent = '示範中…';
+  }
+  function demoFrame(now) {
+    // 用畫格數計時（不是用時鐘），手機變慢時示範也不會跳掉
+    const t = demoTimer.f++ / 60;
+    const p = demoTimer.p;
+    if (t < 1.3) {
+      // 在中間偏上穩穩倒，讓奶泡長成一個大圓
+      p.x = C + Math.sin(t * 8) * 1; p.y = C - 8; p.p = 1.4;
+      applyPointer(p);
+      p.lx = p.x; p.ly = p.y;
+    } else if (t < 1.4) {
+      // 把壺移到圓的上方，準備劃過去
+      p.x = p.lx = C; p.y = p.ly = C - 52;
+    } else if (t < 1.95) {
+      const k = (t - 1.4) / 0.55;
+      p.x = C; p.y = C - 52 + k * 116; p.p = k < 0.5 ? 0.3 : 0.5;
+      applyPointer(p);
+    } else if (t > 2.8) {
+      demoTimer = null;
+      const btn = document.getElementById('demo');
+      btn.disabled = false; btn.textContent = '看示範';
+    }
+  }
+
+  function clearAll() {
+    u.fill(0); v.fill(0); m.fill(0);
+  }
+
+  document.querySelectorAll('.seg button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.seg button').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+      flowBase = parseFloat(b.dataset.flow);
+    });
+  });
+  document.getElementById('reset').addEventListener('click', () => { if (!demoTimer) clearAll(); });
+  document.getElementById('demo').addEventListener('click', () => { if (!demoTimer) runDemo(); });
+  document.getElementById('save').addEventListener('click', () => {
+    canvas.toBlob(blob => {
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'CD-拉花.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }, 'image/png');
+  });
+
+  // 固定每秒算 60 次：高更新率螢幕不會變快，慢的手機最多補算一次
+  const TICK = 1000 / 60;
+  let last = 0, acc = 0;
+  function frame(now) {
+    if (!last) last = now;
+    acc = Math.min(acc + (now - last), TICK * 2);
+    last = now;
+    while (acc >= TICK) {
+      if (pointer) applyPointer(pointer);
+      if (demoTimer) demoFrame(now);
+      step();
+      acc -= TICK;
+    }
+    render();
+    requestAnimationFrame(frame);
+  }
+  layout();
+  window.addEventListener('resize', layout);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
