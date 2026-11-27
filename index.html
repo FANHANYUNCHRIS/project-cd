@@ -25,10 +25,17 @@
     <meta property="og:description" content="台灣土鳳梨餡搭配法國奶油酥皮。旋轉 3D 模型，近看 Project.CD 的手作土鳳梨酥。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fanhanyunchris.github.io/project-cd/">
+    <!-- 分享預覽圖（2026-11-28 Claude）：用現在的產品照合成；換成正式產品照後要重做這張 -->
+    <meta property="og:image" content="https://fanhanyunchris.github.io/project-cd/images/og-share.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Project.CD 手作土鳳梨酥">
+    <meta property="og:locale" content="zh_TW">
 
     <!-- X (Twitter) 分享預覽標籤 -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Project.CD｜手作土鳳梨酥">
+    <meta name="twitter:image" content="https://fanhanyunchris.github.io/project-cd/images/og-share.jpg">
     <meta name="twitter:description" content="台灣土鳳梨餡搭配法國奶油酥皮。旋轉 3D 模型，近看 Project.CD 的手作土鳳梨酥。">
     <!-- og:image／twitter:image 先移除：原本指向 images/banner.png，但這個檔案
          不存在，分享連結到 LINE/FB 會變成破圖，等有正式 banner 圖再補回來 -->
@@ -108,11 +115,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261125-type1">
+    <link rel="stylesheet" href="css/style.css?v=20261128-fix1">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261125-type1" defer></script>
-    <script src="js/script.js?v=20261125-type1" defer></script>
+    <script src="js/pineapple-model.js?v=20261128-fix1" defer></script>
+    <script src="js/script.js?v=20261128-fix1" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -122,9 +129,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261125-type1" defer></script>
-    <script src="js/member.js?v=20261125-type1" defer></script>
-    <script src="js/pagination.js?v=20261125-type1" defer></script>
+    <script src="js/demo-login.js?v=20261128-fix1" defer></script>
+    <script src="js/member.js?v=20261128-fix1" defer></script>
+    <script src="js/pagination.js?v=20261128-fix1" defer></script>
 </head>
 
 <body>
@@ -569,8 +576,9 @@
                 <div class="xcard-copy">
                     <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">03</span>商城<span class="xcard-eyebrow-en" lang="en">SHOP</span></p>
                     <h2 id="shop-title" class="xcard-title">在哪裡買</h2>
-                    <p class="xcard-text">官網、蝦皮、超商平台，選你方便的地方買。</p>
+                    <p class="xcard-text">目前在官網訂購，其他平台準備中。</p>
                     <!-- 2026-11-25 擁有者：道具屋改成四個「通路門」，蝦皮、7-11 賣貨便、全家好賣+ 拿到網址後把 href 填上、拿掉 is-locked 與 aria-disabled 即可 -->
+                    <!-- 2026-11-28 擁有者同意：還沒開的三個先加 hidden 藏起來，只留官網一個大按鈕；開了哪個就拿掉那個的 hidden，並把上面那句說明改回來 -->
                     <div class="shop-doors" aria-label="購買通路">
                         <a class="shop-door is-main" href="#products">
                             <span class="shop-door-tag">官網</span>
@@ -578,26 +586,26 @@
                             <small>NT$500・10 入</small>
                             <span class="shop-door-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
                         </a>
-                        <a class="shop-door is-locked" aria-disabled="true" data-channel="shopee">
+                        <a class="shop-door is-locked" aria-disabled="true" data-channel="shopee" hidden>
                             <span class="shop-door-tag">蝦皮</span>
                             <b>蝦皮購物</b>
                             <small>即將開放</small>
                             <span class="shop-door-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
                         </a>
-                        <a class="shop-door is-locked" aria-disabled="true" data-channel="seven">
+                        <a class="shop-door is-locked" aria-disabled="true" data-channel="seven" hidden>
                             <span class="shop-door-tag">7-ELEVEN</span>
                             <b>賣貨便</b>
                             <small>即將開放</small>
                             <span class="shop-door-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
                         </a>
-                        <a class="shop-door is-locked" aria-disabled="true" data-channel="family">
+                        <a class="shop-door is-locked" aria-disabled="true" data-channel="family" hidden>
                             <span class="shop-door-tag">全家</span>
                             <b>好賣+</b>
                             <small>即將開放</small>
                             <span class="shop-door-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
                         </a>
                     </div>
-                    <p class="shop-note">取貨至少 5 天後・付款可匯款或超商取貨・每週一公休</p>
+                    <p class="shop-note"><span>取貨至少 5 天後</span>・<span>付款可匯款或超商取貨</span>・<span>每週一公休</span></p>
                 </div>
             </div>
             </div>
@@ -629,17 +637,17 @@
                         <h2 class="site-footer-heading">追蹤我們</h2>
                         <div class="site-footer-social">
                             <a href="https://line.me/R/ti/p/@572bkqdy" target="_blank" rel="noopener noreferrer" aria-label="LINE"><i class="fa-brands fa-line" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
-                            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="YouTube" hidden><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="Facebook" hidden><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                            <a href="#" aria-label="Instagram" hidden><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
                         </div>
                     </div>
                 </div>
 
                 <div class="site-footer-bottom">
                     <p>&copy; 2026 Project.CD</p>
-                    <!-- 遊戲入口目前用相對路徑指到本機資料夾，正式上線後請換成真正網址 -->
-                    <a href="../project-cd-playground/index.html" class="site-footer-pill"><i class="fa-solid fa-gamepad" aria-hidden="true"></i>小遊戲</a>
+                    <!-- 遊戲入口目前用相對路徑指到本機資料夾，正式網站會找不到頁面；2026-11-28 先加 hidden 藏起來，有正式網址再打開。YouTube／FB／IG 也是有網址才拿掉 hidden -->
+                    <a href="../project-cd-playground/index.html" class="site-footer-pill" hidden><i class="fa-solid fa-gamepad" aria-hidden="true"></i>小遊戲</a>
                 </div>
             </div>
         </footer>

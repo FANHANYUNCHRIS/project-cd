@@ -9802,3 +9802,15 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 }
 /* 品牌卡標題變兩行後，重點列距收一點，整張卡維持一樣高 */
 @media (max-width: 1024px) { .bcard-points li { padding: 7px 0; } .bcard-switch .bcard-stage-top { padding-top: var(--sp-6); gap: var(--sp-4); } }
+
+
+/* ===== 2026-11-28 進化小修（Claude，擁有者同意）=====
+   1. 商城卡：還沒開的通路（hidden）不顯示，官網訂購一個按鈕占滿整排
+   2. 商城卡底下那行字：每段不拆行，避免「休」單獨掉到下一行
+   3. 頁尾：還沒網址的社群圖示、小遊戲（hidden）不顯示 */
+.shop-door[hidden],
+.site-footer-social a[hidden],
+.site-footer-pill[hidden] { display: none !important; }
+.shop-doors:not(:has(.shop-door:not(.is-main):not([hidden]))) { grid-template-columns: 1fr; }
+.shop-doors:not(:has(.shop-door:not(.is-main):not([hidden]))) .shop-door.is-main { grid-column: 1 / -1; }
+.shop-note > span { white-space: nowrap; }
