@@ -2127,10 +2127,11 @@ function initBrandFlipCards(carousel) {
             entries.forEach(en => { if (en.isIntersecting) mark(en.target.id); });
         }, { rootMargin: '-45% 0px -45% 0px' });
         parts.forEach(p => p && io.observe(p));
-        // 專屬導覽列只在品牌區時出現：品牌區蓋過畫面中間那條線就顯示
+        // 專屬導覽列只在品牌區佔住畫面頂端時出現（2026-11-28 擁有者：原本品牌區過畫面中線就出現，
+        // 產品卡、商城卡還在畫面上時也會跑出來）。改成看畫面最上面那條線：品牌區蓋住它才顯示。
         const bar = brand.querySelector('.brand-jump');
         new IntersectionObserver(([en]) => bar.classList.toggle('is-shown', en.isIntersecting),
-            { rootMargin: '-50% 0px -50% 0px' }).observe(brand);
+            { rootMargin: '-2px 0px -98% 0px' }).observe(brand);
     } else {
         brand.querySelector('.brand-jump').classList.add('is-shown');
     }

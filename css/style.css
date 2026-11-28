@@ -9998,3 +9998,14 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 @media (max-width: 1024px) and (max-height: 820px) {
     .pcard-back .pcard-stage-tip { display: none; }
 }
+
+/* 2026-11-28 擁有者 iPhone：文字還是沒滿版。新版 iPhone Safari 會照 text-wrap: pretty 故意把每行縮短，右邊留空。
+   卡片裡的中文段落一律左右對齊（最後一行靠左），每行都排到右邊。 */
+.xpanel .xcard-text,
+.bcard-intro,
+.bcard-member-quote,
+.store-info small,
+.pcard-rows span {
+    text-align: justify;
+    text-wrap: wrap;
+}
