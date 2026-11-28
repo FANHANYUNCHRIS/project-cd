@@ -9959,3 +9959,42 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 @media (max-width: 1024px) {
     .brand-part { --card-top: max(var(--sp-12), calc(env(safe-area-inset-top) + 52px)); }
 }
+
+/* 2026-11-28 模擬 iPhone（瀏海 59px、底部 34px、Safari 可視高度約 760）檢查全部卡片：
+   產品、人物、建築三張卡的背面內容不能縮（展示區最少 150px），卡片被撐高、跑到底部導覽列下面。
+   手機版背面的展示區最少改成 72px（它本來就是吃剩下高度的那一塊），畫面矮時列距再收一點，卡片就能放進一個畫面。 */
+@media (max-width: 1024px) {
+    .pcard-back .pcard-view { min-height: 72px; }
+}
+@media (max-width: 1024px) and (max-height: 820px) {
+    .xpanel.pcard-back { gap: var(--sp-2); padding-block: var(--sp-4); }
+    .pcard-rows li { padding: 6px 0; }
+}
+/* 品牌區人物、建築卡的背面外框也統一成細金線 */
+.bcard-flip .pcard-back::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+/* 人物卡直寫標題：畫面矮時原本被限制高度 58%，四個字被拆成兩行（「紹／人物介」）。
+   改成永遠一行；展示區太矮時字跟著縮（以展示區高度計算，最大 34px）。 */
+#brand .bcard-people .bcard-vtitle.xcard-title { max-height: none; white-space: nowrap; }
+@supports (container-type: size) {
+    .bcard-people { container-type: size; }
+    #brand .bcard-people .bcard-vtitle.xcard-title { font-size: min(34px, calc((100cqh - 40px) / 4.4)); }
+}
+/* 建築卡（手機）：樓層表原本疊在背景層，畫面矮時會蓋到下面的標題和說明。
+   改成樓層表占「說明上方剩下的高度」，五層平均分，永遠剛好填滿、不重疊。 */
+@media (max-width: 1024px) {
+    .bcard-building.xpanel-rpg > .xcard-bg-building {
+        position: relative;
+        inset: auto;
+        flex: 1 1 0;
+        min-height: 0;
+        padding: var(--sp-6) 84px var(--sp-2) var(--sp-5);
+        align-items: stretch;
+    }
+    .bcard-building .bcard-floors { flex: 1; min-height: 0; }
+    .bcard-building .bcard-floors li { flex: 1 1 0; min-height: 0; align-items: center; padding-block: 0; }
+    .bcard-building.xpanel-rpg > .xcard-body { flex: none; }
+}
+/* 背面展示區很矮時，展示區裡的小提示字會壓到圖，先藏起來 */
+@media (max-width: 1024px) and (max-height: 820px) {
+    .pcard-back .pcard-stage-tip { display: none; }
+}
