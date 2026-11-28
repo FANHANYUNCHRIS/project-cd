@@ -2135,5 +2135,11 @@ function initBrandFlipCards(carousel) {
             entries.forEach(en => { if (en.isIntersecting) mark(en.target.id); });
         }, { rootMargin: '-45% 0px -45% 0px' });
         parts.forEach(p => p && io.observe(p));
+        // 專屬導覽列只在品牌區時出現：品牌區蓋過畫面中間那條線就顯示
+        const bar = brand.querySelector('.brand-jump');
+        new IntersectionObserver(([en]) => bar.classList.toggle('is-shown', en.isIntersecting),
+            { rootMargin: '-50% 0px -50% 0px' }).observe(brand);
+    } else {
+        brand.querySelector('.brand-jump').classList.add('is-shown');
     }
 })();
