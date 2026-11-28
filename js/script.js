@@ -1969,16 +1969,15 @@ function initBrandFlipCards(carousel) {
     const row = ([k, title, text, gold]) => `<li${gold ? ' class="is-warn"' : ''}><i><svg class="pcard-ico" viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg></i><b>${title}</b><span>${text}</span></li>`;
     const flipIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>';
 
-    const portraits = ['images/staff01-nobg.webp', 'images/team-2.jpg', 'images/team-3.jpg'];
     const towerFloors = ['RF', '4F', '3F', '2F', '1F'];
     const towerLit = [['1F', '2F'], ['3F', '4F'], ['RF']];
+    // 人物：一人一張卡（2026-11-28 擁有者：兩位，左右切換），背面只放這個人的四列，不用膠囊
+    const people = [
+        ['武裝神姬', [['user', '咖啡甜點專家', '工作職位'], ['shield', '戰鬥專家', '戰鬥職位'], ['sword', '武士刀×狙擊槍', '專用武器'], ['quote', '座右銘', '「用數據與匠心，重新定義這間店存在的意義。」', true]]],
+        ['強襲魔女', [['user', '代理店長×最強雜工', '工作職位'], ['shield', '移動基地', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「溫度差一度，風味就不再是那個風味。」', true]]]
+    ];
     const backs = {
         // 品牌故事卡不翻面（2026-11-28 擁有者：該講的正面都講了，背面刪掉）
-        // 人物：一人一張卡（2026-11-28 擁有者：兩位，左右切換），背面只放這個人的四列，不用膠囊
-        people: [
-            ['武裝神姬', [['user', '咖啡甜點專家', '工作職位'], ['shield', '戰鬥專家', '戰鬥職位'], ['sword', '武士刀×狙擊槍', '專用武器'], ['quote', '座右銘', '「用數據與匠心，重新定義這間店存在的意義。」', true]]],
-            ['強襲魔女', [['user', '代理店長×最強雜工', '工作職位'], ['shield', '移動基地', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「溫度差一度，風味就不再是那個風味。」', true]]]
-        ],
         building: {
             name: '建築', label: '大樓介紹',
             stage: `<div class="bcard-tower">${towerFloors.map(f => `<span data-floor="${f}"><b>${f}</b></span>`).join('')}</div>`,
@@ -2000,7 +1999,7 @@ function initBrandFlipCards(carousel) {
         let id = 'bcard-' + key;
         if (front.classList.contains('bcard-person')) {
             const n = Number(front.dataset.person);
-            const [pname, rows] = backs.people[n];
+            const [pname, rows] = people[n];
             const img = front.querySelector('.bcard-person-img');
             key = 'team';
             id = 'bcard-person-' + n;
@@ -2043,7 +2042,7 @@ function initBrandFlipCards(carousel) {
                     <div class="pcard-stage bcard-stage">${d.stage}${d.tip ? `<span class="pcard-stage-tip" aria-hidden="true">${d.tip}</span>` : ''}</div>
                 </div>
                 <div class="pcard-lower">
-                    ${d.tabs.map(([, rows], i) => `<section class="pcard-sheet${i === 0 ? ' is-active' : ''}" role="tabpanel" id="${id}-sheet-${i}" aria-labelledby="${id}-pill-${i}"${i === 0 ? '' : ' aria-hidden="true"'}><ul class="pcard-rows">${rows.map(row).join('')}</ul></section>`).join('')}
+                    ${d.tabs.map(([, rows], i) => `<section class="pcard-sheet${i === 0 ? ' is-active' : ''}" id="${id}-sheet-${i}"${d.tabs.length > 1 ? ` role="tabpanel" aria-labelledby="${id}-pill-${i}"` : ''}${i === 0 ? '' : ' aria-hidden="true"'}><ul class="pcard-rows">${rows.map(row).join('')}</ul></section>`).join('')}
                 </div>
                 <div class="pcard-pills" role="tablist" aria-label="${d.label}"${d.tabs.length < 2 ? ' hidden' : ''}>
                     ${d.tabs.map(([name], i) => `<button type="button" class="pcard-pill" role="tab" id="${id}-pill-${i}" aria-controls="${id}-sheet-${i}" aria-selected="${i === 0}"${i === 0 ? '' : ' tabindex="-1"'}>${name}</button>`).join('')}
@@ -2106,7 +2105,7 @@ function initBrandFlipCards(carousel) {
 }
 
 /* 品牌區（2026-11-28 擁有者：改成一頁往下排）：品牌故事 → 人物介紹 → 建築，
-   不再左右換卡。上方三個小按鈕跳到那一段，捲到哪段就亮哪顆（IntersectionObserver，不用 scroll 事件）。 */
+   人物兩張卡左右切換，其他兩段單張。 */
 (function initBrandStack() {
     // 品牌區：品牌故事 → 人物介紹 → 建築往下排。上方的專屬導覽列 2026-11-28 擁有者要求拿掉
     //（手機自由捲動時它會浮在卡片上、蓋住卡片）。

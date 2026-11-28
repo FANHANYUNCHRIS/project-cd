@@ -115,11 +115,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261128-people2">
+    <link rel="stylesheet" href="css/style.css?v=20261128-review1">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261128-people2" defer></script>
-    <script src="js/script.js?v=20261128-people2" defer></script>
+    <script src="js/pineapple-model.js?v=20261128-review1" defer></script>
+    <script src="js/script.js?v=20261128-review1" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -129,9 +129,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261128-people2" defer></script>
-    <script src="js/member.js?v=20261128-people2" defer></script>
-    <script src="js/pagination.js?v=20261128-people2" defer></script>
+    <script src="js/demo-login.js?v=20261128-review1" defer></script>
+    <script src="js/member.js?v=20261128-review1" defer></script>
+    <script src="js/pagination.js?v=20261128-review1" defer></script>
 </head>
 
 <body>
@@ -267,7 +267,7 @@
          品牌故事 → 人物介紹 → 建築，每段一個滿版畫面（2026-11-28 擁有者：上方的三格專屬導覽列拿掉）。
          左右滑只留給同一段裡的多張照片（例如之後的建築照片一排）。 -->
     <section id="brand" class="fullscreen-section xcard xcard-photo dark-section" aria-label="品牌介紹">
-        <div class="brand-part" id="brand-part-story" aria-label="品牌故事">
+        <div class="brand-part" id="brand-part-story" role="region" aria-label="品牌故事">
             <div class="brand-carousel brand-part-frame">
                 <div class="brand-carousel-cards">
             <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-brand bcard-switch" data-position="center">
@@ -294,7 +294,7 @@
         </div>
         <!-- 人物介紹（2026-11-28 擁有者：目前預計兩位，用左右切換兩張卡；「認識團隊」按鈕拿掉；貓貓先拿掉）。
              要加人：複製一張 article、data-person 往下編，並在 js/script.js initBrandFlipCards 的 people 補背面資料。 -->
-        <div class="brand-part" id="brand-part-people" aria-label="人物介紹">
+        <div class="brand-part" id="brand-part-people" role="region" aria-label="人物介紹">
             <div class="brand-carousel brand-part-frame person-carousel" role="group" aria-label="人物卡片">
                 <div class="brand-carousel-cards">
                     <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-team bcard-switch bcard-person" data-person="0" data-position="center">
@@ -333,7 +333,7 @@
                 <span class="sr-only" role="status" aria-atomic="true"></span>
             </div>
         </div>
-        <div class="brand-part" id="brand-part-building" aria-label="建築">
+        <div class="brand-part" id="brand-part-building" role="region" aria-label="建築">
             <div class="brand-carousel brand-part-frame">
                 <div class="brand-carousel-cards">
             <article class="xpanel xpanel-rpg bcard bcard-building">
@@ -589,15 +589,15 @@
                     <p class="xcard-text">選你習慣的平台下單。</p>
                 </div>
                 <ul class="store-list" aria-label="購買平台">
-                    <li><a class="store-row is-locked" data-channel="shopee" aria-disabled="true">
+                    <li><a class="store-row is-locked" role="link" data-channel="shopee" aria-disabled="true">
                         <span class="store-info"><span class="store-tag">蝦皮</span><b>蝦皮購物</b><small>用蝦皮帳號直接下單。</small></span>
                         <span class="store-state"><span class="store-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>即將開放</span>
                     </a></li>
-                    <li><a class="store-row is-locked" data-channel="seven" aria-disabled="true">
+                    <li><a class="store-row is-locked" role="link" data-channel="seven" aria-disabled="true">
                         <span class="store-info"><span class="store-tag">7-ELEVEN</span><b>賣貨便</b><small>到 7-ELEVEN 門市取貨。</small></span>
                         <span class="store-state"><span class="store-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>即將開放</span>
                     </a></li>
-                    <li><a class="store-row is-locked" data-channel="family" aria-disabled="true">
+                    <li><a class="store-row is-locked" role="link" data-channel="family" aria-disabled="true">
                         <span class="store-info"><span class="store-tag">全家</span><b>好賣+</b><small>到全家門市取貨。</small></span>
                         <span class="store-state"><span class="store-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>即將開放</span>
                     </a></li>

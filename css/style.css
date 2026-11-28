@@ -9818,7 +9818,7 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 
 /* ===== 品牌區改成一頁往下排（2026-11-28 擁有者：左右滑藏起來的內容很少人看到）=====
    品牌故事 → 人物介紹 → 建築，每段各占一個畫面（卡片大小跟產品卡一樣），
-   #brand 自己不再留邊距，邊距改到每一段；最上面一排三個小按鈕，捲動時黏在上方，亮的是目前這段。 */
+   #brand 自己不再留邊距，邊距改到每一段；（上方專屬導覽列 2026-11-28 已拿掉）。 */
 #brand.xcard {
     padding: 0;
     scroll-snap-align: none;
@@ -9830,61 +9830,8 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
     scroll-snap-stop: always;
     scroll-margin-top: 0;
 }
-/* 品牌區專屬導覽列（2026-11-28 擁有者：三段要有獨立導覽列）：
-   固定在畫面上方、整條等寬三格（iOS 分段控制器），只在品牌區時出現，離開就淡出；底部主導覽列不變。 */
-.brand-jump {
-    --jump-h: 40px;
-    position: fixed;
-    top: max(calc(var(--card-top) - var(--jump-h) - 4px), calc(env(safe-area-inset-top) + 4px));
-    left: 50%;
-    z-index: 900;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    width: min(calc(100% - 2 * var(--card-gutter)), 400px);
-    height: var(--jump-h);
-    padding: 3px;
-    border-radius: 999px;
-    background: rgb(11 13 18 / 0.82);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    backdrop-filter: blur(16px) saturate(1.4);
-    box-shadow: inset 0 0 0 0.5px rgb(216 192 145 / 0.5), 0 8px 22px -8px rgb(0 0 0 / 0.8);
-    opacity: 0;
-    visibility: hidden;
-    translate: -50% -8px;
-    transition: opacity 0.3s var(--ease-out), translate 0.3s var(--ease-out), visibility 0s linear 0.3s;
-}
-.brand-jump.is-shown {
-    opacity: 1;
-    visibility: visible;
-    translate: -50% 0;
-    transition: opacity 0.3s var(--ease-out), translate 0.3s var(--ease-out), visibility 0s;
-}
-.brand-jump a {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    color: rgb(255 255 255 / 0.72);
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
-}
-.brand-jump a::before { content: ""; position: absolute; inset: -5px 0; }
-.brand-jump a[aria-current="true"] { background: var(--gold-soft); color: var(--x-night); font-weight: 700; }
-.brand-jump a:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
-@media (hover: hover) { .brand-jump a:not([aria-current="true"]):hover { color: #fff; } }
-@media (prefers-reduced-motion: reduce) { .brand-jump, .brand-jump.is-shown, .brand-jump a { transition: none; } }
-/* 建築卡：樓層表跟著畫面高度撐開，填掉樓層表和標題之間的空白 */
-@media (max-width: 1024px) {
-    .bcard-building .bcard-floors li { padding-block: clamp(10px, 2.4dvh, 24px); }
-}
 /* 品牌故事卡：三條重點改成一段話（2026-11-28 擁有者），卡片不翻面 */
-.bcard-intro { color: rgb(255 255 255 / 0.78); font-size: 16px; line-height: 1.85; text-wrap: pretty; }
+.bcard-intro { color: rgb(255 255 255 / 0.78); font-size: 16px; line-height: 1.85; }
 .bcard-brand.xpanel-rpg::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
 
 
