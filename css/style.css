@@ -9951,3 +9951,11 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 
 /* 產品卡外框也改成細金線（2026-11-28 擁有者：跟品牌、商城卡一致） */
 .product-carousel .xpanel::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+
+/* 2026-11-28 擁有者 iPhone 實機截圖：
+   1. 品牌卡說明文字被限制最寬 30em，右邊空一塊 → 拿掉限制，文字跟卡片內容一樣寬
+   2. iPhone 有瀏海時，品牌區專屬導覽列會壓到卡片頂端 → 品牌三段的上邊距至少留到導覽列下方 8px */
+.bcard .xcard-text { max-width: none; }
+@media (max-width: 1024px) {
+    .brand-part { --card-top: max(var(--sp-12), calc(env(safe-area-inset-top) + 52px)); }
+}
