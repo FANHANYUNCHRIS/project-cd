@@ -1974,25 +1974,11 @@ function initBrandFlipCards(carousel) {
     const towerLit = [['1F', '2F'], ['3F', '4F'], ['RF']];
     const backs = {
         // 品牌故事卡不翻面（2026-11-28 擁有者：該講的正面都講了，背面刪掉）
-        team: {
-            name: '角色', label: '角色介紹',
-            stage: '<img class="bcard-portrait" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async"><span class="bcard-portrait-empty" hidden>照片準備中</span>',
-            tip: '',
-            tabs: [
-                ['武裝神姬', [['user', '咖啡甜點專家', '工作職位'], ['shield', '戰鬥專家', '戰鬥職位'], ['sword', '武士刀×狙擊槍', '專用武器'], ['quote', '座右銘', '「用數據與匠心，重新定義這間店存在的意義。」', true]]],
-                ['強襲魔女', [['user', '代理店長×最強雜工', '工作職位'], ['shield', '移動基地', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「溫度差一度，風味就不再是那個風味。」', true]]],
-                ['貓貓', [['user', '招財貓', '工作職位'], ['shield', '偵查', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「每一次失敗的配方，都是下一次成功的線索。」', true]]]
-            ],
-            onSelect(card, i) {
-                const img = card.querySelector('.bcard-portrait');
-                const empty = card.querySelector('.bcard-portrait-empty');
-                img.hidden = false;
-                empty.hidden = true;
-                img.onerror = () => { img.hidden = true; empty.hidden = false; };
-                img.src = portraits[i];
-                img.classList.toggle('is-photo', i !== 0);
-            }
-        },
+        // 人物：一人一張卡（2026-11-28 擁有者：兩位，左右切換），背面只放這個人的四列，不用膠囊
+        people: [
+            ['武裝神姬', [['user', '咖啡甜點專家', '工作職位'], ['shield', '戰鬥專家', '戰鬥職位'], ['sword', '武士刀×狙擊槍', '專用武器'], ['quote', '座右銘', '「用數據與匠心，重新定義這間店存在的意義。」', true]]],
+            ['強襲魔女', [['user', '代理店長×最強雜工', '工作職位'], ['shield', '移動基地', '戰鬥職位'], ['car', '車', '專用武器'], ['quote', '座右銘', '「溫度差一度，風味就不再是那個風味。」', true]]]
+        ],
         building: {
             name: '建築', label: '大樓介紹',
             stage: `<div class="bcard-tower">${towerFloors.map(f => `<span data-floor="${f}"><b>${f}</b></span>`).join('')}</div>`,
@@ -2009,10 +1995,28 @@ function initBrandFlipCards(carousel) {
     };
 
     carousel.querySelectorAll('article.bcard').forEach(front => {
-        const key = Object.keys(backs).find(k => front.classList.contains('bcard-' + k));
-        if (!key) return; // 沒有背面資料的卡（品牌故事）維持單面
-        const d = backs[key];
-        const id = 'bcard-' + key;
+        let key = Object.keys(backs).find(k => front.classList.contains('bcard-' + k));
+        let d = backs[key];
+        let id = 'bcard-' + key;
+        if (front.classList.contains('bcard-person')) {
+            const n = Number(front.dataset.person);
+            const [pname, rows] = backs.people[n];
+            const img = front.querySelector('.bcard-person-img');
+            key = 'team';
+            id = 'bcard-person-' + n;
+            d = {
+                name: pname, label: pname + '介紹', tip: '',
+                stage: `<img class="bcard-portrait${img.classList.contains('is-photo') ? ' is-photo' : ''}" src="${img.getAttribute('src')}" alt="" width="789" height="960" decoding="async"><span class="bcard-portrait-empty" hidden>照片準備中</span>`,
+                tabs: [[pname, rows]],
+                onSelect(card) {
+                    const im = card.querySelector('.bcard-portrait');
+                    const empty = card.querySelector('.bcard-portrait-empty');
+                    im.onerror = () => { im.hidden = true; empty.hidden = false; };
+                    if (im.complete && !im.naturalWidth) im.onerror();
+                }
+            };
+        }
+        if (!d) return; // 沒有背面資料的卡（品牌故事）維持單面
 
         // 正面原本就是一張換卡用的卡片：把「換卡」的身分（位置、inert）移到外層 .pcard
         const card = document.createElement('div');
@@ -2041,7 +2045,7 @@ function initBrandFlipCards(carousel) {
                 <div class="pcard-lower">
                     ${d.tabs.map(([, rows], i) => `<section class="pcard-sheet${i === 0 ? ' is-active' : ''}" role="tabpanel" id="${id}-sheet-${i}" aria-labelledby="${id}-pill-${i}"${i === 0 ? '' : ' aria-hidden="true"'}><ul class="pcard-rows">${rows.map(row).join('')}</ul></section>`).join('')}
                 </div>
-                <div class="pcard-pills" role="tablist" aria-label="${d.label}">
+                <div class="pcard-pills" role="tablist" aria-label="${d.label}"${d.tabs.length < 2 ? ' hidden' : ''}>
                     ${d.tabs.map(([name], i) => `<button type="button" class="pcard-pill" role="tab" id="${id}-pill-${i}" aria-controls="${id}-sheet-${i}" aria-selected="${i === 0}"${i === 0 ? '' : ' tabindex="-1"'}>${name}</button>`).join('')}
                 </div>
                 <button type="button" class="pcard-flip-hint pcard-to-front">點卡片回正面${flipIcon}</button>
@@ -2109,5 +2113,15 @@ function initBrandFlipCards(carousel) {
     const brand = document.getElementById('brand');
     if (!brand) return;
     initBcardSwitch(brand);
+    // 人物照片還沒有（team-2.jpg 等）就顯示「照片準備中」
+    brand.querySelectorAll('.bcard-person .bcard-person-img').forEach(img => {
+        const empty = img.parentElement.querySelector('.bcard-person-empty');
+        const fail = () => { img.hidden = true; if (empty) empty.hidden = false; };
+        img.addEventListener('error', fail);
+        if (img.complete && !img.naturalWidth) fail();
+    });
     initBrandFlipCards(brand);
+    // 人物兩張卡左右切換（跟產品卡同一套：手指左右滑或點金色三角，不繞回）
+    const people = brand.querySelector('.person-carousel');
+    if (people) initCardCarousel(people, { ignore: 'input', capture: false, loop: false });
 })();

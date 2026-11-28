@@ -10007,3 +10007,8 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
     text-align: justify;
     text-wrap: wrap;
 }
+
+/* 人物介紹改成兩張卡左右切換（2026-11-28 擁有者）：名字用大字，拿掉分段鈕和「認識團隊」按鈕 */
+.bcard-member-name { margin: 0; font-family: 'Noto Serif TC', serif; font-size: 30px; font-weight: 900; line-height: 1.25; color: #fff; }
+.bcard-person .bcard-member-job { font-size: 18px; color: rgb(255 255 255 / 0.9); }
+.pcard-pills[hidden] { display: none !important; }

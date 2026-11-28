@@ -115,11 +115,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261128-fix7">
+    <link rel="stylesheet" href="css/style.css?v=20261128-people2">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261128-fix7" defer></script>
-    <script src="js/script.js?v=20261128-fix7" defer></script>
+    <script src="js/pineapple-model.js?v=20261128-people2" defer></script>
+    <script src="js/script.js?v=20261128-people2" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -129,9 +129,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261128-fix7" defer></script>
-    <script src="js/member.js?v=20261128-fix7" defer></script>
-    <script src="js/pagination.js?v=20261128-fix7" defer></script>
+    <script src="js/demo-login.js?v=20261128-people2" defer></script>
+    <script src="js/member.js?v=20261128-people2" defer></script>
+    <script src="js/pagination.js?v=20261128-people2" defer></script>
 </head>
 
 <body>
@@ -292,41 +292,45 @@
                 </div>
             </div>
         </div>
+        <!-- 人物介紹（2026-11-28 擁有者：目前預計兩位，用左右切換兩張卡；「認識團隊」按鈕拿掉；貓貓先拿掉）。
+             要加人：複製一張 article、data-person 往下編，並在 js/script.js initBrandFlipCards 的 people 補背面資料。 -->
         <div class="brand-part" id="brand-part-people" aria-label="人物介紹">
-            <div class="brand-carousel brand-part-frame">
+            <div class="brand-carousel brand-part-frame person-carousel" role="group" aria-label="人物卡片">
                 <div class="brand-carousel-cards">
-            <article class="xpanel xpanel-rpg bcard bcard-team bcard-switch">
-                <div class="bcard-stage-top bcard-people">
-                    <img class="bcard-person-img" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async">
-                    <span class="bcard-person-empty" hidden>照片準備中</span>
-                    <h2 class="xcard-title bcard-vtitle">人物介紹</h2>
+                    <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-team bcard-switch bcard-person" data-person="0" data-position="center">
+                        <div class="bcard-stage-top bcard-people">
+                            <img class="bcard-person-img" src="images/staff01-nobg.webp" alt="武裝神姬" width="789" height="960" decoding="async">
+                            <span class="bcard-person-empty" hidden>照片準備中</span>
+                            <h2 class="xcard-title bcard-vtitle">人物介紹</h2>
+                        </div>
+                        <div class="xcard-body">
+                            <div class="xcard-copy">
+                                <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>人物<span class="xcard-eyebrow-en" lang="en">1 / 2</span></p>
+                                <h3 class="bcard-member-name">武裝神姬</h3>
+                                <p class="bcard-member-job">咖啡甜點專家<small>戰鬥專家・武士刀×狙擊槍</small></p>
+                                <p class="bcard-member-quote">「用數據與匠心，重新定義這間店存在的意義。」</p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-team bcard-switch bcard-person" data-person="1" data-position="right" inert>
+                        <div class="bcard-stage-top bcard-people">
+                            <img class="bcard-person-img is-photo" src="images/team-2.jpg" alt="強襲魔女" width="789" height="960" decoding="async">
+                            <span class="bcard-person-empty" hidden>照片準備中</span>
+                            <h2 class="xcard-title bcard-vtitle">人物介紹</h2>
+                        </div>
+                        <div class="xcard-body">
+                            <div class="xcard-copy">
+                                <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>人物<span class="xcard-eyebrow-en" lang="en">2 / 2</span></p>
+                                <h3 class="bcard-member-name">強襲魔女</h3>
+                                <p class="bcard-member-job">代理店長×最強雜工<small>移動基地・車</small></p>
+                                <p class="bcard-member-quote">「溫度差一度，風味就不再是那個風味。」</p>
+                            </div>
+                        </div>
+                    </article>
                 </div>
-                <div class="xcard-body">
-                    <div class="xcard-copy">
-                        <div class="bcard-seg bcard-seg-3" role="group" aria-label="切換人物">
-                            <button type="button" aria-pressed="true" data-img="images/staff01-nobg.webp">武裝神姬</button>
-                            <button type="button" aria-pressed="false" data-img="images/team-2.jpg">強襲魔女</button>
-                            <button type="button" aria-pressed="false" data-img="images/team-3.jpg">貓貓</button>
-                        </div>
-                        <div class="bcard-member" data-pane="0">
-                            <p class="bcard-member-job">咖啡甜點專家<small>戰鬥專家・武士刀×狙擊槍</small></p>
-                            <p class="bcard-member-quote">「用數據與匠心，重新定義這間店存在的意義。」</p>
-                        </div>
-                        <div class="bcard-member" data-pane="1" hidden>
-                            <p class="bcard-member-job">代理店長×最強雜工<small>移動基地・車</small></p>
-                            <p class="bcard-member-quote">「溫度差一度，風味就不再是那個風味。」</p>
-                        </div>
-                        <div class="bcard-member" data-pane="2" hidden>
-                            <p class="bcard-member-job">招財貓<small>偵查・車</small></p>
-                            <p class="bcard-member-quote">「每一次失敗的配方，都是下一次成功的線索。」</p>
-                        </div>
-                        <div class="xcard-actions">
-                            <button type="button" class="xbtn xbtn-solid" id="brand-team-open">認識團隊</button>
-                        </div>
-                    </div>
-                </div>
-            </article>
-                </div>
+                <button class="brand-carousel-arrow" type="button" data-step="-1" aria-label="上一位" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                <button class="brand-carousel-arrow" type="button" data-step="1" aria-label="下一位" hidden><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                <span class="sr-only" role="status" aria-atomic="true"></span>
             </div>
         </div>
         <div class="brand-part" id="brand-part-building" aria-label="建築">
