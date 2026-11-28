@@ -9814,3 +9814,59 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 .shop-doors:not(:has(.shop-door:not(.is-main):not([hidden]))) { grid-template-columns: 1fr; }
 .shop-doors:not(:has(.shop-door:not(.is-main):not([hidden]))) .shop-door.is-main { grid-column: 1 / -1; }
 .shop-note > span { white-space: nowrap; }
+
+
+/* ===== 品牌區改成一頁往下排（2026-11-28 擁有者：左右滑藏起來的內容很少人看到）=====
+   品牌故事 → 人物介紹 → 建築，每段各占一個畫面（卡片大小跟產品卡一樣），
+   #brand 自己不再留邊距，邊距改到每一段；最上面一排三個小按鈕，捲動時黏在上方，亮的是目前這段。 */
+#brand.xcard {
+    padding: 0;
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+}
+.brand-part {
+    padding: var(--card-top) var(--card-right) var(--card-bottom) var(--card-left);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-margin-top: 0;
+}
+.brand-jump {
+    --jump-h: 36px;
+    position: sticky;
+    top: max(calc(var(--card-top) - var(--jump-h) - 6px), calc(env(safe-area-inset-top) + 4px));
+    z-index: 6;
+    display: flex;
+    gap: 2px;
+    width: max-content;
+    height: var(--jump-h);
+    margin: 0 auto calc(var(--jump-h) * -1);
+    padding: 3px;
+    border-radius: 999px;
+    background: rgb(11 13 18 / 0.78);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: inset 0 0 0 0.5px rgb(216 192 145 / 0.45), 0 6px 18px -6px rgb(0 0 0 / 0.7);
+}
+.brand-jump a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--sp-4);
+    border-radius: 999px;
+    color: rgb(255 255 255 / 0.72);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+}
+.brand-jump a::before { content: ""; position: absolute; inset: -7px 0; }
+.brand-jump a[aria-current="true"] { background: var(--gold-soft); color: var(--x-night); font-weight: 700; }
+.brand-jump a:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+@media (hover: hover) { .brand-jump a:not([aria-current="true"]):hover { color: #fff; } }
+@media (prefers-reduced-motion: reduce) { .brand-jump a { transition: none; } }
+/* 建築卡：樓層表跟著畫面高度撐開，填掉樓層表和標題之間的空白 */
+@media (max-width: 1024px) {
+    .bcard-building .bcard-floors li { padding-block: clamp(10px, 2.4dvh, 24px); }
+}

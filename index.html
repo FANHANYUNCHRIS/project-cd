@@ -115,11 +115,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261128-fix1">
+    <link rel="stylesheet" href="css/style.css?v=20261128-brand2">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261128-fix1" defer></script>
-    <script src="js/script.js?v=20261128-fix1" defer></script>
+    <script src="js/pineapple-model.js?v=20261128-brand2" defer></script>
+    <script src="js/script.js?v=20261128-brand2" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -129,9 +129,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261128-fix1" defer></script>
-    <script src="js/member.js?v=20261128-fix1" defer></script>
-    <script src="js/pagination.js?v=20261128-fix1" defer></script>
+    <script src="js/demo-login.js?v=20261128-brand2" defer></script>
+    <script src="js/member.js?v=20261128-brand2" defer></script>
+    <script src="js/pagination.js?v=20261128-brand2" defer></script>
 </head>
 
 <body>
@@ -263,97 +263,113 @@
          依 productsData 動態產生對應數量的 <section>，取代這個佔位元素 -->
     <div id="products-placeholder"></div>
 
-    <!-- 品牌卡（2026-11-23 聖誕改版）：整頁一張卡，照片當背景，故事寫在卡片上。
-         團隊（RPG 隊伍選單）改到「認識團隊」彈窗；虛擬大樓直接開 building/index.html。 -->
+    <!-- 品牌區（2026-11-28 擁有者：左右滑藏起來的內容很少人看到，改成一頁往下排）：
+         品牌故事 → 人物介紹 → 建築，每段一個滿版畫面；最上面三個小按鈕跳到那一段。
+         左右滑只留給同一段裡的多張照片（例如之後的建築照片一排）。 -->
     <section id="brand" class="fullscreen-section xcard xcard-photo dark-section" aria-label="品牌介紹">
-        <div class="brand-carousel" role="group" aria-label="品牌卡片">
-            <div class="brand-carousel-cards">
-                <!-- 品牌區三張卡（2026-11-25 擁有者：品牌、角色、建築，照產品卡的黑金卡做） -->
-                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-brand bcard-switch" data-position="center">
-                    <div class="bcard-stage-top">
-                        <div class="bcard-logos">
-                            <img class="bcard-logo-img" data-pane="0" src="images/unicorn-logo-white.png" alt="Project.CD 獨角獸標誌" width="512" height="512" decoding="async">
-                            <img class="bcard-logo-img" data-pane="1" src="images/cd-logo-white.png" alt="Project.CD 的 CD 標誌" width="512" height="430" decoding="async" hidden>
-                        </div>
-                        <div class="bcard-seg" role="group" aria-label="切換標誌">
-                            <button type="button" aria-pressed="true">獨角獸</button>
-                            <button type="button" aria-pressed="false">CD</button>
-                        </div>
+        <nav class="brand-jump" aria-label="品牌區段落">
+            <a href="#brand-part-story" aria-current="true">品牌故事</a>
+            <a href="#brand-part-people">人物介紹</a>
+            <a href="#brand-part-building">建築</a>
+        </nav>
+        <div class="brand-part" id="brand-part-story" aria-label="品牌故事">
+            <div class="brand-carousel brand-part-frame">
+                <div class="brand-carousel-cards">
+            <article class="xpanel xpanel-rpg bcard bcard-brand bcard-switch">
+                <div class="bcard-stage-top">
+                    <div class="bcard-logos">
+                        <img class="bcard-logo-img" data-pane="0" src="images/unicorn-logo-white.png" alt="Project.CD 獨角獸標誌" width="512" height="512" decoding="async">
+                        <img class="bcard-logo-img" data-pane="1" src="images/cd-logo-white.png" alt="Project.CD 的 CD 標誌" width="512" height="430" decoding="async" hidden>
                     </div>
-                    <div class="xcard-body">
-                        <div class="xcard-copy">
-                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>品牌<span class="xcard-eyebrow-en" lang="en">BRAND</span></p>
-                            <h2 id="brand-title" class="xcard-title">用理論，<br>烤一顆鳳梨酥。</h2>
-                            <ul class="bcard-points">
-                                <li><b>理論派烘焙</b><span>讀文獻、算比例、記溫度，用做研究的方式做甜點。</span></li>
-                                <li><b>一人品牌</b><span>從研發、烘烤到包裝出貨，全部親手包辦。</span></li>
-                                <li><b>C 與 D</b><span>Coffee 咖啡、Dessert 甜點，名字就是我們最愛的兩件事。</span></li>
-                            </ul>
-                        </div>
+                    <div class="bcard-seg" role="group" aria-label="切換標誌">
+                        <button type="button" aria-pressed="true">獨角獸</button>
+                        <button type="button" aria-pressed="false">CD</button>
                     </div>
-                </article>
-                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-team bcard-switch" data-position="right" inert>
-                    <div class="bcard-stage-top bcard-people">
-                        <img class="bcard-person-img" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async">
-                        <span class="bcard-person-empty" hidden>照片準備中</span>
-                        <h2 class="xcard-title bcard-vtitle">人物介紹</h2>
+                </div>
+                <div class="xcard-body">
+                    <div class="xcard-copy">
+                        <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>品牌<span class="xcard-eyebrow-en" lang="en">BRAND</span></p>
+                        <h2 id="brand-title" class="xcard-title">用理論，<br>烤一顆鳳梨酥。</h2>
+                        <ul class="bcard-points">
+                            <li><b>理論派烘焙</b><span>讀文獻、算比例、記溫度，用做研究的方式做甜點。</span></li>
+                            <li><b>一人品牌</b><span>從研發、烘烤到包裝出貨，全部親手包辦。</span></li>
+                            <li><b>C 與 D</b><span>Coffee 咖啡、Dessert 甜點，名字就是我們最愛的兩件事。</span></li>
+                        </ul>
                     </div>
-                    <div class="xcard-body">
-                        <div class="xcard-copy">
-                            <div class="bcard-seg bcard-seg-3" role="group" aria-label="切換人物">
-                                <button type="button" aria-pressed="true" data-img="images/staff01-nobg.webp">武裝神姬</button>
-                                <button type="button" aria-pressed="false" data-img="images/team-2.jpg">強襲魔女</button>
-                                <button type="button" aria-pressed="false" data-img="images/team-3.jpg">貓貓</button>
-                            </div>
-                            <div class="bcard-member" data-pane="0">
-                                <p class="bcard-member-job">咖啡甜點專家<small>戰鬥專家・武士刀×狙擊槍</small></p>
-                                <p class="bcard-member-quote">「用數據與匠心，重新定義這間店存在的意義。」</p>
-                            </div>
-                            <div class="bcard-member" data-pane="1" hidden>
-                                <p class="bcard-member-job">代理店長×最強雜工<small>移動基地・車</small></p>
-                                <p class="bcard-member-quote">「溫度差一度，風味就不再是那個風味。」</p>
-                            </div>
-                            <div class="bcard-member" data-pane="2" hidden>
-                                <p class="bcard-member-job">招財貓<small>偵查・車</small></p>
-                                <p class="bcard-member-quote">「每一次失敗的配方，都是下一次成功的線索。」</p>
-                            </div>
-                            <div class="xcard-actions">
-                                <button type="button" class="xbtn xbtn-solid" id="brand-team-open">認識團隊</button>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="xpanel xpanel-rpg brand-carousel-card bcard bcard-building" data-position="left" inert>
-                    <div class="xcard-bg xcard-bg-building" aria-hidden="true">
-                        <ol class="bcard-floors">
-                            <li><b>RF</b>空中花園</li>
-                            <li><b>4F</b>辦公室</li>
-                            <li><b>3F</b>甜點咖啡教室</li>
-                            <li><b>2F</b>甜點製作・咖啡烘豆</li>
-                            <li><b>1F</b>咖啡甜點</li>
-                        </ol>
-                    </div>
-                    <div class="rpg-card-head" aria-hidden="true"><span class="rpg-card-no">No.003</span></div>
-                    <div class="xcard-body">
-                        <div class="xcard-copy">
-                            <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>建築<span class="xcard-eyebrow-en" lang="en">BUILDING</span></p>
-                            <h2 class="xcard-title">咖啡大樓</h2>
-                            <p class="xcard-text">一棟可以自己轉動、一層一層逛的 3D 咖啡大樓。</p>
-                            <dl class="rpg-card-stats">
-                                <div><dt>樓層</dt><dd class="rpg-card-num">5<small>層</small></dd></div>
-                                <div><dt>頂樓</dt><dd>空中花園</dd></div>
-                                <div><dt>玩法</dt><dd>拖曳轉動</dd></div>
-                            </dl>
-                            <div class="xcard-actions">
-                                <a class="xbtn xbtn-solid" href="building/index.html">逛虛擬大樓</a>
-                            </div>
-                        </div>
-                    </div>
-                </article>
+                </div>
+            </article>
+                </div>
             </div>
-            <button class="brand-carousel-arrow" type="button" data-step="-1" aria-label="上一張品牌卡片" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-            <button class="brand-carousel-arrow" type="button" data-step="1" aria-label="下一張品牌卡片" hidden><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-            <span class="sr-only" role="status" aria-atomic="true"></span>
+        </div>
+        <div class="brand-part" id="brand-part-people" aria-label="人物介紹">
+            <div class="brand-carousel brand-part-frame">
+                <div class="brand-carousel-cards">
+            <article class="xpanel xpanel-rpg bcard bcard-team bcard-switch">
+                <div class="bcard-stage-top bcard-people">
+                    <img class="bcard-person-img" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async">
+                    <span class="bcard-person-empty" hidden>照片準備中</span>
+                    <h2 class="xcard-title bcard-vtitle">人物介紹</h2>
+                </div>
+                <div class="xcard-body">
+                    <div class="xcard-copy">
+                        <div class="bcard-seg bcard-seg-3" role="group" aria-label="切換人物">
+                            <button type="button" aria-pressed="true" data-img="images/staff01-nobg.webp">武裝神姬</button>
+                            <button type="button" aria-pressed="false" data-img="images/team-2.jpg">強襲魔女</button>
+                            <button type="button" aria-pressed="false" data-img="images/team-3.jpg">貓貓</button>
+                        </div>
+                        <div class="bcard-member" data-pane="0">
+                            <p class="bcard-member-job">咖啡甜點專家<small>戰鬥專家・武士刀×狙擊槍</small></p>
+                            <p class="bcard-member-quote">「用數據與匠心，重新定義這間店存在的意義。」</p>
+                        </div>
+                        <div class="bcard-member" data-pane="1" hidden>
+                            <p class="bcard-member-job">代理店長×最強雜工<small>移動基地・車</small></p>
+                            <p class="bcard-member-quote">「溫度差一度，風味就不再是那個風味。」</p>
+                        </div>
+                        <div class="bcard-member" data-pane="2" hidden>
+                            <p class="bcard-member-job">招財貓<small>偵查・車</small></p>
+                            <p class="bcard-member-quote">「每一次失敗的配方，都是下一次成功的線索。」</p>
+                        </div>
+                        <div class="xcard-actions">
+                            <button type="button" class="xbtn xbtn-solid" id="brand-team-open">認識團隊</button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+                </div>
+            </div>
+        </div>
+        <div class="brand-part" id="brand-part-building" aria-label="建築">
+            <div class="brand-carousel brand-part-frame">
+                <div class="brand-carousel-cards">
+            <article class="xpanel xpanel-rpg bcard bcard-building">
+                <div class="xcard-bg xcard-bg-building" aria-hidden="true">
+                    <ol class="bcard-floors">
+                        <li><b>RF</b>空中花園</li>
+                        <li><b>4F</b>辦公室</li>
+                        <li><b>3F</b>甜點咖啡教室</li>
+                        <li><b>2F</b>甜點製作・咖啡烘豆</li>
+                        <li><b>1F</b>咖啡甜點</li>
+                    </ol>
+                </div>
+                <div class="rpg-card-head" aria-hidden="true"><span class="rpg-card-no">No.003</span></div>
+                <div class="xcard-body">
+                    <div class="xcard-copy">
+                        <p class="xcard-eyebrow"><span class="xcard-eyebrow-no">02</span>建築<span class="xcard-eyebrow-en" lang="en">BUILDING</span></p>
+                        <h2 class="xcard-title">咖啡大樓</h2>
+                        <p class="xcard-text">一棟可以自己轉動、一層一層逛的 3D 咖啡大樓。</p>
+                        <dl class="rpg-card-stats">
+                            <div><dt>樓層</dt><dd class="rpg-card-num">5<small>層</small></dd></div>
+                            <div><dt>頂樓</dt><dd>空中花園</dd></div>
+                            <div><dt>玩法</dt><dd>拖曳轉動</dd></div>
+                        </dl>
+                        <div class="xcard-actions">
+                            <a class="xbtn xbtn-solid" href="building/index.html">逛虛擬大樓</a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+                </div>
+            </div>
         </div>
     </section>
 

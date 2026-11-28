@@ -2025,7 +2025,7 @@ function initBrandFlipCards(carousel) {
         // 正面原本就是一張換卡用的卡片：把「換卡」的身分（位置、inert）移到外層 .pcard
         const card = document.createElement('div');
         card.className = 'pcard brand-carousel-card bcard-flip';
-        card.dataset.position = front.dataset.position;
+        card.dataset.position = front.dataset.position || 'center';
         card.inert = front.inert;
         front.classList.remove('brand-carousel-card');
         front.removeAttribute('data-position');
@@ -2109,11 +2109,31 @@ function initBrandFlipCards(carousel) {
     });
 }
 
-(function initBrandCarousel() {
-    const carousel = document.querySelector('.brand-carousel:not(.product-carousel)');
-    if (!carousel) return;
-    initBcardSwitch(carousel);
-    initBrandFlipCards(carousel);
-    // 跟產品卡一樣不鎖定指標（會吃掉翻面點擊），從按鈕上開始滑也能換卡
-    initCardCarousel(carousel, { ignore: 'input', capture: false });
+/* 品牌區（2026-11-28 擁有者：改成一頁往下排）：品牌故事 → 人物介紹 → 建築，
+   不再左右換卡。上方三個小按鈕跳到那一段，捲到哪段就亮哪顆（IntersectionObserver，不用 scroll 事件）。 */
+(function initBrandStack() {
+    const brand = document.getElementById('brand');
+    if (!brand) return;
+    initBcardSwitch(brand);
+    initBrandFlipCards(brand);
+
+    const links = [...brand.querySelectorAll('.brand-jump a')];
+    const parts = links.map(a => document.querySelector(a.getAttribute('href')));
+    const mark = id => links.forEach(a => {
+        if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+    });
+    links.forEach((a, i) => a.addEventListener('click', e => {
+        if (!parts[i]) return;
+        e.preventDefault();
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        parts[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        mark(parts[i].id);
+    }));
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(en => { if (en.isIntersecting) mark(en.target.id); });
+        }, { rootMargin: '-45% 0px -45% 0px' });
+        parts.forEach(p => p && io.observe(p));
+    }
 })();
