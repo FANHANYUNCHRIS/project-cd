@@ -9723,8 +9723,8 @@ body:has(.modal-overlay.active) .hero-snowflake { animation-play-state: paused; 
 .bcard-member-job { margin: 0; font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 700; color: #fff; }
 .bcard-member-job small { display: block; margin-top: 2px; font-family: 'Noto Sans TC', sans-serif; font-size: 13px; font-weight: 400; color: rgb(255 255 255 / 0.55); letter-spacing: 0.04em; }
 .bcard-member-quote { margin: var(--sp-2) 0 0; font-size: 14px; line-height: 1.6; color: var(--gold-soft); }
-/* 箭頭移到上半部展示區的高度，不壓到下面的文字 */
-#brand .brand-carousel-arrow:not([hidden]) { top: 32%; }
+/* 箭頭一律在卡片正中間的左右（擁有者 2026-11-28） */
+#brand .brand-carousel-arrow:not([hidden]) { top: 50%; }
 /* 電腦版：展示區在左、文字在右 */
 @media (min-width: 1025px) {
     .bcard.bcard-switch { flex-direction: row; align-items: stretch; }
@@ -9832,7 +9832,7 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 }
 /* 品牌故事卡：三條重點改成一段話（2026-11-28 擁有者），卡片不翻面 */
 .bcard-intro { color: rgb(255 255 255 / 0.78); font-size: 16px; line-height: 1.85; }
-.bcard-brand.xpanel-rpg::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+.bcard-brand.xpanel-rpg::after, .bcard-person.xpanel-rpg::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
 
 
 /* ===== 道具屋重新設計（2026-11-28 擁有者：不要背景圖，只放蝦皮、7-ELEVEN、全家三個連結和說明）=====
@@ -9959,3 +9959,37 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 .bcard-member-name { margin: 0; font-family: 'Noto Serif TC', serif; font-size: 30px; font-weight: 900; line-height: 1.25; color: #fff; }
 .bcard-person .bcard-member-job { font-size: 18px; color: rgb(255 255 255 / 0.9); }
 .pcard-pills[hidden] { display: none !important; }
+
+/* ===== 虛擬咖啡甜點店卡（2026-11-28 擁有者：取代咖啡大樓樓層卡，只放一張圖＋標題） ===== */
+.xpanel.xpanel-rpg.bcard-vshop {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    background: rgb(6 7 14); /* 跟插畫底色一樣，圖和卡片接在一起看不出邊 */
+}
+/* 圖吃掉文字以外的所有高度並填滿（cover）；圖是 9:16 的整面店內景，手機幾乎不裁，電腦橫卡裁上下、留中段吧台 */
+.bcard-vshop-img {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 55%;
+}
+.bcard-vshop-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-6) var(--sp-6);
+}
+.bcard-vshop-copy .xcard-eyebrow,
+.bcard-vshop-copy .xcard-title { margin: 0; }
+.bcard-vshop.xpanel-rpg::after { z-index: 2; box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+
+/* 人物卡：名稱、職稱、基本介紹（2026-11-28 擁有者） */
+.bcard-member-intro { margin: var(--sp-2) 0 0; font-size: 15px; line-height: 1.75; color: rgb(255 255 255 / 0.78); text-align: justify; }
+/* 標題跟品牌故事、人物卡一樣是右上角直排（不讓文字區當定位基準，標題才會對到整張卡） */
+.bcard.bcard-vshop .xcard-title { max-height: none; white-space: nowrap; }
+.bcard-vshop-copy > :not(.xcard-title) { position: relative; z-index: 2; }
