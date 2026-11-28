@@ -2104,35 +2104,10 @@ function initBrandFlipCards(carousel) {
 /* 品牌區（2026-11-28 擁有者：改成一頁往下排）：品牌故事 → 人物介紹 → 建築，
    不再左右換卡。上方三個小按鈕跳到那一段，捲到哪段就亮哪顆（IntersectionObserver，不用 scroll 事件）。 */
 (function initBrandStack() {
+    // 品牌區：品牌故事 → 人物介紹 → 建築往下排。上方的專屬導覽列 2026-11-28 擁有者要求拿掉
+    //（手機自由捲動時它會浮在卡片上、蓋住卡片）。
     const brand = document.getElementById('brand');
     if (!brand) return;
     initBcardSwitch(brand);
     initBrandFlipCards(brand);
-
-    const links = [...brand.querySelectorAll('.brand-jump a')];
-    const parts = links.map(a => document.querySelector(a.getAttribute('href')));
-    const mark = id => links.forEach(a => {
-        if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true');
-        else a.removeAttribute('aria-current');
-    });
-    links.forEach((a, i) => a.addEventListener('click', e => {
-        if (!parts[i]) return;
-        e.preventDefault();
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        parts[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-        mark(parts[i].id);
-    }));
-    if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver(entries => {
-            entries.forEach(en => { if (en.isIntersecting) mark(en.target.id); });
-        }, { rootMargin: '-45% 0px -45% 0px' });
-        parts.forEach(p => p && io.observe(p));
-        // 專屬導覽列只在品牌區佔住畫面頂端時出現（2026-11-28 擁有者：原本品牌區過畫面中線就出現，
-        // 產品卡、商城卡還在畫面上時也會跑出來）。改成看畫面最上面那條線：品牌區蓋住它才顯示。
-        const bar = brand.querySelector('.brand-jump');
-        new IntersectionObserver(([en]) => bar.classList.toggle('is-shown', en.isIntersecting),
-            { rootMargin: '-2px 0px -98% 0px' }).observe(brand);
-    } else {
-        brand.querySelector('.brand-jump').classList.add('is-shown');
-    }
 })();

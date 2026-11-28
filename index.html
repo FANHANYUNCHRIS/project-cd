@@ -115,11 +115,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css?v=20261128-fix6">
+    <link rel="stylesheet" href="css/style.css?v=20261128-fix7">
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-    <script src="js/pineapple-model.js?v=20261128-fix6" defer></script>
-    <script src="js/script.js?v=20261128-fix6" defer></script>
+    <script src="js/pineapple-model.js?v=20261128-fix7" defer></script>
+    <script src="js/script.js?v=20261128-fix7" defer></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=League+Spartan:wght@600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -129,9 +129,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
     <script src="js/firebase-config.js" defer></script>
-    <script src="js/demo-login.js?v=20261128-fix6" defer></script>
-    <script src="js/member.js?v=20261128-fix6" defer></script>
-    <script src="js/pagination.js?v=20261128-fix6" defer></script>
+    <script src="js/demo-login.js?v=20261128-fix7" defer></script>
+    <script src="js/member.js?v=20261128-fix7" defer></script>
+    <script src="js/pagination.js?v=20261128-fix7" defer></script>
 </head>
 
 <body>
@@ -264,14 +264,9 @@
     <div id="products-placeholder"></div>
 
     <!-- 品牌區（2026-11-28 擁有者：左右滑藏起來的內容很少人看到，改成一頁往下排）：
-         品牌故事 → 人物介紹 → 建築，每段一個滿版畫面；最上面三個小按鈕跳到那一段。
+         品牌故事 → 人物介紹 → 建築，每段一個滿版畫面（2026-11-28 擁有者：上方的三格專屬導覽列拿掉）。
          左右滑只留給同一段裡的多張照片（例如之後的建築照片一排）。 -->
     <section id="brand" class="fullscreen-section xcard xcard-photo dark-section" aria-label="品牌介紹">
-        <nav class="brand-jump" aria-label="品牌區段落">
-            <a href="#brand-part-story" aria-current="true">品牌故事</a>
-            <a href="#brand-part-people">人物介紹</a>
-            <a href="#brand-part-building">建築</a>
-        </nav>
         <div class="brand-part" id="brand-part-story" aria-label="品牌故事">
             <div class="brand-carousel brand-part-frame">
                 <div class="brand-carousel-cards">

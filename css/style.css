@@ -9956,9 +9956,7 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
    1. 品牌卡說明文字被限制最寬 30em，右邊空一塊 → 拿掉限制，文字跟卡片內容一樣寬
    2. iPhone 有瀏海時，品牌區專屬導覽列會壓到卡片頂端 → 品牌三段的上邊距至少留到導覽列下方 8px */
 .bcard .xcard-text { max-width: none; }
-@media (max-width: 1024px) {
-    .brand-part { --card-top: max(var(--sp-12), calc(env(safe-area-inset-top) + 52px)); }
-}
+/* （品牌區專屬導覽列已拿掉，品牌三段的上邊距回到跟其他卡一樣） */
 
 /* 2026-11-28 模擬 iPhone（瀏海 59px、底部 34px、Safari 可視高度約 760）檢查全部卡片：
    產品、人物、建築三張卡的背面內容不能縮（展示區最少 150px），卡片被撐高、跑到底部導覽列下面。
