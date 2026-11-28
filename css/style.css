@@ -9993,3 +9993,7 @@ a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 /* 標題跟品牌故事、人物卡一樣是右上角直排（不讓文字區當定位基準，標題才會對到整張卡） */
 .bcard.bcard-vshop .xcard-title { max-height: none; white-space: nowrap; }
 .bcard-vshop-copy > :not(.xcard-title) { position: relative; z-index: 2; }
+/* 七個字的直排標題：矮手機自動縮字，不撞到下面的小標和按鈕（Gemini 審查提醒） */
+@media (max-width: 1024px) {
+    .bcard.bcard-vshop .xcard-title { font-size: clamp(24px, calc((100dvh - 340px) / 8.6), 34px); }
+}

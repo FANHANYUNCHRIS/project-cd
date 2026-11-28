@@ -1795,7 +1795,7 @@ function initCardCarousel(carousel, { ignore = 'a, button', capture = true, loop
             card.inert = index !== current;
         });
         arrows.forEach(arrow => arrow.classList.toggle('is-end', !canMove(Number(arrow.dataset.step))));
-        const label = cards[current].querySelector('h2').innerText.trim().replace(/\s+/g, ' ');
+        const label = (cards[current].querySelector('.bcard-member-name') || cards[current].querySelector('h2')).innerText.trim().replace(/\s+/g, ' ');
         status.textContent = (current + 1) + ' / ' + cards.length + '，' + label;
     }
 
