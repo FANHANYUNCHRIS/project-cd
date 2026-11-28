@@ -9886,3 +9886,65 @@ a.shop-door[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-o
 /* 品牌故事卡：三條重點改成一段話（2026-11-28 擁有者），卡片不翻面 */
 .bcard-intro { color: rgb(255 255 255 / 0.78); font-size: 16px; line-height: 1.85; text-wrap: pretty; }
 .bcard-brand.xpanel-rpg::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+
+
+/* ===== 道具屋重新設計（2026-11-28 擁有者：不要背景圖，只放蝦皮、7-ELEVEN、全家三個連結和說明）=====
+   上面標題，下面三列平台；三列平均分掉剩下的高度，卡片永遠填滿不留空。
+   外框跟品牌區的卡一樣是一條細金線。 */
+.xpanel.xpanel-store {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+    padding: var(--sp-6) var(--sp-5) var(--sp-5);
+    background: radial-gradient(80% 40% at 50% 0%, rgb(216 192 145 / 0.12), rgb(216 192 145 / 0) 70%), var(--x-night);
+}
+.xpanel-store::after { box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.55); }
+.store-head { display: flex; flex-direction: column; gap: var(--sp-2); }
+.store-head .xcard-title,
+.store-head .xcard-text { margin: 0; }
+.store-head .xcard-text { font-size: 16px; }
+.store-list {
+    flex: 1 1 auto;
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-height: 0;
+}
+.store-list li { display: flex; min-height: 0; }
+.store-row {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-5);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 0.04);
+    box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.35);
+    color: rgb(255 255 255 / 0.92);
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.store-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.store-tag { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: var(--gold-soft); }
+.store-info b { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 700; line-height: 1.35; }
+.store-info small { margin-top: 2px; font-size: 14px; line-height: 1.6; color: rgb(255 255 255 / 0.62); }
+.store-state { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: rgb(255 255 255 / 0.55); white-space: nowrap; }
+.store-ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(216 192 145 / 0.45); }
+.store-ico svg { width: 18px; height: 18px; fill: none; stroke: var(--gold-soft); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+a.store-row[href] .store-state { color: var(--gold-soft); }
+a.store-row[href]:hover { background: rgb(216 192 145 / 0.1); box-shadow: inset 0 0 0 1px var(--gold-soft); }
+a.store-row[href]:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 2px; }
+.store-row.is-locked { cursor: default; }
+@media (prefers-reduced-motion: reduce) { .store-row { transition: none; } }
+/* 電腦版：標題在左、三列在右 */
+@media (min-width: 1025px) {
+    .xpanel.xpanel-store { flex-direction: row; align-items: stretch; gap: var(--sp-12); padding: var(--sp-12); }
+    .store-head { flex: 0 0 34%; justify-content: center; }
+    .store-list { flex: 1 1 auto; }
+}
+.store-info b { font-size: 26px; }
+.store-info small { font-size: 15px; }

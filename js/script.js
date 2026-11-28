@@ -891,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const plans = [
             ['#products', ['.xcard-title', '.xcard-text', '.xcard-price', '.xcard-actions']],
             ['#brand', ['.xcard-title', '.xcard-text', '.story-party li', '.xcard-actions']],
-            ['#shop', ['.xcard-title', '.xcard-text', '.shop-door', '.shop-note']],
+            ['#shop', ['.xcard-title', '.xcard-text', '.store-row']],
             ['.site-footer', [
                 '.site-footer-brand', '.site-footer-col', '.site-footer-social', '.site-footer-bottom'
             ]]
