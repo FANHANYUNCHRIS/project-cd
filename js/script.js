@@ -1973,16 +1973,7 @@ function initBrandFlipCards(carousel) {
     const towerFloors = ['RF', '4F', '3F', '2F', '1F'];
     const towerLit = [['1F', '2F'], ['3F', '4F'], ['RF']];
     const backs = {
-        brand: {
-            name: '品牌', label: '品牌介紹',
-            stage: '<img class="bcard-logo" src="images/unicorn-logo-white.png" alt="" width="512" height="512" decoding="async">',
-            tip: 'Project.CD',
-            tabs: [
-                ['品牌故事', [['book', '沒有祖傳配方', '從零開始，自己研究'], ['flask', '讀專業文獻', '先弄懂酥皮和內餡的道理'], ['thermo', '記溫度與時間', '每一爐都算比例、做紀錄'], ['star', '一版一版實驗', '直到每一口都平衡', true]]],
-                ['名字由來', [['flag', 'Project', '計畫：把甜點當研究來做'], ['cup', 'C＝Coffee', '咖啡'], ['cake', 'D＝Dessert', '甜點'], ['star', '一個人的甜點研究室', '品牌的一句話', true]]],
-                ['獨角獸', [['feather', '自由與想像力', '不被傳統配方綁住'], ['drop', '純潔', '用單純的好食材'], ['gem', '稀有', '做出別處吃不到的味道'], ['shield', '守護', '把關每一顆的品質', true]]]
-            ]
-        },
+        // 品牌故事卡不翻面（2026-11-28 擁有者：該講的正面都講了，背面刪掉）
         team: {
             name: '角色', label: '角色介紹',
             stage: '<img class="bcard-portrait" src="images/staff01-nobg.webp" alt="" width="789" height="960" decoding="async"><span class="bcard-portrait-empty" hidden>照片準備中</span>',
@@ -2019,6 +2010,7 @@ function initBrandFlipCards(carousel) {
 
     carousel.querySelectorAll('article.bcard').forEach(front => {
         const key = Object.keys(backs).find(k => front.classList.contains('bcard-' + k));
+        if (!key) return; // 沒有背面資料的卡（品牌故事）維持單面
         const d = backs[key];
         const id = 'bcard-' + key;
 
